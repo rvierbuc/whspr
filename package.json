@@ -1,0 +1,12 @@
+{
+  "name": "whspr",
+  "version": "1.0.0",
+  "description": "audio based social media",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
