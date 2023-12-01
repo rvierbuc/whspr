@@ -81,7 +81,7 @@ const config = {
                 ],
               },
             {
-                test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
+                test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i, //may need to include mp3/sound? 
                 type: 'asset',
             },
 

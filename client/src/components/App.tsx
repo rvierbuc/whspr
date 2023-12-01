@@ -20,7 +20,7 @@ const App = () => {
             <Route>
                 <Route path="/" element={<Login />} />
                 <Route path="/protected" element={<PrivateRoutes />} >
-                    <Route path="dashboard" element={<Outlet />} /> // Outlet is a placeholder for child routes to be rendered
+                    <Route path="dashboard" element={<Outlet />} /> // Outlet is a placeholder for child routes to be rendered 
                     </Route>
             </Route>
         )

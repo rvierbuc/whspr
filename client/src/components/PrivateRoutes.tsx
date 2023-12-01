@@ -1,10 +1,13 @@
 import React from 'react';
+import Login from './Login';
+import { Navigate } from 'react-router-dom';
 
 const PrivateRoutes = () => {
     const auth = true;
     return (
         <div>
-            {auth ? <h1>Private Routes</h1> : <h1>Not Authenticated</h1>}
+            {auth ? <h1>Private Routes</h1> : 
+            <Navigate to="/"/>}
         </div>
     )
 }
