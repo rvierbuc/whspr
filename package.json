@@ -6,9 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server/index.ts",
-    "build": "webpack --config webpack.config.js --mode development --watch",
-    "build-prod": "webpack --config webpack.config.js --mode production"
-
+    "build": "webpack --config webpack.dev.js --mode development",
+    "build-prod": "webpack --config webpack.prod.js --mode production"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +15,7 @@
   "dependencies": {
     "@babel/preset-env": "^7.23.5",
     "@babel/preset-react": "^7.23.3",
+    "@babel/preset-typescript": "^7.23.3",
     "autoprefixer": "^10.4.16",
     "axios": "^1.6.2",
     "babel-loader": "^9.1.3",
