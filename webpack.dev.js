@@ -9,9 +9,11 @@ const isProduction = process.env.NODE_ENV == 'production';
 
 const config = {
     entry: './client/src/index.tsx',
+    mode:'development',
+    watch: true,
     output: {
         path: path.resolve(__dirname, './client/dist'),
-        filename: 'bundle.ts',
+        filename: 'bundle.js',
         publicPath: '/'
     },
     devServer: {
@@ -21,7 +23,7 @@ const config = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: './client/index.html',
+            template: './client/src/index.html',
             filename: './index.html'
         }),
 
@@ -34,11 +36,22 @@ const config = {
     module: {
         rules: [
             {
-                test: /\.(ts|tsx)$/, // Update file extension to .tsx
-                use: {
-                  loader: 'ts-loader', // Use ts-loader for TypeScript files
+              test: /\.(ts|tsx)$/,
+              use: [
+                {
+                  loader: 'babel-loader', // Use babel-loader for transpiling TypeScript code
+                  options: {
+                    presets: ['@babel/preset-env', '@babel/preset-typescript', '@babel/preset-react'],
+                  },
                 },
-              },
+                {
+                  loader: 'ts-loader', // Use ts-loader for TypeScript files
+                  options: {
+                    transpileOnly: true, //skips type checking - faster compilation
+                  },
+                },
+              ],
+            },
               {
                 test: /\.(scss)$/,
                 use: [
