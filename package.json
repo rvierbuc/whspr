@@ -37,6 +37,7 @@
     "sass-loader": "^13.3.2",
     "sequelize": "^6.35.1",
     "sequelize-cli": "^6.6.2",
+    "sequelize-typescript": "^2.1.6",
     "style-loader": "^3.3.3",
     "tone": "^14.7.77",
     "ts-loader": "^9.5.1",
