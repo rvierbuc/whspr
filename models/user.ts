@@ -21,6 +21,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     username!: string;
     static associate(models: any) {
       // define association here
+      User.hasMany(models.Post, { foreignKey: 'userId'})
     }
   }
   User.init({
@@ -31,7 +32,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       autoIncrement: true,
     },
     username: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
     }
   }, {
