@@ -1,4 +1,5 @@
-const { Sequelize } = require('sequelize-typescript');
+const {Sequelize} = require("sequelize-typescript");
+
 
 const HOST = "localhost";
 
@@ -9,25 +10,21 @@ const db = new Sequelize({
   username: "postgres",
   database: "whspr",
   password: "ok",
-  dialectOptions: {
-    ssl: false,
-    // Explicitly set the authentication mechanism to 'default'
-    default: {
-      authentication: {
-        type: "default",
-        options: {
-          authentication: "default",
-        },
-      },
-    },
-  },
 });
 
-db.authenticate()
-    .then(() => console.log('Database connected!'))
-    .catch((err: Error) => console.log(err))
+db.authenticate().then(() => {
+  console.log(`successfully connected to the database on ${HOST}`);
+}).catch((error: any) => {
+  console.error("error connecting to the database: ", error.message);
+});
 
+(async () => {
+    try {
+      await db.sync({ force: false });
+      console.log("Database synced!");
+    } catch (error) {
+      console.log("Error syncing database!", error);
+    }
+  })();
 
-module.exports = {
-    db
-}
+module.exports = db
