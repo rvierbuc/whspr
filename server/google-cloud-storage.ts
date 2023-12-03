@@ -1,7 +1,7 @@
-const { Storage: GCStorage } = require('@google-cloud/storage');
+const { Storage: GoogleCloudStorage } = require('@google-cloud/storage');
 const path = require('path')
 
-const storage = new GCStorage({
+const storage = new GoogleCloudStorage({
     keyFilename: '../key.json',
     projectId: 'whspr-406622',
   });

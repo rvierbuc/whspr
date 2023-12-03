@@ -4,8 +4,8 @@ const {
 } = require('sequelize');
 
 interface UserAttributes {
-  id: number,
-  username: string
+  id: number;
+  username: string;
 }
 
 

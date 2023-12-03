@@ -1,30 +1,27 @@
 'use strict';
-
-
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Posts', {
+    await queryInterface.createTable('MagicConches', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userId: {
+      sendingUserId: {
         type: Sequelize.INTEGER
       },
-      category: {
-        type: Sequelize.STRING
+      receivingUserId: {
+        type: Sequelize.INTEGER
       },
       title: {
         type: Sequelize.STRING
       },
-      url:{
+      filename: {
         type: Sequelize.STRING
       },
-      audioId:{
+      audioId: {
         type: Sequelize.INTEGER
       },
       createdAt: {
@@ -38,6 +35,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Posts');
+    await queryInterface.dropTable('MagicConches');
   }
 };
