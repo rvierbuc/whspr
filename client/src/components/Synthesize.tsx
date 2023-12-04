@@ -1,7 +1,7 @@
 import React from 'react';
 import NavBar from './NavBar';
 
-const Synthesize = (props: any) => {
+const Synthesize = (props: {audioContext: BaseAudioContext}) => {
   console.log(props.audioContext);
   return (
     <div>
