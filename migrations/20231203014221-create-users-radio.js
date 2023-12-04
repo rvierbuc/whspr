@@ -1,30 +1,21 @@
 'use strict';
-
-
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Posts', {
+    await queryInterface.createTable('UsersRadios', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      socketId: {
+        type: Sequelize.INTEGER
+      },
       userId: {
         type: Sequelize.INTEGER
       },
-      category: {
-        type: Sequelize.STRING
-      },
-      title: {
-        type: Sequelize.STRING
-      },
-      url:{
-        type: Sequelize.STRING
-      },
-      audioId:{
+      radiosId: {
         type: Sequelize.INTEGER
       },
       createdAt: {
@@ -38,6 +29,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Posts');
+    await queryInterface.dropTable('UsersRadios');
   }
 };
