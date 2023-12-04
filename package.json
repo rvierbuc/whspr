@@ -8,7 +8,7 @@
     "start": "nodemon server/index.ts",
     "build": "webpack --config webpack.dev.js --mode development",
     "build-prod": "webpack --config webpack.prod.js --mode production",
-    
+    "seed": "npx sequelize-cli db:drop && npx sequelize-cli db:create && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all --seeders-path server/db/seeders/"
   },
   "keywords": [],
   "author": "",
