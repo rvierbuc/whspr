@@ -12,26 +12,36 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
-    await queryInterface.bulkInsert('Users', [
+    await queryInterface.bulkInsert('Followers', [
       {
       id: '1',
-      username: 'syd',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-      {
-      id: '2',
-      username: 'angel',
+      userId: '1',
+      followingId: '2',
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
+      id: '2',
+      userId: '1',
+      followingId: '3',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+      {
       id: '3',
-      username: 'george',
+      userId: '2',
+      followingId: '1',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: '4',
+      userId: '2',
+      followingId: '3',
       createdAt: new Date(),
       updatedAt: new Date()
     }
-  ], {}) 
+  ], {})
   },
 
   async down (queryInterface, Sequelize) {
@@ -41,6 +51,6 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-    await queryInterface.bulkDelete('Users', null, {}) 
+    await queryInterface.bulkDelete('Followers', null, {}) 
   }
 };
