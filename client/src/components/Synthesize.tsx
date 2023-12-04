@@ -2,9 +2,8 @@ import React from 'react';
 import NavBar from './NavBar';
 import SynthDaw from './synthComponents/SynthDaw';
 
-const Synthesize = (props: {audioContext: BaseAudioContext}) => {
-  const context: BaseAudioContext = props.audioContext;
-  console.log('Synthesize', context);
+const Synthesize = (props: {audioContext: AudioContext}) => {
+  const context: AudioContext = props.audioContext
 
   return (
     <div>
