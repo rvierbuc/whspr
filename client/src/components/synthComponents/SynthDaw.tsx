@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Synth } from 'tone';
+import * as Tone from 'tone';
 
-// let createSynth: Synth = new Synth();
+function SynthDaw(props: { audioContext: AudioContext; }): React.JSX.Element {
+  // setting base context's state
+  const [contextState, setContextState] = useState('');
 
-const SynthDaw = (props: {audioContext: AudioContext}) => {
   // setting up basic audioContext workflow
   const context: AudioContext = props.audioContext;
   const oscillator: OscillatorNode = context.createOscillator();
@@ -12,7 +13,10 @@ const SynthDaw = (props: {audioContext: AudioContext}) => {
 
   // basic controller function
   const controller: () => void = () => {
-    if (context.state === 'suspended') {
+    if (contextState === '') {
+      oscillator.start();
+      setContextState('started');
+    } else if (context.state === 'suspended') {
       context.resume();
     } else if (context.state === 'running') {
       context.suspend();
@@ -23,11 +27,10 @@ const SynthDaw = (props: {audioContext: AudioContext}) => {
   return (
     <div>
       <h3>This is the Daw!</h3>
-      <button onClick={() => oscillator.start()}>Play</button>
+      <button onClick={() => controller()}>Play</button>
       <button onClick={() => controller()}>Stop</button>
-      <button onClick={() => controller()}>Resume</button>
     </div>
   );
-};
+}
 
 export default SynthDaw;
