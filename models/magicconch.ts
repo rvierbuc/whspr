@@ -1,7 +1,4 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+import { Model } from 'sequelize';
 
 interface MagicConchAttributes {
   sendingUserId: number;
@@ -23,7 +20,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     title!: string;
     filename!: string;
     audioId!: number;
-    static associate(models) {
+    static associate(models: any) {
       // define association here
       MagicConch.belongsTo(models.User, { foreignKey: 'sendingUserId'})
       MagicConch.belongsTo(models.User, { foreignKey: 'receivingUserId'});

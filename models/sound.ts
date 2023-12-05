@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+import {Model} from 'sequelize';
 
 interface SoundAttributes {
   userId: number;
@@ -19,7 +17,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     userId!: number;
     postId!: number;
     recordingUrl!: string;
-    static associate(models) {
+    static associate(models: any) {
       // define association here
       Sound.belongsTo(models.User, { foreignKey: 'userId'})
       Sound.belongsTo(models.Post, { foreignKey: 'postId'})
