@@ -4,6 +4,10 @@ import SynthDaw from './synthComponents/SynthDaw';
 
 const Synthesize = (props: {audioContext: AudioContext}) => {
   const context: AudioContext = props.audioContext
+  // setting up basic audioContext workflow => w/ oscillatorNode
+  const oscillator: OscillatorNode = context.createOscillator();
+  const destination: AudioDestinationNode = context.destination;
+  oscillator.connect(destination);
 
   return (
     <div>
