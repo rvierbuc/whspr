@@ -1,4 +1,4 @@
-import { Sequelize, DataTypes } from 'sequelize'
+import { Sequelize, DataTypes, InferAttributes, Model, InferCreationAttributes, CreationOptional } from 'sequelize'
 
 const HOST = 'localhost'
 
@@ -10,7 +10,15 @@ const db = new Sequelize({
   database: 'whspr',
   password: 'ok'
 })
+// interface User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+//   id: CreationOptional<number>;
+//   username: string;
+//   profileImgUrl: string;
+// };
 
+// interface Follower extends Model<InferAttributes<Follower>, InferCreationAttributes<Follower>> {
+//   id: CreationOptional<number>;
+// };
 export const User = db.define('User', {
   username: {
     type: DataTypes.STRING
@@ -140,10 +148,10 @@ Post.belongsTo(Sound, { foreignKey: 'postId' })
 Stat.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 Stat.belongsTo(Post, { foreignKey: 'postId', as: 'post' })
 
-Follower.belongsTo(User, { foreignKey: 'userId', as: 'user' })
-Follower.belongsTo(User, { foreignKey: 'followingId', as: 'followingUser' })
-
-// Sound.belongsTo(Post, { foreignKey: 'postId', as: 'post' })
+User.hasMany(Follower, { foreignKey: 'userId'})
+User.hasMany(Follower, { foreignKey: 'followingId'})
+Follower.belongsTo(User, { foreignKey: 'userId'})
+Follower.belongsTo(User, { foreignKey: 'followingId'});
 
 db.authenticate()
   .then(() => {

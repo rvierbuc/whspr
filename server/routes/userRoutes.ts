@@ -1,15 +1,8 @@
 const express = require('express')
 import { Request, Response } from 'express'
 const router = express.Router()
-const User = require('../../models/user')
-const FollowerModel = require('../../models/follower')
-const Post = require('../../models/post')
 
-
-//Model needs to be created from the database instance
-const FollowerModel = Follower(db, DataTypes);
-//user example
-const UserModel = User(db, DataTypes);
+import { User, Follower } from '../dbmodels'
 // ************* GET ROUTES **************
 
 //GET ALL USER POSTS
@@ -17,14 +10,21 @@ const UserModel = User(db, DataTypes);
 //GET ALL USER FOLLOWING POSTS
 router.get('/followingPosts', (req: Request, res: Response) => {
 //console.log(Follower());
-  FollowerModel.findAll({
-    where:{
-      userId: 1
-    },
-    include: User
-  })
-  .then((results: any) => console.log('following results', results))
-  .catch((error: Error) => console.log('following results', error))
+// Follower.create({userId: 1, followingId: 2})
+// .then(() => console.log('success'))
+// .catch((err: Error) => console.log('err', err))
 
-
+// User.create({username: 'angel', progileImgUrl: 'some/path'})
+// .then(() => console.log('success'))
+// .catch((err: Error) => console.log('err', err))
+Follower.findAll({
+  where: {
+    userId: 1
+  },
+  include: User
+})
+.then((response: any) => console.log('success', response))
+.catch((err: Error) => console.log('err', err))
+})
 module.exports = router
+//create({userId: 2, category: 'comedy', title: 'funny stuff', cloudPath: 'some/path'})
