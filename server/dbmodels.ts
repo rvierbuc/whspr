@@ -1,4 +1,4 @@
-import { Sequelize, DataTypes, InferAttributes, Model, InferCreationAttributes, CreationOptional } from 'sequelize'
+import { Sequelize, DataTypes } from 'sequelize'
 
 const HOST = 'localhost'
 
@@ -30,10 +30,10 @@ export const User = db.define('User', {
 
 export const MagicConch = db.define('MagicConch', {
   sendingUserId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   receivingUserId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   title: {
     type: DataTypes.STRING
@@ -57,7 +57,7 @@ export const Sound = db.define('Sound', {
 
 export const Post = db.define('Post', {
   userId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   title: {
     type: DataTypes.STRING
@@ -72,10 +72,10 @@ export const Post = db.define('Post', {
 
 export const Radio = db.define('Radio', {
   hostId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   listenerCount: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   url: {
     type: DataTypes.STRING
@@ -90,22 +90,22 @@ export const Radio = db.define('Radio', {
 
 export const Like = db.define('Like', {
   userId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   postId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   }
 })
 
 export const UsersRadio = db.define('UsersRadio', {
   socketId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   userId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   radiosId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   }
 })
 
@@ -120,10 +120,10 @@ export const Follower = db.define('Follower', {
 
 export const Stat = db.define('Stat', {
   userId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   postId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   type: {
     type: DataTypes.STRING
@@ -142,6 +142,7 @@ UsersRadio.belongsTo(Radio, { foreignKey: 'radiosId', as: 'radio' })
 
 Radio.belongsTo(User, { foreignKey: 'hostId', as: 'host' })
 
+User.hasMany(Post, { foreignKey: 'userId'})
 Post.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 Post.belongsTo(Sound, { foreignKey: 'postId' })
 

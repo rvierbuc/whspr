@@ -1,30 +1,59 @@
 const express = require('express')
 import { Request, Response } from 'express'
 const router = express.Router()
+import { Op } from 'sequelize'
 
-import { User, Follower } from '../dbmodels'
+import { User, Follower, Post, Sound, } from '../dbmodels'
 // ************* GET ROUTES **************
 
 //GET ALL USER POSTS
 
 //GET ALL USER FOLLOWING POSTS
-router.get('/followingPosts', (req: Request, res: Response) => {
+router.get('/followingPosts', async (req: Request, res: Response) => {
 //console.log(Follower());
-// Follower.create({userId: 1, followingId: 2})
+// Post.create({userId: 3, soundId: 3, category: 'music', title: 'groovy tunes'})
 // .then(() => console.log('success'))
 // .catch((err: Error) => console.log('err', err))
+// Sound.create({userId: 3, recordingUrl: 'some/path3'})
+// .then(() => console.log('success'))
+// .catch((err: Error) => console.log('err', err))
+// User.create({username: 'george', profileImgUrl: 'some/path'})
+// .then(() => console.log('success'))
+// .catch((err: Error) => console.log('err', err))
+// Follower.create({userId: 1, followingId: 3})
+// .then(() => console.log('success'))
+// .catch((err: Error) => console.log('err', err))
+try{
+  const following = await Follower.findAll({
+    where: {
+      userId: 1
+    }
+  })
+  const followingArr = following.map((follow: any) => {
+    let obj: any = {}
+    obj.userId = follow.followingId
+    return obj
+  })
+  const followingPostsSounds = await Sound.findAll({
+    where: {
+      [Op.or]: followingArr
+    },
+    include: Post
+  })
+  res.status(400).send(followingPostsSounds)
 
-// User.create({username: 'angel', progileImgUrl: 'some/path'})
-// .then(() => console.log('success'))
+}catch(error){
+  res.sendStatus(500)
+  console.log('server', error)
+}
+// Follower.findAll({
+//   where: {
+//     userId: 1
+//   },
+//   include: User
+// })
+// .then((response: any) => console.log('success', response))
 // .catch((err: Error) => console.log('err', err))
-Follower.findAll({
-  where: {
-    userId: 1
-  },
-  include: User
-})
-.then((response: any) => console.log('success', response))
-.catch((err: Error) => console.log('err', err))
 })
 module.exports = router
 //create({userId: 2, category: 'comedy', title: 'funny stuff', cloudPath: 'some/path'})
