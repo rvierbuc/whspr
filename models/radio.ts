@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+import {Model} from 'sequelize';
 
 interface RadioAttributes {
   hostId: number;
@@ -11,7 +9,7 @@ interface RadioAttributes {
   category: string;
 }
 
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize: any, DataTypes: any) => {
   class Radio extends Model<RadioAttributes> {
     /**
      * Helper method for defining associations.
@@ -23,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     url!: string;
     title!: string;
     category!: string;
-    static associate(models) {
+    static associate(models: any) {
       // define association here
       Radio.belongsTo(models.User, { foreignKey: 'hostId'})
     }
