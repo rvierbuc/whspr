@@ -31,7 +31,7 @@ const config = {
         // Learn more about plugins from https://webpack.js.org/configuration/plugins/
     ],
     resolve: {
-        extensions: ['.ts', '.tsx']
+        extensions: ['.ts', '.tsx', '.js', '.jsx']
     },
     module: {
         rules: [
@@ -51,6 +51,12 @@ const config = {
                   },
                 },
               ],
+            },
+            {
+              test: /\.(js|jsx)$/,
+              use: {
+                loader: 'babel-loader',
+              }
             },
               {
                 test: /\.(scss)$/,
