@@ -9,7 +9,7 @@ import { User, Follower, Post, Sound, } from '../dbmodels'
 //GET ALL USER POSTS
 
 //GET ALL USER FOLLOWING POSTS
-router.get('/followingPosts', async (req: Request, res: Response) => {
+router.get('/followingPosts/:userId', async (req: Request, res: Response) => {
 //console.log(Follower());
 // Post.create({userId: 3, soundId: 3, category: 'music', title: 'groovy tunes'})
 // .then(() => console.log('success'))
@@ -23,10 +23,11 @@ router.get('/followingPosts', async (req: Request, res: Response) => {
 // Follower.create({userId: 1, followingId: 3})
 // .then(() => console.log('success'))
 // .catch((err: Error) => console.log('err', err))
+const { userId } = req.params;
 try{
   const following = await Follower.findAll({
     where: {
-      userId: 1
+      userId
     }
   })
   const followingArr = following.map((follow: any) => {
@@ -38,9 +39,15 @@ try{
     where: {
       [Op.or]: followingArr
     },
-    include: Post
+    include: [
+      {model: Post},
+      {
+        model: User,
+        as: 'user'
+    }
+    ]
   })
-  res.status(400).send(followingPostsSounds)
+  res.status(200).send(followingPostsSounds)
 
 }catch(error){
   res.sendStatus(500)
