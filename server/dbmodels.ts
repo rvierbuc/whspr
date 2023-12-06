@@ -12,11 +12,6 @@ const db = new Sequelize({
 })
 
 export const User = db.define('User', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
   username: {
     type: DataTypes.STRING
   },
@@ -26,11 +21,6 @@ export const User = db.define('User', {
 })
 
 export const MagicConch = db.define('MagicConch', {
-  id: {
-    type: DataTypes.BIGINT,
-    allowNull: false,
-    primaryKey: true
-  },
   sendingUserId: {
     type: DataTypes.BIGINT
   },
@@ -43,55 +33,36 @@ export const MagicConch = db.define('MagicConch', {
   url: {
     type: DataTypes.STRING
   },
-  audioId: {
+  soundURL: {
     type: DataTypes.BIGINT
   }
 })
 
 export const Sound = db.define('Sound', {
-  userId: {
-    type: DataTypes.BIGINT
-  },
   postId: {
     type: DataTypes.BIGINT
   },
-  recordingUrl: {
+  soundUrl: {
     type: DataTypes.STRING
   }
 })
 
 export const Post = db.define('Post', {
-  id: {
-    type: DataTypes.BIGINT,
-    allowNull: false,
-    primaryKey: true
-  },
   userId: {
     type: DataTypes.BIGINT
-  },
-  postId: {
-    type: DataTypes.BIGINT
-  },
-  category: {
-    type: DataTypes.STRING
   },
   title: {
     type: DataTypes.STRING
   },
-  url: {
+  category: {
     type: DataTypes.STRING
   },
-  audioId: {
+  soundURL: {
     type: DataTypes.BIGINT
   }
 })
 
 export const Radio = db.define('Radio', {
-  id: {
-    type: DataTypes.BIGINT,
-    allowNull: false,
-    primaryKey: true
-  },
   hostId: {
     type: DataTypes.BIGINT
   },
@@ -110,11 +81,6 @@ export const Radio = db.define('Radio', {
 })
 
 export const Like = db.define('Like', {
-  id: {
-    type: DataTypes.BIGINT,
-    allowNull: false,
-    primaryKey: true
-  },
   userId: {
     type: DataTypes.BIGINT
   },
@@ -124,11 +90,6 @@ export const Like = db.define('Like', {
 })
 
 export const UsersRadio = db.define('UsersRadio', {
-  id: {
-    type: DataTypes.BIGINT,
-    allowNull: false,
-    primaryKey: true
-  },
   socketId: {
     type: DataTypes.BIGINT
   },
@@ -141,11 +102,6 @@ export const UsersRadio = db.define('UsersRadio', {
 })
 
 export const Follower = db.define('Follower', {
-  id: {
-    type: DataTypes.BIGINT,
-    allowNull: false,
-    primaryKey: true
-  },
   userId: {
     type: DataTypes.BIGINT
   },
@@ -155,11 +111,6 @@ export const Follower = db.define('Follower', {
 })
 
 export const Stat = db.define('Stat', {
-  id: {
-    type: DataTypes.BIGINT,
-    allowNull: false,
-    primaryKey: true
-  },
   userId: {
     type: DataTypes.BIGINT
   },
@@ -173,7 +124,7 @@ export const Stat = db.define('Stat', {
 // defines table relations
 MagicConch.belongsTo(User, { foreignKey: 'sendingUserId', as: 'sendingUser' })
 MagicConch.belongsTo(User, { foreignKey: 'receivingUserId', as: 'receivingUser' })
-MagicConch.belongsTo(Sound, { foreignKey: 'audioId', as: 'audio' })
+MagicConch.belongsTo(Sound, { foreignKey: 'soundURL' })
 
 Like.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 Like.belongsTo(Post, { foreignKey: 'postId', as: 'post' })
@@ -184,14 +135,15 @@ UsersRadio.belongsTo(Radio, { foreignKey: 'radiosId', as: 'radio' })
 Radio.belongsTo(User, { foreignKey: 'hostId', as: 'host' })
 
 Post.belongsTo(User, { foreignKey: 'userId', as: 'user' })
-Post.belongsTo(Post, { foreignKey: 'postId', as: 'parentPost' })
-Post.belongsTo(Sound, { foreignKey: 'audioId', as: 'audio' })
+Post.belongsTo(Sound, { foreignKey: 'postId' })
 
 Stat.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 Stat.belongsTo(Post, { foreignKey: 'postId', as: 'post' })
 
 Follower.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 Follower.belongsTo(User, { foreignKey: 'followingId', as: 'followingUser' })
+
+// Sound.belongsTo(Post, { foreignKey: 'postId', as: 'post' })
 
 db.authenticate()
   .then(() => {
@@ -201,15 +153,40 @@ db.authenticate()
     console.error('Error connecting to the database:', error.message)
   })
 
-// this function syncs the database, but you need a semicolon on the line above
-// sync database whenever you make changes to the models above
-// (async () => {
-//   try {
-//     await db.sync({ force: true })
-//     console.log('Database synced!')
-//   } catch (error) {
-//     console.error('Error syncing database:', error)
-//   } finally {
-//     await db.close()
-//   }
-// })().catch((err: any) => { console.error(err) })
+// export script funcs that ref db:
+
+export const authenticateDatabase = async (): Promise<void> => {
+  try {
+    await db.authenticate()
+    console.log(`Successfully connected to the database on ${HOST}`)
+  } catch (error) {
+    console.error('Error connecting to the database:', error)
+  }
+}
+
+export const syncDatabase = async (): Promise<void> => {
+  try {
+    await db.sync({ force: true })
+    console.log('Database synced!')
+  } catch (error) {
+    console.error('Error syncing database:', error)
+  }
+}
+
+export const dropDatabase = async (): Promise<void> => {
+  try {
+    await db.query('DROP DATABASE IF EXISTS "whspr"')
+    console.log('Database dropped')
+  } catch (error) {
+    console.error('Error dropping the database:', error)
+  }
+}
+
+export const createDatabase = async (): Promise<void> => {
+  try {
+    await db.query('CREATE DATABASE "whspr"')
+    console.log('Database created')
+  } catch (error) {
+    console.error('Error creating the database:', error)
+  }
+}

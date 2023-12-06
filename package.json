@@ -8,7 +8,10 @@
     "start": "ts-node server/index.ts",
     "build": "webpack --config webpack.dev.js --mode development",
     "build-prod": "webpack --config webpack.prod.js --mode production",
-    "seed": "npx sequelize-cli db:drop && npx sequelize-cli db:create && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all --seeders-path seeders/"
+    "reassignifneeded": "npx sequelize-cli db:drop && npx sequelize-cli db:create && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all --seeders-path seeders/",
+    "sync": "ts-node server/db/scripts/authAndSyncDb.ts",
+    "seed": "ts-node server/db/scripts/seeder-goofy.ts",
+    "resetDb": "ts-node server/db/scripts/resetDb.ts"
   },
   "keywords": [],
   "author": "",
@@ -36,6 +39,7 @@
     "passport-google-oauth2": "^0.2.0",
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
+    "pg-promise": "^11.5.4",
     "postcss-loader": "^7.3.3",
     "postgres": "^3.4.3",
     "react": "^18.2.0",
@@ -52,6 +56,7 @@
   "devDependencies": {
     "@babel/cli": "^7.23.4",
     "@babel/core": "^7.23.5",
+    "@types/axios": "^0.14.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/multer": "^1.4.11",
