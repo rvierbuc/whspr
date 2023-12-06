@@ -36,14 +36,12 @@ const SynthDaw = ({audioContext, oscillator, mediaDest, filter}: Props): React.J
       audioContext.suspend();
     }
   };
-
     // change the type value => not working
     const changeType: (e: any) => void = (e) => {
       let { id } = e.target;
       setOscSettings({...oscSettings, type: id});
       oscillator.type = id;
     };
-
     // change the frequency values => not working
     const changeValue = (e: any) => {
       let value: number = e.target.value;
