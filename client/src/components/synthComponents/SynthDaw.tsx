@@ -2,39 +2,59 @@ import React, { useState, useEffect } from 'react';
 import * as Tone from 'tone';
 import Oscillator from './Oscillator';
 
-const SynthDaw = (props: { audioContext: AudioContext}): React.JSX.Element => {
-  // set context to prop's audioContext
-  const context: AudioContext = props.audioContext;
+interface Props {
+  audioContext: AudioContext,
+  oscillator: OscillatorNode,
+  filter: BiquadFilterNode
+}
 
-  // oscillator node set to the prop's osc
-  const oscillator: OscillatorNode = context.createOscillator();
-  const destination: AudioDestinationNode = context.destination;
-  oscillator.connect(destination);
+const SynthDaw = ({audioContext, oscillator, filter}: Props): React.JSX.Element => {
 
   // setting base context's state
   const [contextState, setContextState] = useState('');
   // setting Oscillator's state => should be able to render when an older post is fetched
-  const [oscSettings, setOscSettings] = useState(oscillator);
+  const [oscSettings, setOscSettings] = useState({
+    frequency: 200,
+    detune: oscillator.detune.value,
+    type: oscillator.type
+  });
 
-  // basic controller function
-  const controller: () => void = () => {
+  // start the audio
+  const start: () => void = () => {
     if (contextState === '') {
       oscillator.start();
       setContextState('started');
-    } else if (context.state === 'suspended') {
-      context.resume();
-    } else if (context.state === 'running') {
-      context.suspend();
+    } else if (audioContext.state === 'suspended') {
+      audioContext.resume();
     }
   };
 
-  // returning the dynamic html
+  // stop the audio
+  const stop: () => void = () => {
+    if (audioContext.state === 'running') {
+      audioContext.suspend();
+    }
+  };
+
+    // change the type value
+    const changeType: (e: any) => void = (e) => {
+      let { id } = e.target;
+      setOscSettings({...oscSettings, type: id});
+      oscSettings.type = id;
+    };
+
+    const changeValue: (e: any) => void = (e) => {
+      let value: OscillatorNode['frequency']['value'] = e.target.value;
+      setOscSettings({...oscSettings, frequency: value})
+      oscSettings.frequency['value'] = value;
+    };
+
   return (
     <div>
       <h3>This is the Daw!</h3>
-      <button onClick={() => controller()}>Play</button>
-      <button onClick={() => controller()}>Stop</button>
-      <Oscillator oscillator={oscSettings} />
+      <button onClick={() => start()}>Play</button>
+      <button onClick={() => stop()}>Stop</button>
+      <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
     </div>
   );
 }

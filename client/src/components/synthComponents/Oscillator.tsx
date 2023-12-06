@@ -2,31 +2,17 @@ import React, { useState, useRef } from 'react';
 import * as Tone from 'tone';
 
 interface Props {
-  oscillator: OscillatorNode
+  oscSettings: {
+    frequency: OscillatorNode['frequency']['value'],
+    detune: OscillatorNode['detune']['value'],
+    type: OscillatorType
+  };
+  changeType: (e: any) => void;
+  changeValue: (e: any) => void;
 }
 
-const Oscillator = ({oscillator}: Props): React.JSX.Element => {
-  const { type, frequency } = oscillator;
-
-  // set the type state
-  const [osc, setOsc] = useState({
-    frequency: oscillator.frequency.value,
-    detune: oscillator.detune.value,
-    type: oscillator.type
-  });
-
-  // change the type value
-  const changeType: (e: any) => void = (e) => {
-    let id: any = e.target?.id;
-    setOsc({...osc, type: id});
-    osc.type = id;
-  };
-
-  const changeValue: (e: any) => void = (e) => {
-    let { value, id } = e.target;
-    setOsc({...osc, [id]: value})
-    osc[id].value = value;
-  };
+const Oscillator = ({oscSettings, changeType, changeValue}: Props): React.JSX.Element => {
+  const { type, frequency } = oscSettings;
 
   // return dynamic html
   return (
@@ -39,7 +25,7 @@ const Oscillator = ({oscillator}: Props): React.JSX.Element => {
         <button id="sawtooth" onClick={changeType} className="waveOption">Sawtooth</button>
       </div>
       <div className="oscFreq">
-        <input value={(osc.frequency)} onChange={changeValue} id="frequency" type="range" />
+        <input value={frequency} onChange={changeValue} id="frequency" type="range" />
       </div>
       <div className="oscDetune">
         <input id="detune" type="range" />
