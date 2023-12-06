@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { Storage } from '@google-cloud/storage'
-import {Sound} from './dbmodels'
+import { Post, Sound } from './dbmodels'
 const storage = new Storage({
   keyFilename: './key.json',
   projectId: 'whspr-406622'
@@ -31,7 +31,7 @@ const saveAudio = async (audio: any): Promise<void> => {
       Sound.create({
         userId: 1, 
         postId: 1, 
-        recordingUrl: downloadURL,
+        soundUrl: downloadURL,
       }).catch((soundError) => {
         console.error('Error creating Sound record:', soundError);
       }),
@@ -41,4 +41,23 @@ const saveAudio = async (audio: any): Promise<void> => {
   }
 }
 
-export { saveAudio}
+const getAudioUrl = async (postId: number): Promise<string | null> => {
+  try {
+    const soundRecord = await Sound.findOne({ where: { postId } });
+
+    if (!soundRecord) {
+      console.error('Sound record not found.');
+      return null;
+    }
+    const soundUrl = soundRecord.get('soundUrl') as string;
+    if(!soundUrl){
+      console.error('Audio URL not found.')
+    }
+    return soundUrl;
+  } catch (error) {
+    console.error('Error retrieving audio URL:', error);
+    return null;
+  }
+};
+
+export { saveAudio, getAudioUrl }

@@ -6,7 +6,7 @@ const NavBar = () => {
     <div>
       <nav>
         <Link to='/protected/synthesize'>Synthesize</Link>
-        <Link to='/protected/recordPost'>Record Post</Link>
+        <Link to='/protected/post'>Record Post</Link>
       </nav>
     </div>
   );
