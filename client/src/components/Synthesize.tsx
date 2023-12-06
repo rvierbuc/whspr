@@ -7,7 +7,7 @@ interface Props {
 }
 
 const Synthesize = ({audioContext}: Props): React.JSX.Element => {
-
+  console.log(audioContext)
   // setting up basic audioContext workflow => w/ oscillatorNode
   const oscillator: OscillatorNode = audioContext.createOscillator();
   const filter: BiquadFilterNode = audioContext.createBiquadFilter();

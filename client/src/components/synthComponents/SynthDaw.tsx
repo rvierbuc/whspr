@@ -9,17 +9,16 @@ interface Props {
 }
 
 const SynthDaw = ({audioContext, oscillator, filter}: Props): React.JSX.Element => {
-
   // setting base context's state
   const [contextState, setContextState] = useState('');
-  // setting Oscillator's state => should be able to render when an older post is fetched
-  const [frequency, setFrequency] = useState(oscillator.frequency.value);
+  // oscillator's settings
   const [oscSettings, setOscSettings] = useState({
     frequency: oscillator.frequency.value,
     detune: oscillator.detune.value,
     type: oscillator.type
   });
   console.log('state', oscSettings)
+  console.log('prop', oscillator)
 
   // start the audio
   const start: () => void = () => {
@@ -42,7 +41,7 @@ const SynthDaw = ({audioContext, oscillator, filter}: Props): React.JSX.Element 
     const changeType: (e: any) => void = (e) => {
       let { id } = e.target;
       setOscSettings({...oscSettings, type: id});
-      oscSettings.type = id;
+      oscillator.type = id;
     };
 
     // change the frequency values => not working
@@ -50,8 +49,12 @@ const SynthDaw = ({audioContext, oscillator, filter}: Props): React.JSX.Element 
       let value: number = e.target.value;
       let id: string = e.target.id;
       setOscSettings({...oscSettings, [id]: Number(value)})
-      oscSettings[id] = Number(value)
-      console.log('settings', oscSettings)
+      if (id === 'frequency') {
+        oscillator.frequency.value = Number(value);
+      } else if (id === 'detune') {
+        oscillator.detune.value = Number(value);
+      }
+      console.log('settings', oscillator)
     };
 
   return (

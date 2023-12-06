@@ -13,7 +13,6 @@ interface Props {
 
 const Oscillator = ({oscSettings, changeType, changeValue}: Props): React.JSX.Element => {
   const { type, frequency, detune } = oscSettings;
-  console.log('osc', detune)
 
   return (
     <div>
@@ -25,10 +24,10 @@ const Oscillator = ({oscSettings, changeType, changeValue}: Props): React.JSX.El
         <button id="sawtooth" onClick={changeType} className="waveOption">Sawtooth</button>
       </div>
       <div className="oscFreq">
-        <input value={frequency} onChange={changeValue} id="frequency" type="range" />
+        <input value={frequency} max="880" onChange={changeValue} id="frequency" type="range" />
       </div>
-      <div value={detune} onChange={changeValue} className="oscDetune">
-        <input id="detune" type="range" />
+      <div className="oscDetune">
+        <input value={detune} max="100" min="-100" onChange={changeValue} id="detune" type="range" />
       </div>
     </div>
   );
