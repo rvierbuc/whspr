@@ -14,6 +14,14 @@ const RecordSynth = ({ audioContext, mediaDest, start, stop }: Props) => {
 
   // setup the media recorder
   const recorder: MediaRecorder = new MediaRecorder(mediaDest.stream);
+  recorder.ondataavailable = event => setAudioChunks((prevChunks) => [...prevChunks, event.data]);
+  recorder.onstop = event => {
+    let blob = new Blob(audioChunks, { type: 'audio/ogg; codecs=opus'});
+    setAudioSource(URL.createObjectURL(blob));
+    console.log(audioSource);
+  };
+
+  console.log(recorder);
 
   // start the sound/recording
   const startRecording = () => {
@@ -27,14 +35,6 @@ const RecordSynth = ({ audioContext, mediaDest, start, stop }: Props) => {
     stop();
     setIsRecording(false);
     recorder.stop()
-
-    recorder.ondataavailable = event => chunks.push(event.data);
-
-    recorder.onstop = event => {
-      let blob = new Blob(chunks, { type: 'audio/ogg; codecs=opus'});
-      setAudioSource(URL.createObjectURL(blob));
-      console.log(audioSource);
-    };
   };
 
 

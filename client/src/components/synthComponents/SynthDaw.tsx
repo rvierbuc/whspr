@@ -54,7 +54,6 @@ const SynthDaw = ({audioContext, oscillator, mediaDest, filter}: Props): React.J
       } else if (id === 'detune') {
         oscillator.detune.value = Number(value);
       }
-      console.log('settings', oscillator)
     };
 
   return (
