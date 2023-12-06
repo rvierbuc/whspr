@@ -13,6 +13,7 @@ import {
 import Login from './Login';
 import PrivateRoutes from './PrivateRoutes';
 import Synthesize from './Synthesize';
+import WaveSurferComponent from './WaveSurfer';
 
 // THE MAIN audio context to be used throughout the application (DO NOT ALTER)
 const audioContext: BaseAudioContext = new AudioContext();
@@ -27,7 +28,7 @@ const App = () => {
             <Route>
                 <Route path="/" element={<Login />} />
                 <Route path="/protected" element={<PrivateRoutes />} >
-                    <Route path="dashboard" element={<Outlet />} /> // Outlet is a placeholder for child routes to be rendered
+                    <Route path="dashboard" element={<WaveSurferComponent />} /> // Outlet is a placeholder for child routes to be rendered
                 </Route>
                 <Route path="/protected/synthesize" element={<Synthesize audioContext={audioContext} />} />
             </Route>
