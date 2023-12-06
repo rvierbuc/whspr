@@ -13,7 +13,6 @@ const Synthesize = ({audioContext}: Props): React.JSX.Element => {
   const filter: BiquadFilterNode = audioContext.createBiquadFilter();
   const destination: AudioDestinationNode = audioContext.destination;
 
-  oscillator.frequency.value
   // connect the workflow of audioNodes
   oscillator.connect(filter);
   filter.connect(destination);

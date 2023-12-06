@@ -3,18 +3,18 @@ import * as Tone from 'tone';
 
 interface Props {
   oscSettings: {
-    frequency: OscillatorNode['frequency']['value'],
-    detune: OscillatorNode['detune']['value'],
-    type: OscillatorType
+    frequency: number,
+    detune: number,
+    type: string
   };
   changeType: (e: any) => void;
   changeValue: (e: any) => void;
 }
 
 const Oscillator = ({oscSettings, changeType, changeValue}: Props): React.JSX.Element => {
-  const { type, frequency } = oscSettings;
+  const { type, frequency, detune } = oscSettings;
+  console.log('osc', detune)
 
-  // return dynamic html
   return (
     <div>
       <h4>Oscillator</h4>
@@ -27,7 +27,7 @@ const Oscillator = ({oscSettings, changeType, changeValue}: Props): React.JSX.El
       <div className="oscFreq">
         <input value={frequency} onChange={changeValue} id="frequency" type="range" />
       </div>
-      <div className="oscDetune">
+      <div value={detune} onChange={changeValue} className="oscDetune">
         <input id="detune" type="range" />
       </div>
     </div>
