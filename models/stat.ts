@@ -9,7 +9,7 @@ interface StatAttributes{
   type: string;
 }
 
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize: any, DataTypes: any) => {
   class Stat extends Model<StatAttributes> {
     /**
      * Helper method for defining associations.
@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     userId!: number;
     postId!: number;
     type!: string;
-    static associate(models) {
+    static associate(models: any) {
       // define association here
       Stat.belongsTo(models.User, { foreignKey: 'userId' });
       Stat.belongsTo(models.Post, { foreignKey: 'postId' });
