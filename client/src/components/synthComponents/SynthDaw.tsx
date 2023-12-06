@@ -1,24 +1,24 @@
 import React, { useState, useEffect, MouseEventHandler, SyntheticEvent } from 'react';
-import * as Tone from 'tone';
 import Oscillator from './Oscillator';
+import RecordSynth from './RecordSynth';
 
 interface Props {
   audioContext: AudioContext,
   oscillator: OscillatorNode,
   filter: BiquadFilterNode
+  mediaDest: MediaStreamAudioDestinationNode
 }
 
-const SynthDaw = ({audioContext, oscillator, filter}: Props): React.JSX.Element => {
+const SynthDaw = ({audioContext, oscillator, mediaDest, filter}: Props): React.JSX.Element => {
   // setting base context's state
   const [contextState, setContextState] = useState('');
+
   // oscillator's settings
   const [oscSettings, setOscSettings] = useState({
     frequency: oscillator.frequency.value,
     detune: oscillator.detune.value,
     type: oscillator.type
   });
-  console.log('state', oscSettings)
-  console.log('prop', oscillator)
 
   // start the audio
   const start: () => void = () => {
@@ -60,9 +60,8 @@ const SynthDaw = ({audioContext, oscillator, filter}: Props): React.JSX.Element 
   return (
     <div>
       <h3>This is the Daw!</h3>
-      <button onClick={() => start()}>Play</button>
-      <button onClick={() => stop()}>Stop</button>
       <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
+      <RecordSynth audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} />
     </div>
   );
 }

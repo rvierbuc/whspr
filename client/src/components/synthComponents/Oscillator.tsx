@@ -27,7 +27,7 @@ const Oscillator = ({oscSettings, changeType, changeValue}: Props): React.JSX.El
         <input value={frequency} max="880" onChange={changeValue} id="frequency" type="range" />
       </div>
       <div className="oscDetune">
-        <input value={detune} max="100" min="-100" onChange={changeValue} id="detune" type="range" />
+        <input value={detune} max="150" min="-150" onChange={changeValue} id="detune" type="range" />
       </div>
     </div>
   );
