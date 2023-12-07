@@ -1,12 +1,12 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+import {Model} from 'sequelize';
 
 interface PostAttributes {
-  id: number,
-  userId: number,
-  category: string
+  userId: number;
+  category: string;
+  title: string;
+  url: string;
+  audioId: number;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
@@ -17,17 +17,24 @@ module.exports = (sequelize: any, DataTypes: any) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    id!: number;
     userId!: number;
     category!: string;
+    title!: string;
+    url!: string;
+    audioId!: number;
     static associate(models: any) {
       // define association here
       Post.belongsTo(models.User, { foreignKey: 'userId'})
+      Post.belongsTo(models.Post, { foreignKey: 'postId'})
+      Post.belongsTo(models.Sound, { foreignKey: 'audioId'})
     }
   }
   Post.init({
-    userId: DataTypes.NUMBER,
-    category: DataTypes.STRING
+    userId: DataTypes.INTEGER,
+    category: DataTypes.STRING,
+    title: DataTypes.STRING,
+    url: DataTypes.STRING,
+    audioId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Post',
