@@ -12,11 +12,38 @@ const storage = multer.memoryStorage();
 const upload = multer({storage: storage})
 import { Sound, Post } from './dbmodels'
 const app = express()
+const session = require('express-session');
+const crypto = require('crypto');
+const passport = require('passport');
+require('./auth');
+const secret = crypto.randomBytes(64).toString('hex'); //secret hash for session
+
 app.use(cors())
 app.use(upload.single('audio'))
 app.use(express.json())
 app.use(express.static(clientPath))
+app.use(session({
+  secret,
+  resave: false,
+  saveUninitialized: false,
+}))
+
 app.use('/', routes)
+
+//AUTHENTICATION ROUTES
+app.get('/auth/google', (req: Request, res: Response) => {
+  passport.authenticate('google', { scope: ['email', 'profile'] })
+})
+
+app.get('/google/callback', async (req: Request, res: Response) => {
+  try {
+    await passport.authenticate('google', { failureRedirect: '/login' })
+    res.redirect('/protected')
+  } catch (error) {
+    console.error(error)
+    res.status(500).send('Internal server error')
+  }
+})
 
 
 app.get('/getSoundURLPostId',  async (req, res) =>{
