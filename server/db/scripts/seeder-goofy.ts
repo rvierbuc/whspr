@@ -20,6 +20,7 @@ export const seedDatabase = async () => {
 
     
     await User.create({
+      breakme: {},
       username: 'RandomUser',
       profileImgUrl: 'https://website.com/profile-image.jpg',
       createdAt: new Date(),
@@ -32,7 +33,7 @@ export const seedDatabase = async () => {
         userId: 1,
         category: 'The Categorical',
         title: 'The Titular',
-        soundURL: 21,
+        soundURL: 'leftloosey.com/yep.mp3',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
@@ -40,15 +41,15 @@ export const seedDatabase = async () => {
         userId: 1,
         category: 'The Categorical',
         title: 'The Titular',
-        soundURL: 20,
+        soundURL: 'thanks.com/potato.wav',
         createdAt: new Date(),
         updatedAt: new Date(),
       },
     ]);
 
-    console.log('Seed script executed successfully');
+    console.info('\x1b[32m%s\x1b[0m', 'Seed script executed successfully');
   } catch (error) {
-    console.error('Error seeding the database:', error);
+    console.error('\x1b[31m%s\x1b[0m', 'Seed script failed', error);
   }
 };
 

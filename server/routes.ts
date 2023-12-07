@@ -6,12 +6,14 @@ const router = Router()
 
 router.post('/upload', async (req: Request, res: Response) => {
   if (!req.file) {
-    console.log('req.file is undefined in route upload.')
+    console.error('req.file is undefined in route upload.')
     res.sendStatus(400)
   } else {
     try {
-      await saveAudio(req.file.buffer)
-      res.status(200).send('Upload successful')
+      const downloadUrl = await saveAudio(req.file.buffer)
+      if(downloadUrl){
+        res.status(200).send(downloadUrl)
+      }
     } catch (error) {
       console.error('Error in upload router: ', error)
       res.status(500).send('Upload failed')

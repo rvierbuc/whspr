@@ -8,7 +8,7 @@ const storage = new Storage({
 
 const bucket = storage.bucket('whspr-sounds')
 
-const saveAudio = async (audio: any): Promise<void> => {
+const saveAudio = async (audio: any): Promise<void | string> => {
   try {
     const file = bucket.file(`audio/${Date.now()}.wav`)
     const downloadURL = `https://storage.googleapis.com/${bucket.name}/${file.name}`
@@ -35,7 +35,8 @@ const saveAudio = async (audio: any): Promise<void> => {
       }).catch((soundError) => {
         console.error('Error creating Sound record:', soundError);
       }),
-    ]);    
+    ])
+    return downloadURL;
   } catch (error) {
     console.error('Error handling audio upload:', error)
   }
