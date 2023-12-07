@@ -12,7 +12,11 @@ const NavBar = () => {
     <div>
       <nav>
         <Link to='/protected/synthesize'>Synthesize</Link>
+
         <Link to='/protected/dashboard'>WaveSurfer</Link>
+
+        <Link to='/protected/post'>Record Post</Link>
+
       </nav>
       {/* <div className="outlet">
         <Outlet />

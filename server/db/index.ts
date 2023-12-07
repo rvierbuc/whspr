@@ -1,6 +1,5 @@
 const {Sequelize} = require("sequelize-typescript");
 
-
 const HOST = "localhost";
 
 const db = new Sequelize({

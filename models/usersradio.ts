@@ -19,7 +19,7 @@ module.exports = (sequelize: any, DataTypes:any) => {
     socketId!: number;
     userId!: number;
     radiosId!:number;
-    static associate(models) {
+    static associate(models: any) {
       // define association here
       UsersRadio.belongsTo(User, { foreignKey: 'userId'});
       UsersRadio.belongsTo(Radio, { foreignKey: 'radiosId'});
