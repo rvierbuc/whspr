@@ -130,9 +130,11 @@ export const Stat = db.define('Stat', {
   }
 })
 // defines table relations
+User.hasMany(MagicConch, { foreignKey: 'sendingUserId'})
 MagicConch.belongsTo(User, { foreignKey: 'sendingUserId' })
+User.hasMany(MagicConch, { foreignKey: 'receivingUserId'})
 MagicConch.belongsTo(User, { foreignKey: 'receivingUserId' })
-MagicConch.belongsTo(Sound, { foreignKey: 'soundUrl' })
+//MagicConch.belongsTo(Sound, { foreignKey: 'soundUrl' })
 
 Like.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 Like.belongsTo(Post, { foreignKey: 'postId', as: 'post' })
@@ -144,14 +146,17 @@ Radio.belongsTo(User, { foreignKey: 'hostId', as: 'host' })
 
 User.hasMany(Post, { foreignKey: 'userId'})
 Post.belongsTo(User, { foreignKey: 'userId', as: 'user' })
-Post.belongsTo(Sound, { foreignKey: 'postId' })
+
+Post.hasMany(Sound, { foreignKey: 'postId' })
+Sound.belongsTo(Post, { foreignKey: 'postId' })
 
 Stat.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 Stat.belongsTo(Post, { foreignKey: 'postId', as: 'post' })
 
 User.hasMany(Follower, { foreignKey: 'userId'})
-User.hasMany(Follower, { foreignKey: 'followingId'})
 Follower.belongsTo(User, { foreignKey: 'userId'})
+
+User.hasMany(Follower, { foreignKey: 'followingId'})
 Follower.belongsTo(User, { foreignKey: 'followingId'});
 
 db.authenticate()
