@@ -94,7 +94,7 @@ export const RecordPost = ({ audioContext }: { audioContext: BaseAudioContext })
       const response = await axios.post('/upload', formData)
       if (response.status === 200) {
         const downloadURL = response.data
-        console.log('Audio saved to cloud')
+        return downloadURL
       } else {
         console.error('Error saving audio:', response.statusText)
       }
@@ -105,15 +105,15 @@ export const RecordPost = ({ audioContext }: { audioContext: BaseAudioContext })
 
   const createPostRecord = async () => {
     try {
+      const soundUrl = await saveAudioToGoogleCloud()
       const postResponse = await axios.post('/createPostRecord', {
         userId,
         title,
         category,
-        audioId: 1
+        soundUrl
       })
       if (postResponse.status === 200) {
-        console.log('Post saved to Database')
-        await saveAudioToGoogleCloud()
+        console.info('Post saved to Database')
       } else {
         console.error('Error saving post: ', postResponse.statusText)
       }
