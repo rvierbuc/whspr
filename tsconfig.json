@@ -9,6 +9,10 @@
         "strict": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
+        "baseUrl": ".",
+        "paths": {
+            "wavesurfer.js/dist/plugins/*": ["node_modules/wavesurfer.js/dist/plugins/*"]
+        }
     },
     "include": ["./*.ts", "client/src/**/*.tsx", "server/dbmodels.ts"],
     "exclude": ["node_modules"]

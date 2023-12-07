@@ -1,3 +1,4 @@
+
 import path from 'path'
 import express, { Request, Response } from 'express'
 import multer from 'multer'
@@ -42,7 +43,7 @@ app.get('/getSoundURLPostId',  async (req, res) =>{
   }
   })
 
-  app.post('/createPostRecord', async(req, res) =>{
+app.post('/createPostRecord', async(req, res) =>{
     try{
       const postRecord = {
       userId: req.body.userId,
