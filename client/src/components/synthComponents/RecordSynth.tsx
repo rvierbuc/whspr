@@ -11,19 +11,16 @@ interface Props {
 }
 
 const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props) => {
+  const [isPlaying, setIsPlaying] = useState(false);
   const [audioSource, setAudioSource] = useState<string>('Howdy');
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
-  const [mediaSource, setMediaSource] = useState<MediaSource>()
-
-  // setup the media recorder
+  const audioBuffer = useRef<AudioBufferSourceNode | null>(null);
   const recorder: MediaRecorder = new MediaRecorder(mediaDest.stream);
-  const track: MediaSource = new MediaSource();
 
   // start the sound/recording
   const startRecording = async () => {
     try {
       recorder.ondataavailable = event => {
-        console.log(event.data.size);
         setAudioChunks((prevChunks) => [...prevChunks, event.data])
       };
       recorder.start();
@@ -49,7 +46,7 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props)
   };
 
   const saveRecording = async () => {
-    const saveBlob: Blob = new Blob(audioChunks, {type: 'audio/wav'})
+    const saveBlob: Blob = new Blob(audioChunks, {type: 'audio/ogg'})
     try {
       const formData: FormData = new FormData();
       formData.append('audio', saveBlob);
@@ -64,6 +61,38 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props)
     }
   };
 
+  const playBackRecording = async (): Promise<void> => {
+    if (!audioChunks.length || !audioContext) {
+      console.error('Something went wrong', audioChunks.length === 0, !audioContext);
+      return;
+    }
+    const audioBlob = new Blob(audioChunks, { type: 'audio/ogg' })
+    const arrayBuffer = await audioBlob.arrayBuffer()
+    audioContext.decodeAudioData(
+      arrayBuffer,
+      (buffer) => {
+        if (!audioContext) {
+          console.error('audio context is null')
+          return
+        }
+        audioBuffer.current = audioContext.createBufferSource()
+        audioBuffer.current.buffer = buffer
+        audioBuffer.current.connect(finalDest)
+
+        audioBuffer.current.onended = () => {
+          setIsPlaying(false)
+        }
+        audioBuffer.current.start()
+        setIsPlaying(true)
+      },
+      (error) => {
+        console.error('error playing audio: ', error)
+      }
+    ).catch((playError) => {
+      console.error('error playing: ', playError)
+    })
+  };
+
   return (
     <div>
       <h3>Record the synth</h3>
@@ -73,10 +102,11 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props)
         <button onClick={startRecording}>Record</button>
         <button onClick={stopRecording}>Stop Record</button>
         <button onClick={saveRecording}>Save</button>
+        <button onClick={playBackRecording}>Playback</button>
       </div>
-      <div>
+      {/* <div>
         <AudioTag source={audioSource} />
-      </div>
+      </div> */}
     </div>
   );
 };
