@@ -1,6 +1,15 @@
 @import "~bootstrap/scss/bootstrap";
 
+body {
+    background-color: #000;
+}
 #waveform  {
     height: 100%;
     width: 100%;
+    
+}
+
+#play-btn {
+    background-color: #000;
+
 }

@@ -5,6 +5,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const isProduction = process.env.NODE_ENV == 'production';
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+const stylesHandler = isProduction ? MiniCssExtractPlugin.loader : 'style-loader';
 
 
 const config = {
@@ -25,6 +28,10 @@ const config = {
         new HtmlWebpackPlugin({
             template: './client/src/index.html',
             filename: './index.html'
+        }),
+        new MiniCssExtractPlugin({
+            filename: '[name].css',
+            chunkFilename: '[id].css',
         }),
 
         // Add your plugins here
@@ -54,6 +61,10 @@ const config = {
                   },
                 },
               ],
+            },
+            {
+              test: /\.css$/i,
+              use: [stylesHandler, 'css-loader'],
             },
               {
                 test: /\.(scss)$/,
@@ -100,6 +111,7 @@ module.exports = () => {
         
         
         config.plugins.push(new WorkboxWebpackPlugin.GenerateSW());
+        config.plugins.push(new MiniCssExtractPlugin());
         
     } else {
         config.mode = 'development';

@@ -22,6 +22,7 @@ declare module 'wavesurfer.js' {
 const WaveSurferComponent = () => {
     const [wave, setWave] = useState<WaveSurfer | null>(null);
     const [display, setDisplay] = useState<boolean>(false); 
+    const [isPlaying, setIsPlaying] = useState<boolean>(false);
     
     const createSoundWaves = () => {
         let regions: RegionsPlugin
@@ -48,9 +49,9 @@ const WaveSurferComponent = () => {
         regions = wavesurfer.registerPlugin(RegionsPlugin.create());
 
 
-        wavesurfer.on('interaction', () => {
-            wavesurfer.play();
-        });
+        // wavesurfer.on('interaction', () => {
+        //     wavesurfer.play();
+        // });
         wavesurfer.on('click', () => {
             regions.addRegion({
                 start: wavesurfer.getCurrentTime(),
@@ -76,12 +77,18 @@ const WaveSurferComponent = () => {
 
     useEffect(() => {
         createSoundWaves();
-        // console.log('wave', wave);
+        console.log('wave', wave);
     }, []);
     return (
         <div>
             <h1>WaveSurfer</h1>
             <div id="waveform"></div>
+            <button type='button' id="play-btn" onClick={() => {
+                if (wavesurfer) {
+                    wavesurfer.playPause();
+                    setIsPlaying(!isPlaying);
+                }
+            }}>{isPlaying ? 'Stop' : 'Play'}</button>
         </div>
     )
 }
