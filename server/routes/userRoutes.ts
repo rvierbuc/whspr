@@ -35,19 +35,18 @@ try{
     obj.userId = follow.followingId
     return obj
   })
-  const followingPostsSounds = await Sound.findAll({
+  const followingPosts = await Post.findAll({
     where: {
       [Op.or]: followingArr
     },
     include: [
-      {model: Post},
       {
         model: User,
         as: 'user'
     }
     ]
   })
-  res.status(200).send(followingPostsSounds)
+  res.status(200).send(followingPosts)
 
 }catch(error){
   res.sendStatus(500)

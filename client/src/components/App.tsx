@@ -14,6 +14,7 @@ import Login from './Login';
 import PrivateRoutes from './PrivateRoutes';
 import Synthesize from './Synthesize';
 import WaveSurferComponent from './WaveSurfer';
+import Feed from './Feed'
 import Post from './PostCard'
 
 // THE MAIN audio context to be used throughout the application (DO NOT ALTER)
@@ -33,6 +34,7 @@ const App = () => {
                 </Route>
                 <Route path="/protected/synthesize" element={<Synthesize audioContext={audioContext} />} />
                 <Route path="/protected/post" element={<Post audioContext={audioContext} />} />
+                <Route path="/protected/feed" element={<Feed audioContext={audioContext} />} />
             </Route>
         )
     )

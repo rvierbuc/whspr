@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios, {AxiosResponse} from "axios";
 
 import Post from "./Post";
-const Feed = () => {
+const Feed = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   // interface Post {
   //   category: string;
   //   createdAt
