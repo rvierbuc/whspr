@@ -38,7 +38,7 @@ const config = {
         // Learn more about plugins from https://webpack.js.org/configuration/plugins/
     ],
     resolve: {
-        extensions: ['.js', '.ts', '.tsx'],
+        extensions: ['.ts', '.tsx', '.js', '.jsx']
         alias: {
           'wavesurfer.js/dist/plugins/*': ['node_modules/wavesurfer.js/dist/plugins/*']
         }
@@ -63,8 +63,13 @@ const config = {
               ],
             },
             {
+              test: /\.(js|jsx)$/,
+              use: {
+                loader: 'babel-loader',
+              }
               test: /\.css$/i,
               use: [stylesHandler, 'css-loader'],
+
             },
               {
                 test: /\.(scss)$/,

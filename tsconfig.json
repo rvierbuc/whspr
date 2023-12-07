@@ -9,6 +9,7 @@
         "strict": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
+        "noImplicitAny": false,
         "baseUrl": ".",
         "paths": {
             "wavesurfer.js/dist/plugins/*": ["node_modules/wavesurfer.js/dist/plugins/*"]
