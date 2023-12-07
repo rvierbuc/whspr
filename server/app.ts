@@ -20,30 +20,39 @@ const secret = crypto.randomBytes(64).toString('hex'); //secret hash for session
 
 app.use(cors())
 app.use(upload.single('audio'))
-app.use(express.json())
-app.use(express.static(clientPath))
 app.use(session({
   secret,
   resave: false,
   saveUninitialized: false,
 }))
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.json())
+app.use(express.static(clientPath))
 
 app.use('/', routes)
 
 //AUTHENTICATION ROUTES
 app.get('/auth/google', (req: Request, res: Response) => {
-  passport.authenticate('google', { scope: ['email', 'profile'] })
+  passport.authenticate('google', { scope: ['email', 'profile'] })(req, res);
 })
 
-app.get('/google/callback', async (req: Request, res: Response) => {
-  try {
-    await passport.authenticate('google', { failureRedirect: '/login' })
-    res.redirect('/protected')
-  } catch (error) {
-    console.error(error)
-    res.status(500).send('Internal server error')
-  }
+app.get('/google/callback',  passport.authenticate('google', {
+  successRedirect: '/protected',
+  failureRedirect: '/auth/google/failure',
+}),
+(req: Request, res: Response) => {
+  
+  res.redirect('/protected')
 })
+// app.get('/protected', (req: Request, res: Response) => {
+//   console.log('req.user', req.user)
+//   res.send('You are authenticated')
+// })
+
+app.get('/auth/google/failure', (req, res) => {
+  res.send('Failed to authenticate..');
+});
 
 
 app.get('/getSoundURLPostId',  async (req, res) =>{
