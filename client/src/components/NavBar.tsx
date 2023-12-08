@@ -17,6 +17,8 @@ const NavBar = () => {
 
         <Link to='/protected/post'>Record Post</Link>
 
+        <Link to='/protected/profile'>User Profile</Link>
+
       </nav>
       {/* <div className="outlet">
         <Outlet />

@@ -12,7 +12,6 @@ const PostItem = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   })
   return (
     <div>
-      <NavBar />
       <div>
         <h1>{postRecord.title}</h1>
         <h6>{postRecord.category}</h6>

@@ -11,9 +11,10 @@ const PrivateRoutes = () => {
             <NavBar />
             {auth ? (
                 <Outlet />
+                // <div>ok</div>
                 ) :
             <Navigate to="/"/>}
-            <PostItem/>
+            {/* <PostItem/> */}
         </div>
     )
 }

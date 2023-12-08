@@ -75,10 +75,10 @@ app.use('/logout', (req: Request, res: Response) => {
 })
 
 //get current user
-app.get('/user', async (req: Request, res: Response) => {
+app.get('/current-user', async (req: Request, res: Response) => {
   console.log('req.session', req);
     try {
-      const results = await User.findOne({where: {googleId: req.session}})
+      const results = await User.findOne({where: {googleId: req.user}})
       if(results){
         res.status(200).send(results);
       } else {
