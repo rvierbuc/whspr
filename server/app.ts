@@ -9,12 +9,19 @@ import cors from 'cors'
 const clientPath = path.resolve(__dirname, '../client/dist')
 const storage = multer.memoryStorage();
 const upload = multer({storage: storage})
+
+
+const userRoutes = require('./routes/userRoutes')
 import { Sound, Post } from './dbmodels'
 const app = express()
 app.use(cors())
 app.use(upload.single('audio'))
+const routeHandler = express.Router()
 app.use(express.json())
 app.use(express.static(clientPath))
+
+routeHandler.use('/user', userRoutes)
+app.use('/', routeHandler)
 app.use('/', routes)
 
 

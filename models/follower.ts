@@ -1,6 +1,7 @@
 'use strict';
-import { Model } from 'sequelize';
+import { Model, DataTypes, Sequelize } from 'sequelize';
 
+const { db } = require('../server/db');
 interface FollowerAttributes{
   userId: number;
   followingId: number;
