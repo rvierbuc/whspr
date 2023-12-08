@@ -12,12 +12,21 @@ const db = new Sequelize({
 })
 
 export const User = db.define('User', {
+  id: {
+    type: DataTypes.BIGINT,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true
+  },
   username: {
     type: DataTypes.STRING
   },
   profileImgUrl: {
     type: DataTypes.STRING
-  }
+  },
+  googleId: {
+    type: DataTypes.STRING
+  },
 })
 
 export const MagicConch = db.define('MagicConch', {

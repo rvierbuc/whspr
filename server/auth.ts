@@ -1,3 +1,5 @@
+import { User } from "./dbmodels";
+
 require('dotenv').config();
 
 const passport = require('passport');
@@ -14,6 +16,14 @@ passport.use(new GoogleStrategy(
         passReqToCallback: true
     },
     (req: any, accessToken: string, refreshToken: string, profile: any, done: any) => {
+        // console.log('profile', profile);
+        User.findOrCreate({
+            where: { googleId: profile.id },
+            defaults: {
+                username: profile.displayName,
+                profileImgUrl: profile.picture
+            }
+        });
         return done(null, profile);
     }
 ))

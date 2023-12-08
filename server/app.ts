@@ -24,6 +24,10 @@ app.use(session({
   secret,
   resave: false,
   saveUninitialized: false,
+  cookie: {
+    secure: false,
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours 
+  }
 }))
 app.use(passport.initialize());
 app.use(passport.session());
@@ -42,7 +46,6 @@ app.get('/google/callback',  passport.authenticate('google', {
   failureRedirect: '/auth/google/failure',
 }),
 (req: Request, res: Response) => {
-  
   res.redirect('/protected')
 })
 // app.get('/protected', (req: Request, res: Response) => {
