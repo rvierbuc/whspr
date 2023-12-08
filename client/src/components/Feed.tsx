@@ -5,6 +5,7 @@ import Post from "./Post";
 const Feed = ({ audioContext }: { audioContext: BaseAudioContext }) => {
 const [posts, setPosts] = useState<any>()
 const userId = 1;
+
 const getFriendsPosts = async() => {
   try{
     const friendsPosts: AxiosResponse = await axios.get('/post/following/1')
@@ -27,6 +28,7 @@ useEffect(() => {
           key = {post.id}
           postObj = {post}
           getFriendsPosts={getFriendsPosts}
+          audioContext={audioContext}
         />
       )) : <div>Loading...</div>}
     </div>

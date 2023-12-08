@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from "react";
 import axios, {AxiosResponse} from "axios";
 import Comment from "./Comment";
-
+import { RecordPost } from "./RecordPost"
  const Post = (props) => {
-  const { postObj, getFriendsPosts } = props
+  const { postObj, getFriendsPosts, audioContext } = props
   const [commentInputOpen, setCommentInputOpen] = useState<boolean>(false)
   const [commentOpen, setCommentOpen] = useState<boolean>(false)
   const [comments, setComments] = useState<any>()
@@ -103,6 +103,9 @@ useEffect(() => {
            className="btn btn-light"
            >submit</button>
          </div>
+         {/* <RecordPost 
+         audioContext={audioContext}
+         /> */}
          <div className="accordion" id="previousComments">
         <div className="accordion-item"></div>
         <h4 className="accordion-header">
