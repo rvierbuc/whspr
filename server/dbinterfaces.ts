@@ -11,7 +11,7 @@ export interface MagicConchAttributes {
   receivingUserId: number;
   title: string;
   url: string;
-  soundURL: number; 
+  soundUrl: string; 
 }
 export interface MagicConchInstance  extends Model<MagicConchAttributes>, MagicConchAttributes  {}
 
@@ -25,7 +25,7 @@ export interface PostAttributes {
   userId: number;
   title: string;
   category: string;
-  soundUrl: number; 
+  soundUrl: string; 
 }
 export interface PostInstance extends Model<PostAttributes>, PostAttributes {}
 

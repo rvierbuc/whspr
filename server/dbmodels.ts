@@ -10,7 +10,15 @@ const db = new Sequelize({
   database: 'whspr',
   password: 'ok'
 })
+// interface User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+//   id: CreationOptional<number>;
+//   username: string;
+//   profileImgUrl: string;
+// };
 
+// interface Follower extends Model<InferAttributes<Follower>, InferCreationAttributes<Follower>> {
+//   id: CreationOptional<number>;
+// };
 export const User = db.define('User', {
   username: {
     type: DataTypes.STRING
@@ -22,10 +30,10 @@ export const User = db.define('User', {
 
 export const MagicConch = db.define('MagicConch', {
   sendingUserId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   receivingUserId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   title: {
     type: DataTypes.STRING
@@ -33,8 +41,8 @@ export const MagicConch = db.define('MagicConch', {
   url: {
     type: DataTypes.STRING
   },
-  soundURL: {
-    type: DataTypes.BIGINT
+  soundUrl: {
+    type: DataTypes.STRING
   }
 })
 
@@ -49,7 +57,7 @@ export const Sound = db.define('Sound', {
 
 export const Post = db.define('Post', {
   userId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   title: {
     type: DataTypes.STRING
@@ -57,17 +65,17 @@ export const Post = db.define('Post', {
   category: {
     type: DataTypes.STRING
   },
-  soundURL: {
-    type: DataTypes.BIGINT
+  soundUrl: {
+    type: DataTypes.STRING
   }
 })
 
 export const Radio = db.define('Radio', {
   hostId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   listenerCount: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   url: {
     type: DataTypes.STRING
@@ -82,22 +90,22 @@ export const Radio = db.define('Radio', {
 
 export const Like = db.define('Like', {
   userId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   postId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   }
 })
 
 export const UsersRadio = db.define('UsersRadio', {
   socketId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   userId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   radiosId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   }
 })
 
@@ -112,19 +120,21 @@ export const Follower = db.define('Follower', {
 
 export const Stat = db.define('Stat', {
   userId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   postId: {
-    type: DataTypes.BIGINT
+    type: DataTypes.INTEGER
   },
   type: {
     type: DataTypes.STRING
   }
 })
 // defines table relations
-MagicConch.belongsTo(User, { foreignKey: 'sendingUserId', as: 'sendingUser' })
-MagicConch.belongsTo(User, { foreignKey: 'receivingUserId', as: 'receivingUser' })
-MagicConch.belongsTo(Sound, { foreignKey: 'soundURL' })
+User.hasMany(MagicConch, { foreignKey: 'sendingUserId'})
+MagicConch.belongsTo(User, { foreignKey: 'sendingUserId' })
+User.hasMany(MagicConch, { foreignKey: 'receivingUserId'})
+MagicConch.belongsTo(User, { foreignKey: 'receivingUserId' })
+//MagicConch.belongsTo(Sound, { foreignKey: 'soundUrl' })
 
 Like.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 Like.belongsTo(Post, { foreignKey: 'postId', as: 'post' })
@@ -134,20 +144,24 @@ UsersRadio.belongsTo(Radio, { foreignKey: 'radiosId', as: 'radio' })
 
 Radio.belongsTo(User, { foreignKey: 'hostId', as: 'host' })
 
+User.hasMany(Post, { foreignKey: 'userId'})
 Post.belongsTo(User, { foreignKey: 'userId', as: 'user' })
-Post.belongsTo(Sound, { foreignKey: 'postId' })
+
+Post.hasMany(Sound, { foreignKey: 'postId' })
+Sound.belongsTo(Post, { foreignKey: 'postId' })
 
 Stat.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 Stat.belongsTo(Post, { foreignKey: 'postId', as: 'post' })
 
-Follower.belongsTo(User, { foreignKey: 'userId', as: 'user' })
-Follower.belongsTo(User, { foreignKey: 'followingId', as: 'followingUser' })
+User.hasMany(Follower, { foreignKey: 'userId'})
+Follower.belongsTo(User, { foreignKey: 'userId'})
 
-// Sound.belongsTo(Post, { foreignKey: 'postId', as: 'post' })
+User.hasMany(Follower, { foreignKey: 'followingId'})
+Follower.belongsTo(User, { foreignKey: 'followingId'});
 
 db.authenticate()
   .then(() => {
-    console.log(`Successfully connected to the database on ${HOST}`)
+    console.info(`Successfully connected to the database on ${HOST}`)
   })
   .catch((error: any) => {
     console.error('Error connecting to the database:', error.message)
@@ -158,7 +172,7 @@ db.authenticate()
 export const authenticateDatabase = async (): Promise<void> => {
   try {
     await db.authenticate()
-    console.log(`Successfully connected to the database on ${HOST}`)
+    console.info(`Successfully connected to the database on ${HOST}`)
   } catch (error) {
     console.error('Error connecting to the database:', error)
   }
@@ -166,8 +180,8 @@ export const authenticateDatabase = async (): Promise<void> => {
 
 export const syncDatabase = async (): Promise<void> => {
   try {
-    await db.sync({ force: true })
-    console.log('Database synced!')
+    await db.sync({ force: false })
+    console.info('Database synced!')
   } catch (error) {
     console.error('Error syncing database:', error)
   }
@@ -176,7 +190,7 @@ export const syncDatabase = async (): Promise<void> => {
 export const dropDatabase = async (): Promise<void> => {
   try {
     await db.query('DROP DATABASE IF EXISTS "whspr"')
-    console.log('Database dropped')
+    console.info('Database dropped')
   } catch (error) {
     console.error('Error dropping the database:', error)
   }
@@ -185,7 +199,7 @@ export const dropDatabase = async (): Promise<void> => {
 export const createDatabase = async (): Promise<void> => {
   try {
     await db.query('CREATE DATABASE "whspr"')
-    console.log('Database created')
+    console.info('Database created')
   } catch (error) {
     console.error('Error creating the database:', error)
   }

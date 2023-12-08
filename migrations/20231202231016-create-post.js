@@ -24,7 +24,7 @@ module.exports = {
       url:{
         type: Sequelize.STRING
       },
-      audioId:{
+      soundId:{
         type: Sequelize.INTEGER
       },
       createdAt: {

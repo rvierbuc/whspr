@@ -1,4 +1,3 @@
-
 import path from 'path'
 import express, { Request, Response } from 'express'
 import multer from 'multer'
@@ -10,12 +9,19 @@ import cors from 'cors'
 const clientPath = path.resolve(__dirname, '../client/dist')
 const storage = multer.memoryStorage();
 const upload = multer({storage: storage})
+
+
+const userRoutes = require('./routes/userRoutes')
 import { Sound, Post } from './dbmodels'
 const app = express()
 app.use(cors())
 app.use(upload.single('audio'))
+const routeHandler = express.Router()
 app.use(express.json())
 app.use(express.static(clientPath))
+
+routeHandler.use('/user', userRoutes)
+app.use('/', routeHandler)
 app.use('/', routes)
 
 
@@ -33,9 +39,9 @@ app.get('/getSoundURLPostId',  async (req, res) =>{
       res.send('Sound record not found.').status(404);
       return
     }
-    const audioId = soundRecord.get('soundURL');
-    if(audioId){
-      res.status(200).send({audioId});
+    const soundUrl = soundRecord.get('soundUrl');
+    if(soundUrl){
+      res.status(200).send({soundUrl});
     }
   }catch(error){
     console.error('Nonspecific error retrieving audio id:', error);
@@ -43,13 +49,13 @@ app.get('/getSoundURLPostId',  async (req, res) =>{
   }
   })
 
-app.post('/createPostRecord', async(req, res) =>{
+  app.post('/createPostRecord', async(req, res) =>{
     try{
       const postRecord = {
       userId: req.body.userId,
       title: req.body.title,
       category: req.body.category,
-      audioId: 1
+      soundUrl: req.body.soundUrl
     }
       await Post.create(postRecord)
       res.status(200).send('Post record created.')

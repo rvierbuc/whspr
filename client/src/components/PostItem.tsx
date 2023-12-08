@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { RecordPost } from './RecordPost'
 import NavBar from './NavBar'
 
 const PostItem = ({ audioContext }: { audioContext: BaseAudioContext }) => {
@@ -8,7 +7,7 @@ const PostItem = ({ audioContext }: { audioContext: BaseAudioContext }) => {
     userId: 1,
     title: 'eastbound and down',
     category: 'loaded up and trucking',
-    audioUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1701901644758.wav'
+    audioUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3'
   })
   return (
     <div>
@@ -21,7 +20,7 @@ const PostItem = ({ audioContext }: { audioContext: BaseAudioContext }) => {
         </audio>
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default PostItem

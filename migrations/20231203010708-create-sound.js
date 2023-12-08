@@ -9,11 +9,17 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userId: {
-        type: Sequelize.INTEGER
-      },
+      // userId: {
+      //   type: Sequelize.INTEGER
+      // },
       postId: {
         type: Sequelize.INTEGER
+      },
+      title: {
+        type: Sequelize.STRING
+      },
+      recordingUrl: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
