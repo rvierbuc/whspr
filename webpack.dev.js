@@ -31,7 +31,10 @@ const config = {
         // Learn more about plugins from https://webpack.js.org/configuration/plugins/
     ],
     resolve: {
-        extensions: ['.ts', '.tsx']
+        extensions: ['.ts', '.tsx', '.js'],
+        alias: {
+          '@common': path.resolve(__dirname, 'src/common')
+        },
     },
     module: {
         rules: [
