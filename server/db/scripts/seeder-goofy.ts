@@ -1,9 +1,8 @@
-import { Sound, User, Post, Follower } from '../../dbmodels';
+import { Sound, User, Post, Follower, Comment } from '../../dbmodels';
 
 export const seedDatabase = async () => {
   try {
 
-    
     await User.bulkCreate([
       {
       username: 'RandomUser',
@@ -43,7 +42,7 @@ export const seedDatabase = async () => {
       updatedAt: new Date(),
     },
   ]);
-  
+
   await Sound.bulkCreate([
     {
       postId: 1,
@@ -77,6 +76,28 @@ export const seedDatabase = async () => {
   } catch (error) {
     console.error('\x1b[31m%s\x1b[0m', 'Seed script failed', error);
   }
+  await Comment.bulkCreate([
+    {
+      userId: 1,
+      postId: 2,
+      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
+    },
+    {
+      userId: 2,
+      postId: 2,
+      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
+    },
+    {
+      userId: 1,
+      postId: 1,
+      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
+    },
+    {
+      userId: 3,
+      postId: 1,
+      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
+    }
+  ])
 };
 
 seedDatabase();

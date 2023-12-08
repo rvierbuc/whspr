@@ -11,7 +11,7 @@ const storage = multer.memoryStorage();
 const upload = multer({storage: storage})
 
 
-const userRoutes = require('./routes/userRoutes')
+const userRoutes = require('./routes/postRoutes')
 import { Sound, Post } from './dbmodels'
 const app = express()
 app.use(cors())
@@ -20,7 +20,7 @@ const routeHandler = express.Router()
 app.use(express.json())
 app.use(express.static(clientPath))
 
-routeHandler.use('/user', userRoutes)
+routeHandler.use('/post', userRoutes)
 app.use('/', routeHandler)
 app.use('/', routes)
 
