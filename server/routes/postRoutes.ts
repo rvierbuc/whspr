@@ -46,6 +46,35 @@ try{
 
 })
 
+router.get('/explore/:userId', async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  try{
+    const postsArr = await Post.findAll({
+      //need to figure this out so you can exclude viewing user
+      // where: {
+      //   [Op.ne]: userId 
+      // },
+      include: [
+        {
+          model: User,
+          as: 'user'
+        },
+        {
+          model: Like
+        }
+      ], 
+      order: [
+        ['createdAt', 'DESC']
+      ],
+    })
+    res.status(200).send(postsArr)
+  
+  }catch(error){
+    res.sendStatus(500)
+    console.log('could not get following posts', error)
+  }
+  
+  })
 //allows user to like a post and add a record to the like table
 router.post('/like', async (req: Request, res: Response) => {
   const {userId, postId} = req.body;

@@ -72,14 +72,12 @@ useEffect(() => {
           <button
         type="button"
         className="btn btn-light"
-        style={{margin:'15px'}}
         onClick={()=> handleUnlike()}
         >unlike
         </button>
         : <button
         type="button"
         className="btn btn-dark"
-        style={{margin:'15px'}}
         onClick={()=> handleLike()}
         >like
         </button>}

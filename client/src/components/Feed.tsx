@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios, {AxiosResponse} from "axios";
-
+import { RecordPost } from "./RecordPost"
 import Post from "./Post";
+
+
 const Feed = ({ audioContext }: { audioContext: BaseAudioContext }) => {
 const [posts, setPosts] = useState<any>()
+const [record, setRecord] = useState<boolean>(false)
+const [feed, setFeed] = useState<string>('following')
+
 const userId = 1;
 
 const getFriendsPosts = async() => {
@@ -16,15 +21,61 @@ const getFriendsPosts = async() => {
   }
 }
 
-
+const getPosts = async(type) => {
+  setFeed(type)
+  try{
+    const allPosts: AxiosResponse = await axios.get(`/post/${type}/${userId}`)
+    setPosts(allPosts.data)
+    console.log(allPosts.data)
+  } catch(error) {
+    console.log('client get friends', error)
+  }
+}
 useEffect(() => {
-  getFriendsPosts()
+  getPosts('following')
 }, [])
   return (
     <div>
       <h2>Audio Feed</h2>
+      <button  
+      type="button"
+      className="btn btn-dark"
+      style={{margin:'15px'}}
+      onClick={() => setRecord(() => !record)}
+      >Create a Post
+      </button>
+       {record 
+        ? <RecordPost
+          audioContext={audioContext}
+         />
+        :<div></div>}
+    {feed === 'following' ?
+    <div>
+        <button
+        type="button"
+        className="btn btn-dark"
+        onClick={() => getPosts('following')}
+        >Following</button>
+        <button
+        type="button"
+        className="btn btn-light"
+        onClick={() => getPosts('explore')}
+        >Explore</button>
+    </div>
+    : <div>
+      <button
+        type="button"
+        className="btn btn-light"
+        onClick={() => getPosts('following')}
+        >Following</button>
+        <button
+        type="button"
+        className="btn btn-dark"
+        onClick={() => getPosts('explore')}
+        >Explore</button>
+      </div>}
       {posts ? posts.map((post: any) => (
-        <Post 
+        <Post
           key = {post.id}
           postObj = {post}
           getFriendsPosts={getFriendsPosts}

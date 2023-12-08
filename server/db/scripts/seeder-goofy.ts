@@ -22,6 +22,12 @@ export const seedDatabase = async () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     },
+    {
+      username: 'angel',
+      profileImgUrl: 'https://website.com/profile-image.jpg',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
   ]);
 
   await Post.bulkCreate([
@@ -37,6 +43,14 @@ export const seedDatabase = async () => {
       userId: 2,
       category: 'The Categorical',
       title: 'The Titular2',
+      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      userId: 4,
+      category: 'comedy',
+      title: 'Angel\'s Post',
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
       createdAt: new Date(),
       updatedAt: new Date(),
