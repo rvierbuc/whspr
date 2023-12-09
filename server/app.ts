@@ -12,7 +12,7 @@ const upload = multer({storage: storage})
 
 
 
-const userRoutes = require('./routes/userRoutes')
+const userRoutes = require('./routes/postRoutes')
 import { Sound, Post, User } from './dbmodels'
 
 const app = express()
