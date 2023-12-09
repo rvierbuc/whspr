@@ -4,9 +4,9 @@ import {Model} from 'sequelize';
 interface PostAttributes {
   userId: number;
   category: string;
-  title: string;
-  url: string;
-  audioId: number;
+  //title: string;
+  //url: string;
+  soundId: number;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
@@ -19,25 +19,28 @@ module.exports = (sequelize: any, DataTypes: any) => {
      */
     userId!: number;
     category!: string;
-    title!: string;
-    url!: string;
-    audioId!: number;
+    //title!: string;
+    //url!: string;
+    soundId!: number;
     static associate(models: any) {
       // define association here
       Post.belongsTo(models.User, { foreignKey: 'userId'})
-      Post.belongsTo(models.Post, { foreignKey: 'postId'})
-      Post.belongsTo(models.Sound, { foreignKey: 'audioId'})
+      //Post.belongsTo(models.Post, { foreignKey: 'postId'})
+      Post.hasOne(models.Sound, { foreignKey: 'soundId'})
+      Post.belongsTo(models.Sound, { foreignKey: 'postId'})
+
     }
   }
   Post.init({
     userId: DataTypes.INTEGER,
     category: DataTypes.STRING,
-    title: DataTypes.STRING,
-    url: DataTypes.STRING,
-    audioId: DataTypes.INTEGER
+   // title: DataTypes.STRING,
+   // url: DataTypes.STRING,
+    soundId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Post',
   });
   return Post;
 };
+//export {}
