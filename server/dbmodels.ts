@@ -50,7 +50,7 @@ export const MagicConch = db.define('MagicConch', {
   url: {
     type: DataTypes.STRING
   },
-  soundUrl: {
+  soundURL: {
     type: DataTypes.STRING
   }
 })
@@ -61,6 +61,18 @@ export const Sound = db.define('Sound', {
   },
   soundUrl: {
     type: DataTypes.STRING
+  },
+  frequency: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  detune: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  type: {
+    type: DataTypes.STRING,
+    allowNull: true
   }
 })
 
@@ -74,6 +86,7 @@ export const Post = db.define('Post', {
   category: {
     type: DataTypes.STRING
   },
+<<<<<<< HEAD
   soundUrl: {
     type: DataTypes.STRING
   }
@@ -87,6 +100,9 @@ export const Comment = db.define('Comment', {
     type: DataTypes.INTEGER
   },
   soundUrl: {
+=======
+  soundURL: {
+>>>>>>> SynthPost
     type: DataTypes.STRING
   }
 })
