@@ -12,7 +12,7 @@ const upload = multer({storage: storage})
 
 
 
-const userRoutes = require('./routes/userRoutes')
+const postRoutes = require('./routes/postRoutes')
 import { Sound, Post, User } from './dbmodels'
 
 const app = express()
@@ -46,7 +46,7 @@ app.use(express.static(clientPath))
 
 
 const routeHandler = express.Router()
-routeHandler.use('/post', userRoutes)
+routeHandler.use('/post', postRoutes)
 
 
 app.use('/', routeHandler)
