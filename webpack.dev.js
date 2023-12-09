@@ -40,6 +40,7 @@ const config = {
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx'],
         alias: {
+          '@common': path.resolve(__dirname, 'src/common'),
           'wavesurfer.js/dist/plugins/*': ['node_modules/wavesurfer.js/dist/plugins/*']
         }
     },

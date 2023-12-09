@@ -11,6 +11,7 @@ import {
   } from 'react-router-dom';
 
 import Login from './Login';
+import Room from './Room'
 import PrivateRoutes from './PrivateRoutes';
 import Synthesize from './Synthesize';
 import WaveSurferComponent from './WaveSurfer';
@@ -46,6 +47,7 @@ const App = () => {
                     <Route path="dashboard" element={<WaveSurferComponent />} /> // Outlet is a placeholder for child routes to be rendered
                     <Route path="profile" element={<UserProfile />} loader={() => getUserLoader()}/>
                 </Route>
+                <Route path="/protected/room" element={<Room />} />
                 <Route path="/protected/synthesize" element={<Synthesize audioContext={audioContext} />} />
                 <Route path="/protected/post" element={<Post audioContext={audioContext} />} />
                 <Route path="/protected/feed" element={<Feed audioContext={audioContext} />} />

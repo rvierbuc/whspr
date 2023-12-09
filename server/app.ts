@@ -6,13 +6,22 @@ import routes from './routes'
 // const express = require('express')
 // const session = require('express-session')
 import cors from 'cors'
+import http from 'http'
+import {Server, Socket} from 'socket.io'
+import {ExpressPeerServer} from 'peer'
+
 const clientPath = path.resolve(__dirname, '../client/dist')
+
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST'],
+}
 const storage = multer.memoryStorage();
 const upload = multer({storage: storage})
 
 
 
-const userRoutes = require('./routes/userRoutes')
+const postRoutes = require('./routes/postRoutes')
 import { Sound, Post, User } from './dbmodels'
 
 const app = express()
@@ -39,14 +48,20 @@ app.use(session({
 }))
 app.use(passport.initialize());
 app.use(passport.session());
+const server = http.createServer(app)
+const io = new Server(server)
+// const peerServer = ExpressPeerServer(server, { path: '/peerjs'})
+
+app.use(cors(corsOptions))
 app.use(express.json())
+// app.use('/peerjs', peerServer)
 app.use(express.static(clientPath))
 
 
 
 
 const routeHandler = express.Router()
-routeHandler.use('/post', userRoutes)
+routeHandler.use('/post', postRoutes)
 
 
 app.use('/', routeHandler)
@@ -144,9 +159,50 @@ app.post('/createPostRecord', async(req, res) =>{
     }
   })
 
+  
+// io.on('connection', (socket: Socket) => {
+//   console.log('Socket connected! ID: ', socket.id)
+//   socket.emit('id', socket.id)
+
+//   socket.on('disconnect', () => {
+//     console.log('User disconnected')
+//     io.emit('disconnected', socket.id)
+//   })
+  
+//   socket.on('call', (data: dataObj) => {
+//     console.log('joined')
+//     io.to(data.userId).emit('call', {signal: data.signal, from: data.from, name: data.name})
+//   })
+
+//   socket.on('answer', (data: dataObj2) => {
+//     io.to(data.to).emit('accept', data.signal)
+//   })
+
+// })
+
+io.on('connection', (socket) => {
+  console.log('User connected');
+
+  socket.on('join-channel', (channelName, uid) => {
+    socket.join(channelName);
+    io.to(channelName).emit('user-joined', uid);
+  });
+
+  socket.on('leave-channel', () => {
+    const rooms = Object.keys(socket.rooms);
+    rooms.forEach((room) => {
+      socket.leave(room);
+    });
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+});
+
 // MAKE SURE THIS IS LAST
 app.get('/*', (req: Request, res: Response) => {
   res.sendFile(path.join(clientPath, 'index.html'))
 })
 
-export default app
+export default server

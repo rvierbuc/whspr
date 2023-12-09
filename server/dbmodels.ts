@@ -86,7 +86,7 @@ export const Post = db.define('Post', {
   category: {
     type: DataTypes.STRING
   },
-  soundURL: {
+  soundUrl: {
     type: DataTypes.STRING
   }
 })
