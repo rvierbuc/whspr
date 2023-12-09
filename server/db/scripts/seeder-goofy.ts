@@ -73,10 +73,11 @@ export const seedDatabase = async () => {
         updatedAt: new Date(),
       },
     ]);
-    console.log('Seed script executed successfully');
+    console.info('\x1b[32m%s\x1b[0m', 'Seed script executed successfully');
   } catch (error) {
     console.error('\x1b[31m%s\x1b[0m', 'Seed script failed', error);
   }
 };
+
 
 seedDatabase();

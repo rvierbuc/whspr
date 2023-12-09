@@ -189,7 +189,7 @@ export const syncDatabase = async (): Promise<void> => {
 
 export const dropDatabase = async (): Promise<void> => {
   try {
-    await db.query('DROP DATABASE IF EXISTS "whspr"')
+    await db.query('DROP DATABASE IF EXISTS "whspr";')
     console.info('Database dropped')
   } catch (error) {
     console.error('Error dropping the database:', error)
@@ -198,9 +198,18 @@ export const dropDatabase = async (): Promise<void> => {
 
 export const createDatabase = async (): Promise<void> => {
   try {
-    await db.query('CREATE DATABASE "whspr"')
+    await db.query('CREATE DATABASE "whspr";')
     console.info('Database created')
   } catch (error) {
     console.error('Error creating the database:', error)
+  }
+}
+
+export const closeDatabase = async (): Promise<void> => {
+  try {
+    await db.close()
+    console.info('Database closed.')
+  } catch (error) {
+    console.error('Error closing the database:', error)
   }
 }

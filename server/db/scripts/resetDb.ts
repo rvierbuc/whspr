@@ -1,4 +1,4 @@
-import {dropDatabase, createDatabase, authenticateDatabase, syncDatabase} from '../../dbmodels';
+import {dropDatabase, createDatabase, authenticateDatabase, syncDatabase, closeDatabase} from '../../dbmodels';
 import { seedDatabase } from './seeder-goofy';
 const resetDb = async () =>{
     try {
@@ -8,6 +8,7 @@ const resetDb = async () =>{
     await authenticateDatabase();
     await syncDatabase();
     await seedDatabase();
+    await closeDatabase();
 }catch(error){
     console.error('error resetting database: ', error)
 }

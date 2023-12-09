@@ -125,25 +125,28 @@ export const RecordPost = ({ audioContext, title, category }: { audioContext: Ba
   return (
         <div>
           <button
+            className="record-button"
             onClick={startRecording}
             disabled={isRecording}
-            >🔴</button>
+            >◯</button>
             <button
+            className="play-button"
             onClick={playAudio}
             disabled={isPlaying || audioChunks.length === 0 }
-            >▶️</button>
+            >▷</button>
             <button
+            className="stop-button"
             onClick={isRecording ? stopRecording : stopPlaying}
             disabled={!isRecording && !isPlaying}
-            >🟥</button>
-            <button
-            onClick={createPostRecord}
-            disabled={audioChunks.length === 0 || isRecording}
-            >💾</button>
+            >■</button>
             <button
             onClick={emptyRecording}
             disabled={audioChunks.length === 0 || isRecording}
             >🗑️</button>
+            <button
+            onClick={createPostRecord}
+            disabled={audioChunks.length === 0 || isRecording}
+            >Post</button>
         </div>
   )
 }

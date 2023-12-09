@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Storage } from '@google-cloud/storage'
 import { Post, Sound } from './dbmodels'
 const storage = new Storage({
