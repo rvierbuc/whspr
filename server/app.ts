@@ -42,10 +42,13 @@ app.use(passport.session());
 app.use(express.json())
 app.use(express.static(clientPath))
 
+
+
+
 const routeHandler = express.Router()
+routeHandler.use('/post', userRoutes)
 
 
-routeHandler.use('/user', userRoutes)
 app.use('/', routeHandler)
 app.use('/', routes)
 

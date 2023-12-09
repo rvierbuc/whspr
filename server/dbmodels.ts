@@ -79,6 +79,18 @@ export const Post = db.define('Post', {
   }
 })
 
+export const Comment = db.define('Comment', {
+  userId: {
+    type: DataTypes.INTEGER
+  },
+  postId: {
+    type: DataTypes.INTEGER
+  },
+  soundUrl: {
+    type: DataTypes.STRING
+  }
+})
+
 export const Radio = db.define('Radio', {
   hostId: {
     type: DataTypes.INTEGER
@@ -144,9 +156,15 @@ MagicConch.belongsTo(User, { foreignKey: 'sendingUserId' })
 User.hasMany(MagicConch, { foreignKey: 'receivingUserId'})
 MagicConch.belongsTo(User, { foreignKey: 'receivingUserId' })
 //MagicConch.belongsTo(Sound, { foreignKey: 'soundUrl' })
-
+User.hasMany(Like, {foreignKey: 'userId'})
 Like.belongsTo(User, { foreignKey: 'userId', as: 'user' })
+Post.hasMany(Like, {foreignKey: 'postId'})
 Like.belongsTo(Post, { foreignKey: 'postId', as: 'post' })
+
+User.hasMany(Comment, {foreignKey: 'userId'})
+Comment.belongsTo(User, { foreignKey: 'userId' })
+Post.hasMany(Comment, {foreignKey: 'postId'})
+Comment.belongsTo(Post, { foreignKey: 'postId'})
 
 UsersRadio.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 UsersRadio.belongsTo(Radio, { foreignKey: 'radiosId', as: 'radio' })
