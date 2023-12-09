@@ -1,4 +1,4 @@
-import { Sound, User, Post, Follower, Comment } from '../../dbmodels';
+import { Sound, User, Post, Follower, Radio, Comment } from '../../dbmodels';
 
 export const seedDatabase = async () => {
   try {
@@ -7,24 +7,28 @@ export const seedDatabase = async () => {
       {
       username: 'RandomUser',
       profileImgUrl: 'https://website.com/profile-image.jpg',
+      googleId: 'kjhjo',
       createdAt: new Date(),
       updatedAt: new Date(),
     },
     {
       username: 'Rando',
       profileImgUrl: 'https://website.com/profile-image.jpg',
+      googleId: 'jhgouy',
       createdAt: new Date(),
       updatedAt: new Date(),
     },
     {
       username: 'dom',
       profileImgUrl: 'https://website.com/profile-image.jpg',
+      googleId: 'o;uhul',
       createdAt: new Date(),
       updatedAt: new Date(),
     },
     {
       username: 'angel',
       profileImgUrl: 'https://website.com/profile-image.jpg',
+      googleId: 'ljkhgjuh',
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -86,6 +90,8 @@ export const seedDatabase = async () => {
         updatedAt: new Date(),
       },
     ]);
+
+
     console.log('Seed script executed successfully');
   } catch (error) {
     console.error('\x1b[31m%s\x1b[0m', 'Seed script failed', error);

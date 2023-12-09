@@ -86,7 +86,6 @@ export const Post = db.define('Post', {
   category: {
     type: DataTypes.STRING
   },
-<<<<<<< HEAD
   soundUrl: {
     type: DataTypes.STRING
   }
@@ -100,9 +99,6 @@ export const Comment = db.define('Comment', {
     type: DataTypes.INTEGER
   },
   soundUrl: {
-=======
-  soundURL: {
->>>>>>> SynthPost
     type: DataTypes.STRING
   }
 })

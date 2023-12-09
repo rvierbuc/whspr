@@ -11,6 +11,7 @@ const NavBar = () => {
   return (
     <div>
       <nav>
+      <Link to='/protected/room'>Room</Link>
         <Link to='/protected/synthesize'>Synthesize</Link>
 
         <Link to='/protected/dashboard'>WaveSurfer</Link>

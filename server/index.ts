@@ -1,11 +1,14 @@
 // server index to set up port listen
-import app from './app'
-import dotenv from 'dotenv'
 
-dotenv.config()
+//import dotenv from 'dotenv'
 
-const PORT = (process.env.PORT) || 3000
+//dotenv.config()
+import server from './app';
+//equire('dotenv').config();
 
-app.listen(PORT, () => {
-  console.log(`Server is listening on ${PORT}`)
-})
+const PORT =  3000
+
+
+server.listen(PORT, () => {
+  console.log(`Server is listening on ${PORT}`);
+});
