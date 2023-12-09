@@ -27,7 +27,7 @@ const getPosts = async(type) => {
   try{
     const allPosts: AxiosResponse = await axios.get(`/post/${type}/${userId}`)
     setPosts(allPosts.data)
-    console.log(allPosts.data)
+    console.log(allPosts)
   } catch(error) {
     console.log('client get friends', error)
   }

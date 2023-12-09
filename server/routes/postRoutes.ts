@@ -75,6 +75,17 @@ router.get('/explore/:userId', async (req: Request, res: Response) => {
   }
   
   })
+
+  router.post('/createCommentRecord', async (req: Request, res: Response) => {
+    const { userId, postId, soundUrl } = req.body
+    try{
+      await Comment.create({userId, postId, soundUrl})
+      res.sendStatus(201)
+    }catch(error){
+      console.log('could not add comment', error)
+      res.sendStatus(500)
+    }
+  })
 //allows user to like a post and add a record to the like table
 router.post('/like', async (req: Request, res: Response) => {
   const {userId, postId} = req.body;

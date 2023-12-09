@@ -1,7 +1,9 @@
 import React, {useState, useEffect} from "react";
 import axios, {AxiosResponse} from "axios";
 import Comment from "./Comment";
-import { RecordPost } from "./RecordPost"
+import { RecordComment } from "./RecordComment"
+import WaveSurferComponent from "./WaveSurfer";
+
  const Post = (props) => {
   const { postObj, getFriendsPosts, audioContext } = props
   const [commentInputOpen, setCommentInputOpen] = useState<boolean>(false)
@@ -63,6 +65,9 @@ useEffect(() => {
       <div className="card-body" >
         <a href="#" className="card-link">{postObj.user.username}</a>
         <h3>{postObj.title}</h3>
+        <WaveSurferComponent
+          soundUrl={postObj.soundUrl}
+          />
         <audio controls>
           <source src={postObj.soundUrl} type="audio/webm" />
         </audio>
@@ -71,13 +76,13 @@ useEffect(() => {
         ?
           <button
         type="button"
-        className="btn btn-light"
+        className="btn btn-dark"
         onClick={()=> handleUnlike()}
         >unlike
         </button>
         : <button
         type="button"
-        className="btn btn-dark"
+        className="btn btn-light"
         onClick={()=> handleLike()}
         >like
         </button>}
@@ -93,17 +98,12 @@ useEffect(() => {
        {commentInputOpen ?
        <div id="commentInput" className="accordion-collapse show" data-bs-parent="#commentBox">
        <div className="accordion-body">
-         <div className="input-group">
-           <span className="input-group-text">{userObj.username}</span>
-           <textarea className="form-control" aria-label="With textarea"></textarea>
-           <button 
-           type="button"
-           className="btn btn-light"
-           >submit</button>
-         </div>
-         {/* <RecordPost 
+        <p>Record Your Comment</p>
+         <RecordComment
          audioContext={audioContext}
-         /> */}
+         postObj={postObj}
+         getComments={getComments}
+         />
          <div className="accordion" id="previousComments">
         <div className="accordion-item"></div>
         <h4 className="accordion-header">
