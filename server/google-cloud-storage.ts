@@ -8,7 +8,7 @@ const storage = new Storage({
 
 const bucket = storage.bucket('whspr-sounds')
 
-const saveAudio = async (audio: any): Promise<void | string> => {
+const saveAudio = async (audio: 'wav'): Promise<void | string> => {
   try {
     const file = bucket.file(`audio/${Date.now()}.wav`)
     const downloadURL = `https://storage.googleapis.com/${bucket.name}/${file.name}`

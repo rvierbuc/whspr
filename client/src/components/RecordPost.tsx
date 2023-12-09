@@ -1,18 +1,18 @@
 import React, { useState, useRef } from 'react'
 import axios from 'axios'
 
-export const RecordPost = ({ audioContext }: { audioContext: BaseAudioContext }) => {
-  const [title, setTitle] = useState('')
-  const [category, setCategory] = useState('')
+export const RecordPost = ({ audioContext, title, category }: { audioContext: BaseAudioContext; title: string; category: string}, tit) => {
   const [isRecording, setIsRecording] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([])
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const audioSource = useRef<AudioBufferSourceNode | null>(null)
   const userId = 1
-  const postId = 1
+  
   const startRecording = async () => {
     try {
+      //for now, this resets the recording array to an empty array when recording starts
+      setAudioChunks([])
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       mediaRecorder.current = new MediaRecorder(stream)
 
@@ -124,13 +124,7 @@ export const RecordPost = ({ audioContext }: { audioContext: BaseAudioContext })
   
   return (
         <div>
-          <div>
-          title: <input type="text" value={title} onChange={(e) => { setTitle(e.target.value) }}/>
-          </div>
-          <div>
-          category: <input type="text" value={category} onChange={(e) => { setCategory(e.target.value) }}/>
-          </div>
-            <button
+          <button
             onClick={startRecording}
             disabled={isRecording}
             >🔴</button>

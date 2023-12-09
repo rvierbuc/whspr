@@ -5,15 +5,11 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const isProduction = process.env.NODE_ENV == 'production';
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
-const stylesHandler = isProduction ? MiniCssExtractPlugin.loader : 'style-loader';
 
 
-const config = {
+module.exports = {
     entry: './client/src/index.tsx',
-    mode:'development',
-    watch: true,
+    mode: isProduction ? 'production' : 'development',
     output: {
         path: path.resolve(__dirname, './client/dist'),
         filename: 'bundle.js',
@@ -21,7 +17,6 @@ const config = {
     },
     devServer: {
         open: true,
-        host: 'localhost',
         historyApiFallback: true,
     },
     plugins: [
@@ -29,19 +24,12 @@ const config = {
             template: './client/src/index.html',
             filename: './index.html'
         }),
-        new MiniCssExtractPlugin({
-            filename: '[name].css',
-            chunkFilename: '[id].css',
-        }),
 
         // Add your plugins here
         // Learn more about plugins from https://webpack.js.org/configuration/plugins/
     ],
     resolve: {
-        extensions: ['.ts', '.tsx', '.js', '.jsx'],
-        alias: {
-          'wavesurfer.js/dist/plugins/*': ['node_modules/wavesurfer.js/dist/plugins/*']
-        }
+        extensions: ['.ts', '.tsx']
     },
     module: {
         rules: [
@@ -61,15 +49,6 @@ const config = {
                   },
                 },
               ],
-            },
-            {
-              test: /\.(js|jsx)$/,
-              use: {
-                loader: 'babel-loader',
-              },
-              test: /\.css$/i,
-              use: [stylesHandler, 'css-loader'],
-
             },
               {
                 test: /\.(scss)$/,
@@ -100,7 +79,7 @@ const config = {
                 ],
               },
             {
-                test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i, //may need to include mp3/sound? 
+                test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
                 type: 'asset',
             },
 
@@ -110,16 +89,6 @@ const config = {
     },
 };
 
-module.exports = () => {
-    if (isProduction) {
-        config.mode = 'production';
-        
-        
-        config.plugins.push(new WorkboxWebpackPlugin.GenerateSW());
-        config.plugins.push(new MiniCssExtractPlugin());
-        
-    } else {
-        config.mode = 'development';
-    }
-    return config;
-};
+if (isProduction) {
+  module.exports.plugins.push(new WorkboxWebpackPlugin.GenerateSW());
+}
