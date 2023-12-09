@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import * as Tone from 'tone';
 
 interface Props {
   oscSettings: {
@@ -15,15 +14,18 @@ const Oscillator = ({oscSettings, changeType, changeValue}: Props): React.JSX.El
   const { type, frequency, detune } = oscSettings;
 
   return (
-    <div>
-      <h4>Oscillator</h4>
+    <div className="text-center">
+      <h4 className="text-center">Oscillator</h4>
       <div className="oscOptions">
-        <button id="sine" onClick={changeType}>Sine</button>
-        <button id="triangle" onClick={changeType} className="waveOption">Triangle</button>
-        <button id="square" onClick={changeType} className="waveOption">Square</button>
-        <button id="sawtooth" onClick={changeType} className="waveOption">Sawtooth</button>
+        <button className="btn" id="sine" onClick={changeType}>Sine</button>
+        <button className="btn" id="triangle" onClick={changeType}>Triangle</button>
+        <button className="btn" id="square" onClick={changeType}>Square</button>
+        <button className="btn" id="sawtooth" onClick={changeType}>Sawtooth</button>
       </div>
       <div className="oscFreq">
+        <div className="slider">
+          <div className="knob"></div>
+        </div>
         <input value={frequency} max="880" onChange={changeValue} id="frequency" type="range" />
       </div>
       <div className="oscDetune">
