@@ -34,13 +34,8 @@ const saveAudio = async (audio: 'wav'): Promise<void | string> => {
       }).catch((soundError) => {
         console.error('Error creating Sound record:', soundError);
       }),
-      Post.create({
-        userId: 2,
-        title: 'My music',
-        category: 'Music',
-        soundURL: downloadURL
-      }),
-    ]);
+    ])
+    return downloadURL;
   } catch (error) {
     console.error('Error handling audio upload:', error)
   }
