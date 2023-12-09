@@ -1,8 +1,12 @@
 // server index to set up port listen
-const { server } = require('./app');
-// require('dotenv').config();
 
-const PORT = 3000;
+//import dotenv from 'dotenv'
+
+//dotenv.config()
+import server from './app';
+//equire('dotenv').config();
+
+const PORT =  3000
 
 
 server.listen(PORT, () => {

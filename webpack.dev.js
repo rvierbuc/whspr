@@ -5,6 +5,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const isProduction = process.env.NODE_ENV == 'production';
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+const stylesHandler = isProduction ? MiniCssExtractPlugin.loader : 'style-loader';
 
 
 const config = {
@@ -26,6 +29,10 @@ const config = {
             template: './client/src/index.html',
             filename: './index.html'
         }),
+        new MiniCssExtractPlugin({
+            filename: '[name].css',
+            chunkFilename: '[id].css',
+        }),
 
         // Add your plugins here
         // Learn more about plugins from https://webpack.js.org/configuration/plugins/
@@ -33,8 +40,9 @@ const config = {
     resolve: {
         extensions: ['.ts', '.tsx', '.js'],
         alias: {
-          '@common': path.resolve(__dirname, 'src/common')
-        },
+          '@common': path.resolve(__dirname, 'src/common'),
+          'wavesurfer.js/dist/plugins/*': ['node_modules/wavesurfer.js/dist/plugins/*']
+        }
     },
     module: {
         rules: [
@@ -54,6 +62,15 @@ const config = {
                   },
                 },
               ],
+            },
+            {
+              test: /\.(js|jsx)$/,
+              use: {
+                loader: 'babel-loader',
+              }
+              test: /\.css$/i,
+              use: [stylesHandler, 'css-loader'],
+
             },
               {
                 test: /\.(scss)$/,
@@ -100,6 +117,7 @@ module.exports = () => {
         
         
         config.plugins.push(new WorkboxWebpackPlugin.GenerateSW());
+        config.plugins.push(new MiniCssExtractPlugin());
         
     } else {
         config.mode = 'development';
