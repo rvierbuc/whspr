@@ -6,6 +6,10 @@
         "module": "commonjs",
         "jsx": "react",
         "outDir": "dist",
+        "baseUrl": "./src",
+        "paths": {
+            "@common/*": ["src/common/*"]
+        },
         "strict": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,

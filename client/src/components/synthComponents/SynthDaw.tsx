@@ -58,8 +58,8 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter}: Prop
   };
 
   return (
-    <div>
-      <h3>This is the Daw!</h3>
+    <div className="card w-50 p-4">
+      <h3 className="text-center">This is the Daw!</h3>
       <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
       <RecordSynth audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} />
     </div>
