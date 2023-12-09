@@ -7,8 +7,9 @@ export const RecordPost = ({ audioContext, title, category }: { audioContext: Ba
   const [audioChunks, setAudioChunks] = useState<Blob[]>([])
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const audioSource = useRef<AudioBufferSourceNode | null>(null)
-  const userId = 1
-  
+  const userId = 5
+  const postId = 66
+
   const startRecording = async () => {
     try {
       //for now, this resets the recording array to an empty array when recording starts
@@ -91,7 +92,7 @@ export const RecordPost = ({ audioContext, title, category }: { audioContext: Ba
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
-      const response = await axios.post('/upload', formData)
+      const response = await axios.post(`/upload/${userId}/${postId}`, formData)
       if (response.status === 200) {
         const downloadURL = response.data
         return downloadURL
@@ -138,7 +139,7 @@ export const RecordPost = ({ audioContext, title, category }: { audioContext: Ba
             className="stop-button"
             onClick={isRecording ? stopRecording : stopPlaying}
             disabled={!isRecording && !isPlaying}
-            >■</button>
+            >□</button>
             <button
             onClick={emptyRecording}
             disabled={audioChunks.length === 0 || isRecording}

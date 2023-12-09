@@ -28,6 +28,12 @@ export const seedDatabase = async () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     },
+    {
+      username: 'thisguyoverhere',
+      profileImgUrl: 'https://website.com/profile-image.jpg',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
   ]);
 
   await Post.bulkCreate([
