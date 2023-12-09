@@ -14,12 +14,12 @@ const NavBar = () => {
       <Link to='/protected/room'>Room</Link>
         <Link to='/protected/synthesize'>Synthesize</Link>
 
-        <Link to='/protected/dashboard'>WaveSurfer</Link>
+        <Link className="mx-3" to='/protected/dashboard'>WaveSurfer</Link>
 
-        <Link to='/protected/post'>Record Post</Link>
-        <Link to='/protected/feed'>Feed</Link>
+        <Link className="mx-3" to='/protected/post'>Record Post</Link>
+        <Link className="mx-3" to='/protected/feed'>Feed</Link>
 
-        <Link to='/protected/profile'>User Profile</Link>
+        <Link className="mx-3" to='/protected/profile'>User Profile</Link>
 
       </nav>
       {/* <div className="outlet">

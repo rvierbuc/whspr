@@ -19,9 +19,9 @@ const Synthesize = ({audioContext}: Props): React.JSX.Element => {
   filter.connect(mediaDest);
 
   return (
-    <div>
+    <div className="container-sm">
       <NavBar />
-      <h1>Synthesize Component</h1>
+      <h1 className="text-center">Whspr</h1>
       <SynthDaw audioContext={audioContext} oscillator={oscillator} filter={filter} mediaDest={mediaDest} finalDest={finalDest} />
     </div>
   );
