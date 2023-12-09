@@ -1,12 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+const handleAuth = () => {
+    window.location.href = '/auth/google';
+}
+
 const Login = () => {
     return (
         <div>
-            <Link to="/protected">
-            <h1>Login</h1>
-            </Link>
+            <button type='button' onClick={()=> {handleAuth()}}>
+                Login
+            </button>
         </div>
     )
 }
