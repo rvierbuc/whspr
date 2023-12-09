@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 import { Router, Request, Response } from 'express'
 import { saveAudio, getAudioUrl } from './google-cloud-storage'
+import {Post} from './dbmodels'
 
 const router = Router()
 
@@ -42,5 +43,21 @@ router.get('/getAudio', async (req: Request, res: Response) => {
     res.status(500).send('Error fetching audio');
   }
 });
+
+// router.get('/getAudioAndStore/:postId', async (req: Request, res: Response) => {
+//   try{
+//     const postId = req.params.postId
+//     const postRecord = await Post.findOne({where: {postId}})
+//     if(!postRecord){
+//       res.status(404).send('Post not found')
+//     }
+//     const soundURL = postRecord?.get('soundURL') as string;
+//     if(!soundURL){
+//       res.status(404).send('SoundURL not found')
+//     }
+//     const fileName = soundURL.split('/').pop()
+//     const localFilePath = path.join()
+//   }
+// });
 
 export default router
