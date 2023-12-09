@@ -91,6 +91,18 @@ export const Post = db.define('Post', {
   }
 })
 
+export const Comment = db.define('Comment', {
+  userId: {
+    type: DataTypes.INTEGER
+  },
+  postId: {
+    type: DataTypes.INTEGER
+  },
+  soundUrl: {
+    type: DataTypes.STRING
+  }
+})
+
 export const Radio = db.define('Radio', {
   hostId: {
     type: DataTypes.INTEGER
