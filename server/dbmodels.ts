@@ -44,6 +44,18 @@ export const Sound = db.define('Sound', {
   },
   soundUrl: {
     type: DataTypes.STRING
+  },
+  frequency: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  detune: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  type: {
+    type: DataTypes.STRING,
+    allowNull: true
   }
 })
 
