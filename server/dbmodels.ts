@@ -34,7 +34,7 @@ export const MagicConch = db.define('MagicConch', {
     type: DataTypes.STRING
   },
   soundURL: {
-    type: DataTypes.BIGINT
+    type: DataTypes.STRING
   }
 })
 
@@ -70,7 +70,7 @@ export const Post = db.define('Post', {
     type: DataTypes.STRING
   },
   soundURL: {
-    type: DataTypes.BIGINT
+    type: DataTypes.STRING
   }
 })
 

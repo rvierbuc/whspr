@@ -32,15 +32,14 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props)
       console.error('Could not start recording', error)
     }
   };
-  console.log(recorder.stream.getAudioTracks());
+  console.log(audioSource);
   // stop the sound/recording
   const stopRecording = async () => {
     try {
       stop();
       recorder.stop();
       recorder.onstop = async () => {
-        let blob: string = URL.createObjectURL(new Blob(audioChunks, {type: 'audio/ogg'}));
-        console.log(new Blob(audioChunks, {type: 'audio/wav'}))
+        let blob: string = URL.createObjectURL(new Blob(audioChunks, {type: 'audio/wav'}));
         setAudioSource(blob.slice(5));
       };
       console.log('in stopRecording', audioSource);
@@ -50,7 +49,7 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props)
   };
 
   const saveRecording = async () => {
-    const saveBlob: Blob = new Blob(audioChunks, {type: 'audio/ogg'})
+    const saveBlob: Blob = new Blob(audioChunks, {type: 'audio/wav'})
     try {
       const formData: FormData = new FormData();
       formData.append('audio', saveBlob);
@@ -98,14 +97,14 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props)
   //     console.error('error playing: ', playError)
   //   })
   // };
-
   const postRecording = async () => {
+    console.log('soundURL', audioSource);
     try {
       const postResponse = await axios.post('/createPostRecord', {
-        userId,
-        title,
-        category,
-        audioId: 1
+        userId: userId,
+        title: 'My music',
+        category: category,
+        soundURL: audioSource
       })
       if (postResponse.status === 200) {
         console.log('Post saved to Database')
