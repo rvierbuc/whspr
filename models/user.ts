@@ -4,6 +4,7 @@ import {Model} from 'sequelize';
 interface UserAttributes {
   id: number;
   username: string;
+  googleId: string;
 }
 
 
@@ -17,6 +18,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
      */
     id!: number;
     username!: string;
+    googleId!: string;
     static associate(models: any) {
       // define association here
       User.hasMany(models.Post, { foreignKey: 'userId'})
@@ -27,7 +29,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
   }
   User.init({
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
@@ -35,7 +37,11 @@ module.exports = (sequelize: any, DataTypes: any) => {
     username: {
       type: DataTypes.STRING,
       allowNull: false,
-    }
+    },
+    googleId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   }, {
     sequelize,
     modelName: 'User',
