@@ -28,7 +28,12 @@ export interface PostAttributes {
   soundUrl: string; 
 }
 export interface PostInstance extends Model<PostAttributes>, PostAttributes {}
-
+export interface CommentAttributes {
+  userId: number;
+  postId: number;
+  soundUrl: string; 
+}
+export interface CommentInstance extends Model<CommentAttributes>, CommentAttributes {}
 export interface RadioAttributes {
   hostId: number;
   listenerCount: number;

@@ -20,12 +20,21 @@ const db = new Sequelize({
 //   id: CreationOptional<number>;
 // };
 export const User = db.define('User', {
+  id: {
+    type: DataTypes.BIGINT,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true
+  },
   username: {
     type: DataTypes.STRING
   },
   profileImgUrl: {
     type: DataTypes.STRING
-  }
+  },
+  googleId: {
+    type: DataTypes.STRING
+  },
 })
 
 export const MagicConch = db.define('MagicConch', {
@@ -41,7 +50,7 @@ export const MagicConch = db.define('MagicConch', {
   url: {
     type: DataTypes.STRING
   },
-  soundUrl: {
+  soundURL: {
     type: DataTypes.STRING
   }
 })
@@ -52,6 +61,18 @@ export const Sound = db.define('Sound', {
   },
   soundUrl: {
     type: DataTypes.STRING
+  },
+  frequency: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  detune: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  type: {
+    type: DataTypes.STRING,
+    allowNull: true
   }
 })
 
@@ -64,6 +85,18 @@ export const Post = db.define('Post', {
   },
   category: {
     type: DataTypes.STRING
+  },
+  soundUrl: {
+    type: DataTypes.STRING
+  }
+})
+
+export const Comment = db.define('Comment', {
+  userId: {
+    type: DataTypes.INTEGER
+  },
+  postId: {
+    type: DataTypes.INTEGER
   },
   soundUrl: {
     type: DataTypes.STRING
@@ -135,9 +168,15 @@ MagicConch.belongsTo(User, { foreignKey: 'sendingUserId' })
 User.hasMany(MagicConch, { foreignKey: 'receivingUserId'})
 MagicConch.belongsTo(User, { foreignKey: 'receivingUserId' })
 //MagicConch.belongsTo(Sound, { foreignKey: 'soundUrl' })
-
+User.hasMany(Like, {foreignKey: 'userId'})
 Like.belongsTo(User, { foreignKey: 'userId', as: 'user' })
+Post.hasMany(Like, {foreignKey: 'postId'})
 Like.belongsTo(Post, { foreignKey: 'postId', as: 'post' })
+
+User.hasMany(Comment, {foreignKey: 'userId'})
+Comment.belongsTo(User, { foreignKey: 'userId' })
+Post.hasMany(Comment, {foreignKey: 'postId'})
+Comment.belongsTo(Post, { foreignKey: 'postId'})
 
 UsersRadio.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 UsersRadio.belongsTo(Radio, { foreignKey: 'radiosId', as: 'radio' })

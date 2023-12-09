@@ -128,7 +128,7 @@ const Room = () => {
         .then((stream) => {
             console.log('stream', stream)
 
-            createChannel(channelName, uid, '007eJxTYKgWsDPcLGWb3m1/Tn3i7d/c7wSSFl88dDPJzO3PLo75zccVGBKNk5INTEwTLcwsLUwszM0tjFIMUs0Mk4xNzSwsLU2NzsYWpTYEMjIsYr3AwsgAgSA+I0MiAwMArvYdPg==', stream)
+            createChannel(channelName, uid, '007eJxTYPBdOLtmftV7Yz+P1GfSx08pdH/dXbfQbEfv229pB0S8KjYpMCQaJyUbmJgmWphZWphYmJtbGKUYpJoZJhmbmllYWpoaHTlcktoQyMggWH2RlZEBAkF8RoZEBgYAV0cfRw==', stream)
             setStream(stream)
              //myAudioRef.current.srcObject = stream
         })
@@ -145,7 +145,7 @@ const Room = () => {
     }, [remoteAudioTracks])
 
   const handleJoinChannel = (stream) => {
-    joinChannel(channelName, uid, '007eJxTYKgWsDPcLGWb3m1/Tn3i7d/c7wSSFl88dDPJzO3PLo75zccVGBKNk5INTEwTLcwsLUwszM0tjFIMUs0Mk4xNzSwsLU2NzsYWpTYEMjIsYr3AwsgAgSA+I0MiAwMArvYdPg==');
+    joinChannel(channelName, uid, '007eJxTYPBdOLtmftV7Yz+P1GfSx08pdH/dXbfQbEfv229pB0S8KjYpMCQaJyUbmJgmWphZWphYmJtbGKUYpJoZJhmbmllYWpoaHTlcktoQyMggWH2RlZEBAkF8RoZEBgYAV0cfRw==');
     startAudio(stream);
   };
 

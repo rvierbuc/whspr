@@ -11,11 +11,14 @@ interface Props {
 }
 
 const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [audioSource, setAudioSource] = useState<string>('Howdy');
+  const [title, setTitle] = useState<string>('')
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [audioSource, setAudioSource] = useState<string>('');
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const audioBuffer = useRef<AudioBufferSourceNode | null>(null);
   const recorder: MediaRecorder = new MediaRecorder(mediaDest.stream);
+  const userId: number = 5;
+  const category: string = 'music';
 
   // start the sound/recording
   const startRecording = async () => {
@@ -29,7 +32,7 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props)
       console.error('Could not start recording', error)
     }
   };
-  console.log('Record', audioSource);
+  console.log(audioSource);
   // stop the sound/recording
   const stopRecording = async () => {
     try {
@@ -38,60 +41,81 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props)
       recorder.onstop = async () => {
         let blob: string = URL.createObjectURL(new Blob(audioChunks, {type: 'audio/wav'}));
         setAudioSource(blob.slice(5));
-        console.log(audioSource);
       };
+      console.log('in stopRecording', audioSource);
     } catch(error) {
       console.error('Could not stop recording', error);
     }
   };
 
   const saveRecording = async () => {
-    const saveBlob: Blob = new Blob(audioChunks, {type: 'audio/ogg'})
+    const saveBlob: Blob = new Blob(audioChunks, {type: 'audio/wav'})
     try {
       const formData: FormData = new FormData();
       formData.append('audio', saveBlob);
       const response = await axios.post('/upload', formData);
-      if (response.status === 200) {
-        console.log('Synth saved to cloud');
-      } else {
-        console.error('Error saving synth', response.statusText);
-      }
+      console.log('cloud response', response)
+      response.status === 200 ? console.log('Synth saved to cloud') : console.error('Error saving synth', response.statusText)
     } catch(error) {
       console.error('Error saving audio', error);
     }
   };
 
-  const playBackRecording = async (): Promise<void> => {
-    if (!audioChunks.length || !audioContext) {
-      console.error('Something went wrong', audioChunks.length === 0, !audioContext);
-      return;
-    }
-    const audioBlob = new Blob(audioChunks, { type: 'audio/ogg' })
-    const arrayBuffer = await audioBlob.arrayBuffer()
-    audioContext.decodeAudioData(
-      arrayBuffer,
-      (buffer) => {
-        if (!audioContext) {
-          console.error('audio context is null')
-          return
-        }
-        audioBuffer.current = audioContext.createBufferSource()
-        audioBuffer.current.buffer = buffer
-        audioBuffer.current.connect(finalDest)
+  // const playBackRecording = async (): Promise<void> => {
+  //   if (!audioChunks.length || !audioContext) {
+  //     console.error('Something went wrong', audioChunks.length === 0, !audioContext);
+  //     return;
+  //   }
+  //   const audioBlob = new Blob(audioChunks, { type: 'audio/ogg' })
+  //   console.log('chunk', audioChunks)
+  //   console.log('blob', audioBlob)
+  //   const arrayBuffer = await audioBlob.arrayBuffer()
 
-        audioBuffer.current.onended = () => {
-          setIsPlaying(false)
-        }
-        audioBuffer.current.start()
-        setIsPlaying(true)
-      },
-      (error) => {
-        console.error('error playing audio: ', error)
+  //   console.log(arrayBuffer);
+
+  //   audioContext.decodeAudioData(
+  //     arrayBuffer,
+  //     (buffer) => {
+  //       if (!audioContext) {
+  //         console.error('audio context is null')
+  //         return
+  //       }
+  //       audioBuffer.current = audioContext.createBufferSource()
+  //       audioBuffer.current.buffer = buffer
+  //       audioBuffer.current.connect(finalDest)
+
+  //       audioBuffer.current.onended = () => {
+  //         setIsPlaying(false)
+  //       }
+  //       audioBuffer.current.start()
+  //       setIsPlaying(true)
+  //     },
+  //     (error) => {
+  //       console.error('error playing audio: ', error)
+  //     }
+  //   ).catch((playError) => {
+  //     console.error('error playing: ', playError)
+  //   })
+  // };
+  const postRecording = async () => {
+    console.log('soundURL', audioSource);
+    try {
+      const postResponse = await axios.post('/createPostRecord', {
+        userId: userId,
+        title: 'My music',
+        category: category,
+        soundURL: audioSource
+      })
+      if (postResponse.status === 200) {
+        console.log('Post saved to Database')
+        await saveRecording()
+      } else {
+        console.error('Error saving post: ', postResponse.statusText)
       }
-    ).catch((playError) => {
-      console.error('error playing: ', playError)
-    })
-  };
+    } catch (error) {
+      console.error('error saving post: ', error)
+    }
+  }
 
   return (
     <div>
@@ -101,12 +125,11 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props)
         <button onClick={stop}>Stop</button>
         <button onClick={startRecording}>Record</button>
         <button onClick={stopRecording}>Stop Record</button>
-        <button onClick={saveRecording}>Save</button>
-        <button onClick={playBackRecording}>Playback</button>
+        <button onClick={saveRecording}>Post</button>
       </div>
-      {/* <div>
-        <AudioTag source={audioSource} />
-      </div> */}
+      <div>
+        {/* <AudioTag source={audioSource} /> */}
+      </div>
     </div>
   );
 };
