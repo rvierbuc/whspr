@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ChangeEventHandler, MutableRefObject, useEffect, useRef, useState } from 'react';
 // import {io, Socket} from 'socket.io-client'
 import Peer from 'peerjs'
 import AgoraRTC from 'agora-rtc-sdk'
@@ -8,120 +8,15 @@ import { joinChannel, leaveChannel, startAudio, stopAudio, createChannel, subscr
 
 // const socket: Socket = io('http://localhost:3000')
 
-const Room = () => {
-    // const [stream, setStream] = useState()
-    // const [me, setMe] = useState('')
+const Room: React.FC = () => {
+
+  const [channelName, setChannelName] = useState('a');
+  const [uid, setUid] = useState<number>(Math.floor(Math.random() * 20));
+  const [stream, setStream] = useState<MediaStream>()
+  const [remoteAudioTracks, setRemoteAudioTracks] = useState<string[]>([]);
 
     // const myAudioRef = useRef()
-    // const userAudioRef = useRef()
-    // useEffect(() => {
-    //     const peer = new Peer( {
-    //         host: '/',
-    //         port: 3000,
-    //         path: '/peerjs',
-    //         debug: 3,
-            
-    //     })
-    //     navigator.mediaDevices.getUserMedia({video: false, audio: true})
-    //     .then((stream) => {
-    //         setStream(stream)
-    //         myAudioRef.current.srcObject = stream
-    //     })
-
-    //     socket.on('id', (id) => {
-    //         setMe(id)
-    //     })
-
-       
-    //     console.log('ppp', peer)
-    //     peer.on('open', (id) => {
-    //         console.log('hello', id)
-    //         socket.emit('call', {
-    //             user: me,
-    //             signal: id,
-    //             from: me,
-    //             name: me
-    //         })
-
-
-
-
-    //         // socket.on('start-call', (callerId: string) => {
-    //         //     navigator.mediaDevices.getUserMedia({audio: true})
-    //         //     .then((stream) => {
-    //         //         console.log('yoo')
-    //         //     const call = peer.call(callerId,  stream)
-    //         //     if(call) {
-    //         //         call.on('stream', (remoteStream) => {
-    //         //             if(audioRef.current){
-    //         //                 audioRef.current.srcObject = remoteStream
-    //         //             }
-    //         //         })
-    //         //     }
-    //         // })
-    //         // })
-
-    //         // socket.on('user-joined', (userId: string) => {
-    //         //     console.log('UserConnected')
-    //         // })
-    //         // socket.on('disconnected', (userId: string) => {
-    //         //     conssole.log('User disconnected ', userId)
-    //         // })
-
-    //     })
-
-    //     peer.on('error', (error) => {
-    //         console.error('error', error)
-    //     })
-
-    //     peer.on('stream', (stream) => {
-    //         userAudioRef.current.srcObject = stream
-    //     })
-
-    //     socket.on('accepted', (signal) => {
-    //     })
-
-    //     // peer.on('call', (call) => {
-    //     //     navigator.mediaDevices.getUserMedia({video: false, audio: true})
-    //     //     .then((stream) => {
-    //     //         call.answer(stream)
-
-    //     //         call.on('stream', (remoteStream) => {
-    //     //             if(audioRef.current){
-    //     //                 audioRef.current.srcObject = remoteStream
-    //     //                 audioRef.current.play()
-    //     //                 .catch((err) => {
-    //     //                     console.error('playback error', err)
-    //     //                 })
-    //     //             }
-    //     //         })
-    //     //     })
-    //     // })
-
-
-
-    //     return () => {
-    //         peer.destroy()
-    //         socket.disconnect()
-    //     }
-    // }, [])
-
-    // return (
-    //     <div>
-    //         <h1>Radio</h1>
-    //        <audio  autoPlay  controls/>
-    //        <audio ref={myAudioRef} autoPlay />
-
-    //     </div>
-    // )
-
-    const [channelName, setChannelName] = useState('a');
-  const [uid, setUid] = useState(Math.floor(Math.random() * 20));
-  const [stream, setStream] = useState(null)
-  const [remoteAudioTracks, setRemoteAudioTracks] = useState([]);
-
-    // const myAudioRef = useRef()
-    const remoteAudioRef = useRef()
+    const remoteAudioRef = useRef<HTMLAudioElement | null>(null)
 
     useEffect(() => {
         navigator.mediaDevices.getUserMedia({video: false, audio: true})
@@ -158,7 +53,6 @@ const Room = () => {
   return (
     <div>
       <h1>Agora Voice Chat</h1>
-      {console.log('hi', remoteAudioRef)}
       {/* <audio ref={myAudioRef} autoPlay /> */}
       <audio ref={remoteAudioRef} autoPlay />
 
@@ -175,7 +69,7 @@ const Room = () => {
       <br />
       <label>
         User ID:
-        <input type="text" value={uid} onChange={(e) => setUid(e.target.value)} />
+        <input type="text" value={uid} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setUid(Number(event.target.value))} />
       </label>
       <br />
       <button onClick={(stream) => handleJoinChannel(stream)}>Join Channel</button>
