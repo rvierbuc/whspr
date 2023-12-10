@@ -12,15 +12,6 @@ const [feed, setFeed] = useState<string>('following')
 
 const userId = 1;
 
-const getFriendsPosts = async() => {
-  try{
-    const friendsPosts: AxiosResponse = await axios.get('/post/following/1')
-    setPosts(friendsPosts.data)
-    console.log(friendsPosts.data)
-  } catch(error) {
-    console.log('client get friends', error)
-  }
-}
 
 const getPosts = async(type) => {
   setFeed(type)

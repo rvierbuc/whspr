@@ -34,14 +34,16 @@ const handleUnlike = async() => {
 
 const findLikedPost = () => {
   //console.log(friendsPosts.data)
-  if(postObj.Likes.length > 0){
-    for(let j = 0; j < postObj.Likes.length; j++){
-      if(postObj.Likes[j].userId === userId){
-        return true
+  if(postObj.Likes){
+    if(postObj.Likes.length > 0){
+      for(let j = 0; j < postObj.Likes.length; j++){
+        if(postObj.Likes[j].userId === userId){
+          return true
+        }
       }
     }
-  }
-  return false
+    return false
+  } else{ return false }
 }
 
 const getComments = async() => {

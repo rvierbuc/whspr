@@ -18,6 +18,7 @@ import WaveSurferComponent from './WaveSurfer';
 import Feed from './Feed'
 import Post from './PostCard'
 import UserProfile from './userProfile';
+import ReadOnlyProfile from './ReadOnlyProfile';
 import axios from 'axios';
 
 // THE MAIN audio context to be used throughout the application (DO NOT ALTER)
@@ -50,6 +51,7 @@ const App = () => {
                     <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} />
                     <Route path="post" element={<Post audioContext={audioContext} />} />
                     <Route path="room" element={<Room />} />
+                    <Route path="profile/:id" element={<ReadOnlyProfile audioContext={audioContext}/>} />
                 </Route>
             </Route>
         )

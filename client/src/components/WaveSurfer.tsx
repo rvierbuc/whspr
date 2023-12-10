@@ -72,8 +72,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, pos
         <div  className="card">
             <br/>
             <div className="card-body" >
-            <a href="#" className="card-link">{postObj.user.username}</a>
-            <h3>{postObj.title}</h3>
+                <a href={`profile/${postObj.user.id}`} className="card-link">{postObj.user.username}</a>
+                <h3>{postObj.title}</h3>
             <div id={containerId}></div>
             {isPlaying ?
                 <button type='button' className="btn btn-danger" id="play-btn" onClick={() => {
@@ -90,12 +90,12 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, pos
                 }}>Play</button>
             }
             <div>
-                <button
+                {/* <button
                 className="btn"
                 // onClick={()=> }
                 style={{backgroundColor:'white', borderColor:'white'}}>
                 <a href="#" className="card-link">{`#${postObj.category}`}</a>
-                </button>
+                </button> */}
             </div>
             </div>
         </div>

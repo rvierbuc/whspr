@@ -5,7 +5,6 @@ import { Op } from 'sequelize'
 
 import { User, Follower, Post, Like, Comment} from '../dbmodels'
 // ************* GET ROUTES **************
-
 //GET ALL USER FOLLOWING POSTS
 router.get('/following/:userId', async (req: Request, res: Response) => {
 const { userId } = req.params;
@@ -86,6 +85,18 @@ router.get('/explore/:userId', async (req: Request, res: Response) => {
       res.sendStatus(500)
     }
   })
+//add following relationship
+  router.post('/startFollowing', async(req: Request, res: Response) =>{
+    const {userId, followingId} = req.body
+    console.log(userId, followingId)
+    try{
+      const startFollowing = await Follower.create({userId, followingId})
+      res.sendStatus(201)
+    }catch(error){
+      console.error('could not follow', error)
+      res.sendStatus(500)
+    }
+   })
 //allows user to like a post and add a record to the like table
 router.post('/like', async (req: Request, res: Response) => {
   const {userId, postId} = req.body;
@@ -141,19 +152,38 @@ try{
   res.sendStatus(500)
 }
  })
-module.exports = router
-/**
- *  try {
-      const destroyLike = await Like.destroy({
-        where: {
-          [Op.and]: [{userId}, {postId}]
-        }
-      })
-      console.log(destroyLike)
-      res.sendStatus(201)
+//get only one users posts
+ router.get('/selected/:id', async (req: Request, res: Response) => {
+  const { id } = req.params
 
-    } catch(error){
-      console.log('could not remove like', error)
-      res.sendStatus(500)
+  try{
+    const selectedUser = await Post.findAll({ 
+      where: {userId: id},
+      include: [{
+        model: User,
+        as: 'user'
+      },
+    Like,
+    Comment]
     }
- */
+  )
+    console.log(selectedUser)
+    res.status(200).send(selectedUser)
+  } catch(error) {
+    console.error('query failed: could not get selected user', error)
+    res.sendStatus(500)
+  }
+ })
+
+ router.post('/startFollowing', async(req: Request, res: Response) =>{
+  const {userId, followingId} = req.body
+  console.log(userId, followingId)
+  // try{
+  //   const startFollowing = await Follower.create({userId, followingId})
+  //   res.send(startFollowing)
+  // }catch(error){
+  //   console.error('could not follow', error)
+  //   res.sendStatus(500)
+  // }
+ })
+module.exports = router
