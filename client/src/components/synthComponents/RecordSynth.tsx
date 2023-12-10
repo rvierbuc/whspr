@@ -14,9 +14,9 @@ interface Props {
 const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props) => {
   const [title, setTitle] = useState<string>('')
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [audioSource, setAudioSource] = useState<string>('');
+  // const [audioSource, setAudioSource] = useState<string>('');
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
-  const audioBuffer = useRef<AudioBufferSourceNode | null>(null);
+  const audioSource = useRef<AudioBufferSourceNode | null>(null);
   const recorder: MediaRecorder = new MediaRecorder(mediaDest.stream);
   const userId: number = 5;
 
@@ -32,7 +32,7 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props)
       console.error('Could not start recording', error)
     }
   };
-  console.log(audioSource);
+
   // stop the sound/recording
   const stopRecording = async () => {
     try {
