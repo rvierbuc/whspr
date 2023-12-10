@@ -9,11 +9,11 @@ import cors from 'cors'
 import http from 'http'
 import {Server, Socket} from 'socket.io'
 import {ExpressPeerServer} from 'peer'
-
+import {HOST, PORT} from './index'
 const clientPath = path.resolve(__dirname, '../client/dist')
 
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: `http://${HOST}:${PORT}`,
   methods: ['GET', 'POST'],
 }
 const storage = multer.memoryStorage();
@@ -150,7 +150,7 @@ app.post('/createPostRecord', async(req, res) =>{
       userId: req.body.userId,
       title: req.body.title,
       category: req.body.category,
-      soundURL: req.body.soundURL
+      soundUrl: req.body.soundUrl
       }
       await Post.create(postRecord)
       res.status(200).send('Post record created.')

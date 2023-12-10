@@ -50,7 +50,7 @@ export const MagicConch = db.define('MagicConch', {
   url: {
     type: DataTypes.STRING
   },
-  soundURL: {
+  soundUrl: {
     type: DataTypes.STRING
   }
 })

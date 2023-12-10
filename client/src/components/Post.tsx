@@ -64,7 +64,7 @@ useEffect(() => {
         <a href="#" className="card-link">{postObj.user.username}</a>
         <h3>{postObj.title}</h3>
         <audio controls>
-          <source src={postObj.soundURL} type="audio/webm" />
+          <source src={postObj.soundUrl} type="audio/webm" />
         </audio>
         <h4>{`category: ${postObj.category}`}</h4>
         {findLikedPost()

@@ -107,6 +107,7 @@ export const RecordPost = ({ audioContext, title, category }: { audioContext: Ba
   const createPostRecord = async () => {
     try {
       const soundUrl = await saveAudioToGoogleCloud()
+      console.log('this is the sound URL in create postrecord: ', soundUrl)
       const postResponse = await axios.post('/createPostRecord', {
         userId,
         title,

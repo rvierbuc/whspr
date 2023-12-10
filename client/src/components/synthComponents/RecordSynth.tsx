@@ -19,6 +19,7 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props)
   const recorder: MediaRecorder = new MediaRecorder(mediaDest.stream);
   const userId: number = 5;
   const category: string = 'music';
+  const postId = 123;
 
   // start the sound/recording
   const startRecording = async () => {
@@ -53,9 +54,15 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props)
     try {
       const formData: FormData = new FormData();
       formData.append('audio', saveBlob);
-      const response = await axios.post('/upload', formData);
+      const response = await axios.post(`/upload/${userId}/${postId}`, formData);
       console.log('cloud response', response)
-      response.status === 200 ? console.log('Synth saved to cloud') : console.error('Error saving synth', response.statusText)
+      if(response.status === 200){ 
+        console.log('Synth saved to cloud') 
+        const downloadURL = response.data
+        return downloadURL
+      }else{
+        console.error('Error saving synth', response.statusText)
+      } 
     } catch(error) {
       console.error('Error saving audio', error);
     }
@@ -69,7 +76,7 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props)
         userId: userId,
         title: 'My music',
         category: 'music',
-        soundURL: soundUrl
+        soundUrl: soundUrl
       })
       if (postResponse.status === 200) {
         console.log('Post saved to Database')
