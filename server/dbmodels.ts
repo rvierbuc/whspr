@@ -173,10 +173,10 @@ Like.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 Post.hasMany(Like, {foreignKey: 'postId'})
 Like.belongsTo(Post, { foreignKey: 'postId', as: 'post' })
 
-User.hasMany(Comment, {foreignKey: 'userId'})
-Comment.belongsTo(User, { foreignKey: 'userId' })
-Post.hasMany(Comment, {foreignKey: 'postId'})
-Comment.belongsTo(Post, { foreignKey: 'postId'})
+// User.hasMany(Comment, {foreignKey: 'userId'})
+// Comment.belongsTo(User, { foreignKey: 'userId' })
+// Post.hasMany(Comment, {foreignKey: 'postId'})
+// Comment.belongsTo(Post, { foreignKey: 'postId'})
 
 UsersRadio.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 UsersRadio.belongsTo(Radio, { foreignKey: 'radiosId', as: 'radio' })
@@ -186,8 +186,8 @@ Radio.belongsTo(User, { foreignKey: 'hostId', as: 'host' })
 User.hasMany(Post, { foreignKey: 'userId'})
 Post.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 
-Post.hasMany(Sound, { foreignKey: 'postId' })
-Sound.belongsTo(Post, { foreignKey: 'postId' })
+// Post.hasMany(Sound, { foreignKey: 'postId' })
+// Sound.belongsTo(Post, { foreignKey: 'postId' })
 
 Stat.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 Stat.belongsTo(Post, { foreignKey: 'postId', as: 'post' })
@@ -228,7 +228,7 @@ export const syncDatabase = async (): Promise<void> => {
 
 export const dropDatabase = async (): Promise<void> => {
   try {
-    await db.query('DROP DATABASE IF EXISTS "whspr"')
+    await db.query('DROP DATABASE IF EXISTS "whspr";')
     console.info('Database dropped')
   } catch (error) {
     console.error('Error dropping the database:', error)
@@ -237,9 +237,18 @@ export const dropDatabase = async (): Promise<void> => {
 
 export const createDatabase = async (): Promise<void> => {
   try {
-    await db.query('CREATE DATABASE "whspr"')
+    await db.query('CREATE DATABASE "whspr";')
     console.info('Database created')
   } catch (error) {
     console.error('Error creating the database:', error)
+  }
+}
+
+export const closeDatabase = async (): Promise<void> => {
+  try {
+    await db.close()
+    console.info('Database closed.')
+  } catch (error) {
+    console.error('Error closing the database:', error)
   }
 }

@@ -13,3 +13,68 @@ body {
     background-color: #000;
 
 }
+
+.play-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #3c3556;
+    color: #a6c5ff;
+    font-size: 20px;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .play-button:hover {
+    background-color: #1e1a2a;
+  }
+
+  .record-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #3c3556;
+    color: #a6c5ff;
+    font-size: 20px;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .record-button:hover {
+    background-color: #1e1a2a;
+  }
+
+  .stop-button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #3c3556;
+    color: #a6c5ff;
+    font-size: 20px;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .play-button:disabled,
+  .record-button:disabled,
+  .stop-button:disabled {
+    opacity: 0.3;
+    border: 1px solid #ddd;
+  }
+
+  
+  .play-button:active,
+  .record-button:active,
+  .stop-button:active {
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .stop-button:hover {
+        background-color: #1e1a2a;
+    }
+    
+    .play-button:disabled:hover,
+    .record-button:hover,
+    .stop-button:hover {
+      background-color: #3c3556;
+    }

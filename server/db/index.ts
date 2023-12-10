@@ -1,6 +1,6 @@
 const {Sequelize} = require("sequelize-typescript");
 
-const HOST = "localhost";
+const HOST = process.env.HOST;
 
 const db = new Sequelize({
   host: HOST,

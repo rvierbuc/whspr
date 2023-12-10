@@ -32,6 +32,12 @@ export const seedDatabase = async () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     },
+    {
+      username: 'thisguyoverhere',
+      profileImgUrl: 'https://website.com/profile-image.jpg',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
   ]);
 
   await Post.bulkCreate([
@@ -90,9 +96,7 @@ export const seedDatabase = async () => {
         updatedAt: new Date(),
       },
     ]);
-
-
-    console.log('Seed script executed successfully');
+    console.info('\x1b[32m%s\x1b[0m', 'Seed script executed successfully');
   } catch (error) {
     console.error('\x1b[31m%s\x1b[0m', 'Seed script failed', error);
   }
@@ -119,5 +123,6 @@ export const seedDatabase = async () => {
     }
   ])
 };
+
 
 seedDatabase();
