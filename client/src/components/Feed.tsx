@@ -37,19 +37,19 @@ useEffect(() => {
 }, [])
   return (
     <div>
-      <h2>Audio Feed</h2>
-      <button  
+      <h2 style={{color: 'white'}}>Audio Feed</h2>
+      {/* <button  
       type="button"
       className="btn btn-dark"
       style={{margin:'15px'}}
       onClick={() => setRecord(() => !record)}
       >Create a Post
-      </button>
-       {record 
+      </button> */}
+       {/* {record 
         ? <RecordPost
           audioContext={audioContext}
          />
-        :<div></div>}
+        :<div></div>} */}
     {feed === 'following' ?
     <div>
         <button
@@ -77,14 +77,15 @@ useEffect(() => {
       </div>}
       {posts ? posts.map((post: any) => (
         <div>
+          <WaveSurferComponent postObj={post} audioUrl={post.soundUrl} postId={post.id} />
           <Post
             key = {post.id}
             postObj = {post}
-            getFriendsPosts={getFriendsPosts}
+            getPosts={getPosts}
             audioContext={audioContext}
+            feed={feed}
           />
           {/* each post should have its own instance of a waveSurfer comp */}
-          <WaveSurferComponent audioUrl={post.soundUrl} postId={post.id} />
 
         </div>
       )) : <div>Loading...</div>}

@@ -5,7 +5,7 @@ import { RecordComment } from "./RecordComment"
 import WaveSurferComponent from "./WaveSurfer";
 
  const Post = (props) => {
-  const { postObj, getFriendsPosts, audioContext } = props
+  const { postObj, getPosts, audioContext, feed } = props
   const [commentInputOpen, setCommentInputOpen] = useState<boolean>(false)
   const [commentOpen, setCommentOpen] = useState<boolean>(false)
   const [comments, setComments] = useState<any>()
@@ -17,7 +17,7 @@ import WaveSurferComponent from "./WaveSurfer";
   const handleLike = async()=> {
     try{
        await axios.post('/post/like', {userId, postId: postObj.id})
-       await getFriendsPosts()
+       await getPosts(feed)
     } catch(error){
       console.log('client could not like', error)
     }
@@ -26,7 +26,7 @@ const handleUnlike = async() => {
   try{
     const likeObj = postObj.Likes.filter((likeObj) => likeObj.userId === userId)
     await axios.delete(`/post/unlike/${likeObj[0].id}`)
-    await getFriendsPosts()
+    await getPosts(feed)
   } catch(error){
     console.log('client could not unlike', error)
   }
@@ -63,28 +63,32 @@ useEffect(() => {
     <div className="card" >
       
       <div className="card-body" >
-        <a href="#" className="card-link">{postObj.user.username}</a>
-        <h3>{postObj.title}</h3>
-        <WaveSurferComponent
-          soundUrl={postObj.soundUrl}
-          />
-        <audio controls>
+        {/* <a href="#" className="card-link">{postObj.user.username}</a>
+        <h3>{postObj.title}</h3> */}
+        {/* <audio controls>
           <source src={postObj.soundUrl} type="audio/webm" />
-        </audio>
-        <h4>{`category: ${postObj.category}`}</h4>
+        </audio> */}
+        {/* <h4>{`category: ${postObj.category}`}</h4> */}
         {findLikedPost()
         ?
           <button
         type="button"
-        className="btn btn-dark"
+        className="btn"
         onClick={()=> handleUnlike()}
-        >unlike
-        </button>
+        style={{backgroundColor:'white', borderColor:'white'}}
+        ><svg width="26" height="26" fill='black' className="bi bi-heart-fill" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"></path> 
+  
+        </svg>
+       </button>
         : <button
         type="button"
-        className="btn btn-light"
+        className="btn"
         onClick={()=> handleLike()}
-        >like
+        style={{backgroundColor:'white', borderColor:'white'}}
+        > <svg width="26" height="26" fill="black" className="bi bi-heart" viewBox="0 0 16 16">
+        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"></path>
+      </svg>
         </button>}
       </div>
       <div className="accordion" id="commentBox">

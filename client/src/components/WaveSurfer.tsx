@@ -7,9 +7,10 @@ import React, { useEffect, useState } from 'react';
 interface WaveSurferProps {
     audioUrl: string;
     postId: number;
+    postObj: any;
 }
 
-const WaveSurferComponent: React.FC<WaveSurferProps> = ({ audioUrl, postId}) => {
+const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, postId}) => {
     const [wave, setWave] = useState<WaveSurfer | null>(null);
     const [display, setDisplay] = useState<boolean>(false); 
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -68,15 +69,35 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ audioUrl, postId}) => 
         console.log('wave', wave);
     }, [audioUrl]);
     return (
-        <div>
+        <div  className="card">
             <br/>
+            <div className="card-body" >
+            <a href="#" className="card-link">{postObj.user.username}</a>
+            <h3>{postObj.title}</h3>
             <div id={containerId}></div>
-            <button type='button' id="play-btn" onClick={() => {
-                if (wave) {
-                    wave.playPause();
-                    setIsPlaying(!isPlaying);
-                }
-            }}>{isPlaying ? 'Stop' : 'Play'}</button>
+            {isPlaying ?
+                <button type='button' className="btn btn-danger" id="play-btn" onClick={() => {
+                    if (wave) {
+                        wave.playPause();
+                        setIsPlaying(!isPlaying);
+                    }
+                }}>Stop</button>
+                : <button type='button' className="btn btn-light" id="play-btn" onClick={() => {
+                    if (wave) {
+                        wave.playPause();
+                        setIsPlaying(!isPlaying);
+                    }
+                }}>Play</button>
+            }
+            <div>
+                <button
+                className="btn"
+                // onClick={()=> }
+                style={{backgroundColor:'white', borderColor:'white'}}>
+                <a href="#" className="card-link">{`#${postObj.category}`}</a>
+                </button>
+            </div>
+            </div>
         </div>
     )
 }

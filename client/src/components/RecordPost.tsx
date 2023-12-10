@@ -7,8 +7,8 @@ export const RecordPost = ({ audioContext, title, category }: { audioContext: Ba
   const [audioChunks, setAudioChunks] = useState<Blob[]>([])
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const audioSource = useRef<AudioBufferSourceNode | null>(null)
-  const userId = 5
-  const postId = 66
+  const userId = 1
+  const postId = 1
 
   const startRecording = async () => {
     try {

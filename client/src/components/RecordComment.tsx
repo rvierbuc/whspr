@@ -92,7 +92,7 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
-      const response = await axios.post('/upload', formData)
+      const response = await axios.post(`/upload/${userId}/${postId}`, formData)
       if (response.status === 200) {
         const downloadURL = response.data
         return downloadURL
@@ -126,17 +126,20 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
   return (
         <div>
             <button
+            className="record-button"
             onClick={startRecording}
             disabled={isRecording}
-            >🔴</button>
+            >◯</button>
             <button
+            className="play-button"
             onClick={playAudio}
             disabled={isPlaying || audioChunks.length === 0 }
-            >▶️</button>
+            >▷</button>
             <button
+            className="stop-button"
             onClick={isRecording ? stopRecording : stopPlaying}
             disabled={!isRecording && !isPlaying}
-            >🟥</button>
+            >□</button>
             <button
             onClick={createPostRecord}
             disabled={audioChunks.length === 0 || isRecording}
