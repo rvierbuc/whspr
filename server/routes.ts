@@ -52,11 +52,11 @@ router.get('/getAudio', async (req: Request, res: Response) => {
 //     if(!postRecord){
 //       res.status(404).send('Post not found')
 //     }
-//     const soundURL = postRecord?.get('soundURL') as string;
-//     if(!soundURL){
+//     const soundUrl = postRecord?.get('soundUrl') as string;
+//     if(!soundUrl){
 //       res.status(404).send('SoundURL not found')
 //     }
-//     const fileName = soundURL.split('/').pop()
+//     const fileName = soundUrl.split('/').pop()
 //     const localFilePath = path.join()
 //   }
 // });
