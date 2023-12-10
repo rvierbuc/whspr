@@ -11,7 +11,6 @@ const Post = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   }
   return (
     <div>
-      <NavBar />
         <h1>record a post</h1>
         <button onClick={handleCreatePost}>Record a Post</button>
 

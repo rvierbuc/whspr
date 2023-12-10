@@ -13,6 +13,16 @@ body {
     background-color: #000;
 
 }
+.navbar-collapse {
+  transition: max-height 0.3s ease-in-out;
+  max-height: 0;
+  overflow: hidden;
+}
+
+.navbar-collapse.show {
+  max-height: 2000px; 
+  transition: max-height 0.3s ease-in-out;
+}
 
 .play-button {
     width: 50px;
@@ -78,3 +88,4 @@ body {
     .stop-button:hover {
       background-color: #3c3556;
     }
+    
