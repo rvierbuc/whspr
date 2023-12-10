@@ -20,7 +20,6 @@ const Synthesize = ({audioContext}: Props): React.JSX.Element => {
 
   return (
     <div className="container-sm">
-      <NavBar />
       <h1 className="text-center">Whspr</h1>
       <SynthDaw audioContext={audioContext} oscillator={oscillator} filter={filter} mediaDest={mediaDest} finalDest={finalDest} />
     </div>
