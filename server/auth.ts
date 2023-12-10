@@ -6,7 +6,7 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, ENVIRONMENT } = process.env;
 const PORT = process.env.PORT || 3000
-const HOST = process.env.HOST || 'bad times'
+const HOST = process.env.HOST || 'localhost'
 const callbackURL = `http://${HOST}:${PORT}/google/callback`;
 console.log(PORT, HOST)
 
