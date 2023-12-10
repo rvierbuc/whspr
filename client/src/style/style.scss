@@ -1,5 +1,18 @@
 @import "~bootstrap/scss/bootstrap";
 
+@keyframes navbarflyout{
+  from{
+    height: 0;
+    opacity: 0;
+    transform: translateY(-20px)
+  }
+  to{
+    height: auto;
+    opacity: 1;
+    transform: translatyY(0)
+  }
+}
+
 body {
     background-color: #424242;
 }
@@ -14,14 +27,13 @@ body {
 
 }
 .navbar-collapse {
-  transition: max-height 0.3s ease-in-out;
-  max-height: 0;
+  height: 0;
   overflow: hidden;
 }
 
 .navbar-collapse.show {
-  max-height: 2000px; 
-  transition: max-height 0.3s ease-in-out;
+  animation: navbarflyout 0.3s ease-in-out;
+  height: auto;
 }
 
 .play-button {

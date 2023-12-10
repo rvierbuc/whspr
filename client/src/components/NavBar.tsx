@@ -6,7 +6,7 @@ import Container from 'react-bootstrap/Container';
 // import '../style/style.scss'
 
 const NavBar = () => {
-  const [showMenu, setShowMenu] = useState<boolean>(false);
+  const [showMenu, setShowMenu] = useState(false);
 
   const navigate = useNavigate();
   const handleNavigation = (path: string) => {
@@ -32,7 +32,7 @@ const NavBar = () => {
             />
             {' '}
             </Navbar.Brand>
-            <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={toggleMenu}>
+            <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={() => setShowMenu(!showMenu)}>
               </Navbar.Toggle>
             <Navbar.Collapse id="responsive-navbar-nav" className={showMenu ? 'show' : ''}>
               <Nav className="ml-auto">
