@@ -10,6 +10,7 @@ const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   }
   return (
     <div>
+      <div className="d-flex justify-content-center">
 <button  
       type="button"
       className="btn btn-dark"
@@ -17,8 +18,9 @@ const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
       onClick={handleCreatePost}>
         Post
       </button>
+      </div>
 {postCreated && (<div>
-<div>
+<div className="d-flex justify-content-center">
           <input type="text"
           placeholder="What's on your mind?"
           value={title} 
