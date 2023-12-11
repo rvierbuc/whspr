@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios, {AxiosResponse} from "axios";
-import { RecordPost } from "./RecordPost"
+import PostCard from "./PostCard"
 import Post from "./Post";
 import WaveSurferComponent from "./WaveSurfer";
 
 
 const Feed = ({ audioContext }: { audioContext: BaseAudioContext }) => {
 const [posts, setPosts] = useState<any>()
-const [record, setRecord] = useState<boolean>(false)
 const [feed, setFeed] = useState<string>('following')
 
 const userId = 1;
@@ -37,19 +36,7 @@ useEffect(() => {
 }, [])
   return (
     <div>
-      <h2>Audio Feed</h2>
-      <button  
-      type="button"
-      className="btn btn-dark"
-      style={{margin:'15px'}}
-      onClick={() => setRecord(() => !record)}
-      >Create a Post
-      </button>
-       {record 
-        ? <RecordPost
-          audioContext={audioContext}
-         />
-        :<div></div>}
+<PostCard audioContext={audioContext}/>
     {feed === 'following' ?
     <div>
         <button

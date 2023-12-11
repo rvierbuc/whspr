@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { RecordPost } from './RecordPost'
-import NavBar from './NavBar'
 
-const Post = ({ audioContext }: { audioContext: BaseAudioContext }) => {
+const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   const [postCreated, setPostCreated] = useState(false)
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState('')
@@ -11,27 +10,27 @@ const Post = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   }
   return (
     <div>
-        <h1>record a post</h1>
-        <button onClick={handleCreatePost}>Record a Post</button>
-
+<button  
+      type="button"
+      className="btn btn-dark"
+      style={{margin:'15px'}}
+      onClick={handleCreatePost}>
+        Post
+      </button>
 {postCreated && (<div>
 <div>
-          title: <input type="text"
+          <input type="text"
+          placeholder="What's on your mind?"
           value={title} 
-          onChange={(e) => { setTitle(e.target.value) }}/>
-          </div>
-          <div>
-          category: <input type="text" 
-          value={category} 
-          onChange={(e) => { setCategory(e.target.value) }}/>
+          onChange={(e) => { setTitle(e.target.value) }}
+          className='input-control'
+          />
           </div>
 <RecordPost
 audioContext={audioContext}
 title={title}
 category={category}
-
 />
-<button onClick={handleCreatePost}>Cancel</button>
 </div>
 )}
 
@@ -39,4 +38,4 @@ category={category}
   )
 }
 
-export default Post
+export default PostCard

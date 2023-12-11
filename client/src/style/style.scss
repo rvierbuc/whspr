@@ -9,7 +9,7 @@
   to{
     height: auto;
     opacity: 1;
-    transform: translatyY(0)
+    transform: translateY(0)
   }
 }
 
@@ -22,10 +22,6 @@ body {
     
 }
 
-#play-btn {
-    background-color: #000;
-
-}
 .navbar-collapse {
   height: 0;
   overflow: hidden;
@@ -35,69 +31,51 @@ body {
   animation: navbarflyout 0.3s ease-in-out;
   height: auto;
 }
-
-.play-button {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: #3c3556;
-    color: #a6c5ff;
-    font-size: 20px;
-    padding: 10px;
-    text-align: center;
-  }
-  
-  .play-button:hover {
-    background-color: #1e1a2a;
-  }
-
+  .post-button,
+  .delete-button,
+  .stop-button,
+  .play-button,
   .record-button {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: #3c3556;
-    color: #a6c5ff;
-    font-size: 20px;
-    padding: 10px;
-    text-align: center;
+    overflow: hidden;
+    background-color: #000210;
   }
-
-  .record-button:hover {
+  .post-button:not(:disabled):hover,
+  .delete-button:not(:disabled):hover,
+  .stop-button:not(:disabled):hover,
+  .play-button:not(:disabled):hover,
+  .record-button:not(:disabled):hover {
     background-color: #1e1a2a;
   }
-
-  .stop-button {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: #3c3556;
-    color: #a6c5ff;
-    font-size: 20px;
-    padding: 10px;
-    text-align: center;
+  .post-button img,
+  .delete-button img,
+  .stop-button img,
+  .play-button img,
+  .record-button img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
-
+  .post-button:disabled,
+  .delete-button:disabled,
   .play-button:disabled,
   .record-button:disabled,
   .stop-button:disabled {
-    opacity: 0.3;
-    border: 1px solid #ddd;
+    opacity: 0.55;
+    border: 1px solid #000000;
   }
-
-  
-  .play-button:active,
-  .record-button:active,
-  .stop-button:active {
+  .post-button:active,
+  .delete-button:active,
+    .record-button:active,
+    .play-button:active,
+    .stop-button:active {
       box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     }
-    
-    .stop-button:hover {
-        background-color: #1e1a2a;
+
+    .input-control {
+      border-radius: 10px;
+      background-color: rgba(0, 0, 0, 0.2);
+      padding: 15px;
     }
-    
-    .play-button:disabled:hover,
-    .record-button:hover,
-    .stop-button:hover {
-      background-color: #3c3556;
-    }
-    
