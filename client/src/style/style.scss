@@ -9,20 +9,10 @@ body {
     
 }
 
-#play-btn {
-    background-color: #000;
+// #play-btn {
+//     background-color: #f4ebeb;
 
-}
-.navbar-collapse {
-  transition: max-height 0.3s ease-in-out;
-  max-height: 0;
-  overflow: hidden;
-}
-
-.navbar-collapse.show {
-  max-height: 2000px; 
-  transition: max-height 0.3s ease-in-out;
-}
+// }
 
 .play-button {
     width: 50px;
@@ -106,3 +96,5 @@ body {
 .active {
     background-color: rgb(109, 74, 225);
 }
+    }
+
