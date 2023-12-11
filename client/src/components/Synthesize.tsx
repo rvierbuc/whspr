@@ -21,7 +21,6 @@ const Synthesize = ({audioContext}: Props): React.JSX.Element => {
 
   return (
     <div>
-      <NavBar />
       <SynthDaw audioContext={audioContext} oscillator={oscillator} filter={filter} mediaDest={mediaDest} finalDest={finalDest} />
     </div>
   );
