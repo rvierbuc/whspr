@@ -41,7 +41,9 @@ const ReadOnlyProfile = ({audioContext}) => {
           <div>
             <div className="user-profile-card">
                 <div className="user-profile-image">
-                    <img src={selectedUserInfo[0].user.profileImgUrl} alt="user profile image" />
+                    <img 
+                    style={{ width: 'auto', height: '100px', objectFit: 'scale-down' }}
+                    src={selectedUserInfo[0].user.profileImgUrl} alt="user profile image" />
                 </div>
                 <div className="user-profile-info">
                   <h2 style={{color: 'white'}}>{selectedUserInfo[0].user.username}</h2>
