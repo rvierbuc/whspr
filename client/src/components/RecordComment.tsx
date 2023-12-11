@@ -1,7 +1,9 @@
 import React, { useState, useRef } from 'react'
 import axios from 'axios'
 
-export const RecordPost = ({ audioContext, title, category }: { audioContext: BaseAudioContext; title: string; category: string}, tit) => {
+export const RecordComment = (props, { audioContext }: { audioContext: BaseAudioContext }) => {
+  const [title, setTitle] = useState('')
+  const [category, setCategory] = useState('')
   const [isRecording, setIsRecording] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([])
@@ -9,11 +11,9 @@ export const RecordPost = ({ audioContext, title, category }: { audioContext: Ba
   const audioSource = useRef<AudioBufferSourceNode | null>(null)
   const userId = 1
   const postId = 1
-
+  const { postObj, getComments } = props
   const startRecording = async () => {
     try {
-      //for now, this resets the recording array to an empty array when recording starts
-      setAudioChunks([])
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       mediaRecorder.current = new MediaRecorder(stream)
 
@@ -107,15 +107,14 @@ export const RecordPost = ({ audioContext, title, category }: { audioContext: Ba
   const createPostRecord = async () => {
     try {
       const soundUrl = await saveAudioToGoogleCloud()
-      console.log('this is the sound URL in create postrecord: ', soundUrl)
-      const postResponse = await axios.post('/createPostRecord', {
+      const postResponse = await axios.post('/post/createCommentRecord', {
         userId,
-        title,
-        category,
+        postId: postObj.id,
         soundUrl
       })
-      if (postResponse.status === 200) {
+      if (postResponse.status === 201) {
         console.info('Post saved to Database')
+        getComments()
       } else {
         console.error('Error saving post: ', postResponse.statusText)
       }
@@ -125,32 +124,30 @@ export const RecordPost = ({ audioContext, title, category }: { audioContext: Ba
   }
   
   return (
-        <div style={{margin:'15px'}}>
-          <button
+        <div>
+            <button
             className="record-button"
             onClick={startRecording}
             disabled={isRecording}
-            ><img src={require('../style/recordbutton.png')} /></button>
+            >◯</button>
             <button
             className="play-button"
             onClick={playAudio}
             disabled={isPlaying || audioChunks.length === 0 }
-            ><img src={require('../style/playbutton.png')} /></button>
+            >▷</button>
             <button
             className="stop-button"
             onClick={isRecording ? stopRecording : stopPlaying}
             disabled={!isRecording && !isPlaying}
-            ><img src={require('../style/stopbutton.png')} /></button>
+            >□</button>
             <button
-            className="delete-button"
-            onClick={emptyRecording}
-            disabled={audioChunks.length === 0 || isRecording}
-            ><img src={require('../style/deletebutton.png')} /></button>
-            <button
-            className="post-button"
             onClick={createPostRecord}
             disabled={audioChunks.length === 0 || isRecording}
-            ><img src={require('../style/postbutton.png')} /></button>
+            >💾</button>
+            <button
+            onClick={emptyRecording}
+            disabled={audioChunks.length === 0 || isRecording}
+            >🗑️</button>
         </div>
   )
 }

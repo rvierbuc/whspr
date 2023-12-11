@@ -76,7 +76,7 @@ app.get('/auth/google', (req: Request, res: Response) => {
 })
 
 app.get('/google/callback',  passport.authenticate('google', {
-  successRedirect: '/protected',
+  successRedirect: '/protected/feed',
   failureRedirect: '/auth/google/failure',
 }),
 (req: Request, res: Response) => {
