@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import AudioTag from './AudioTag';
 import axios from 'axios';
+import { Container, Button, Stack, Card } from 'react-bootstrap';
 
 interface Props {
   audioContext: AudioContext;
@@ -33,7 +34,7 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props)
       console.error('Could not start recording', error)
     }
   };
-  console.log(audioSource);
+
   // stop the sound/recording
   const stopRecording = async () => {
     try {
@@ -90,19 +91,16 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props)
   }
 
   return (
-    <div className="text-center">
-      <h3>Record the synth</h3>
-      <div>
-        <button className="btn" onClick={start}>Play</button>
-        <button className="btn" onClick={stop}>Stop</button>
-        <button className="btn" onClick={startRecording}>Record</button>
-        <button className="btn" onClick={stopRecording}>Stop Record</button>
-        <button className="btn" onClick={postRecording}>Post</button>
-      </div>
-      <div>
-        {/* <AudioTag source={audioSource} /> */}
-      </div>
-    </div>
+    <Container className="text-center my-3 pb-3">
+      <h3 className="mb-2">Record the synth</h3>
+      <Stack direction="horizontal" gap={4} className="mx-5 mb-3 typeCard">
+        <Button className="btn-secondary" variant="secondary" onClick={start}>▶️</Button>
+        <Button className="btn-secondary" onClick={stop}>⏸️</Button>
+        <Button className="btn-secondary" onClick={startRecording}>🔴</Button>
+        <Button className="btn-secondary" onClick={stopRecording}>🟥</Button>
+        <Button className="btn-secondary" onClick={postRecording}>🎶 </Button>
+      </Stack>
+    </Container>
   );
 };
 

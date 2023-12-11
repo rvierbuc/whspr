@@ -1,6 +1,7 @@
 import React from 'react';
 import NavBar from './NavBar';
 import SynthDaw from './synthComponents/SynthDaw';
+import { Container } from 'react-bootstrap';
 
 interface Props {
   audioContext: AudioContext
@@ -19,8 +20,8 @@ const Synthesize = ({audioContext}: Props): React.JSX.Element => {
   filter.connect(mediaDest);
 
   return (
-    <div className="container-sm">
-      <h1 className="text-center">Whspr</h1>
+    <div>
+      <NavBar />
       <SynthDaw audioContext={audioContext} oscillator={oscillator} filter={filter} mediaDest={mediaDest} finalDest={finalDest} />
     </div>
   );
