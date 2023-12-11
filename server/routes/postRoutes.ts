@@ -44,7 +44,7 @@ try{
 }
 
 })
-
+//gets all posts
 router.get('/explore/:userId', async (req: Request, res: Response) => {
   const { userId } = req.params;
   try{
@@ -74,7 +74,7 @@ router.get('/explore/:userId', async (req: Request, res: Response) => {
   }
   
   })
-
+//creates comment 
   router.post('/createCommentRecord', async (req: Request, res: Response) => {
     const { userId, postId, soundUrl } = req.body
     try{
@@ -131,7 +131,7 @@ router.post('/like', async (req: Request, res: Response) => {
     res.sendStatus(500)
   }
  })
-
+//gets all comments for one post
  router.get('/comment/:postId', async (req: Request, res: Response) => {
   const { postId } = req.params;
 try{
@@ -152,12 +152,12 @@ try{
   res.sendStatus(500)
 }
  })
-//get only one users posts
+//get only one user's posts
  router.get('/selected/:id', async (req: Request, res: Response) => {
   const { id } = req.params
 
   try{
-    const selectedUser = await Post.findAll({ 
+    const selectedUserPosts = await Post.findAll({ 
       where: {userId: id},
       include: [{
         model: User,
@@ -167,8 +167,8 @@ try{
     Comment]
     }
   )
-    console.log(selectedUser)
-    res.status(200).send(selectedUser)
+    console.log('got user posts', selectedUserPosts)
+    res.status(200).send(selectedUserPosts)
   } catch(error) {
     console.error('query failed: could not get selected user', error)
     res.sendStatus(500)
@@ -178,12 +178,12 @@ try{
  router.post('/startFollowing', async(req: Request, res: Response) =>{
   const {userId, followingId} = req.body
   console.log(userId, followingId)
-  // try{
-  //   const startFollowing = await Follower.create({userId, followingId})
-  //   res.send(startFollowing)
-  // }catch(error){
-  //   console.error('could not follow', error)
-  //   res.sendStatus(500)
-  // }
+  try{
+    const startFollowing = await Follower.create({userId, followingId})
+    res.send(startFollowing)
+  }catch(error){
+    console.error('could not follow', error)
+    res.sendStatus(500)
+  }
  })
 module.exports = router
