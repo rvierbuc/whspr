@@ -27,7 +27,9 @@ useEffect(() => {
 }, [])
   return (
     <div>
+    <div className="centered">
 <PostCard audioContext={audioContext}/>
+    </div>
     {feed === 'following' ?
     <div>
         <button
