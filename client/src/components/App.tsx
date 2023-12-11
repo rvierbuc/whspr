@@ -46,7 +46,7 @@ const App = () => {
                 <Route path="/" element={<Login />} />
                 <Route path="/protected" element={<PrivateRoutes />} >
                     <Route path="dashboard" element={<WaveSurferComponent />} /> // Outlet is a placeholder for child routes to be rendered
-                    <Route path="profile" element={<UserProfile />} loader={() => getUserLoader()}/>
+                    <Route path="profile" element={<UserProfile  audioContext={audioContext} />} loader={() => getUserLoader()}/>
                     <Route path="feed" element={<Feed audioContext={audioContext} />} />
                     <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} />
                     <Route path="post" element={<Post audioContext={audioContext} />} />
