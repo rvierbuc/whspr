@@ -36,6 +36,7 @@ const App = () => {
             return response.data;
         } catch(err) {
             console.error('user loader error', err)
+            return null;
         }
     }
 

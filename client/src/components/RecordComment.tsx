@@ -16,6 +16,7 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
   const userId = user.id
   const startRecording = async () => {
     try {
+      setAudioChunks([])
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       mediaRecorder.current = new MediaRecorder(stream)
 
@@ -165,7 +166,10 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
       ><img src={require('../style/deletebutton.png')} /></button>
       <button
       className="post-button"
-      onClick={saveAudioToGoogleCloud}
+      onClick={() =>{
+        saveAudioToGoogleCloud()
+        emptyRecording()
+      }}
       disabled={audioChunks.length === 0 || isRecording}
       ><img src={require('../style/postbutton.png')} /></button>
   </div>

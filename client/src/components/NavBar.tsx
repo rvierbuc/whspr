@@ -37,7 +37,7 @@ const NavBar = () => {
             <Navbar.Collapse id="responsive-navbar-nav" className={showMenu ? 'show' : ''}>
               <Nav className="ml-auto">
                 <Nav.Link onClick={() => handleNavigation('/protected/feed')} >Home</Nav.Link>
-                <Nav.Link onClick={() => handleNavigation('/protected/post')}>Post</Nav.Link>
+                {/* <Nav.Link onClick={() => handleNavigation('/protected/post')}>Post</Nav.Link> */}
                 <Nav.Link onClick={() => handleNavigation('/protected/feed')}>Feed</Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/profile')}>Profile</Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/synthesize')}>Synthesize</Nav.Link>
