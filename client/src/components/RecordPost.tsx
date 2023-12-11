@@ -1,15 +1,14 @@
 import React, { useState, useRef } from 'react'
 import axios from 'axios'
 
-export const RecordPost = ({ user, audioContext, title, category }: { user: any; audioContext: BaseAudioContext; title: string; category: string}, tit) => {
+export const RecordPost = ({ user, audioContext, title, category, openPost }: { user: any; audioContext: BaseAudioContext; title: string; category: string; openPost: () => void}) => {
   const [isRecording, setIsRecording] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([])
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const audioSource = useRef<AudioBufferSourceNode | null>(null)
   const userId = user.id;
-  console.log(userId, "userid")
-  
+    
   const startRecording = async () => {
     try {
       //for now, this resets the recording array to an empty array when recording starts
@@ -97,7 +96,7 @@ export const RecordPost = ({ user, audioContext, title, category }: { user: any;
       formData.append('category', category)
       const response = await axios.post(`/upload`, formData)
       if (response.status === 200) {
-        console.log('Audio save successfully')
+        console.info('Audio save successfully')
       } else {
         console.error('Error saving audio:', response.statusText)
       }
@@ -130,7 +129,10 @@ export const RecordPost = ({ user, audioContext, title, category }: { user: any;
             ><img src={require('../style/deletebutton.png')} /></button>
             <button
             className="post-button"
-            onClick={saveAudioToGoogleCloud}
+            onClick={()=>{
+              openPost()
+              saveAudioToGoogleCloud()}
+            }
             disabled={audioChunks.length === 0 || isRecording}
             ><img src={require('../style/postbutton.png')} /></button>
         </div>
