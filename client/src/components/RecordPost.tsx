@@ -1,15 +1,16 @@
 import React, { useState, useRef } from 'react'
 import axios from 'axios'
 
-export const RecordPost = ({ audioContext, title, category }: { audioContext: BaseAudioContext; title: string; category: string}, tit) => {
+export const RecordPost = ({ user, audioContext, title, category }: { user: any; audioContext: BaseAudioContext; title: string; category: string}, tit) => {
   const [isRecording, setIsRecording] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([])
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const audioSource = useRef<AudioBufferSourceNode | null>(null)
-  const userId = 1
-  const postId = 1
-
+  console.log(user)
+  const userId = user.id;
+  
+console.log(userId, "userid")
   const startRecording = async () => {
     try {
       //for now, this resets the recording array to an empty array when recording starts
@@ -92,7 +93,7 @@ export const RecordPost = ({ audioContext, title, category }: { audioContext: Ba
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
-      const response = await axios.post(`/upload/${userId}/${postId}`, formData)
+      const response = await axios.post(`/upload/${userId}/`, formData)
       if (response.status === 200) {
         const downloadURL = response.data
         return downloadURL
@@ -125,7 +126,7 @@ export const RecordPost = ({ audioContext, title, category }: { audioContext: Ba
   }
   
   return (
-        <div style={{margin:'15px'}}>
+        <div className="d-flex justify-content-center" style={{margin:'15px'}}>
           <button
             className="record-button"
             onClick={startRecording}

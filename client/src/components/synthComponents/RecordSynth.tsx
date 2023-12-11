@@ -19,7 +19,7 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop, userId }
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const audioBuffer = useRef<AudioBufferSourceNode | null>(null);
   const recorder: MediaRecorder = new MediaRecorder(mediaDest.stream);
-  const postId = 123;
+  
   console.log('record synth', userId)
   // start the sound/recording
   const startRecording = async () => {
@@ -54,7 +54,7 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop, userId }
     try {
       const formData: FormData = new FormData();
       formData.append('audio', saveBlob);
-      const response = await axios.post(`/upload/${userId}/${postId}`, formData);
+      const response = await axios.post(`/upload/${userId}`, formData);
       console.log('cloud response', response)
       if(response.status === 200){ 
         console.log('Synth saved to cloud') 

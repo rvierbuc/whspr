@@ -7,11 +7,19 @@ const storage = new Storage({
 
 const bucket = storage.bucket('whspr-sounds')
 
-const saveAudio = async (audio: any, postId, userId): Promise<void | string> => {
+const saveAudio = async (audio: any, userId, title: string, category: string): Promise<void | string> => {
+  const file = bucket.file(`audio/${Date.now()}.wav`)
+  const downloadURL = `https://storage.googleapis.com/${bucket.name}/${file.name}`
   try {
-    console.log('ids in save audio', postId, userId)
-    const file = bucket.file(`audio/${Date.now()}.wav`)
-    const downloadURL = `https://storage.googleapis.com/${bucket.name}/${file.name}`
+    const postRecord = await Post.create({
+      title,
+      category,
+      userId,
+      soundUrl: downloadURL
+    })
+    const postId = postRecord.get('id')
+    console.log(postId, "postId in saveAudio")
+    console.log('ids in save audio', userId)
     const writeStream = file.createWriteStream({
       metadata: {
         contentType: 'audio/wav'

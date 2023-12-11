@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { RecordPost } from './RecordPost'
+import { useLoaderData } from 'react-router-dom'
 
 const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   const [postCreated, setPostCreated] = useState(false)
@@ -8,6 +9,8 @@ const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   const handleCreatePost = () => {
     setPostCreated(!postCreated)
   }
+  const user = useLoaderData()
+  console.log(user)
   return (
     <div>
       <div className="d-flex justify-content-center">
@@ -29,6 +32,7 @@ const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
           />
           </div>
 <RecordPost
+user={user}
 audioContext={audioContext}
 title={title}
 category={category}

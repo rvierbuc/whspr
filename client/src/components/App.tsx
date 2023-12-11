@@ -16,7 +16,7 @@ import PrivateRoutes from './PrivateRoutes';
 import Synthesize from './Synthesize';
 import WaveSurferComponent from './WaveSurfer';
 import Feed from './Feed'
-import Post from './PostCard'
+import PostCard from './PostCard'
 import UserProfile from './userProfile';
 import ReadOnlyProfile from './ReadOnlyProfile';
 import axios from 'axios';
@@ -49,7 +49,7 @@ const App = () => {
                     <Route path="profile" element={<UserProfile />} loader={() => getUserLoader()}/>
                     <Route path="feed" element={<Feed audioContext={audioContext} />} />
                     <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
-                    <Route path="post" element={<Post audioContext={audioContext} />} />
+                    <Route path="post" element={<PostCard audioContext={audioContext} />} loader={() => getUserLoader()}/>
                     <Route path="room" element={<Room />} />
                     <Route path="profile/:id" element={<ReadOnlyProfile audioContext={audioContext}/>} />
                 </Route>

@@ -92,7 +92,7 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
-      const response = await axios.post(`/upload/${userId}/${postId}`, formData)
+      const response = await axios.post(`/upload/${userId}`, formData)
       if (response.status === 200) {
         const downloadURL = response.data
         return downloadURL
