@@ -22,7 +22,7 @@ import ReadOnlyProfile from './ReadOnlyProfile';
 import axios from 'axios';
 
 // THE MAIN audio context to be used throughout the application (DO NOT ALTER)
-const audioContext: BaseAudioContext = new AudioContext();
+const audioContext: AudioContext = new AudioContext();
 /**
  * If this is altered, Pixie will find you and haunt you in your sleep until you
  * learn to sleep with one eye open, and even then that won't be enough.
@@ -46,9 +46,11 @@ const App = () => {
                 <Route path="/" element={<Login />} />
                 <Route path="/protected" element={<PrivateRoutes />} >
                     <Route path="dashboard" element={<WaveSurferComponent />} /> // Outlet is a placeholder for child routes to be rendered
-                    <Route path="profile" element={<UserProfile  audioContext={audioContext} />} loader={() => getUserLoader()}/>
+
+
+                    <Route path="profile" element={<UserProfile />} loader={() => getUserLoader()}/>
                     <Route path="feed" element={<Feed audioContext={audioContext} />} loader={() => getUserLoader()}/>
-                    <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} />
+                    <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
                     <Route path="post" element={<Post audioContext={audioContext} />} />
                     <Route path="room" element={<Room />} />
                     <Route path="profile/:id" element={<ReadOnlyProfile audioContext={audioContext}/>} loader={() => getUserLoader()} />
