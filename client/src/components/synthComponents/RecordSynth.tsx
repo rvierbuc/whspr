@@ -9,19 +9,18 @@ interface Props {
   finalDest: AudioDestinationNode
   start: () => void;
   stop: () => void;
+  userId: number
 }
 
-const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop }: Props) => {
+const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop, userId }: Props) => {
   const [title, setTitle] = useState<string>('')
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [audioSource, setAudioSource] = useState<string>('');
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const audioBuffer = useRef<AudioBufferSourceNode | null>(null);
   const recorder: MediaRecorder = new MediaRecorder(mediaDest.stream);
-  const userId: number = 5;
-  const category: string = 'music';
   const postId = 123;
-
+  console.log('record synth', userId)
   // start the sound/recording
   const startRecording = async () => {
     try {

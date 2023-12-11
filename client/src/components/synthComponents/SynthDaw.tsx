@@ -9,9 +9,10 @@ interface Props {
   filter: BiquadFilterNode
   mediaDest: MediaStreamAudioDestinationNode
   finalDest: AudioDestinationNode
+  userId: number
 }
 
-const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter}: Props): React.JSX.Element => {
+const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userId}: Props): React.JSX.Element => {
   // setting base context's state
   const [contextState, setContextState] = useState('');
 
@@ -64,7 +65,7 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter}: Prop
       <div>
         <h3 className="text-center">Set the Tone</h3>
         <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
-        <RecordSynth audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} />
+        <RecordSynth audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />
       </div>
     </Container>
   );
