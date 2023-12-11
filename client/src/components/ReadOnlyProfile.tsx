@@ -9,7 +9,7 @@ const ReadOnlyProfile = ({audioContext}) => {
     const [following, setFollowing] = useState<boolean>(false)
     //const [userPosts, setUserPosts]  = useState<any>()
     const { id } = useParams();
-
+    const user:any = useLoaderData()
     const getSelectedUserInfo = async () => {
       try{
         const selectedUserObj = await axios.get(`/post/selected/${id}`)
@@ -23,7 +23,7 @@ const ReadOnlyProfile = ({audioContext}) => {
 
     const startFollowing = async () => {
       try{
-        const createFollowing = await axios.post('/post/startFollowing', {userId: 1, followingId:id})
+        const createFollowing = await axios.post('/post/startFollowing', {userId: user.id, followingId:id})
         if(createFollowing.data === 'Created'){
           setFollowing(true)
         }

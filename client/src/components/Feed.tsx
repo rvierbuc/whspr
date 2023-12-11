@@ -3,19 +3,19 @@ import axios, {AxiosResponse} from "axios";
 import PostCard from "./PostCard"
 import Post from "./Post";
 import WaveSurferComponent from "./WaveSurfer";
-
+import { useLoaderData } from 'react-router-dom';
 
 const Feed = ({ audioContext }: { audioContext: BaseAudioContext }) => {
 const [posts, setPosts] = useState<any>()
-const [feed, setFeed] = useState<string>('following')
+const [feed, setFeed] = useState<string>('explore')
 
-const userId = 1;
-
+const user: any = useLoaderData();
+console.log(user)
 
 const getPosts = async(type) => {
   setFeed(type)
   try{
-    const allPosts: AxiosResponse = await axios.get(`/post/${type}/${userId}`)
+    const allPosts: AxiosResponse = await axios.get(`/post/${type}/${user.id}`)
     setPosts(allPosts.data)
     console.log(allPosts)
   } catch(error) {
@@ -23,7 +23,7 @@ const getPosts = async(type) => {
   }
 }
 useEffect(() => {
-  getPosts('following')
+  getPosts('explore')
 }, [])
   return (
     <div>
@@ -64,6 +64,7 @@ useEffect(() => {
             getPosts={getPosts}
             audioContext={audioContext}
             feed={feed}
+            user={user}
           />
           {/* each post should have its own instance of a waveSurfer comp */}
 
