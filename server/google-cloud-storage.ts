@@ -18,8 +18,9 @@ const saveAudio = async (audio: any, userId, title: string, category: string): P
       soundUrl: downloadURL
     })
     const postId = postRecord.get('id')
-    console.log(postId, "postId in saveAudio")
-    console.log('ids in save audio', userId)
+    if(!postId){
+      console.error('postId not found in saveAudio')
+    }
     const writeStream = file.createWriteStream({
       metadata: {
         contentType: 'audio/wav'
@@ -44,7 +45,7 @@ const saveAudio = async (audio: any, userId, title: string, category: string): P
         console.error('Error creating Sound record:', soundError);
       }),
     ])
-    return downloadURL;
+    console.log('Audio saved to cloud')
   } catch (error) {
     console.error('Error handling audio upload:', error)
   }

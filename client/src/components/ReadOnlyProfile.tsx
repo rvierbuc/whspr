@@ -9,7 +9,7 @@ const ReadOnlyProfile = ({audioContext}) => {
     const [following, setFollowing] = useState<boolean>(false)
     //const [userPosts, setUserPosts]  = useState<any>()
     const { id } = useParams();
-
+    const user:any = useLoaderData()
     const getSelectedUserInfo = async () => {
       try{
         const selectedUserObj = await axios.get(`/post/selected/${id}`)
@@ -23,7 +23,7 @@ const ReadOnlyProfile = ({audioContext}) => {
 
     const startFollowing = async () => {
       try{
-        const createFollowing = await axios.post('/post/startFollowing', {userId: 1, followingId:id})
+        const createFollowing = await axios.post('/post/startFollowing', {userId: user.id, followingId:id})
         if(createFollowing.data === 'Created'){
           setFollowing(true)
         }
@@ -41,7 +41,9 @@ const ReadOnlyProfile = ({audioContext}) => {
           <div>
             <div className="user-profile-card">
                 <div className="user-profile-image">
-                    <img src={selectedUserInfo[0].user.profileImgUrl} alt="user profile image" />
+                    <img 
+                    style={{ width: 'auto', height: '100px', objectFit: 'scale-down' }}
+                    src={selectedUserInfo[0].user.profileImgUrl} alt="user profile image" />
                 </div>
                 <div className="user-profile-info">
                   <h2 style={{color: 'white'}}>{selectedUserInfo[0].user.username}</h2>

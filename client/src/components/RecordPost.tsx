@@ -7,10 +7,9 @@ export const RecordPost = ({ user, audioContext, title, category }: { user: any;
   const [audioChunks, setAudioChunks] = useState<Blob[]>([])
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const audioSource = useRef<AudioBufferSourceNode | null>(null)
-  console.log(user)
   const userId = user.id;
+  console.log(userId, "userid")
   
-console.log(userId, "userid")
   const startRecording = async () => {
     try {
       //for now, this resets the recording array to an empty array when recording starts
@@ -93,10 +92,12 @@ console.log(userId, "userid")
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
-      const response = await axios.post(`/upload/${userId}/`, formData)
+      formData.append('userId', userId)
+      formData.append('title', title)
+      formData.append('category', category)
+      const response = await axios.post(`/upload`, formData)
       if (response.status === 200) {
-        const downloadURL = response.data
-        return downloadURL
+        console.log('Audio save successfully')
       } else {
         console.error('Error saving audio:', response.statusText)
       }
@@ -105,26 +106,6 @@ console.log(userId, "userid")
     }
   }
 
-  const createPostRecord = async () => {
-    try {
-      const soundUrl = await saveAudioToGoogleCloud()
-      console.log('this is the sound URL in create postrecord: ', soundUrl)
-      const postResponse = await axios.post('/createPostRecord', {
-        userId,
-        title,
-        category,
-        soundUrl
-      })
-      if (postResponse.status === 200) {
-        console.info('Post saved to Database')
-      } else {
-        console.error('Error saving post: ', postResponse.statusText)
-      }
-    } catch (error) {
-      console.error('error saving post: ', error)
-    }
-  }
-  
   return (
         <div className="d-flex justify-content-center" style={{margin:'15px'}}>
           <button
@@ -149,7 +130,7 @@ console.log(userId, "userid")
             ><img src={require('../style/deletebutton.png')} /></button>
             <button
             className="post-button"
-            onClick={createPostRecord}
+            onClick={saveAudioToGoogleCloud}
             disabled={audioChunks.length === 0 || isRecording}
             ><img src={require('../style/postbutton.png')} /></button>
         </div>

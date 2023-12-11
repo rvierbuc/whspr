@@ -9,6 +9,7 @@ interface Props {
 const Synthesize = ({audioContext}: Props): React.JSX.Element => {
   // setting up basic audioContext workflow => w/ oscillatorNode
   const user: any = useLoaderData();
+  const userId = user.id
   console.log('USER', user.id);
   const oscillator: OscillatorNode = audioContext.createOscillator();
   const filter: BiquadFilterNode = audioContext.createBiquadFilter();
@@ -22,7 +23,7 @@ const Synthesize = ({audioContext}: Props): React.JSX.Element => {
 
   return (
     <div>
-      <SynthDaw audioContext={audioContext} oscillator={oscillator} filter={filter} mediaDest={mediaDest} finalDest={finalDest} userId={user.id} />
+      <SynthDaw audioContext={audioContext} oscillator={oscillator} filter={filter} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />
     </div>
   );
 };

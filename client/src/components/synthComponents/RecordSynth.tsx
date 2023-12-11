@@ -52,14 +52,15 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop, userId }
   const saveRecording = async () => {
     const saveBlob: Blob = new Blob(audioChunks, {type: 'audio/wav'})
     try {
-      const formData: FormData = new FormData();
-      formData.append('audio', saveBlob);
-      const response = await axios.post(`/upload/${userId}`, formData);
+      const formData = new FormData()
+      formData.append('audio', saveBlob)
+      formData.append('userId', userId.toString())
+      formData.append('title', 'My music')
+      formData.append('category', 'music')
+      const response = await axios.post(`/upload`, formData);
       console.log('cloud response', response)
       if(response.status === 200){ 
         console.log('Synth saved to cloud') 
-        const downloadURL = response.data
-        return downloadURL
       }else{
         console.error('Error saving synth', response.statusText)
       } 
@@ -68,26 +69,26 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop, userId }
     }
   };
 
-  const postRecording = async () => {
-    try {
-      const soundUrl = await saveRecording();
-      console.log(soundUrl);
-      const postResponse = await axios.post('/createPostRecord', {
-        userId: userId,
-        title: 'My music',
-        category: 'music',
-        soundUrl: soundUrl
-      })
-      if (postResponse.status === 200) {
-        console.log('Post saved to Database')
-        await saveRecording()
-      } else {
-        console.error('Error saving post: ', postResponse.statusText)
-      }
-    } catch (error) {
-      console.error('error saving post: ', error)
-    }
-  }
+  // const postRecording = async () => {
+  //   try {
+  //     const soundUrl = await saveRecording();
+  //     console.log(soundUrl);
+  //     const postResponse = await axios.post('/createPostRecord', {
+  //       userId: userId,
+  //       title: 'My music',
+  //       category: 'music',
+  //       soundUrl: soundUrl
+  //     })
+  //     if (postResponse.status === 200) {
+  //       console.log('Post saved to Database')
+  //       await saveRecording()
+  //     } else {
+  //       console.error('Error saving post: ', postResponse.statusText)
+  //     }
+  //   } catch (error) {
+  //     console.error('error saving post: ', error)
+  //   }
+  // }
 
   return (
     <Container className="text-center my-3 pb-3">
@@ -97,7 +98,7 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop, userId }
         <Button className="btn-secondary" onClick={stop}>⏸️</Button>
         <Button className="btn-secondary" onClick={startRecording}>🔴</Button>
         <Button className="btn-secondary" onClick={stopRecording}>🟥</Button>
-        <Button className="btn-secondary" onClick={postRecording}>🎶 </Button>
+        <Button className="btn-secondary" onClick={saveRecording}>🎶 </Button>
       </Stack>
     </Container>
   );

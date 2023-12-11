@@ -5,7 +5,7 @@ import { RecordComment } from "./RecordComment"
 import WaveSurferComponent from "./WaveSurfer";
 
  const Post = (props) => {
-  const { postObj, getPosts, audioContext, feed } = props
+  const { postObj, getPosts, audioContext, feed, user } = props
   const [commentInputOpen, setCommentInputOpen] = useState<boolean>(false)
   const [commentOpen, setCommentOpen] = useState<boolean>(false)
   const [comments, setComments] = useState<any>()
@@ -109,6 +109,7 @@ useEffect(() => {
          audioContext={audioContext}
          postObj={postObj}
          getComments={getComments}
+         user={user}
          />
          <div className="accordion" id="previousComments">
         <div className="accordion-item"></div>

@@ -5,14 +5,14 @@ import {Post} from './dbmodels'
 
 const router = Router()
 
-router.post('/upload/:userId', async (req: Request, res: Response) => {
-const {userId} = req.params
+router.post('/upload', async (req: Request, res: Response) => {
+const {userId, title, category} = req.body;
   if (!req.file) {
     console.error('req.file is undefined in route upload.')
     res.sendStatus(400)
   } else {
     try {
-      const downloadUrl = await saveAudio(req.file.buffer, userId)
+      const downloadUrl = await saveAudio(req.file.buffer, userId, title, category)
       if(downloadUrl){
         res.status(200).send(downloadUrl)
       }
