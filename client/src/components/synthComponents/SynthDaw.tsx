@@ -1,6 +1,7 @@
 import React, { useState, useEffect, MouseEventHandler, SyntheticEvent } from 'react';
 import Oscillator from './Oscillator';
 import RecordSynth from './RecordSynth';
+import { Container, Card } from 'react-bootstrap';
 
 interface Props {
   audioContext: AudioContext,
@@ -58,11 +59,14 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter}: Prop
   };
 
   return (
-    <div className="card w-50 p-4">
-      <h3 className="text-center">This is the Daw!</h3>
-      <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
-      <RecordSynth audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} />
-    </div>
+    <Container className="synthCont w-50 rounded text-white">
+      <h1 className="text-center">Synthesize</h1>
+      <div>
+        <h3 className="text-center">Set the Tone</h3>
+        <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
+        <RecordSynth audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} />
+      </div>
+    </Container>
   );
 }
 
