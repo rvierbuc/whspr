@@ -1,15 +1,14 @@
 import React, { useState, useRef } from 'react'
 import axios from 'axios'
 
-export const RecordPost = ({ audioContext, title, category }: { audioContext: BaseAudioContext; title: string; category: string}, tit) => {
+export const RecordPost = ({ user, audioContext, title, category, openPost }: { user: any; audioContext: BaseAudioContext; title: string; category: string; openPost: () => void}) => {
   const [isRecording, setIsRecording] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([])
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const audioSource = useRef<AudioBufferSourceNode | null>(null)
-  const userId = 6
-  const postId = 1
-
+  const userId = user.id;
+    
   const startRecording = async () => {
     try {
       //for now, this resets the recording array to an empty array when recording starts
@@ -92,10 +91,12 @@ export const RecordPost = ({ audioContext, title, category }: { audioContext: Ba
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
-      const response = await axios.post(`/upload/${userId}/${postId}`, formData)
+      formData.append('userId', userId)
+      formData.append('title', title)
+      formData.append('category', category)
+      const response = await axios.post(`/upload`, formData)
       if (response.status === 200) {
-        const downloadURL = response.data
-        return downloadURL
+        console.info('Audio save successfully')
       } else {
         console.error('Error saving audio:', response.statusText)
       }
@@ -104,28 +105,8 @@ export const RecordPost = ({ audioContext, title, category }: { audioContext: Ba
     }
   }
 
-  const createPostRecord = async () => {
-    try {
-      const soundUrl = await saveAudioToGoogleCloud()
-      console.log('this is the sound URL in create postrecord: ', soundUrl)
-      const postResponse = await axios.post('/createPostRecord', {
-        userId,
-        title,
-        category,
-        soundUrl
-      })
-      if (postResponse.status === 200) {
-        console.info('Post saved to Database')
-      } else {
-        console.error('Error saving post: ', postResponse.statusText)
-      }
-    } catch (error) {
-      console.error('error saving post: ', error)
-    }
-  }
-  
   return (
-        <div style={{margin:'15px'}}>
+        <div className="d-flex justify-content-center" style={{margin:'15px'}}>
           <button
             className="record-button"
             onClick={startRecording}
@@ -148,7 +129,10 @@ export const RecordPost = ({ audioContext, title, category }: { audioContext: Ba
             ><img src={require('../style/deletebutton.png')} /></button>
             <button
             className="post-button"
-            onClick={createPostRecord}
+            onClick={()=>{
+              openPost()
+              saveAudioToGoogleCloud()}
+            }
             disabled={audioChunks.length === 0 || isRecording}
             ><img src={require('../style/postbutton.png')} /></button>
         </div>

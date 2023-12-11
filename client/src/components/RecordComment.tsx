@@ -13,8 +13,10 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
   
 
   const { postObj, getComments, user } = props
+  const userId = user.id
   const startRecording = async () => {
     try {
+      setAudioChunks([])
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       mediaRecorder.current = new MediaRecorder(stream)
 
@@ -88,15 +90,33 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
     setAudioChunks([])
   }
 
-  const saveAudioToGoogleCloud = async () => {
-    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+  // const saveAudioToGoogleCloud = async () => {
+  //   const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+  //   try {
+  //     const formData = new FormData()
+  //     formData.append('audio', audioBlob)
+  //     const response = await axios.post(`/upload/${user.id}/${postObj.id}`, formData)
+  //     if (response.status === 200) {
+    //       const downloadURL = response.data
+    //       return downloadURL
+    //     } else {
+      //       console.error('Error saving audio:', response.statusText)
+      //     }
+      //   } catch (error) {
+        //     console.error('Error saving audio:', error)
+        //   }
+        // }
+        const saveAudioToGoogleCloud = async () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
-      const response = await axios.post(`/upload/${user.id}/${postObj.id}`, formData)
+      formData.append('userId', userId)
+      formData.append('postId', postObj.id)
+      const response = await axios.post(`/uploadComment`, formData)
       if (response.status === 200) {
-        const downloadURL = response.data
-        return downloadURL
+        getComments()
+        console.log('Audio save successfully')
       } else {
         console.error('Error saving audio:', response.statusText)
       }
@@ -104,25 +124,23 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
       console.error('Error saving audio:', error)
     }
   }
-
-  const createPostRecord = async () => {
-    try {
-      const soundUrl = await saveAudioToGoogleCloud()
-      const postResponse = await axios.post('/post/createCommentRecord', {
-        userId: user.id,
-        postId: postObj.id,
-        soundUrl
-      })
-      if (postResponse.status === 201) {
-        console.info('Post saved to Database')
-        getComments()
-      } else {
-        console.error('Error saving post: ', postResponse.statusText)
-      }
-    } catch (error) {
-      console.error('error saving post: ', error)
-    }
-  }
+  // const createPostRecord = async () => {
+  //   try {
+  //     const soundUrl = await saveAudioToGoogleCloud()
+  //     const postResponse = await axios.post('/post/createCommentRecord', {
+  //       userId: user.id,
+  //       postId: postObj.id,
+  //       soundUrl
+  //     })
+  //     if (postResponse.status === 201) {
+  //       console.info('Post saved to Database')
+  //     } else {
+  //       console.error('Error saving post: ', postResponse.statusText)
+  //     }
+  //   } catch (error) {
+  //     console.error('error saving post: ', error)
+  //   }
+  // }
   
   return (
     <div style={{margin:'15px'}}>
@@ -148,7 +166,10 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
       ><img src={require('../style/deletebutton.png')} /></button>
       <button
       className="post-button"
-      onClick={createPostRecord}
+      onClick={() =>{
+        saveAudioToGoogleCloud()
+        emptyRecording()
+      }}
       disabled={audioChunks.length === 0 || isRecording}
       ><img src={require('../style/postbutton.png')} /></button>
   </div>

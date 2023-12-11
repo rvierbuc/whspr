@@ -1,13 +1,17 @@
 import React, { useState } from 'react'
 import { RecordPost } from './RecordPost'
+import { useLoaderData } from 'react-router-dom'
 
 const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   const [postCreated, setPostCreated] = useState(false)
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState('')
-  const handleCreatePost = () => {
+  const user = useLoaderData()
+
+  const openPost = () => {
     setPostCreated(!postCreated)
   }
+  
   return (
     <div>
       <div className="d-flex justify-content-center">
@@ -15,13 +19,15 @@ const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
       type="button"
       className="btn btn-dark"
       style={{margin:'15px'}}
-      onClick={handleCreatePost}>
-        Post
+      onClick={openPost}>
+        Write Post
       </button>
       </div>
-{postCreated && (<div>
+{postCreated && (
+<div id="responsive-navbar-nav" className={postCreated ? 'show' : ''}>
 <div className="d-flex justify-content-center">
           <input type="text"
+          maxLength={22}
           placeholder="What's on your mind?"
           value={title} 
           onChange={(e) => { setTitle(e.target.value) }}
@@ -29,9 +35,11 @@ const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
           />
           </div>
 <RecordPost
+user={user}
 audioContext={audioContext}
 title={title}
 category={category}
+openPost={openPost}
 />
 </div>
 )}
