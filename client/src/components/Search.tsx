@@ -1,8 +1,8 @@
 import algoliasearch from 'algoliasearch/lite';
 import React from 'react';
 import { InstantSearch, SearchBox, Hits } from 'react-instantsearch';
-import { client } from '../../../server/algolia'
-const searchClient = algoliasearch('2580UW5I69', '478ebbd6c72994b0fe40099822edaed1');
+
+const searchClient = algoliasearch('APP ID', 'Admin API Key');
 function Hit({ hit }) {
   return (
     <article>
