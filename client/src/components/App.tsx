@@ -51,8 +51,8 @@ const App = () => {
                     <Route path="search" element={<Search />} />
                     <Route path="profile" element={<UserProfile />} loader={() => getUserLoader()}/>
                     <Route path="feed" element={<Feed audioContext={audioContext} />} loader={() => getUserLoader()}/>
-                    <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
                     <Route path="post" element={<PostCard audioContext={audioContext} />} loader={() => getUserLoader()}/>
+                    <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
                     <Route path="room" element={<Room />} />
                     <Route path="profile/:id" element={<ReadOnlyProfile audioContext={audioContext}/>} loader={() => getUserLoader()} />
                 </Route>
