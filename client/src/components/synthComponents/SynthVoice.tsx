@@ -18,17 +18,41 @@ interface Props {
 }
 
 const SynthVoice = ({ audioContext, userId }: Props) => {
+  const [isRecording, setIsRecording] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const audio = useRef<AudioBufferSourceNode | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const mediaRecorder = useRef<MediaRecorder | null>(null)
 
+  // start the recording => set the recorder, stream, and the recorder's methods for getting audioChunks
   const startRecording = async () => {
     try {
       setAudioChunks([]);
       const stream = await navigator.mediaDevices.getUserMedia({audio: true});
-      
+      mediaRecorder.current = new MediaRecorder(stream);
+      mediaRecorder.current.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          setAudioChunks((prevChunks) => [...prevChunks, event.data]);
+        }
+      }
+      mediaRecorder.current.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, {type: 'audio/wav'});
+      };
+      mediaRecorder.current.start();
+      setIsRecording(true);
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  //stop the recording process
+  const stopRecording = async () => {
+    if (mediaRecorder.current?.state === 'recording') {
+      mediaRecorder.current.stop();
+      setIsRecording(false);
+      // stop mic access => this may not be necessary
+      const tracks = mediaRecorder.current.stream.getTracks();
+      tracks.forEach(track => track.stop())
     }
   };
 
