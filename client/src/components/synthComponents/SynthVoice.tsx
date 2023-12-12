@@ -11,19 +11,45 @@ interface Props {
   userId: any
 }
 
+function makeDistortionCurve(amount) {
+  const k = typeof amount === "number" ? amount : 50;
+  const n_samples = 44100;
+  const curve = new Float32Array(n_samples);
+  const deg = Math.PI / 180;
+
+  for (let i = 0; i < n_samples; i++) {
+    const x = (i * 2) / n_samples - 1;
+    curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
+  }
+  return curve;
+}
+
 const SynthVoice = ({ audioContext, userId }: Props) => {
   const [isRecording, setIsRecording] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const audio = useRef<AudioBufferSourceNode | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const mediaRecorder = useRef<MediaRecorder | null>(null)
+  const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
 
   // start the recording => set the recorder, stream, and the recorder's methods for getting audioChunks
   const startRecording = async () => {
     try {
       setAudioChunks([]);
       const stream = await navigator.mediaDevices.getUserMedia({audio: true});
-      mediaRecorder.current = new MediaRecorder(stream);
+      mediaRecorder.current = new MediaRecorder(destination.stream);
+
+      const source = audioContext.createMediaStreamSource(stream);
+      const filter = audioContext.createWaveShaper();
+      // filter.curve = makeDistortionCurve(0);
+      const reverb = audioContext.createBiquadFilter();
+
+      source.connect(reverb);
+      reverb.connect(filter);
+      filter.connect(destination);
+      // source.connect(destination);
+      console.log(filter)
+      console.log(destination.stream, mediaRecorder.current.stream)
       mediaRecorder.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
           setAudioChunks((prevChunks) => [...prevChunks, event.data]);
@@ -32,6 +58,9 @@ const SynthVoice = ({ audioContext, userId }: Props) => {
       mediaRecorder.current.onstop = async () => {
         const audioBlob = new Blob(audioChunks, {type: 'audio/wav'});
       };
+
+
+
       mediaRecorder.current.start();
       setIsRecording(true);
     } catch (error) {
@@ -64,20 +93,10 @@ const SynthVoice = ({ audioContext, userId }: Props) => {
           console.error('audio context is null')
           return
         }
-        const delay = audioContext.createDelay()
-        delay.delayTime.value = 1;
-        const distortion = audioContext.createWaveShaper();
-        distortion.oversample = '4x';
-        const gain = audioContext.createGain();
-        gain.gain.value = -1;
-        const filter = audioContext.createBiquadFilter();
-        filter.detune.value = -5000;
+
         audio.current = audioContext.createBufferSource()
         audio.current.buffer = buffer
-        audio.current.connect(delay);
-        delay.connect(distortion);
-        distortion.connect(gain);
-        gain.connect(audioContext.destination);
+        audio.current.connect(audioContext.destination);
 
         audio.current.onended = () => {
           setIsPlaying(false)
@@ -92,9 +111,6 @@ const SynthVoice = ({ audioContext, userId }: Props) => {
       console.error('error playing: ', playError)
     })
   }
-
-  const filter = audioContext.createBiquadFilter();
-  console.log('filter', filter);
 
   const stopPlaying = () => {
     if (audio.current) {
