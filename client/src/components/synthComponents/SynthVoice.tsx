@@ -1,12 +1,6 @@
 import React, { useRef, useState } from 'react';
-
-/**
- * Step 1: Set up getUserMedia (or whatever is needed to record voice)
- * Step 2: Then pass that through effects nodes
- * Step 3: Then pass the node whose output I want to record into recorder.js
- * Step 4: Then save to the cloud
- */
-
+import { Stack, Button, Container } from 'react-bootstrap';
+import axios from 'axios';
 
 /**
  * record audio => grab audio => run through effects nodes
@@ -14,7 +8,7 @@ import React, { useRef, useState } from 'react';
 
 interface Props {
   audioContext: AudioContext;
-  userId: number
+  userId: any
 }
 
 const SynthVoice = ({ audioContext, userId }: Props) => {
@@ -71,14 +65,19 @@ const SynthVoice = ({ audioContext, userId }: Props) => {
           return
         }
         const delay = audioContext.createDelay()
-        delay.delayTime.value = 0.7;
+        delay.delayTime.value = 1;
         const distortion = audioContext.createWaveShaper();
-        distortion.oversample = '2x';
+        distortion.oversample = '4x';
+        const gain = audioContext.createGain();
+        gain.gain.value = -1;
+        const filter = audioContext.createBiquadFilter();
+        filter.detune.value = -5000;
         audio.current = audioContext.createBufferSource()
         audio.current.buffer = buffer
         audio.current.connect(delay);
         delay.connect(distortion);
-        distortion.connect(audioContext.destination);
+        distortion.connect(gain);
+        gain.connect(audioContext.destination);
 
         audio.current.onended = () => {
           setIsPlaying(false)
@@ -94,10 +93,72 @@ const SynthVoice = ({ audioContext, userId }: Props) => {
     })
   }
 
+  const filter = audioContext.createBiquadFilter();
+  console.log('filter', filter);
+
+  const stopPlaying = () => {
+    if (audio.current) {
+      audio.current.stop();
+      setIsPlaying(false);
+    }
+  };
+
+  const emptyRecording = () => {
+    setAudioChunks([])
+  };
+
+  const saveAudioToGoogleCloud = async () => {
+    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+    try {
+      const formData = new FormData()
+      formData.append('audio', audioBlob)
+      formData.append('userId', userId)
+      formData.append('title', 'Testing')
+      formData.append('category', 'Goofy Steve')
+      const response = await axios.post(`/upload`, formData)
+      if (response.status === 200) {
+        console.info('Audio save successfully')
+      } else {
+        console.error('Error saving audio:', response.statusText)
+      }
+    } catch (error) {
+      console.error('Error saving audio:', error)
+    }
+  }
+
   return (
-    <div>
+    <Container className="text-center my-3 pb-3">
       <h2 className="text-white text-center">SynthVoice</h2>
-    </div>
+      <Stack direction="horizontal" className="mx-5 mb-3 typeCard">
+      <button
+            className="record-button"
+            onClick={startRecording}
+            disabled={isRecording}
+            ><img src={require('../../style/recordbutton.png')} /></button>
+            <button
+            className="play-button"
+            onClick={playAudio}
+            disabled={isPlaying || audioChunks.length === 0 }
+            ><img src={require('../../style/playbutton.png')} /></button>
+            <button
+            className="stop-button"
+            onClick={isRecording ? stopRecording : stopPlaying}
+            disabled={!isRecording && !isPlaying}
+            ><img src={require('../../style/stopbutton.png')} /></button>
+            <button
+            className="delete-button"
+            onClick={emptyRecording}
+            disabled={audioChunks.length === 0 || isRecording}
+            ><img src={require('../../style/deletebutton.png')} /></button>
+            <button
+            className="post-button"
+            onClick={()=>{
+              saveAudioToGoogleCloud()}
+            }
+            disabled={audioChunks.length === 0 || isRecording}
+            ><img src={require('../../style/postbutton.png')} /></button>
+      </Stack>
+    </Container>
   );
 };
 
