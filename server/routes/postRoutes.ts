@@ -5,6 +5,15 @@ import { Op } from 'sequelize'
 
 import { User, Follower, Post, Like, Comment} from '../dbmodels'
 // ************* GET ROUTES **************
+router.get('/users', async (req: Request, res: Response) => {
+  try{
+    const users = await User.findAll({})
+    res.status(200).send(users)
+  }catch(error){
+    console.error('could not get all users', error)
+    res.sendStatus(500)
+  }
+})
 //GET ALL USER FOLLOWING POSTS
 router.get('/following/:userId', async (req: Request, res: Response) => {
 const { userId } = req.params;
