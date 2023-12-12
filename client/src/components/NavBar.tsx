@@ -12,11 +12,15 @@ const NavBar = () => {
     <div>
       <nav>
       <Link to='/protected/room'>Room</Link>
+
         <Link to='/protected/synthesize'>Synthesize</Link>
+
+        <Link to='/protected/conch'>Magic Conch</Link>
 
         <Link className="mx-3" to='/protected/dashboard'>WaveSurfer</Link>
 
         <Link className="mx-3" to='/protected/post'>Record Post</Link>
+
         <Link className="mx-3" to='/protected/feed'>Feed</Link>
 
         <Link className="mx-3" to='/protected/profile'>User Profile</Link>

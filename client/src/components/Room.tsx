@@ -1,12 +1,10 @@
 import React, { ChangeEventHandler, MutableRefObject, useEffect, useRef, useState } from 'react';
-// import {io, Socket} from 'socket.io-client'
 import Peer from 'peerjs'
 import AgoraRTC from 'agora-rtc-sdk'
 // import agoraConfig from '../agoraConfig'
 import { joinChannel, leaveChannel, startAudio, stopAudio, createChannel, subscribeRemoteUser } from './AgoraClient';
 
 
-// const socket: Socket = io('http://localhost:3000')
 
 const Room: React.FC = () => {
 
@@ -15,7 +13,6 @@ const Room: React.FC = () => {
   const [stream, setStream] = useState<MediaStream>()
   const [remoteAudioTracks, setRemoteAudioTracks] = useState<string[]>([]);
 
-    // const myAudioRef = useRef()
     const remoteAudioRef = useRef<HTMLAudioElement | null>(null)
 
     useEffect(() => {
@@ -25,7 +22,6 @@ const Room: React.FC = () => {
 
             createChannel(channelName, uid, '007eJxTYPBdOLtmftV7Yz+P1GfSx08pdH/dXbfQbEfv229pB0S8KjYpMCQaJyUbmJgmWphZWphYmJtbGKUYpJoZJhmbmllYWpoaHTlcktoQyMggWH2RlZEBAkF8RoZEBgYAV0cfRw==', stream)
             setStream(stream)
-             //myAudioRef.current.srcObject = stream
         })
 
         subscribeRemoteUser((user, mediaType) => {
@@ -53,7 +49,6 @@ const Room: React.FC = () => {
   return (
     <div>
       <h1>Agora Voice Chat</h1>
-      {/* <audio ref={myAudioRef} autoPlay /> */}
       <audio ref={remoteAudioRef} autoPlay />
 
 
