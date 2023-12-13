@@ -16,7 +16,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, pos
     const [display, setDisplay] = useState<boolean>(false); 
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     // const { audioUrl, postId } = props;
-    const containerId = `waveform-${postId}`
+    const containerId = `waveform-${postId || ''}`
     const createSoundWaves = () => {
         let regions: RegionsPlugin
         //if there is a wavesurfer already, destroy it
