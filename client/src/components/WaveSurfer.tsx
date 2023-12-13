@@ -6,8 +6,8 @@ import React, { useEffect, useState } from 'react';
 
 interface WaveSurferProps {
     audioUrl: string;
-    postId: number;
-    postObj: any;
+    postId: number | null;
+    postObj: any | null;
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, postId}) => {
@@ -15,7 +15,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, pos
     const [display, setDisplay] = useState<boolean>(false); 
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     // const { audioUrl, postId } = props;
-    const containerId = `waveform-${postId}`
+    const containerId = `waveform-${postId || ''}`
     const createSoundWaves = () => {
         let regions: RegionsPlugin
         //if there is a wavesurfer already, destroy it

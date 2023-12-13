@@ -43,7 +43,7 @@ export const seedDatabase = async () => {
   await Post.bulkCreate([
     {
       userId: 3,
-      category: 'The Categorical',
+      category: 'Development',
       title: 'The Titular',
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702167980979.wav',
       createdAt: new Date(),
@@ -51,7 +51,7 @@ export const seedDatabase = async () => {
     },
     {
       userId: 2,
-      category: 'The Categorical',
+      category: 'Finance',
       title: 'The Titular2',
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702265197317.wav',
       createdAt: new Date(),
@@ -59,7 +59,7 @@ export const seedDatabase = async () => {
     },
     {
       userId: 4,
-      category: 'comedy',
+      category: 'Comedy',
       title: 'Angel\'s Post',
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702237656598.wav',
       createdAt: new Date(),
