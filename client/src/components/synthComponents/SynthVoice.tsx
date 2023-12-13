@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Stack, Button, Container } from 'react-bootstrap';
 import axios from 'axios';
+import Tuna from 'tunajs';
 
 /**
  * record audio => grab audio => run through effects nodes
@@ -11,19 +12,6 @@ interface Props {
   userId: any
 }
 
-function makeDistortionCurve(amount) {
-  const k = typeof amount === "number" ? amount : 50;
-  const n_samples = 44100;
-  const curve = new Float32Array(n_samples);
-  const deg = Math.PI / 180;
-
-  for (let i = 0; i < n_samples; i++) {
-    const x = (i * 2) / n_samples - 1;
-    curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
-  }
-  return curve;
-}
-
 const SynthVoice = ({ audioContext, userId }: Props) => {
   const [isRecording, setIsRecording] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
@@ -32,23 +20,66 @@ const SynthVoice = ({ audioContext, userId }: Props) => {
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
 
+  // TUNA CONTEXT => MOVE TO FILTERS
+  const tuna = new Tuna(audioContext);
+  console.log('TUNA', tuna);
+
+  const chorus = new tuna.Chorus({
+    rate: 5,
+    feedback: 0.45,
+    delay: 0.6,
+    bypass: false,
+  });
+
+  const compressor = new tuna.Compressor({
+    threshold: -100,    //-100 to 0
+    makeupGain: 7,     //0 and up (in decibels)
+    attack: 5,         //0 to 1000
+    release: 500,      //0 to 3000
+    ratio: 9,          //1 to 20
+    knee: 36,           //0 to 40
+    automakeup: false, //true/false
+    bypass: false
+  });
+
+  const gain = new tuna.Gain({ gain: 90 })
+
+  const highpass: BiquadFilterNode = audioContext.createBiquadFilter();
+  console.log(highpass);
+  highpass.frequency.value = 5000;
+  highpass.type = 'highpass';
+  const lowpass: BiquadFilterNode = audioContext.createBiquadFilter();
+  lowpass.frequency.value = 60;
+  lowpass.type = 'lowpass'
+
+  interface Constraints {
+    noiseSuppression: boolean,
+    echoCancellation: boolean
+  }
+
+  const constraints = {
+    audio: {
+      noiseSuppression: true,
+      echoCancellation: true
+    },
+    video: false
+  }
+
   // start the recording => set the recorder, stream, and the recorder's methods for getting audioChunks
   const startRecording = async () => {
     try {
       setAudioChunks([]);
-      const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       mediaRecorder.current = new MediaRecorder(destination.stream);
 
       const source = audioContext.createMediaStreamSource(stream);
-      const distortion = audioContext.createWaveShaper();
-      // filter.curve = makeDistortionCurve(0);
-      const filter = audioContext.createBiquadFilter();
+      source.connect(lowpass);
+      lowpass.connect(highpass)
+      highpass.connect(chorus)
+      chorus.connect(compressor);
+      compressor.connect(gain);
+      gain.connect(destination);
 
-      source.connect(filter);
-      // distortion.connect(destination);
-      filter.connect(destination);
-      // source.connect(destination);
-      console.log(distortion)
       console.log(destination.stream, mediaRecorder.current.stream)
       mediaRecorder.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
