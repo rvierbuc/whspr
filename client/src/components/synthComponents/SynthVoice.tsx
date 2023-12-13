@@ -40,15 +40,15 @@ const SynthVoice = ({ audioContext, userId }: Props) => {
       mediaRecorder.current = new MediaRecorder(destination.stream);
 
       const source = audioContext.createMediaStreamSource(stream);
-      const filter = audioContext.createWaveShaper();
+      const distortion = audioContext.createWaveShaper();
       // filter.curve = makeDistortionCurve(0);
-      const reverb = audioContext.createBiquadFilter();
+      const filter = audioContext.createBiquadFilter();
 
-      source.connect(reverb);
-      reverb.connect(filter);
+      source.connect(filter);
+      // distortion.connect(destination);
       filter.connect(destination);
       // source.connect(destination);
-      console.log(filter)
+      console.log(distortion)
       console.log(destination.stream, mediaRecorder.current.stream)
       mediaRecorder.current.ondataavailable = (event) => {
         if (event.data.size > 0) {

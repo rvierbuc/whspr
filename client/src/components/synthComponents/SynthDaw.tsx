@@ -1,7 +1,8 @@
 import React, { useState, useEffect, MouseEventHandler, SyntheticEvent } from 'react';
+import { Container, Card } from 'react-bootstrap';
 import Oscillator from './Oscillator';
 import RecordSynth from './RecordSynth';
-import { Container, Card } from 'react-bootstrap';
+import Filters from './Filters';
 import SynthVoice from './SynthVoice';
 
 interface Props {
@@ -67,6 +68,7 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userI
         <h3 className="text-center">Set the Tone</h3>
         <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
         <RecordSynth audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />
+        <Filters audioContext={audioContext} />
         <SynthVoice userId={userId} audioContext={audioContext} />
       </div>
     </Container>
