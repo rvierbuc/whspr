@@ -5,6 +5,26 @@ import { Op } from 'sequelize'
 
 import { User, Follower, Post, Like, Comment} from '../dbmodels'
 // ************* GET ROUTES **************
+router.get('/ranked', async (req:Request, res: Response) => {
+try{
+
+  const allPosts = await Post.findAll({})
+  const postDataValues = allPosts.map((post) => post.dataValues)
+  const postsWRanks = postDataValues.map((post) => {
+    let score = post.likeCount + (post.commentCount * .05) + (post.listenCount * .002)
+    let today = new Date().getTime()
+    let timeSinceCreation = (today - post.createdAt.getTime()) / 14400000
+    let decay = 1 + (.4 * (timeSinceCreation ** 2))
+    let rank = score / decay
+    post.rank = rank
+    return post
+  }).sort((a, b) => (a.rank > b.rank ? -1 : 1))
+  res.send(postsWRanks)
+}catch(error){
+  console.log('ranked', error)
+}
+})
+
 router.get('/users', async (req: Request, res: Response) => {
   try{
     const users = await User.findAll({})

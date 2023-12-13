@@ -88,6 +88,15 @@ export const Post = db.define('Post', {
   },
   soundUrl: {
     type: DataTypes.STRING
+  },
+  commentCount: {
+    type: DataTypes.INTEGER
+  },
+  likeCount: {
+    type: DataTypes.INTEGER
+  },
+  listenCount: {
+    type: DataTypes.INTEGER
   }
 })
 
