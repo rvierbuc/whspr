@@ -125,6 +125,7 @@ const SynthVoice = ({ audioContext, userId }: Props) => {
 
   const saveAudioToGoogleCloud = async () => {
     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+    console.log(audioBlob);
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
