@@ -89,7 +89,7 @@ const getSearchData = async () => {
           title: record.title,
           category: record.category,
           username: record.username,
-          objectID: record.id.toString(),
+          objectID: record.id,
           soundUrl: record.soundUrl
         }
         // save the values to the search index
@@ -104,8 +104,6 @@ const getSearchData = async () => {
     console.error('error', error);
   }
 }
-getSearchData();
-getUserData();
 // set the settings for the search index to be able to search by username, title, and category
 const setSearchIndexSettings = async () => {
   try {
@@ -121,7 +119,8 @@ const setSearchIndexSettings = async () => {
     console.log('error', error);
   }
 };
-
+getSearchData();
+getUserData();
 setSearchIndexSettings();
 // searchIndex
 // .search('Daniel')
