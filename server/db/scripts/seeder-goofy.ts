@@ -1,5 +1,30 @@
 import { Sound, User, Post, Follower, Radio, Comment } from '../../dbmodels';
+//function to create posts with random engagement counts 
+//set to 10 posts rn but if you want more or less change in for loop
+const getRandomPosts = () => {
+  let postArr:any = []
 
+  function getRandomDate(start, end) {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  }
+
+  for(let i = 0; i < 10; i++){
+    let samplePost:any = {
+      category: 'comedy',
+      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702167980979.wav'
+    }
+    samplePost.userId = Math.floor(Math.random() * 5) + 1
+    samplePost.title = `title${i}`
+    samplePost.createdAt = getRandomDate(new Date(2023, 11, 1), new Date())
+    samplePost.updatedAt = samplePost.createdAt
+    samplePost.likeCount = Math.floor(Math.random() * 50) + 1
+    samplePost.listenCount = Math.floor(Math.random() * 200) + 20
+    samplePost.commentCount = Math.floor(Math.random() * 50) + 1
+
+    postArr.push(samplePost)
+  }
+return postArr
+}
 export const seedDatabase = async () => {
   try {
 
@@ -40,32 +65,43 @@ export const seedDatabase = async () => {
     },
   ]);
 
-  await Post.bulkCreate([
-    {
-      userId: 3,
-      category: 'The Categorical',
-      title: 'The Titular',
-      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702167980979.wav',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      userId: 2,
-      category: 'The Categorical',
-      title: 'The Titular2',
-      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702265197317.wav',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      userId: 4,
-      category: 'comedy',
-      title: 'Angel\'s Post',
-      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702237656598.wav',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ]);
+  await Post.bulkCreate(
+    //[
+    // {
+    //   userId: 3,
+    //   category: 'The Categorical',
+    //   title: 'The Titular',
+    //   likeCount: 2,
+    //   commentCount: 10,
+    //   listenCount: 33,
+    //   soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702167980979.wav',
+    //   createdAt: new Date(),
+    //   updatedAt: new Date(),
+    // },
+    // {
+    //   userId: 2,
+    //   category: 'The Categorical',
+    //   title: 'The Titular2',
+    //   soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702265197317.wav',
+    //   createdAt: new Date(),
+    //   updatedAt: new Date(),
+    //   likeCount: 21,
+    //   commentCount: 20,
+    //   listenCount: 33
+    // },
+    // {
+    //   userId: 4,
+    //   category: 'comedy',
+    //   title: 'Angel\'s Post',
+    //   soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702237656598.wav',
+    //   createdAt: new Date(),
+    //   updatedAt: new Date(),
+    //   likeCount: 12,
+    //   commentCount: 44,
+    //   listenCount: 56,
+    // }]
+    getRandomPosts()
+  );
 
   await Sound.bulkCreate([
     {
@@ -123,6 +159,28 @@ export const seedDatabase = async () => {
     }
   ])
 };
-
+/**
+ *  {
+      userId: 3,
+      category: 'The Categorical',
+      title: 'The Titular',
+      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702167980979.wav',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+ */
 
 seedDatabase();
+
+let samplePost:any = {}
+for(let i = 0; i < 10; i++){
+  samplePost.userId 
+  samplePost.category = 
+  samplePost.title
+  samplePost.soundUrl
+  samplePost.createdAt
+  samplePost.updatedAt
+  samplePost.likeCount
+  samplePost.listenCount
+  samplePost.commentCount
+}
