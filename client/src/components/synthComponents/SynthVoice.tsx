@@ -12,6 +12,11 @@ interface Props {
   userId: any
 }
 
+interface Constraints {
+  noiseSuppression: boolean,
+  echoCancellation: boolean
+}
+
 const SynthVoice = ({ audioContext, userId }: Props) => {
   const [isRecording, setIsRecording] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
@@ -23,6 +28,14 @@ const SynthVoice = ({ audioContext, userId }: Props) => {
   // TUNA CONTEXT => MOVE TO FILTERS
   const tuna = new Tuna(audioContext);
   console.log('TUNA', tuna);
+
+  const lowpass: BiquadFilterNode = audioContext.createBiquadFilter();
+  lowpass.frequency.value = 60;
+  lowpass.type = 'lowpass';
+
+  const highpass: BiquadFilterNode = audioContext.createBiquadFilter();
+  highpass.frequency.value = 5000;
+  highpass.type = 'highpass';
 
   const chorus = new tuna.Chorus({
     rate: 5,
@@ -42,20 +55,7 @@ const SynthVoice = ({ audioContext, userId }: Props) => {
     bypass: false
   });
 
-  const gain = new tuna.Gain({ gain: 90 })
-
-  const highpass: BiquadFilterNode = audioContext.createBiquadFilter();
-  console.log(highpass);
-  highpass.frequency.value = 5000;
-  highpass.type = 'highpass';
-  const lowpass: BiquadFilterNode = audioContext.createBiquadFilter();
-  lowpass.frequency.value = 60;
-  lowpass.type = 'lowpass'
-
-  interface Constraints {
-    noiseSuppression: boolean,
-    echoCancellation: boolean
-  }
+  const gain = new tuna.Gain({ gain: 90 });
 
   const constraints = {
     audio: {
@@ -71,8 +71,8 @@ const SynthVoice = ({ audioContext, userId }: Props) => {
       setAudioChunks([]);
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       mediaRecorder.current = new MediaRecorder(destination.stream);
-
       const source = audioContext.createMediaStreamSource(stream);
+
       source.connect(lowpass);
       lowpass.connect(highpass)
       highpass.connect(chorus)
@@ -80,7 +80,6 @@ const SynthVoice = ({ audioContext, userId }: Props) => {
       compressor.connect(gain);
       gain.connect(destination);
 
-      console.log(destination.stream, mediaRecorder.current.stream)
       mediaRecorder.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
           setAudioChunks((prevChunks) => [...prevChunks, event.data]);
@@ -89,8 +88,6 @@ const SynthVoice = ({ audioContext, userId }: Props) => {
       mediaRecorder.current.onstop = async () => {
         const audioBlob = new Blob(audioChunks, {type: 'audio/wav'});
       };
-
-
 
       mediaRecorder.current.start();
       setIsRecording(true);
@@ -124,7 +121,6 @@ const SynthVoice = ({ audioContext, userId }: Props) => {
           console.error('audio context is null')
           return
         }
-
         audio.current = audioContext.createBufferSource()
         audio.current.buffer = buffer
         audio.current.connect(audioContext.destination);
@@ -156,7 +152,6 @@ const SynthVoice = ({ audioContext, userId }: Props) => {
 
   const saveAudioToGoogleCloud = async () => {
     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
-    console.log(audioBlob);
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
@@ -164,11 +159,7 @@ const SynthVoice = ({ audioContext, userId }: Props) => {
       formData.append('title', 'Testing')
       formData.append('category', 'Goofy Steve')
       const response = await axios.post(`/upload`, formData)
-      if (response.status === 200) {
-        console.info('Audio save successfully')
-      } else {
-        console.error('Error saving audio:', response.statusText)
-      }
+      response.status === 200 ? console.info('Audio saved successfully') : console.error('Error saving audio', response.statusText);
     } catch (error) {
       console.error('Error saving audio:', error)
     }

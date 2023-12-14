@@ -1,19 +1,23 @@
 import React from 'react';
-import { Container } from 'react-bootstrap';
+import Tuna from 'tunajs';
+import SynthVoice from './SynthVoice';
 
 interface Props {
   audioContext: AudioContext
+  userId: any
 }
 
-const Filters = ({ audioContext }: Props) => {
-  const distortion = () => {
+const Filters = ({ audioContext, userId }: Props) => {
+  const tuna = new Tuna(audioContext);
+  console.log('TUNATUNA', tuna);
+
+  const robot = () => {
 
   };
-
   return (
-    <Container className="text-center">
-      <h2>Filters go here</h2>
-    </Container>
+    <div>
+      <h2>Filters here</h2>
+    </div>
   );
 };
 
