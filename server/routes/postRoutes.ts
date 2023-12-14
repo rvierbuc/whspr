@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 const router = express.Router()
 import sequelize, { Op } from 'sequelize'
 
-import { User, Follower, Post, Like, Comment} from '../dbmodels'
+import { User, Follower, Post, Like, Comment, Listen} from '../dbmodels'
 // ************* GET ROUTES **************
 router.get('/ranked', async (req:Request, res: Response) => {
 try{
@@ -169,7 +169,7 @@ router.get('/explore/:userId', async (req: Request, res: Response) => {
       res.sendStatus(500)
     }
    })
-//allows user to like a post and add a record to the like table
+// add a record to the like table when user likes post
 router.post('/like', async (req: Request, res: Response) => {
   const {userId, postId} = req.body;
     try {
@@ -185,6 +185,21 @@ router.post('/like', async (req: Request, res: Response) => {
     }
  })
 
+// add a record to the listen table when user completely listens to a post
+ router.post('/listen', async (req: Request, res: Response) => {
+  const {userId, postId} = req.body;
+    try {
+      const createdListen = await Listen.create({
+        userId,
+        postId
+      })
+      console.log(createdListen)
+      res.sendStatus(201)
+    } catch(error) {
+      console.log('could not add listen', error)
+      res.sendStatus(500)
+    }
+ })
  router.put('/updateCount', async (req: Request, res: Response) => {
   const { column, type, id } = req.body
 
@@ -194,12 +209,12 @@ let updateResult;
   const postToUpdate:any = await Post.findByPk(id)
   if(type === "increment"){
     updateResult = await postToUpdate.increment(column)
-    console.log(updateResult)
+    //console.log(updateResult)
   }
 
   if(type === "decrement"){
     updateResult = await postToUpdate.decrement(column)
-    console.log(updateResult)
+    //console.log(updateResult)
   }
   res.status(200).send(updateResult)
 }catch(error){

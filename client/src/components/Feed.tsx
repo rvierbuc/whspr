@@ -57,7 +57,11 @@ useEffect(() => {
       </div>}
       {posts ? posts.map((post: any) => (
         <div>
-          <WaveSurferComponent postObj={post} audioUrl={post.soundUrl} postId={post.id} />
+          <WaveSurferComponent 
+          postObj={post} 
+          audioUrl={post.soundUrl} 
+          postId={post.id} 
+          userId={user.id}/>
           <Post
             key = {post.id}
             postObj = {post}
