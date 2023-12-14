@@ -5,11 +5,17 @@ import sequelize, { Op } from 'sequelize'
 
 import { User, Follower, Post, Like, Comment, Listen} from '../dbmodels'
 // ************* GET ROUTES **************
-router.get('/ranked', async (req:Request, res: Response) => {
+router.get('/explore/:userId', async (req:Request, res: Response) => {
+  const { userId } = req.params
 try{
 
   const allPosts:any = await Post.findAll({
-    include: [Like, Comment],
+    include: [
+      Like,
+      Comment,
+      { model: User,
+        as: 'user'}
+    ]
   })
   const postDataValues = allPosts.map((post) => post.dataValues)
 
@@ -22,6 +28,25 @@ try{
     post.rank = rank
     return post
   }).sort((a, b) => (a.rank > b.rank ? -1 : 1))
+
+  const likedPosts = await Like.findAll({
+    where: {userId}
+  })
+  
+  const likedPostIdArr = await likedPosts.map((post:any) => post.postId)
+  //console.log(likedPostIdArr)
+  const addIsLikedPair =  (postArr) => {
+    for(let i = 0; i < postArr.length; i++){
+      if(likedPostIdArr.includes(postArr[i].id)){
+        //console.log('true')
+        postArr[i].isLiked = true
+      }else {
+        postArr[i].isLiked = false
+      }
+    }
+  }
+
+  await addIsLikedPair(postsWRanks)
   res.send(postsWRanks)
 }catch(error){
   console.log('ranked', error)
@@ -99,53 +124,53 @@ try{
 
 })
 //gets all posts
-router.get('/explore/:userId', async (req: Request, res: Response) => {
-  const { userId } = req.params;
-  try{
-    const postsArr = await Post.findAll({
-      //need to figure this out so you can exclude viewing user
-      // where: {
-      //   [Op.ne]: userId 
-      // },
-      include: [
-        {
-          model: User,
-          as: 'user'
-        },
-        {
-          model: Like
-        }
-      ], 
-      order: [
-        ['createdAt', 'DESC']
-      ],
-    })
-    const likedPosts = await Like.findAll({
-      where: {userId}
-    })
+// router.get('/explore/:userId', async (req: Request, res: Response) => {
+//   const { userId } = req.params;
+//   try{
+//     const postsArr = await Post.findAll({
+//       //need to figure this out so you can exclude viewing user
+//       // where: {
+//       //   [Op.ne]: userId 
+//       // },
+//       include: [
+//         {
+//           model: User,
+//           as: 'user'
+//         },
+//         {
+//           model: Like
+//         }
+//       ], 
+//       order: [
+//         ['createdAt', 'DESC']
+//       ],
+//     })
+//     const likedPosts = await Like.findAll({
+//       where: {userId}
+//     })
     
-    const likedPostIdArr = await likedPosts.map((post:any) => post.postId)
-    //console.log(likedPostIdArr)
-    const addIsLikedPair =  (postArr) => {
-      for(let i = 0; i < postArr.length; i++){
-        if(likedPostIdArr.includes(postArr[i].id)){
-          //console.log('true')
-          postArr[i].dataValues.isLiked = true
-        }else {
-          postArr[i].dataValues.isLiked = false
-        }
-      }
-    }
+//     const likedPostIdArr = await likedPosts.map((post:any) => post.postId)
+//     //console.log(likedPostIdArr)
+//     const addIsLikedPair =  (postArr) => {
+//       for(let i = 0; i < postArr.length; i++){
+//         if(likedPostIdArr.includes(postArr[i].id)){
+//           //console.log('true')
+//           postArr[i].dataValues.isLiked = true
+//         }else {
+//           postArr[i].dataValues.isLiked = false
+//         }
+//       }
+//     }
   
-      await addIsLikedPair(postsArr)
-      //console.log(followingPosts)
-      await res.status(200).send(postsArr)  
-  }catch(error){
-    res.sendStatus(500)
-    console.log('could not get following posts', error)
-  }
+//       await addIsLikedPair(postsArr)
+//       //console.log(followingPosts)
+//       await res.status(200).send(postsArr)  
+//   }catch(error){
+//     res.sendStatus(500)
+//     console.log('could not get following posts', error)
+//   }
   
-  })
+//   })
 //creates comment 
   router.post('/createCommentRecord', async (req: Request, res: Response) => {
     const { userId, postId, soundUrl } = req.body
