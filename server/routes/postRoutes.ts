@@ -1,15 +1,18 @@
 const express = require('express')
 import { Request, Response } from 'express'
 const router = express.Router()
-import { Op } from 'sequelize'
+import sequelize, { Op } from 'sequelize'
 
 import { User, Follower, Post, Like, Comment} from '../dbmodels'
 // ************* GET ROUTES **************
 router.get('/ranked', async (req:Request, res: Response) => {
 try{
 
-  const allPosts = await Post.findAll({})
+  const allPosts:any = await Post.findAll({
+    include: [Like, Comment],
+  })
   const postDataValues = allPosts.map((post) => post.dataValues)
+
   const postsWRanks = postDataValues.map((post) => {
     let score = post.likeCount + (post.commentCount * .05) + (post.listenCount * .002)
     let today = new Date().getTime()
@@ -25,6 +28,7 @@ try{
 }
 })
 
+//get all users
 router.get('/users', async (req: Request, res: Response) => {
   try{
     const users = await User.findAll({})
@@ -34,6 +38,7 @@ router.get('/users', async (req: Request, res: Response) => {
     res.sendStatus(500)
   }
 })
+
 //GET ALL USER FOLLOWING POSTS
 router.get('/following/:userId', async (req: Request, res: Response) => {
 const { userId } = req.params;
@@ -48,7 +53,7 @@ try{
     obj.userId = follow.followingId
     return obj
   })
-  const followingPosts = await Post.findAll({
+  const followingPosts:any = await Post.findAll({
     where: {
       [Op.or]: followingArr
     },
@@ -65,7 +70,27 @@ try{
       ['createdAt', 'DESC']
     ],
   })
-  res.status(200).send(followingPosts)
+
+  const likedPosts = await Like.findAll({
+    where: {userId}
+  })
+  
+  const likedPostIdArr = await likedPosts.map((post:any) => post.postId)
+  //console.log(likedPostIdArr)
+  const addIsLikedPair =  (postArr) => {
+    for(let i = 0; i < postArr.length; i++){
+      if(likedPostIdArr.includes(postArr[i].id)){
+        //console.log('true')
+        postArr[i].dataValues.isLiked = true
+      }else {
+        postArr[i].dataValues.isLiked = false
+      }
+    }
+  }
+
+    await addIsLikedPair(followingPosts)
+    //console.log(followingPosts)
+    await res.status(200).send(followingPosts)
 
 }catch(error){
   res.sendStatus(500)
@@ -95,8 +120,26 @@ router.get('/explore/:userId', async (req: Request, res: Response) => {
         ['createdAt', 'DESC']
       ],
     })
-    res.status(200).send(postsArr)
+    const likedPosts = await Like.findAll({
+      where: {userId}
+    })
+    
+    const likedPostIdArr = await likedPosts.map((post:any) => post.postId)
+    //console.log(likedPostIdArr)
+    const addIsLikedPair =  (postArr) => {
+      for(let i = 0; i < postArr.length; i++){
+        if(likedPostIdArr.includes(postArr[i].id)){
+          //console.log('true')
+          postArr[i].dataValues.isLiked = true
+        }else {
+          postArr[i].dataValues.isLiked = false
+        }
+      }
+    }
   
+      await addIsLikedPair(postsArr)
+      //console.log(followingPosts)
+      await res.status(200).send(postsArr)  
   }catch(error){
     res.sendStatus(500)
     console.log('could not get following posts', error)
@@ -142,6 +185,27 @@ router.post('/like', async (req: Request, res: Response) => {
     }
  })
 
+ router.put('/updateCount', async (req: Request, res: Response) => {
+  const { column, type, id } = req.body
+
+try{
+let updateResult;
+
+  const postToUpdate:any = await Post.findByPk(id)
+  if(type === "increment"){
+    updateResult = await postToUpdate.increment(column)
+    console.log(updateResult)
+  }
+
+  if(type === "decrement"){
+    updateResult = await postToUpdate.decrement(column)
+    console.log(updateResult)
+  }
+  res.status(200).send(updateResult)
+}catch(error){
+  console.error('could not update count', error)
+}
+ } )
  //allows user to unlike a post and removes like record from db
  router.delete('/unlike/:id', async (req: Request, res: Response) => {
   const { id } = req.params;

@@ -40,9 +40,10 @@ try{
 const commentsArr = await axios.get(`/post/comment/${postObj.id}`)
 if(commentsArr.data.length > 0){
   setComments(commentsArr.data)
+  console.log('got comments', commentsArr.data)
 }
 }catch(error) {
-  console.log()
+  console.error('could not get comments', error)
 }
 }
 
