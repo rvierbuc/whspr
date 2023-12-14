@@ -73,6 +73,7 @@
     "react-bootstrap": "^2.9.1",
     "react-dom": "^18.2.0",
     "react-instantsearch": "^7.4.1",
+    "react-instantsearch-core": "^7.4.1",
     "react-router-dom": "^6.20.1",
     "sass": "^1.69.5",
     "sass-loader": "^13.3.2",
