@@ -7,18 +7,16 @@ interface Props {
   userId: any
 }
 
-/**
- * make each filter an object => pass into SynthVoice => add the filter as an optional parameter? => need a default no filter?
- * 
- * maybe use Object.values(filter).forEach() or normal loop?
- * set only up to 5 audioNodes per filter?
- *  OR just 3 and have lowPass and highPass in SynthVoice (results may not be great for other filters)
- */
-
 const Filters = ({ audioContext, userId }: Props) => {
   const tuna = new Tuna(audioContext); // this is working
 
-  // lowpass/highpass types/values
+  const defaultSettings = {
+    lowPassFrequency: 350,
+    highPassFrequency: 350,
+    highPassType: 'highpass',
+    lowPassType: 'lowpass',
+  }
+
   const robot = {
     lowPassType: 'lowpass',
     lowPassFrequency: 60,
@@ -66,10 +64,41 @@ const Filters = ({ audioContext, userId }: Props) => {
     gain: new tuna.Gain({ gain: 250})
   }
 
+  const alien = {
+    lowPassType: 'lowpass',
+    lowPassFrequency: 50,
+    highPassType: 'highpass',
+    highPassFrequency: 7000,
+    gain: new tuna.Gain({ gain: 150 }),
+    compressor: new tuna.Compressor({
+      threshold: -80,
+      makeupGain: 20,
+      attack: 1,
+      release: 250,
+      ratio: 4,
+      knee: 5,
+      automakeup: false,
+      bypass: false
+    }),
+    phaser: new tuna.Phaser({
+      rate: 23,
+      depth: 0.4,
+      feedback: 0.6,
+      stereoPhase: 20,
+      baseModulationFrequency: 1000,
+      bypass: false
+    }),
+  }
+
   return (
     <div>
-      <h2>Filters here</h2>
-      <SynthVoice audioContext={audioContext} userId={userId} robot={robot} wobbly={wobbly} />
+      <SynthVoice
+        audioContext={audioContext}
+        userId={userId}
+        robot={robot}
+        wobbly={wobbly}
+        alien={alien}
+        defaultSettings={defaultSettings} />
     </div>
   );
 };
