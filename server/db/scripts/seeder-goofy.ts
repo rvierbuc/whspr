@@ -65,6 +65,7 @@ export const seedDatabase = async () => {
     },
   ]);
 
+
   await Post.bulkCreate(
     //[
     // {
@@ -102,6 +103,7 @@ export const seedDatabase = async () => {
     // }]
     getRandomPosts()
   );
+
 
   await Sound.bulkCreate([
     {
