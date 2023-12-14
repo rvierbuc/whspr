@@ -3,23 +3,31 @@ import { Sound, User, Post, Follower, Radio, Comment } from '../../dbmodels';
 //set to 10 posts rn but if you want more or less change in for loop
 const getRandomPosts = () => {
   let postArr:any = []
-
+  const hashtags = ['#love', '#instagood', '#fashion', '#photography', '#art', '#beautiful', '#nature', '#happy', '#travel', '#cute', '#style', '#summer', '#beauty', '#fitness', '#food', '#photo', '#friends', '#music', '#smile', '#family', '#life']
+  
   function getRandomDate(start, end) {
     return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
   }
 
+  function getRandomTags (){
+    let tags:any = []
+    for(let i = 0; i < 5; i++){
+      tags.push(hashtags[Math.floor(Math.random() * 18)])
+    }
+    return tags
+  }
   for(let i = 0; i < 10; i++){
     let samplePost:any = {
-      category: 'comedy',
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702167980979.wav'
     }
     samplePost.userId = Math.floor(Math.random() * 5) + 1
     samplePost.title = `title${i}`
-    samplePost.createdAt = getRandomDate(new Date(2023, 11, 1), new Date())
+    samplePost.createdAt = getRandomDate(new Date(2023, 11, 10), new Date())
     samplePost.updatedAt = samplePost.createdAt
     samplePost.likeCount = Math.floor(Math.random() * 50) + 1
     samplePost.listenCount = Math.floor(Math.random() * 200) + 20
     samplePost.commentCount = Math.floor(Math.random() * 50) + 1
+    samplePost.categories = getRandomTags()
 
     postArr.push(samplePost)
   }
