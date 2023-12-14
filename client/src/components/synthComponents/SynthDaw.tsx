@@ -4,6 +4,8 @@ import Oscillator from './Oscillator';
 import RecordSynth from './RecordSynth';
 import Filters from './Filters';
 import SynthVoice from './SynthVoice';
+import * as Tone from 'tone';
+
 
 interface Props {
   audioContext: AudioContext,
@@ -17,6 +19,8 @@ interface Props {
 const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userId}: Props): React.JSX.Element => {
   // setting base context's state
   const [contextState, setContextState] = useState('');
+  const synth = new Tone.Synth()
+  console.log(synth)
 
   // oscillator's settings
   const [oscSettings, setOscSettings] = useState({
