@@ -62,7 +62,7 @@ app.use(express.static(clientPath))
 
 const routeHandler = express.Router()
 routeHandler.use('/post', postRoutes)
-
+//routeHandler.use('/search', searchRoutes)
 
 app.use('/', routeHandler)
 app.use('/', routes)
