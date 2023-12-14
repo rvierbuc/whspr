@@ -2,8 +2,8 @@ const express = require('express')
 import { Request, Response } from 'express'
 const router = express.Router()
 import sequelize, { Op } from 'sequelize'
-
-import { User, Follower, Post, Like, Comment, Listen} from '../dbmodels'
+import { User, Follower, Post, Like, Comment, Listen} from '../dbmodels' 
+import { getTagsByEngagement } from '../algorithmHelpers'
 // ************* GET ROUTES **************
 router.get('/explore/:userId', async (req:Request, res: Response) => {
   const { userId } = req.params
@@ -20,7 +20,7 @@ try{
   const postDataValues = allPosts.map((post) => post.dataValues)
 
   const postsWRanks = postDataValues.map((post) => {
-    let score = post.likeCount + (post.commentCount * .05) + (post.listenCount * .002)
+    let score = post.likeCount + (post.commentCount * .55) + (post.listenCount * .002)
     let today = new Date().getTime()
     let timeSinceCreation = (today - post.createdAt.getTime()) / 14400000
     let decay = 1 + (.4 * (timeSinceCreation ** 2))
@@ -47,7 +47,17 @@ try{
   }
 
   await addIsLikedPair(postsWRanks)
-  res.send(postsWRanks)
+  const tagRanks = await getTagsByEngagement(userId)
+
+  for(let i = 0; i < postsWRanks.length; i++){
+    for(let key in tagRanks){
+      if(postsWRanks[i].categories.includes(key)){
+        postsWRanks[i].rank += tagRanks[key]
+      }
+    }
+  }
+
+  res.send(postsWRanks.sort((a, b) => (a.rank > b.rank ? -1 : 1)))
 }catch(error){
   console.log('ranked', error)
 }
@@ -63,7 +73,74 @@ router.get('/users', async (req: Request, res: Response) => {
     res.sendStatus(500)
   }
 })
+//hashtag ranking
+router.get('/rankTag/:id', async (req: Request, res: Response) => {
+  const { id } = req.params
+  try{
+    //get liked tags
+    const userLikesData:any = await Like.findAll({
+      where: {
+        userId: id
+      },
+      include: { model: Post,
+        as: 'post'}
+    })
+    const userLikedTagObj = userLikesData
+    .flatMap((like) => like.dataValues.post.dataValues.categories )
+    .reduce((acc, curr) =>  {
+      acc[curr] ? acc[curr] += 1 : acc[curr] = 1
+      return acc
+    }, {})
 
+    //get listened tags
+    const userListensData = await Listen.findAll({
+      where: {
+        userId: id
+      },
+      include: Post
+    })
+    const userListenedTagObj = userListensData
+    .flatMap((listen) => listen.dataValues.Post.dataValues.categories )
+    .reduce((acc, curr) =>  {
+      acc[curr] ? acc[curr] += 1 : acc[curr] = 1
+      return acc
+    }, {})
+
+    //get commented tags
+    const userCommentData = await Comment.findAll({
+      where: {
+        userId: id
+      },
+      include: Post
+    })
+    const userCommentedTagObj = userCommentData
+    .flatMap((comment) => comment.dataValues.Post.dataValues.categories)
+    .reduce((acc, curr) =>  {
+      acc[curr] ? acc[curr] += 1 : acc[curr] = 1
+      return acc
+    }, {})
+
+    const getRankedTags = (like, comment, listen, rankedTags = {}) => {
+      for(let key in like){
+        rankedTags[key] ? rankedTags[key] += like[key] : rankedTags[key] = like[key]
+      }
+
+      for(let key in comment){
+        rankedTags[key] ? rankedTags[key] += (.25 * comment[key]) : rankedTags[key] = (.25 * comment[key])
+      }
+
+      for(let key in listen){
+        rankedTags[key] ? rankedTags[key] += (.05 * listen[key]) : rankedTags[key] = (.05 * listen[key])
+      }
+      return rankedTags
+    }
+
+    console.log(getRankedTags(userLikedTagObj, userCommentedTagObj, userListenedTagObj))
+
+  }catch(error){
+    console.error('tag tanking route', error)
+  }
+})
 //GET ALL USER FOLLOWING POSTS
 router.get('/following/:userId', async (req: Request, res: Response) => {
 const { userId } = req.params;
