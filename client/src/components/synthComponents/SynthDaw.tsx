@@ -19,8 +19,7 @@ interface Props {
 const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userId}: Props): React.JSX.Element => {
   // setting base context's state
   const [contextState, setContextState] = useState('');
-  const synth = new Tone.Synth()
-  console.log(synth)
+  const synth = new Tone.Synth();
 
   // oscillator's settings
   const [oscSettings, setOscSettings] = useState({
@@ -73,7 +72,6 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userI
         <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
         <RecordSynth audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />
         <Filters audioContext={audioContext} userId={userId} />
-        <SynthVoice userId={userId} audioContext={audioContext} />
       </div>
     </Container>
   );
