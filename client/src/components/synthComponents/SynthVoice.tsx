@@ -153,8 +153,7 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
 
   return (
     <Container className="text-center my-3 pb-3">
-      <h2 className="text-white text-center">SynthVoice</h2>
-      <input className="mb-2" type="text" value={title} onChange={handleEdit} />
+      <input className="mb-2" type="text" value={title} onChange={() => handleEdit} />
       <Stack direction="horizontal" className="mx-5 mb-3 typeCard">
         <Button className="mx-2 btn-secondary" disabled={filter === defaultSettings} onClick={() => setFilter(defaultSettings)}>Default</Button>
         <Button className="mx-2 btn-secondary" disabled={filter === alien} onClick={() => setFilter(alien)}>Alien</Button>

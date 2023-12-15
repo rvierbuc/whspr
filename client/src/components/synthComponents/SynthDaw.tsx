@@ -69,9 +69,9 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userI
       <h1 className="text-center">Synthesize</h1>
       <div>
         <h3 className="text-center">Set the Tone</h3>
+        <Filters audioContext={audioContext} userId={userId} />
         <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
         <RecordSynth audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />
-        <Filters audioContext={audioContext} userId={userId} />
       </div>
     </Container>
   );
