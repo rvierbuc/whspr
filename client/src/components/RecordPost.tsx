@@ -1,5 +1,44 @@
 import React, { useState, useRef } from 'react'
 import axios from 'axios'
+import algoliasearch from 'algoliasearch';
+import { InstantSearch, SearchBox, Hits, useSearchBox, useHits } from 'react-instantsearch';
+import { v4 as uuidv4 } from 'uuid';
+
+
+const generateUserToken = (): string => {
+  return uuidv4();
+};
+
+const userToken = generateUserToken();
+
+const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251e4', {
+  headers: {
+    'X-Algolia-UserToken': userToken,
+  }
+});
+
+const Hit = ({ hit }) => {
+  const { hits } = useHits(); // the array of hits
+  // console.log('hits', hits); //the individual hit obj
+  return (
+    <article>
+      {hit.category}
+    </article>
+  )};
+const CategorySearch = () => {
+  const [currentSearch, setCurrentSearch] = useState<string>('***');
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentSearch(event.target.value);
+  }
+  return (
+    <div>
+      <InstantSearch searchClient={searchClient} indexName="category_index">
+        <SearchBox onInput={handleSearchChange} />
+        <Hits hitComponent={Hit} />
+      </InstantSearch>
+    </div>
+  );
+}
 
 export const RecordPost = ({ user, audioContext, title, category, openPost }: { user: any; audioContext: BaseAudioContext; title: string; category: string; openPost: () => void}) => {
   const [isRecording, setIsRecording] = useState(false)
@@ -8,7 +47,7 @@ export const RecordPost = ({ user, audioContext, title, category, openPost }: { 
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const audioSource = useRef<AudioBufferSourceNode | null>(null)
   const userId = user.id;
-    
+
   const startRecording = async () => {
     try {
       //for now, this resets the recording array to an empty array when recording starts
@@ -135,6 +174,9 @@ export const RecordPost = ({ user, audioContext, title, category, openPost }: { 
             }
             disabled={audioChunks.length === 0 || isRecording}
             ><img src={require('../style/postbutton.png')} /></button>
+            <div className='category-search'>
+              <CategorySearch />
+            </div>
         </div>
   )
 }
