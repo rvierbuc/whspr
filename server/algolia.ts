@@ -119,9 +119,85 @@ const setSearchIndexSettings = async () => {
     console.log('error', error);
   }
 };
-getSearchData();
-getUserData();
-setSearchIndexSettings();
+
+//init a category index
+const categoryIndex = client.initIndex('category_index');
+//create a helper to check if the category already exists in the index
+const doesCategoryExist = async (category: string) => {
+  try {
+    const results = await categoryIndex.search(category);
+    const hits = results.hits;
+    console.log('hits', hits);
+    if (hits.length === 0) {
+      console.log('category does not exist');
+      return false;
+    } else {
+      console.log('category exists');
+      return true;
+    }
+  } catch(err) {
+    console.log('error checking if category exists', err);
+  }
+}
+// doesCategoryExist('comedy');
+// get all the category data from the post table and save it if it doesnt exist already
+const getCategoryData = async () => {
+  try {
+    // query the post table for all posts
+    const results = await Post.findAll({})
+    // console.log('cat results', results);
+    // map over the data to get dataValues
+    const posts = results.map((post) => post.dataValues)
+    // map over the data to get the category
+    const categoryDataToLoop = posts.map((post) => {
+      return {
+        category: post.category,
+      }
+    })
+    // use a for of loop to loop through the data since it is async, we want to wait for each loop to finish before moving on to the next
+    for (const post of categoryDataToLoop) {
+      // init category to a var
+      const category = post.category;
+      // check if the category exists in the index using the helper (returns a boolean)
+      const categoryExists = await doesCategoryExist(category);
+      // if the category doesn't exist
+      if (!categoryExists) {
+        // log that it doesn't exist and save it to the index
+        console.log('category does not exist, saving to index');
+        // create an object to save to the index, the objectID is the category name since
+        // we want to be able to search by category name, and if we auto generate the objectID,
+        // we can't search by it and it duplicates
+        const categoryDataToSave = {
+          objectID: category,
+          category: post.category,
+        };
+        await categoryIndex.saveObject(categoryDataToSave, {
+          autoGenerateObjectIDIfNotExist: false
+        })
+      } else {
+        console.log('category exists, not saving to index', category);
+      }
+    }
+  } catch(err) {
+    console.log('error getting category data', err);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+getCategoryData();
+// getSearchData();
+// getUserData();
+// setSearchIndexSettings();
+
+
 // searchIndex
 // .search('Daniel')
 // .then(({ hits }) => console.log('then', hits)) 
@@ -137,5 +213,10 @@ setSearchIndexSettings();
 //   console.log('user index deleted')
 // }).catch((error) => {
 //   console.log('error', error)
+// })
+// categoryIndex.delete().then(() => {
+//   console.log('category index deleted')
+// }).catch((error) => {
+//   console.log('error deleting category index', error)
 // })
 
