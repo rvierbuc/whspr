@@ -64,7 +64,6 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
       setAudioChunks([]);
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       const source = audioContext.createMediaStreamSource(stream);
-      console.log(source);
       const synthSource = audioContext.createMediaStreamSource(dest.stream);
       mediaRecorder.current = new MediaRecorder(destination.stream);
 

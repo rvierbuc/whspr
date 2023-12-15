@@ -19,18 +19,13 @@ const Filters = ({ audioContext, userId }: Props) => {
 
   const robot = {
     lowPassType: 'lowpass',
-    lowPassFrequency: 60,
+    lowPassFrequency: 100,
     highPassType: 'highpass',
-    highPassFrequency: 5000,
-    chorus: new tuna.Chorus({
-      rate: 5,
-      feedback: 0.45,
-      delay: 0.6,
-      bypass: false,
-    }),
+    highPassFrequency: 5500,
+    gain: new tuna.Gain({ gain: 1000 }),
     compressor: new tuna.Compressor({
-      threshold: -100,
-      makeupGain: 7,
+      threshold: -10,
+      makeupGain: 5,
       attack: 5,
       release: 500,
       ratio: 9,
@@ -38,7 +33,12 @@ const Filters = ({ audioContext, userId }: Props) => {
       automakeup: false,
       bypass: false
     }),
-    gain: new tuna.Gain({ gain: 90 })
+    chorus: new tuna.Chorus({
+      rate: 6,
+      feedback: 0.3,
+      delay: 0.6,
+      bypass: false,
+    }),
   };
 
   const wobbly = {
@@ -61,7 +61,7 @@ const Filters = ({ audioContext, userId }: Props) => {
       delayTimeLeft: 60,
       delayTimeRight: 100,
     }),
-    gain: new tuna.Gain({ gain: 250})
+    gain: new tuna.Gain({ gain: 450})
   }
 
   const alien = {
