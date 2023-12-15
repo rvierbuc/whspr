@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node-dev server/index.ts",
-    "index": "ts-node-dev server/algolia.ts",
+    "index": "ts-node-dev server/algolia/algolia.ts",
+    "deleteIndex": "ts-node server/algolia/algoliadelete.ts",
     "build": "webpack --config webpack.dev.js --mode development",
     "build-prod": "webpack --config webpack.prod.js --mode production",
     "reassignifneeded": "npx sequelize-cli db:drop && npx sequelize-cli db:create && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all --seeders-path seeders/",
