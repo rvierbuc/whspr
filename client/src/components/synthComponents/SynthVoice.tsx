@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Stack, Button, Container } from 'react-bootstrap';
+import * as Tone from 'tone';
 import axios from 'axios';
 
 interface Props {
@@ -13,7 +14,7 @@ interface Props {
     highPassFrequency: number
     lowPassType: any // these need to be refactored to the proper types
     highPassType: any
-    }
+  }
 }
 
 interface Constraints {
@@ -33,6 +34,7 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
   const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
   const [ filter, setFilter ] = useState(defaultSettings)
   const [title, setTitle] = useState('');
+  Tone.setContext(audioContext); // need to set the Tone context to the audioContext
 
   const handleEdit = (e: any) => {
     setTitle(e.target.value);
@@ -53,40 +55,43 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
     },
     video: false
   }
+  const synth = new Tone.Synth();
+  const dest: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
+  synth.connect(dest);
 
   const startRecording = async () => {
     try {
       setAudioChunks([]);
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      mediaRecorder.current = new MediaRecorder(destination.stream);
       const source = audioContext.createMediaStreamSource(stream);
-      // filter audioNodes
+      console.log(source);
+      const synthSource = audioContext.createMediaStreamSource(dest.stream);
+      mediaRecorder.current = new MediaRecorder(destination.stream);
+
       if (filter !== defaultSettings) {
         let options: any = Object.values(filter).slice(4)
-        source.connect(lowpass)
-        lowpass.connect(highpass)
-        highpass.connect(options[0])
+        source.connect(lowpass).connect(highpass).connect(options[0])
         options[0].connect(options[1])
         options[1].connect(options[2])
         options[2].connect(destination);
-      } else { source.connect(destination) }
+      } else {
+        source.connect(destination);
+      }
 
       mediaRecorder.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
           setAudioChunks((prevChunks) => [...prevChunks, event.data]);
         }
       }
-
       mediaRecorder.current.start();
       setIsRecording(true);
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {console.error(error)}
   };
 
   //stop the recording process
-  const stopRecording = async () => {
+  const stopRecording = () => {
     if (mediaRecorder.current?.state === 'recording') {
+      synth.triggerRelease()
       mediaRecorder.current.stop();
       setIsRecording(false);
     }
