@@ -17,7 +17,7 @@ const getPosts = async(type) => {
   try{
     const allPosts: AxiosResponse = await axios.get(`/post/${type}/${user.id}`)
     setPosts(allPosts.data)
-    console.log(allPosts)
+    console.log('all posts', allPosts.data)
   } catch(error) {
     console.log('client get friends', error)
   }
@@ -57,7 +57,11 @@ useEffect(() => {
       </div>}
       {posts ? posts.map((post: any) => (
         <div>
-          <WaveSurferComponent postObj={post} audioUrl={post.soundUrl} postId={post.id} />
+          <WaveSurferComponent 
+          postObj={post} 
+          audioUrl={post.soundUrl} 
+          postId={post.id} 
+          userId={user.id}/>
           <Post
             key = {post.id}
             postObj = {post}

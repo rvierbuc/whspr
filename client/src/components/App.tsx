@@ -19,6 +19,7 @@ import Feed from './Feed'
 import PostCard from './PostCard'
 import UserProfile from './userProfile';
 import ReadOnlyProfile from './ReadOnlyProfile';
+import Search from './Search';
 import axios from 'axios';
 
 // THE MAIN audio context to be used throughout the application (DO NOT ALTER)
@@ -48,12 +49,11 @@ const App = () => {
                 <Route path="/" element={<Login />} />
                 <Route path="/protected" element={<PrivateRoutes />} >
                     <Route path="dashboard" element={<WaveSurferComponent />} /> // Outlet is a placeholder for child routes to be rendered
-
-
+                    <Route path="search" element={<Search />} />
                     <Route path="profile" element={<UserProfile />} loader={() => getUserLoader()}/>
                     <Route path="feed" element={<Feed audioContext={audioContext} />} loader={() => getUserLoader()}/>
-                    <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
                     <Route path="post" element={<PostCard audioContext={audioContext} />} loader={() => getUserLoader()}/>
+                    <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
                     <Route path="room" element={<Room />} />
                     <Route path="profile/:id" element={<ReadOnlyProfile audioContext={audioContext}/>} loader={() => getUserLoader()} />
                 </Route>

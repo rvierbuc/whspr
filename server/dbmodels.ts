@@ -88,6 +88,15 @@ export const Post = db.define('Post', {
   },
   soundUrl: {
     type: DataTypes.STRING
+  },
+  commentCount: {
+    type: DataTypes.INTEGER
+  },
+  likeCount: {
+    type: DataTypes.INTEGER
+  },
+  listenCount: {
+    type: DataTypes.INTEGER
   }
 })
 
@@ -102,6 +111,15 @@ export const Comment = db.define('Comment', {
     type: DataTypes.STRING
   }
 })
+
+export const Listen = db.define('Listen', {
+  userId: {
+    type: DataTypes.INTEGER
+  },
+  postId: {
+    type: DataTypes.INTEGER
+  }
+} )
 
 export const Radio = db.define('Radio', {
   hostId: {
@@ -172,6 +190,11 @@ User.hasMany(Like, {foreignKey: 'userId'})
 Like.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 Post.hasMany(Like, {foreignKey: 'postId'})
 Like.belongsTo(Post, { foreignKey: 'postId', as: 'post' })
+
+User.hasMany(Listen, {foreignKey: 'userId'})
+Listen.belongsTo(User, { foreignKey: 'userId'})
+Post.hasMany(Listen, {foreignKey: 'postId'})
+Listen.belongsTo(Post, { foreignKey: 'postId'})
 
 User.hasMany(Comment, {foreignKey: 'userId'})
 Comment.belongsTo(User, { foreignKey: 'userId' })

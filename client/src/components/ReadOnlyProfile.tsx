@@ -66,6 +66,7 @@ const ReadOnlyProfile = ({audioContext}) => {
                   key = {post.id}
                   postObj = {post}
                   audioContext={audioContext}
+                  user={user}
                 />
                 {/* each post should have its own instance of a waveSurfer comp */}
       
