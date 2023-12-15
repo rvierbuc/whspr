@@ -23,7 +23,8 @@ import Search from './Search';
 import axios from 'axios';
 
 // THE MAIN audio context to be used throughout the application (DO NOT ALTER)
-const audioContext: AudioContext = new AudioContext();
+export const audioContext: AudioContext = new AudioContext();
+export const filterContext: AudioContext = audioContext;
 /**
  * If this is altered, Pixie will find you and haunt you in your sleep until you
  * learn to sleep with one eye open, and even then that won't be enough.
