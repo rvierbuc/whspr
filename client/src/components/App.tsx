@@ -34,7 +34,7 @@ const App = () => {
     const getUserLoader = async () => {
         try {
             const response = await axios.get('/current-user');
-            console.log('responseloader', response);
+            // console.log('responseloader', response);
             return response.data;
         } catch(err) {
             console.error('user loader error', err)

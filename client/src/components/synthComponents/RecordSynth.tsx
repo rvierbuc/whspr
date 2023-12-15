@@ -10,36 +10,35 @@ interface Props {
   start: () => void;
   stop: () => void;
   userId: number
+  title: string
 }
 
-const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop, userId }: Props) => {
-  const [audioSource, setAudioSource] = useState<string>('');
+const RecordSynth = ({ title, audioContext, finalDest, mediaDest, start, stop, userId }: Props) => {
+  const [postTitle, setPostTitle] = useState(title);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
-  const recorder: MediaRecorder = new MediaRecorder(mediaDest.stream);
+  const recorder = useRef<MediaRecorder | null>(null);
 
-  // start the sound/recording
   const startRecording = async () => {
     try {
-      recorder.ondataavailable = event => {
-        setAudioChunks((prevChunks) => [...prevChunks, event.data])
+      recorder.current = new MediaRecorder(mediaDest.stream);
+      recorder.current.ondataavailable = event => {
+        if (event.data.size > 0) {
+          setAudioChunks((prevChunks) => [...prevChunks, event.data])
+        }
       };
-      recorder.start();
+      recorder.current.start();
       start();
     } catch(error) {
       console.error('Could not start recording', error)
     }
   };
 
-  // stop the sound/recording
   const stopRecording = async () => {
     try {
-      stop();
-      recorder.stop();
-      recorder.onstop = async () => {
-        let blob: string = URL.createObjectURL(new Blob(audioChunks, {type: 'audio/wav'}));
-        setAudioSource(blob.slice(5));
-      };
-      console.log('in stopRecording', audioSource);
+      if (recorder.current?.state === 'recording') {
+        stop();
+        recorder.current.stop();
+      }
     } catch(error) {
       console.error('Could not stop recording', error);
     }
@@ -51,10 +50,9 @@ const RecordSynth = ({ audioContext, finalDest, mediaDest, start, stop, userId }
       const formData = new FormData()
       formData.append('audio', saveBlob)
       formData.append('userId', userId.toString())
-      formData.append('title', 'My music')
+      formData.append('title', postTitle)
       formData.append('category', 'music')
       const response = await axios.post(`/upload`, formData);
-      console.log('cloud response', response)
       if(response.status === 200){
         console.log('Synth saved to cloud')
       }else{

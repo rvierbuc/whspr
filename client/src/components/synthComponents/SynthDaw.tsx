@@ -19,7 +19,15 @@ interface Props {
 const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userId}: Props): React.JSX.Element => {
   // setting base context's state
   const [contextState, setContextState] = useState('');
-  const synth = new Tone.Synth();
+  const [title, setTitle] = useState('')
+
+  useEffect(() => {
+    setTitle('')
+  }, []);
+
+  const handleEdit = (e: any) => {
+    setTitle(e.target.value);
+  };
 
   // oscillator's settings
   const [oscSettings, setOscSettings] = useState({
@@ -65,13 +73,14 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userI
   };
 
   return (
-    <Container className="synthCont w-50 rounded text-white">
+    <Container className="synthCont w-50 rounded text-white text-center">
       <h1 className="text-center">Synthesize</h1>
       <div>
         <h3 className="text-center">Set the Tone</h3>
-        <Filters audioContext={audioContext} userId={userId} />
+        <input className="mb-2" type="text" value={title} onChange={handleEdit} />
+        <Filters title={title} audioContext={audioContext} userId={userId} />
         <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
-        <RecordSynth audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />
+        <RecordSynth title={title} audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />
       </div>
     </Container>
   );

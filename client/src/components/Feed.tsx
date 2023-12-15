@@ -10,7 +10,7 @@ const [posts, setPosts] = useState<any>()
 const [feed, setFeed] = useState<string>('explore')
 
 const user: any = useLoaderData();
-console.log(user)
+// console.log(user)
 
 const getPosts = async(type) => {
   setFeed(type)

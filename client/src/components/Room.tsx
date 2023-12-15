@@ -21,7 +21,7 @@ const Room: React.FC = () => {
     useEffect(() => {
         navigator.mediaDevices.getUserMedia({video: false, audio: true})
         .then((stream) => {
-            console.log('stream', stream)
+            // console.log('stream', stream)
 
             createChannel(channelName, uid, '007eJxTYPBdOLtmftV7Yz+P1GfSx08pdH/dXbfQbEfv229pB0S8KjYpMCQaJyUbmJgmWphZWphYmJtbGKUYpJoZJhmbmllYWpoaHTlcktoQyMggWH2RlZEBAkF8RoZEBgYAV0cfRw==', stream)
             setStream(stream)
@@ -46,7 +46,7 @@ const Room: React.FC = () => {
 
   const handleLeaveChannel = (stream) => {
     leaveChannel();
-    console.log('stream', stream)
+    // console.log('stream', stream)
     stopAudio(stream);
   };
 

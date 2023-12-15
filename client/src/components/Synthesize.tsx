@@ -10,7 +10,6 @@ const Synthesize = ({audioContext}: Props): React.JSX.Element => {
   // setting up basic audioContext workflow => w/ oscillatorNode
   const user: any = useLoaderData();
   const userId = user.id
-  console.log('USER', user.id);
   const oscillator: OscillatorNode = audioContext.createOscillator();
   const filter: BiquadFilterNode = audioContext.createBiquadFilter();
   const mediaDest: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();

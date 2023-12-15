@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react';
 import { Stack, Button, Container } from 'react-bootstrap';
-import * as Tone from 'tone';
 import axios from 'axios';
 
 interface Props {
@@ -15,6 +14,7 @@ interface Props {
     lowPassType: any // these need to be refactored to the proper types
     highPassType: any
   }
+  title: string
 }
 
 interface Constraints {
@@ -25,20 +25,15 @@ interface Constraints {
   video: boolean
 }
 
-const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSettings }: Props) => {
+const SynthVoice = ({ title, audioContext, userId, robot, wobbly, alien, defaultSettings }: Props) => {
   const [isRecording, setIsRecording] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const audio = useRef<AudioBufferSourceNode | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
-  const [ filter, setFilter ] = useState(defaultSettings)
-  const [title, setTitle] = useState('');
-  Tone.setContext(audioContext); // need to set the Tone context to the audioContext
-
-  const handleEdit = (e: any) => {
-    setTitle(e.target.value);
-  };
+  const [ filter, setFilter ] = useState(defaultSettings);
+  const [postTitle, setPostTitle] = useState(title);
 
   const lowpass: BiquadFilterNode = audioContext.createBiquadFilter();
   lowpass.frequency.value = filter.lowPassFrequency;
@@ -55,16 +50,12 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
     },
     video: false
   }
-  const synth = new Tone.Synth();
-  const dest: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
-  synth.connect(dest);
 
   const startRecording = async () => {
     try {
       setAudioChunks([]);
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       const source = audioContext.createMediaStreamSource(stream);
-      const synthSource = audioContext.createMediaStreamSource(dest.stream);
       mediaRecorder.current = new MediaRecorder(destination.stream);
 
       if (filter !== defaultSettings) {
@@ -87,10 +78,8 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
     } catch (error) {console.error(error)}
   };
 
-  //stop the recording process
   const stopRecording = () => {
     if (mediaRecorder.current?.state === 'recording') {
-      synth.triggerRelease()
       mediaRecorder.current.stop();
       setIsRecording(false);
     }
@@ -140,8 +129,6 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
   };
 
   const saveAudioToGoogleCloud = async () => {
-    let postTitle = title;
-    setTitle('');
     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
     try {
       const formData = new FormData()
@@ -158,7 +145,7 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
 
   return (
     <Container className="text-center my-3 pb-3">
-      <input className="mb-2" type="text" value={title} onChange={handleEdit} />
+      {/* <input className="mb-2" type="text" value={title} onChange={handleEdit} /> */}
       <Stack direction="horizontal" className="mx-5 mb-3 typeCard">
         <Button className="mx-2 btn-secondary" disabled={filter === defaultSettings} onClick={() => setFilter(defaultSettings)}>Default</Button>
         <Button className="mx-2 btn-secondary" disabled={filter === alien} onClick={() => setFilter(alien)}>Alien</Button>

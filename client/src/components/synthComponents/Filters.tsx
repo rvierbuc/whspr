@@ -5,9 +5,10 @@ import SynthVoice from './SynthVoice';
 interface Props {
   audioContext: AudioContext
   userId: any
+  title: string
 }
 
-const Filters = ({ audioContext, userId }: Props) => {
+const Filters = ({ title, audioContext, userId }: Props) => {
   const tuna = new Tuna(audioContext); // this is working
 
   const defaultSettings = {
@@ -93,6 +94,7 @@ const Filters = ({ audioContext, userId }: Props) => {
   return (
     <div>
       <SynthVoice
+        title={title}
         audioContext={audioContext}
         userId={userId}
         robot={robot}
