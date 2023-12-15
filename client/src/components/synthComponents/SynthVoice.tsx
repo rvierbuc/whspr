@@ -136,13 +136,14 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
   };
 
   const saveAudioToGoogleCloud = async () => {
-    console.log(userId, title)
+    let postTitle = title;
+    setTitle('');
     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
       formData.append('userId', userId)
-      formData.append('title', title)
+      formData.append('title', postTitle)
       formData.append('category', 'Voice Synth')
       const response = await axios.post(`/upload`, formData)
       response.status === 200 ? console.info('Audio saved successfully') : console.error('Error saving audio', response.statusText);
@@ -153,7 +154,6 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
 
   return (
     <Container className="text-center my-3 pb-3">
-      <h2 className="text-white text-center">SynthVoice</h2>
       <input className="mb-2" type="text" value={title} onChange={handleEdit} />
       <Stack direction="horizontal" className="mx-5 mb-3 typeCard">
         <Button className="mx-2 btn-secondary" disabled={filter === defaultSettings} onClick={() => setFilter(defaultSettings)}>Default</Button>
