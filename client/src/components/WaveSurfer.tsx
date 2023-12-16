@@ -3,7 +3,9 @@ import RecordPlugin from 'wavesurfer.js/dist/plugins/record'
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.js';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+dayjs.extend(relativeTime)
 interface WaveSurferProps {
     audioUrl: string;
     postId: number;
@@ -98,7 +100,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, pos
                     >{`#${cat}`}</button>))
                 :<div></div>
                 }
-                <div>{postObj.createdAt}</div>
+                <div>{dayjs(postObj.createdAt).fromNow()}</div>
                 {postObj.listenCount 
                 ?<div>{`listens: ${postObj.listenCount}`}</div>
                 :<div>Be the first to listen!</div>}
