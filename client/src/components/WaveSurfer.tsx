@@ -96,7 +96,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, pos
                     : <a href={`profile/${postObj.user.id}`} className="card-link">{postObj.user.username}</a>
                     }
                 <h3>{postObj.title}</h3>
-                <div>{postObj.rank}</div>
+                {/* <div>{postObj.rank}</div> */}
                 <div id={containerId}></div>
                 {postObj.categories 
                 ?postObj.categories.map((cat) => (

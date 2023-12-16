@@ -98,19 +98,23 @@ try{
   //if user has listened posts add all listened post ids to array to check incoming posts
   if(listenedPosts.length > 0){
     const listenedPostIdArr = await listenedPosts.map((post:any) => post.postId)
+    //console.log(listenedPostIdArr)
     await decayRankWhenPrevListened(postsWRanks, listenedPostIdArr)
   }
 
   //get user specific tag rankings (function definition in server/algorithmHelpers)
   const tagRanks = await getTagsByEngagement(userId)
-
+  //console.log(postsWRanks[0])
   //function to add user specific tag ranking to current rank field
   const getFinalRanking = (postRanks, tagRanks) => {
     for(let i = 0; i < postRanks.length; i++){
     for(let key in tagRanks){
-      if(postRanks[i].categories.includes(key)){
-        postRanks[i].rank += tagRanks[key]
-      }
+      if(postRanks[i].categories){
+        if(postRanks[i].categories.includes(key)){
+            postRanks[i].rank += tagRanks[key]
+          }
+        }
+      //console.log('qwz', postRanks[i])
     }
   }
 }
