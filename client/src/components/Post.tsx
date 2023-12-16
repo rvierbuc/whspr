@@ -105,6 +105,7 @@ useEffect(() => {
          postObj={postObj}
          getComments={getComments}
          user={user}
+         updatePost={updatePost}
          />
         <div className="accordion" id="previousComments">
         <div className="accordion-item"></div>

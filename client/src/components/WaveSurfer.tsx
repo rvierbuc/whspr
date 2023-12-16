@@ -13,9 +13,10 @@ interface WaveSurferProps {
     userId: number;
     getPosts: any;
     feed: string;
+    updatePost: any;
 }
 
-const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, postId, userId, getPosts, feed}) => {
+const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, postId, userId, getPosts, updatePost}) => {
     const [wave, setWave] = useState<WaveSurfer | null>(null);
     const [display, setDisplay] = useState<boolean>(false); 
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -61,7 +62,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, pos
             try {
                 const addListen = await axios.post('/post/listen', {userId, postId})
                 const updateListenCount = await axios.put('/post/updateCount', {column: 'listenCount', type: 'increment', id: postId})
-                await console.log('complete', updateListenCount, addListen)
+                await updatePost(postId, 'listen')
+                console.log('complete', updateListenCount, addListen)
             }catch(error){
 
             }

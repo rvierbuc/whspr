@@ -8,16 +8,23 @@ import { useLoaderData } from 'react-router-dom';
 const Feed = ({ audioContext }: { audioContext: BaseAudioContext }) => {
 const [posts, setPosts] = useState<any>()
 const [feed, setFeed] = useState<string>('explore')
-
+const [title, setTitle] = useState<string>('Explore WHSPR')
 const user: any = useLoaderData();
 // console.log(user)
 
 const getPosts = async(type, tag) => {
   setFeed(type)
   try{
-    console.log('request variables', type, user.id, tag)
+   // console.log('request variables', type, user.id, tag)
     const allPosts: AxiosResponse = await axios.get(`/post/${type}/${user.id}/${tag}`)
     setPosts(allPosts.data)
+    if(tag !== 'none'){
+        setTitle(`Explore #${tag}`)
+    } else if(type === 'following'){
+        setTitle('Explore Posts from your Friends')
+    } else {
+        setTitle('Explore WHSPR')
+    }
     console.log('all posts', allPosts.data)
   } catch(error) {
     console.log('client get friends', error)
@@ -46,6 +53,7 @@ useEffect(() => {
     <div className="centered">
 <PostCard audioContext={audioContext}/>
     </div>
+    <h2 style={{color: 'white'}}>{title}</h2>
     {feed === 'following' ?
     <div>
         <button
@@ -79,6 +87,7 @@ useEffect(() => {
           postId={post.id} 
           userId={user.id}
           getPosts={getPosts}
+          updatePost={updatePost}
           feed={feed}
           />
           <Post
