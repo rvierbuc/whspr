@@ -20,7 +20,7 @@ const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
       className="btn btn-dark"
       style={{margin:'15px'}}
       onClick={openPost}>
-        Write Post
+        {(!postCreated) ? 'Say something' : 'Nevermind'}
       </button>
       </div>
 {postCreated && (
