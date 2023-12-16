@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import AudioTag from './AudioTag';
 import axios from 'axios';
 import { Container, Button, Stack, Card } from 'react-bootstrap';
 
@@ -14,7 +13,6 @@ interface Props {
 }
 
 const RecordSynth = ({ title, audioContext, finalDest, mediaDest, start, stop, userId }: Props) => {
-  const [postTitle, setPostTitle] = useState(title);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const recorder = useRef<MediaRecorder | null>(null);
 
@@ -50,7 +48,7 @@ const RecordSynth = ({ title, audioContext, finalDest, mediaDest, start, stop, u
       const formData = new FormData()
       formData.append('audio', saveBlob)
       formData.append('userId', userId.toString())
-      formData.append('title', postTitle)
+      formData.append('title', title)
       formData.append('category', 'music')
       const response = await axios.post(`/upload`, formData);
       if(response.status === 200){

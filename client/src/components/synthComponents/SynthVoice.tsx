@@ -1,19 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { Stack, Button, Container } from 'react-bootstrap';
+import { defaultSettings, alien, wobbly, robot } from './filters';
 import axios from 'axios';
 
 interface Props {
   audioContext: AudioContext;
   userId: any
-  robot: any
-  wobbly: any
-  alien: any
-  defaultSettings: {
-    lowPassFrequency: number
-    highPassFrequency: number
-    lowPassType: any // these need to be refactored to the proper types
-    highPassType: any
-  }
   title: string
 }
 
@@ -25,7 +17,7 @@ interface Constraints {
   video: boolean
 }
 
-const SynthVoice = ({ title, audioContext, userId, robot, wobbly, alien, defaultSettings }: Props) => {
+const SynthVoice = ({ title, audioContext, userId }: Props) => {
   const [isRecording, setIsRecording] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const audio = useRef<AudioBufferSourceNode | null>(null);
@@ -33,7 +25,7 @@ const SynthVoice = ({ title, audioContext, userId, robot, wobbly, alien, default
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
   const [ filter, setFilter ] = useState(defaultSettings);
-  const [postTitle, setPostTitle] = useState(title);
+  const [ postTitle, setPostTitle ] = useState(title);
 
   const lowpass: BiquadFilterNode = audioContext.createBiquadFilter();
   lowpass.frequency.value = filter.lowPassFrequency;
