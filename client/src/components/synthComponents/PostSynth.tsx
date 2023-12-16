@@ -8,10 +8,13 @@ interface Props {
   audioChunks: any
   isRecording: boolean
 }
-// send user back to the feed after making a post
 
 const PostSynth = ({ isRecording, audioChunks, userId}: Props) => {
   const [ title, setTitle ] = useState('');
+  const navigate = useNavigate();
+  const handleNavigation = (path: string) => {
+    navigate(path);
+  }
 
   const saveAudioToGoogleCloud = async () => {
     let postTitle = title;
@@ -36,7 +39,8 @@ const PostSynth = ({ isRecording, audioChunks, userId}: Props) => {
       <button
             className="post-button"
             onClick={()=>{
-              saveAudioToGoogleCloud()}
+              saveAudioToGoogleCloud()
+              handleNavigation('/protected/feed')}
             }
             disabled={audioChunks.length === 0 || isRecording}
             ><img src={require('../../style/postbutton.png')} /></button>
