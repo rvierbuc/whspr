@@ -402,7 +402,7 @@ router.delete('/stopFollowing/:userId/:followingId', async (req: Request, res: R
         followingId
       }
     })
-    //console.log('unfollowed', destroyFollowing)
+    console.log('unfollowed', destroyFollowing)
     res.sendStatus(201)
   }catch(error){
     console.error('server could not unfollow', error)

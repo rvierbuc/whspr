@@ -50,7 +50,7 @@ const ReadOnlyProfile = ({audioContext}) => {
 
     const stopFollowing = async () => {
       try{
-        const createFollowing = await axios.post(`/post/stopFollowing/${user.id}/${id}`)
+        const createFollowing = await axios.delete(`/post/stopFollowing/${user.id}/${id}`)
         if(createFollowing.data === 'Created'){
           setFollowing(false)
         }
