@@ -5,7 +5,7 @@ import { RecordComment } from "./RecordComment"
 import WaveSurferComponent from "./WaveSurfer";
 
  const Post = (props) => {
-  const { postObj, getPosts, audioContext, feed, user } = props
+  const { postObj, audioContext, feed, user, updatePost } = props
   const [commentInputOpen, setCommentInputOpen] = useState<boolean>(false)
   const [commentOpen, setCommentOpen] = useState<boolean>(false)
   const [comments, setComments] = useState<any>()
@@ -18,18 +18,18 @@ import WaveSurferComponent from "./WaveSurfer";
     try{
        await axios.post('/post/like', {userId: user.id, postId: postObj.id})
        await axios.put('/post/updateCount', {type: 'increment', column: 'likeCount', id: postObj.id})
-       await getPosts(feed)
+       await updatePost(postObj.id, 'like')
     } catch(error){
       console.log('client could not like', error)
     }
   }
 const handleUnlike = async() => {
   try{
-    const likeObj = postObj.Likes.filter((likeObj) => likeObj.userId == user.id)
+    //const likeObj = postObj.Likes.filter((likeObj) => likeObj.userId == user.id)
     //console.log(likeObj)
-    await axios.delete(`/post/unlike/${likeObj[0].id}`)
+    await axios.delete(`/post/unlike/${user.id}/${postObj.id}`)
     await axios.put('/post/updateCount', {type: 'decrement', column: 'likeCount', id: postObj.id})
-    await getPosts(feed)
+    await updatePost(postObj.id, 'unlike')
   } catch(error){
     console.log('client could not unlike', error)
   }
@@ -69,7 +69,7 @@ useEffect(() => {
         onClick={()=> handleUnlike()}
         style={{backgroundColor:'white', borderColor:'white'}}
         ><svg width="26" height="26" fill='black' className="bi bi-heart-fill" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"></path> 
+        <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"></path> 
   
         </svg>
        </button>
@@ -85,6 +85,7 @@ useEffect(() => {
         </button>
         <p>{postObj.likeCount}</p> </div>}
       </div>
+      <div>{`comments: ${postObj.commentCount}`}</div>
       <div className="accordion" id="commentBox">
         <div className="accordion-item"></div>
         <h4 className="accordion-header">
@@ -103,7 +104,7 @@ useEffect(() => {
          getComments={getComments}
          user={user}
          />
-         <div className="accordion" id="previousComments">
+        <div className="accordion" id="previousComments">
         <div className="accordion-item"></div>
         <h4 className="accordion-header">
           <button className="accordion-button collapsed"

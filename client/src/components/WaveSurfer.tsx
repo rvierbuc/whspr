@@ -86,7 +86,11 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, pos
             <div className="card-body" >
                 <a href={`profile/${postObj.user.id}`} className="card-link">{postObj.user.username}</a>
                 <h3>{postObj.title}</h3>
+                <div>{postObj.rank}</div>
                 <div id={containerId}></div>
+                {postObj.categories.map((cat) => <button className="btn btn-link" >{cat}</button>)}
+                <div>{postObj.createdAt}</div>
+                <div>{`listens: ${postObj.listenCount}`}</div>
             {isPlaying ?
                 <button type='button' className="btn btn-danger" id="play-btn" onClick={() => {
                     if (wave) {

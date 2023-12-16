@@ -4,11 +4,13 @@ const router = express.Router()
 import sequelize, { Op } from 'sequelize'
 import { User, Follower, Post, Like, Comment, Listen} from '../dbmodels' 
 import { getTagsByEngagement } from '../algorithmHelpers'
+
 // ************* GET ROUTES **************
+//gets posts and adds personalized ranking and isLiked field to each postObj before sending to client (for explore page)
 router.get('/explore/:userId', async (req:Request, res: Response) => {
   const { userId } = req.params
 try{
-
+  //get all posts
   const allPosts:any = await Post.findAll({
     include: [
       Like,
@@ -17,24 +19,31 @@ try{
         as: 'user'}
     ]
   })
+  //clean query response to only include dataValues
   const postDataValues = allPosts.map((post) => post.dataValues)
 
+  //add popularity ranking based on overall likes, comments, and listen counts
   const postsWRanks = postDataValues.map((post) => {
-    let score = post.likeCount + (post.commentCount * .55) + (post.listenCount * .002)
+    let score = (post.likeCount * .1) + (post.commentCount * .05) + (post.listenCount * .0025)
     let today = new Date().getTime()
     let timeSinceCreation = (today - post.createdAt.getTime()) / 14400000
-    let decay = 1 + (.4 * (timeSinceCreation ** 2))
+    let decay = .05 * (timeSinceCreation ** 2)
     let rank = score / decay
     post.rank = rank
     return post
-  }).sort((a, b) => (a.rank > b.rank ? -1 : 1))
-
+  })
+  const ranksb4Tags = postsWRanks.map((post:any) => {
+    return {id: post.id, rank: post.rank}
+  })
+  console.log(ranksb4Tags.sort((a, b) => (a.rank > b.rank ? -1 : 1)))
+  //find all likes from this user
   const likedPosts = await Like.findAll({
     where: {userId}
   })
-  
+  //add all liked post ids to array to check incoming posts
   const likedPostIdArr = await likedPosts.map((post:any) => post.postId)
-  //console.log(likedPostIdArr)
+
+  //function that adds isLiked property to post obj with boolean based on if post id is included in likedPostArr
   const addIsLikedPair =  (postArr) => {
     for(let i = 0; i < postArr.length; i++){
       if(likedPostIdArr.includes(postArr[i].id)){
@@ -45,25 +54,57 @@ try{
       }
     }
   }
-
   await addIsLikedPair(postsWRanks)
-  const tagRanks = await getTagsByEngagement(userId)
 
-  for(let i = 0; i < postsWRanks.length; i++){
+  //get user specific tag rankings (function definition in server/algorithmHelpers)
+  const tagRanks = await getTagsByEngagement(userId)
+  //console.log(tagRanks)
+
+  //function to add user specific tag ranking to current rank field
+  const getFinalRanking = (postRanks, tagRanks) => {
+    for(let i = 0; i < postRanks.length; i++){
     for(let key in tagRanks){
-      if(postsWRanks[i].categories.includes(key)){
-        postsWRanks[i].rank += tagRanks[key]
+      if(postRanks[i].categories.includes(key)){
+        postRanks[i].rank += tagRanks[key]
       }
     }
   }
-
-  res.send(postsWRanks.sort((a, b) => (a.rank > b.rank ? -1 : 1)))
+}
+await getFinalRanking(postsWRanks, tagRanks)
+console.log('tags', tagRanks)
+//send posts in order of ranking
+await res.send(postsWRanks.sort((a, b) => (a.rank > b.rank ? -1 : 1)))
 }catch(error){
   console.log('ranked', error)
 }
 })
 
-//get all users
+//gets updated post obj after user engages
+router.get('/updatedPost/:postId/:updateType', async (req: Request, res: Response) => {
+  const { postId, updateType } = req.params;
+
+  try{
+    //find post by id
+    const post:any = await Post.findByPk(postId, {include: [
+      Like,
+      Comment,
+      { model: User,
+        as: 'user'}
+    ]})
+
+    if(updateType === 'like'){
+      post.dataValues.isLiked = true
+    } else if(updateType === 'unlike'){
+      post.dataValues.isLiked = false
+    }
+
+    res.status(200).send(post)
+  }catch(error){
+    console.log('updated like count', error)
+  }
+})
+
+//gets all users
 router.get('/users', async (req: Request, res: Response) => {
   try{
     const users = await User.findAll({})
@@ -73,75 +114,8 @@ router.get('/users', async (req: Request, res: Response) => {
     res.sendStatus(500)
   }
 })
-//hashtag ranking
-router.get('/rankTag/:id', async (req: Request, res: Response) => {
-  const { id } = req.params
-  try{
-    //get liked tags
-    const userLikesData:any = await Like.findAll({
-      where: {
-        userId: id
-      },
-      include: { model: Post,
-        as: 'post'}
-    })
-    const userLikedTagObj = userLikesData
-    .flatMap((like) => like.dataValues.post.dataValues.categories )
-    .reduce((acc, curr) =>  {
-      acc[curr] ? acc[curr] += 1 : acc[curr] = 1
-      return acc
-    }, {})
 
-    //get listened tags
-    const userListensData = await Listen.findAll({
-      where: {
-        userId: id
-      },
-      include: Post
-    })
-    const userListenedTagObj = userListensData
-    .flatMap((listen) => listen.dataValues.Post.dataValues.categories )
-    .reduce((acc, curr) =>  {
-      acc[curr] ? acc[curr] += 1 : acc[curr] = 1
-      return acc
-    }, {})
-
-    //get commented tags
-    const userCommentData = await Comment.findAll({
-      where: {
-        userId: id
-      },
-      include: Post
-    })
-    const userCommentedTagObj = userCommentData
-    .flatMap((comment) => comment.dataValues.Post.dataValues.categories)
-    .reduce((acc, curr) =>  {
-      acc[curr] ? acc[curr] += 1 : acc[curr] = 1
-      return acc
-    }, {})
-
-    const getRankedTags = (like, comment, listen, rankedTags = {}) => {
-      for(let key in like){
-        rankedTags[key] ? rankedTags[key] += like[key] : rankedTags[key] = like[key]
-      }
-
-      for(let key in comment){
-        rankedTags[key] ? rankedTags[key] += (.25 * comment[key]) : rankedTags[key] = (.25 * comment[key])
-      }
-
-      for(let key in listen){
-        rankedTags[key] ? rankedTags[key] += (.05 * listen[key]) : rankedTags[key] = (.05 * listen[key])
-      }
-      return rankedTags
-    }
-
-    console.log(getRankedTags(userLikedTagObj, userCommentedTagObj, userListenedTagObj))
-
-  }catch(error){
-    console.error('tag tanking route', error)
-  }
-})
-//GET ALL USER FOLLOWING POSTS
+//Gets all posts from people user is following (for following feed)
 router.get('/following/:userId', async (req: Request, res: Response) => {
 const { userId } = req.params;
 try{
@@ -200,149 +174,9 @@ try{
 }
 
 })
-//gets all posts
-// router.get('/explore/:userId', async (req: Request, res: Response) => {
-//   const { userId } = req.params;
-//   try{
-//     const postsArr = await Post.findAll({
-//       //need to figure this out so you can exclude viewing user
-//       // where: {
-//       //   [Op.ne]: userId 
-//       // },
-//       include: [
-//         {
-//           model: User,
-//           as: 'user'
-//         },
-//         {
-//           model: Like
-//         }
-//       ], 
-//       order: [
-//         ['createdAt', 'DESC']
-//       ],
-//     })
-//     const likedPosts = await Like.findAll({
-//       where: {userId}
-//     })
-    
-//     const likedPostIdArr = await likedPosts.map((post:any) => post.postId)
-//     //console.log(likedPostIdArr)
-//     const addIsLikedPair =  (postArr) => {
-//       for(let i = 0; i < postArr.length; i++){
-//         if(likedPostIdArr.includes(postArr[i].id)){
-//           //console.log('true')
-//           postArr[i].dataValues.isLiked = true
-//         }else {
-//           postArr[i].dataValues.isLiked = false
-//         }
-//       }
-//     }
-  
-//       await addIsLikedPair(postsArr)
-//       //console.log(followingPosts)
-//       await res.status(200).send(postsArr)  
-//   }catch(error){
-//     res.sendStatus(500)
-//     console.log('could not get following posts', error)
-//   }
-  
-//   })
-//creates comment 
-  router.post('/createCommentRecord', async (req: Request, res: Response) => {
-    const { userId, postId, soundUrl } = req.body
-    try{
-      await Comment.create({userId, postId, soundUrl})
-      res.sendStatus(201)
-    }catch(error){
-      console.log('could not add comment', error)
-      res.sendStatus(500)
-    }
-  })
-//add following relationship
-  router.post('/startFollowing', async(req: Request, res: Response) =>{
-    const {userId, followingId} = req.body
-    console.log(userId, followingId)
-    try{
-      const startFollowing = await Follower.create({userId, followingId})
-      res.sendStatus(201)
-    }catch(error){
-      console.error('could not follow', error)
-      res.sendStatus(500)
-    }
-   })
-// add a record to the like table when user likes post
-router.post('/like', async (req: Request, res: Response) => {
-  const {userId, postId} = req.body;
-    try {
-      const createdLike = await Like.create({
-        userId,
-        postId
-      })
-      console.log(createdLike)
-      res.sendStatus(201)
-    } catch(error) {
-      console.log('could not add like', error)
-      res.sendStatus(500)
-    }
- })
 
-// add a record to the listen table when user completely listens to a post
- router.post('/listen', async (req: Request, res: Response) => {
-  const {userId, postId} = req.body;
-    try {
-      const createdListen = await Listen.create({
-        userId,
-        postId
-      })
-      console.log(createdListen)
-      res.sendStatus(201)
-    } catch(error) {
-      console.log('could not add listen', error)
-      res.sendStatus(500)
-    }
- })
- router.put('/updateCount', async (req: Request, res: Response) => {
-  const { column, type, id } = req.body
-
-try{
-let updateResult;
-
-  const postToUpdate:any = await Post.findByPk(id)
-  if(type === "increment"){
-    updateResult = await postToUpdate.increment(column)
-    //console.log(updateResult)
-  }
-
-  if(type === "decrement"){
-    updateResult = await postToUpdate.decrement(column)
-    //console.log(updateResult)
-  }
-  res.status(200).send(updateResult)
-}catch(error){
-  console.error('could not update count', error)
-}
- } )
- //allows user to unlike a post and removes like record from db
- router.delete('/unlike/:id', async (req: Request, res: Response) => {
-  const { id } = req.params;
-
-  try {
-    const destroyLike = await Like.destroy({
-      where: {
-        id
-      }
-    })
-    console.log(destroyLike)
-    res.sendStatus(201)
-
-  } catch(error){
-    console.log('could not remove like', error)
-    res.sendStatus(500)
-  }
- })
 //gets all comments for one post
- router.get('/comment/:postId', async (req: Request, res: Response) => {
+router.get('/comment/:postId', async (req: Request, res: Response) => {
   const { postId } = req.params;
 try{
   const postComments = await Comment.findAll({
@@ -385,15 +219,182 @@ try{
   }
  })
 
- router.post('/startFollowing', async(req: Request, res: Response) =>{
-  const {userId, followingId} = req.body
-  console.log(userId, followingId)
-  try{
-    const startFollowing = await Follower.create({userId, followingId})
-    res.send(startFollowing)
-  }catch(error){
-    console.error('could not follow', error)
+// *************POST REQUESTS***********************
+//creates comment
+  router.post('/createCommentRecord', async (req: Request, res: Response) => {
+    const { userId, postId, soundUrl } = req.body
+    try{
+      await Comment.create({userId, postId, soundUrl})
+      res.sendStatus(201)
+    }catch(error){
+      console.log('could not add comment', error)
+      res.sendStatus(500)
+    }
+  })
+
+//creates following relationship
+  router.post('/startFollowing', async(req: Request, res: Response) =>{
+    const {userId, followingId} = req.body
+    console.log(userId, followingId)
+    try{
+      const startFollowing = await Follower.create({userId, followingId})
+      res.sendStatus(201)
+    }catch(error){
+      console.error('could not follow', error)
+      res.sendStatus(500)
+    }
+   })
+
+// add a record to the like table when user likes post
+router.post('/like', async (req: Request, res: Response) => {
+  const {userId, postId} = req.body;
+    try {
+      const createdLike = await Like.create({
+        userId,
+        postId
+      })
+      console.log(createdLike)
+      res.sendStatus(201)
+    } catch(error) {
+      console.log('could not add like', error)
+      res.sendStatus(500)
+    }
+ })
+
+// add a record to the listen table when user completely listens to a post
+ router.post('/listen', async (req: Request, res: Response) => {
+  const {userId, postId} = req.body;
+    try {
+      const createdListen = await Listen.create({
+        userId,
+        postId
+      })
+      console.log(createdListen)
+      res.sendStatus(201)
+    } catch(error) {
+      console.log('could not add listen', error)
+      res.sendStatus(500)
+    }
+ })
+
+ //*******************PUT REQUESTS ********************** */
+ router.put('/updateCount', async (req: Request, res: Response) => {
+  const { column, type, id } = req.body
+
+try{
+let updateResult;
+
+  const postToUpdate:any = await Post.findByPk(id)
+  if(type === "increment"){
+    updateResult = await postToUpdate.increment(column)
+    //console.log(updateResult)
+  }
+
+  if(type === "decrement"){
+    updateResult = await postToUpdate.decrement(column)
+    //console.log(updateResult)
+  }
+  res.status(200).send(updateResult)
+}catch(error){
+  console.error('could not update count', error)
+}
+ } )
+
+ // **********************DELETE REQUESTS****************************
+ //allows user to unlike a post and removes like record from db
+ router.delete('/unlike/:userId/:postId', async (req: Request, res: Response) => {
+  const { userId, postId } = req.params;
+
+  try {
+    const destroyLike = await Like.destroy({
+      where: {
+        userId,
+        postId
+      }
+    })
+    console.log('unliked', destroyLike)
+    res.sendStatus(201)
+
+  } catch(error){
+    console.log('could not remove like', error)
     res.sendStatus(500)
   }
  })
+
+// router.get('/testing/:userId', async (req: Request, res:Response) => {
+//  const { userId } = req.params
+//   try{
+//     //get liked tags
+//     let today = new Date().getTime()
+    
+//     const userLikesData = await Like.findAll({
+//       where: {
+//         userId
+//       },
+//       include: { model: Post,
+//         as: 'post'}
+//     })
+//     const userLikedTagObj = userLikesData
+//     .map((like) => {
+//       let timeSinceCreation = (today - like.dataValues.post.dataValues.createdAt.getTime()) / 14400000
+//       let decay = 1 + (.4 * (timeSinceCreation ** 2))
+//       return {
+//         decay,
+//         tags: like.dataValues.post.dataValues.categories
+//       }
+//       } )
+//       console.log(userLikedTagObj)
+//     // .reduce((acc, curr) =>  {
+//     //   acc[curr] ? acc[curr] += 1 : acc[curr] = 1
+//     //   return acc//
+//     // }, {})
+
+//     //get listened tags
+//     const userListensData = await Listen.findAll({
+//       where: {
+//         userId
+//       },
+//       include: Post
+//     })
+//     const userListenedTagObj = userListensData
+//     .flatMap((listen) => listen.dataValues.Post.dataValues.categories )
+//     .reduce((acc, curr) =>  {
+//       acc[curr] ? acc[curr] += 1 : acc[curr] = 1
+//       return acc
+//     }, {})
+
+//     //get commented tags
+//     const userCommentData = await Comment.findAll({
+//       where: {
+//         userId
+//       },
+//       include: Post
+//     })
+//     const userCommentedTagObj = userCommentData
+//     .flatMap((comment) => comment.dataValues.Post.dataValues.categories)
+//     .reduce((acc, curr) =>  {
+//       acc[curr] ? acc[curr] += 1 : acc[curr] = 1
+//       return acc
+//     }, {})
+
+//     //combine tag rankings 
+//     let rankedTags = {}
+//     for(let key in userLikedTagObj){
+//       rankedTags[key] ? rankedTags[key] += userLikedTagObj[key] : rankedTags[key] = userLikedTagObj[key]
+//     }
+
+//     for(let key in userCommentedTagObj){
+//       rankedTags[key] ? rankedTags[key] += (.05 * userCommentedTagObj[key]) : rankedTags[key] = (.05 * userCommentedTagObj[key])
+//     }
+
+//     for(let key in userListenedTagObj){
+//       rankedTags[key] ? rankedTags[key] += (.002 * userListenedTagObj[key]) : rankedTags[key] = (.002 * userListenedTagObj[key])
+//     }
+
+//   return rankedTags
+//   }catch(error){
+//     console.error('[algorithmHelpers.ts] tag ranking error:', error)
+//   }
+// })
+
 module.exports = router

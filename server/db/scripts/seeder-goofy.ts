@@ -22,7 +22,7 @@ const getRandomPosts = () => {
     }
     samplePost.userId = Math.floor(Math.random() * 5) + 1
     samplePost.title = `title${i}`
-    samplePost.createdAt = getRandomDate(new Date(2023, 11, 10), new Date())
+    samplePost.createdAt = getRandomDate(new Date(2023, 11, 13), new Date())
     samplePost.updatedAt = samplePost.createdAt
     samplePost.likeCount = Math.floor(Math.random() * 50) + 1
     samplePost.listenCount = Math.floor(Math.random() * 200) + 20

@@ -22,6 +22,21 @@ const getPosts = async(type) => {
     console.log('client get friends', error)
   }
 }
+
+const updatePost = async(postId, updateType) => {
+    try{
+        const updatedPost:any = await axios.get(`/post/updatedPost/${postId}/${updateType}`)
+        console.log('updated post obj', updatedPost)
+        const postIndex = posts.findIndex((post) => post.id === updatedPost.data.id)
+        updatedPost.data.rank = posts[postIndex].rank
+        //console.log('post index', updatePostIndex)
+        const postsWUpdatedPost = posts.toSpliced(postIndex, 1, updatedPost.data )
+        console.log(postsWUpdatedPost)
+        setPosts(postsWUpdatedPost)
+    } catch(error){
+        console.log('could not update post', error)
+    }
+}
 useEffect(() => {
   getPosts('explore')
 }, [])
@@ -65,7 +80,7 @@ useEffect(() => {
           <Post
             key = {post.id}
             postObj = {post}
-            getPosts={getPosts}
+            updatePost={updatePost}
             audioContext={audioContext}
             feed={feed}
             user={user}
