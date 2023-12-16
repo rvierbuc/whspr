@@ -10,7 +10,7 @@ interface Props {
 }
 
 const Filters = ({ audioContext, userId }: Props) => {
-  const tuna = new Tuna(audioContext); // this is working
+  const tuna = new Tuna(audioContext);
   Tone.setContext(audioContext);
   console.log(audioContext, Tone.context);
 
