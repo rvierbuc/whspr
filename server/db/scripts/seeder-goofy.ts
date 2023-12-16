@@ -7,10 +7,12 @@ const getRandomPosts = () => {
   function getRandomDate(start, end) {
     return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
   }
-
+  const possibleCategories = ['comedy', 'sports', 'music', 'gaming', 'news', 'politics', 'random']
   for(let i = 0; i < 10; i++){
     let samplePost:any = {
-      category: 'comedy',
+      categories: Array.from({ length: Math.floor(Math.random() * 5) + 1}, () =>
+        possibleCategories[Math.floor(Math.random() * possibleCategories.length)]
+      ),
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702167980979.wav'
     }
     samplePost.userId = Math.floor(Math.random() * 5) + 1
@@ -67,40 +69,6 @@ export const seedDatabase = async () => {
 
 
   await Post.bulkCreate(
-    //[
-    // {
-    //   userId: 3,
-    //   category: 'The Categorical',
-    //   title: 'The Titular',
-    //   likeCount: 2,
-    //   commentCount: 10,
-    //   listenCount: 33,
-    //   soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702167980979.wav',
-    //   createdAt: new Date(),
-    //   updatedAt: new Date(),
-    // },
-    // {
-    //   userId: 2,
-    //   category: 'The Categorical',
-    //   title: 'The Titular2',
-    //   soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702265197317.wav',
-    //   createdAt: new Date(),
-    //   updatedAt: new Date(),
-    //   likeCount: 21,
-    //   commentCount: 20,
-    //   listenCount: 33
-    // },
-    // {
-    //   userId: 4,
-    //   category: 'comedy',
-    //   title: 'Angel\'s Post',
-    //   soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702237656598.wav',
-    //   createdAt: new Date(),
-    //   updatedAt: new Date(),
-    //   likeCount: 12,
-    //   commentCount: 44,
-    //   listenCount: 56,
-    // }]
     getRandomPosts()
   );
 
@@ -177,7 +145,7 @@ seedDatabase();
 let samplePost:any = {}
 for(let i = 0; i < 10; i++){
   samplePost.userId 
-  samplePost.category = 
+  samplePost.categories
   samplePost.title
   samplePost.soundUrl
   samplePost.createdAt

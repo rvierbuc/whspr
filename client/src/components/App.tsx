@@ -21,9 +21,26 @@ import UserProfile from './userProfile';
 import ReadOnlyProfile from './ReadOnlyProfile';
 import Search from './Search';
 import axios from 'axios';
+import aa from 'search-insights'
+import { v4 as uuidv4 } from 'uuid';
+import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
+
 
 // THE MAIN audio context to be used throughout the application (DO NOT ALTER)
 export const audioContext: AudioContext = new AudioContext();
+// algolia initialization
+aa('init', {
+    appId: '2580UW5I69',
+    apiKey: '32b038f1c55d83bac4be0f41a0c07524'
+})
+const generateUserToken = (): string => {
+    return uuidv4();
+};
+
+const userToken = generateUserToken();
+
+aa('setUserToken', userToken)
+
 
 const App = () => {
     const getUserLoader = async () => {

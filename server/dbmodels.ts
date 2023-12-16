@@ -83,8 +83,8 @@ export const Post = db.define('Post', {
   title: {
     type: DataTypes.STRING
   },
-  category: {
-    type: DataTypes.STRING
+  categories: {
+    type: DataTypes.ARRAY(DataTypes.STRING)
   },
   soundUrl: {
     type: DataTypes.STRING
