@@ -134,16 +134,12 @@ export const seedDatabase = async () => {
         updatedAt: new Date(),
       },
     ]);
-    console.info('\x1b[32m%s\x1b[0m', 'Seed script executed successfully');
-  } catch (error) {
-    console.error('\x1b[31m%s\x1b[0m', 'Seed script failed', error);
-  }
-  await Comment.bulkCreate([
-    {
-      userId: 1,
-      postId: 2,
-      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
-    },
+    await Comment.bulkCreate([
+      {
+        userId: 1,
+        postId: 2,
+        soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
+      },
     {
       userId: 2,
       postId: 2,
@@ -160,18 +156,25 @@ export const seedDatabase = async () => {
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
     }
   ])
-};
+
 /**
  *  {
-      userId: 3,
-      category: 'The Categorical',
-      title: 'The Titular',
-      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702167980979.wav',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
- */
+userId: 3,
+category: 'The Categorical',
+title: 'The Titular',
+soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702167980979.wav',
+createdAt: new Date(),
+updatedAt: new Date(),
+},
+*/
 
+//keep this at the bottom of the seed and keep seeds within the try block.
+console.info('\x1b[32m%s\x1b[0m', 'Seed script executed successfully');
+} catch (error) {
+console.error('\x1b[31m%s\x1b[0m', 'Seed script failed', error);
+}
+
+}
 seedDatabase();
 
 let samplePost:any = {}

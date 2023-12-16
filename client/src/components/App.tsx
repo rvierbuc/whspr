@@ -25,13 +25,6 @@ import {WhsprAI} from './WhsprAI';
 
 // THE MAIN audio context to be used throughout the application (DO NOT ALTER)
 export const audioContext: AudioContext = new AudioContext();
-<<<<<<< HEAD
-/**
- * If this is altered, Pixie will find you and haunt you in your sleep until you
- * learn to sleep with one eye open, and even then that won't be enough.
- */
-=======
->>>>>>> 36029a8487a837fc2f5946f7a12c0ceed7dab8aa
 
 const App = () => {
     const getUserLoader = async () => {
