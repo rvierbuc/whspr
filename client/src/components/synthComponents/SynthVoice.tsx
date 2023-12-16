@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Stack, Button, Container } from 'react-bootstrap';
-import axios from 'axios';
+import PostSynth from './PostSynth';
 
 interface Props {
   audioContext: AudioContext;
@@ -13,7 +13,7 @@ interface Props {
     highPassFrequency: number
     lowPassType: any // these need to be refactored to the proper types
     highPassType: any
-    }
+  }
 }
 
 interface Constraints {
@@ -32,11 +32,6 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
   const [ filter, setFilter ] = useState(defaultSettings)
-  const [title, setTitle] = useState('');
-
-  const handleEdit = (e: any) => {
-    setTitle(e.target.value);
-  };
 
   const lowpass: BiquadFilterNode = audioContext.createBiquadFilter();
   lowpass.frequency.value = filter.lowPassFrequency;
@@ -60,7 +55,7 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       mediaRecorder.current = new MediaRecorder(destination.stream);
       const source = audioContext.createMediaStreamSource(stream);
-      // filter audioNodes
+
       if (filter !== defaultSettings) {
         let options: any = Object.values(filter).slice(4)
         source.connect(lowpass)
@@ -84,7 +79,6 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
     }
   };
 
-  //stop the recording process
   const stopRecording = async () => {
     if (mediaRecorder.current?.state === 'recording') {
       mediaRecorder.current.stop();
@@ -135,26 +129,9 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
     setAudioChunks([])
   };
 
-  const saveAudioToGoogleCloud = async () => {
-    let postTitle = title;
-    setTitle('');
-    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
-    try {
-      const formData = new FormData()
-      formData.append('audio', audioBlob)
-      formData.append('userId', userId)
-      formData.append('title', postTitle)
-      formData.append('category', 'Voice Synth')
-      const response = await axios.post(`/upload`, formData)
-      response.status === 200 ? console.info('Audio saved successfully') : console.error('Error saving audio', response.statusText);
-    } catch (error) {
-      console.error('Error saving audio:', error)
-    }
-  }
-
   return (
     <Container className="text-center my-3 pb-3">
-      <input className="mb-2" type="text" value={title} onChange={handleEdit} />
+      <PostSynth isRecording={isRecording} audioChunks={audioChunks} userId={userId} />
       <Stack direction="horizontal" className="mx-5 mb-3 typeCard">
         <Button className="mx-2 btn-secondary" disabled={filter === defaultSettings} onClick={() => setFilter(defaultSettings)}>Default</Button>
         <Button className="mx-2 btn-secondary" disabled={filter === alien} onClick={() => setFilter(alien)}>Alien</Button>
@@ -182,13 +159,6 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
             onClick={emptyRecording}
             disabled={audioChunks.length === 0 || isRecording}
             ><img src={require('../../style/deletebutton.png')} /></button>
-            <button
-            className="post-button"
-            onClick={()=>{
-              saveAudioToGoogleCloud()}
-            }
-            disabled={audioChunks.length === 0 || isRecording}
-            ><img src={require('../../style/postbutton.png')} /></button>
       </Stack>
     </Container>
   );
