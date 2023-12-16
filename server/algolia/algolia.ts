@@ -2,6 +2,7 @@
 // hello_algolia.js
 import algoliasearch from 'algoliasearch';
 import { User, Post } from '../dbmodels'
+
 //const axios = require('axios');
 // Connect and authenticate with your Algolia app
 //TO DO:
@@ -12,6 +13,7 @@ import { User, Post } from '../dbmodels'
 // const { APP_ID, ADMIN_API_KEY }: EnvironmentVariables = process.env as any;
 
 export const client = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251e4');
+
 
 
 // Create a new index and add a record

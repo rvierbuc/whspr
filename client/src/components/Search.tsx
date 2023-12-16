@@ -7,6 +7,9 @@ import { Link } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
+import aa from 'search-insights';
+import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
+
 const generateUserToken = (): string => {
   return uuidv4();
 };
@@ -16,19 +19,17 @@ interface EnvironmentVariables {
   APP_ID: string;
   ADMIN_API_KEY: string;
 }
-interface SearchPropTypes {
-  children: React.ReactNode;
-}
+
 
 
 
 const userToken = generateUserToken();
 
-const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251e4', {
-  headers: {
-    'X-Algolia-UserToken': userToken,
-  }
-});
+const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251e4');
+
+
+
+
 
 
 function Hit({ hit }) {
@@ -47,7 +48,7 @@ function Hit({ hit }) {
 }
   //creating a custom search box to stuff into the navbar
 
-const Search:React.FC<SearchPropTypes> = ({ children }) => {
+const Search:React.FC = () => {
   const [currentSearch, setCurrentSearch] = useState<string>('');
   // const { refine } = useSearchBox();
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,16 +58,16 @@ const Search:React.FC<SearchPropTypes> = ({ children }) => {
     // refine(event.target.value);
   }
   return (
-    <Form inline>
+    <Form>
     <InstantSearch 
     searchClient={searchClient} 
     indexName="search_index"
     initialUiState={{ searchBox: { query: currentSearch } }}
+    insights={true}
     >
+      <Configure clickAnalytics={true} />
       <SearchBox onInput={handleSearchChange}/>
       {currentSearch && <Hits hitComponent={Hit} />}
-      <Configure userToken={userToken} />
-      { children }
     </InstantSearch>
       </Form>
   );

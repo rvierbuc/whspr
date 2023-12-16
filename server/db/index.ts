@@ -9,6 +9,7 @@ const db = new Sequelize({
   username: "postgres",
   database: "whspr",
   password: "ok",
+  logging: false //disables sql commands being logged in console
 });
 
 db.authenticate().then(() => {

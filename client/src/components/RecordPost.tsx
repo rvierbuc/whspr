@@ -9,6 +9,7 @@ export const RecordPost = ({ user, audioContext, title, category, openPost }: { 
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const audioSource = useRef<AudioBufferSourceNode | null>(null)
   const userId = user.id;
+  console.log('category in record', category);
 
   const startRecording = async () => {
     try {

@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import { RecordPost } from './RecordPost'
 import { useLoaderData } from 'react-router-dom'
 import algoliasearch from 'algoliasearch';
-import { InstantSearch, SearchBox, Hits, useSearchBox, useHits, Configure } from 'react-instantsearch';
+import { InstantSearch, SearchBox, Hits, useSearchBox, Configure } from 'react-instantsearch';
 import { v4 as uuidv4 } from 'uuid';
+import searchInsights from 'search-insights';
 
 
 const generateUserToken = (): string => {
@@ -18,18 +19,25 @@ const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251
   }
 });
 
-const Hit = ({ hit }) => {
-  const { hits } = useHits(); // the array of hits
+
+const Hit = ({ hit, onSelect }: { hit: any; onSelect: (category: string) => void }) => {
   // console.log('hits', hits); //the individual hit obj
   return (
-    <article>
+    <article onClick={() => onSelect(hit.category)}>
       {hit.category}
     </article>
   )};
-const CategorySearch = () => {  
+const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: string) => void }) => {  
   const [currentSearch, setCurrentSearch] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('working', event.target.value, event);
     setCurrentSearch(event.target.value);
+  }
+  const handleCategorySelection = (category: string) => {
+    // console.log('category', category);
+    setSelectedCategory(category);
+    onCategorySelect(category);
   }
   return (
     <div>
@@ -38,8 +46,8 @@ const CategorySearch = () => {
       indexName="category_index"
       initialUiState={{ searchBox: { query: currentSearch } }}
       >
-        <SearchBox onInput={handleSearchChange} />
-        {currentSearch && <Hits hitComponent={Hit} />}
+        <SearchBox onInput={handleSearchChange} placeholder={'' || selectedCategory}/>
+        {currentSearch && <Hits hitComponent={(props) => <Hit {...props} onSelect={handleCategorySelection} />} />}
         <Configure userToken={userToken} />
       </InstantSearch>
     </div>
@@ -55,7 +63,10 @@ const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   const openPost = () => {
     setPostCreated(!postCreated)
   }
-  
+  const handleCategorySelect = (selectedCategory: string) => {
+    // console.log('selectedCategory', selectedCategory);
+    setCategory(selectedCategory);
+  }
   return (
     <div>
       <div className="d-flex justify-content-center">
@@ -77,7 +88,7 @@ const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
           onChange={(e) => { setTitle(e.target.value) }}
           className='input-control'
           />
-          <CategorySearch />
+          <CategorySearch onCategorySelect={handleCategorySelect}/>
           </div>
 <RecordPost
 user={user}
