@@ -112,3 +112,17 @@ body {
   left: 80%;
   transform: translateX(-20%)
 }
+.ais-Hits-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #a6c5ff;
+  border: #a6c5ff;
+  border-radius: 10px;
+  margin-left: 21px;
+  color: #fff;
+  position: sticky;
+}
+#category-search {
+  margin-left: 50px;
+}

@@ -39,6 +39,13 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
     setSelectedCategory(category);
     onCategorySelect(category);
   }
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // console.log('currentSearch', currentSearch);
+    setCurrentSearch('');
+    setSelectedCategory(currentSearch);
+    onCategorySelect(currentSearch);
+  }
   return (
     <div>
       <InstantSearch 
@@ -46,7 +53,17 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
       indexName="category_index"
       initialUiState={{ searchBox: { query: currentSearch } }}
       >
-        <SearchBox onInput={handleSearchChange} placeholder={'' || selectedCategory}/>
+        {/* <SearchBox onInput={handleSearchChange} placeholder={'' || selectedCategory} className='input-control'/> */}
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            value={currentSearch}
+            onInput={handleSearchChange}
+            placeholder={'Add up to 5 categories!' || selectedCategory}
+            className='input-control'
+            id='category-search'
+          />
+          </form>
         {currentSearch && <Hits hitComponent={(props) => <Hit {...props} onSelect={handleCategorySelection} />} />}
         <Configure userToken={userToken} />
       </InstantSearch>
