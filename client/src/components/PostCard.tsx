@@ -80,7 +80,8 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
   }
   const handleCategorySelection = (category: string) => {
     console.log('category', category);
-    const updatedCategories = [...selectedCategories, category.trim()];
+    const trimmedCategory = category.trim();
+    const updatedCategories = [...selectedCategories, trimmedCategory];
     console.log('updatedCategories', updatedCategories);
     setSelectedCategories(updatedCategories);
     onCategorySelect(updatedCategories);
@@ -91,9 +92,6 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
     // console.log('currentSearch', currentSearch);
     handleCategorySelection(currentSearch);
   }
-  useEffect(() => {
-    console.log('selectedCategories', selectedCategories);
-  }, [selectedCategories])
   return (
     <div>
       <InstantSearch 
@@ -122,14 +120,16 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
 const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   const [postCreated, setPostCreated] = useState(false)
   const [title, setTitle] = useState('')
-  const [categories, setCategories] = useState<string[] | string>('')
+  const [categories, setCategories] = useState<string[]>([])
   const user = useLoaderData()
 
   const openPost = () => {
     setPostCreated(!postCreated)
   }
-  const handleCategorySelect = (selectedCategory: string[] | string) => {
-    setCategories(selectedCategory);
+  const handleCategorySelect = (selectedCategory: string | string[]) => {
+    const array = Array.isArray(selectedCategory) ? selectedCategory : [selectedCategory];
+    setCategories(array);
+    // setCategories(selectedCategory);
   }
   return (
     <div>

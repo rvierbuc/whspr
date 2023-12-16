@@ -100,6 +100,7 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost }: 
         console.log('foreach', category, index);
         formData.append(`category[${index}]`, category)
       })
+      console.log('formdata', Object.fromEntries(formData.entries()));
       const response = await axios.post(`/upload`, formData)
       if (response.status === 200) {
         console.info('Audio save successfully')
