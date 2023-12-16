@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Stack, Button, Container } from 'react-bootstrap';
 import PostSynth from './PostSynth';
+import * as Tone from 'tone';
 
 interface Props {
   audioContext: AudioContext;
@@ -14,6 +15,8 @@ interface Props {
     lowPassType: any // these need to be refactored to the proper types
     highPassType: any
   }
+  notes1: string[]
+  sampleSynth: any
 }
 
 interface Constraints {
@@ -24,14 +27,15 @@ interface Constraints {
   video: boolean
 }
 
-const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSettings }: Props) => {
+const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, alien, defaultSettings }: Props) => {
   const [isRecording, setIsRecording] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const audio = useRef<AudioBufferSourceNode | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
-  const [ filter, setFilter ] = useState(defaultSettings)
+  const [ filter, setFilter ] = useState(defaultSettings);
+  const [ addSynth, setAddSynth ] = useState(false);
 
   const lowpass: BiquadFilterNode = audioContext.createBiquadFilter();
   lowpass.frequency.value = filter.lowPassFrequency;
@@ -49,13 +53,17 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
     video: false
   }
 
+  const sample = new Tone.Synth().toDestination();
+
   const startRecording = async () => {
     try {
       setAudioChunks([]);
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       mediaRecorder.current = new MediaRecorder(destination.stream);
       const source = audioContext.createMediaStreamSource(stream);
+      if (addSynth) {
 
+      }
       if (filter !== defaultSettings) {
         let options: any = Object.values(filter).slice(4)
         source.connect(lowpass)
@@ -65,13 +73,11 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
         options[1].connect(options[2])
         options[2].connect(destination);
       } else { source.connect(destination) }
-
       mediaRecorder.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
           setAudioChunks((prevChunks) => [...prevChunks, event.data]);
         }
       }
-
       mediaRecorder.current.start();
       setIsRecording(true);
     } catch (error) {
@@ -103,7 +109,6 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
         audio.current = audioContext.createBufferSource()
         audio.current.buffer = buffer
         audio.current.connect(audioContext.destination);
-
         audio.current.onended = () => {
           setIsPlaying(false)
         }
@@ -139,26 +144,11 @@ const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSetting
         <Button className="mx-2 btn-secondary" disabled={filter === robot} onClick={() => setFilter(robot)}>Robot</Button>
       </Stack>
       <Stack direction="horizontal" className="mx-5 mb-3 typeCard">
-      <button
-            className="record-button"
-            onClick={startRecording}
-            disabled={isRecording}
-            ><img src={require('../../style/recordbutton.png')} /></button>
-            <button
-            className="play-button"
-            onClick={playAudio}
-            disabled={isPlaying || audioChunks.length === 0 }
-            ><img src={require('../../style/playbutton.png')} /></button>
-            <button
-            className="stop-button"
-            onClick={isRecording ? stopRecording : stopPlaying}
-            disabled={!isRecording && !isPlaying}
-            ><img src={require('../../style/stopbutton.png')} /></button>
-            <button
-            className="delete-button"
-            onClick={emptyRecording}
-            disabled={audioChunks.length === 0 || isRecording}
-            ><img src={require('../../style/deletebutton.png')} /></button>
+      <button className="record-button" onClick={startRecording} disabled={isRecording}><img src={require('../../style/recordbutton.png')} /></button>
+      <button className="play-button" onClick={playAudio} disabled={isPlaying || audioChunks.length === 0 }><img src={require('../../style/playbutton.png')} /></button>
+      <button className="stop-button" onClick={isRecording ? stopRecording : stopPlaying} disabled={!isRecording && !isPlaying}><img src={require('../../style/stopbutton.png')} /></button>
+      <button className="delete-button" onClick={emptyRecording} disabled={audioChunks.length === 0 || isRecording}><img src={require('../../style/deletebutton.png')} /></button>
+      <button onClick={ () => {addSynth === false ? setAddSynth(true) : setAddSynth(false)}}>Add audio</button>
       </Stack>
     </Container>
   );

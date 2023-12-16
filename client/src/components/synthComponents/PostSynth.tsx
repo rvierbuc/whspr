@@ -1,19 +1,17 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import * as Tone from 'tone';
 
 interface Props {
   userId: any
   audioChunks: any
   isRecording: boolean
 }
+// send user back to the feed after making a post
 
 const PostSynth = ({ isRecording, audioChunks, userId}: Props) => {
   const [ title, setTitle ] = useState('');
-
-  const handleEdit = (e: any) => {
-    setTitle(e.target.value);
-  };
 
   const saveAudioToGoogleCloud = async () => {
     let postTitle = title;
@@ -34,7 +32,7 @@ const PostSynth = ({ isRecording, audioChunks, userId}: Props) => {
 
   return (
     <div>
-      <input type="text" value={title} onChange={handleEdit} />
+      <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
       <button
             className="post-button"
             onClick={()=>{
