@@ -7,19 +7,41 @@ import { getTagsByEngagement } from '../algorithmHelpers'
 
 // ************* GET ROUTES **************
 //gets posts and adds personalized ranking and isLiked field to each postObj before sending to client (for explore page)
-router.get('/explore/:userId', async (req:Request, res: Response) => {
-  const { userId } = req.params
+router.get('/explore/:userId/:tag', async (req:Request, res: Response) => {
+  const { userId, tag } = req.params
 try{
   //get all posts
-  const allPosts:any = await Post.findAll({
-    include: [
-      Like,
-      Comment,
-      { model: User,
-        as: 'user'}
-    ]
-  })
-  //clean query response to only include dataValues
+  let allPosts:any;
+  if(tag === 'none'){
+    allPosts = await Post.findAll({
+      where: {
+        userId: {
+          [Op.ne]: userId
+        }
+      },
+      include: [
+        Like,
+        Comment,
+        { model: User,
+          as: 'user'}
+        ]
+      })
+    } else {
+      allPosts = await Post.findAll({
+        where: {
+          categories: {
+            [Op.contains]: [tag]
+          }
+        },
+        include: [
+          Like,
+          Comment,
+          { model: User,
+            as: 'user'}
+          ]
+        })
+    }
+      //clean query response to only include dataValues
   const postDataValues = allPosts.map((post) => post.dataValues)
 
   //add popularity ranking based on overall likes, comments, and listen counts
@@ -32,33 +54,49 @@ try{
     post.rank = rank
     return post
   })
-  const ranksb4Tags = postsWRanks.map((post:any) => {
-    return {id: post.id, rank: post.rank}
-  })
-  console.log(ranksb4Tags.sort((a, b) => (a.rank > b.rank ? -1 : 1)))
+  // const ranksb4Tags = postsWRanks.map((post:any) => {
+  //   return {id: post.id, rank: post.rank}
+  // })
+  // console.log(ranksb4Tags.sort((a, b) => (a.rank > b.rank ? -1 : 1)))
+
   //find all likes from this user
   const likedPosts = await Like.findAll({
     where: {userId}
   })
-  //add all liked post ids to array to check incoming posts
-  const likedPostIdArr = await likedPosts.map((post:any) => post.postId)
-
-  //function that adds isLiked property to post obj with boolean based on if post id is included in likedPostArr
-  const addIsLikedPair =  (postArr) => {
+   //find all listens from this user
+  const listenedPosts = await Listen.findAll({
+    where: {userId}
+  })
+ // console.log(likedPosts, listenedPosts)
+   //function that adds isLiked property to post obj with boolean and removes previously listened or liked posts
+   const addUserEngageInfo =  (postArr, checkArr) => {
     for(let i = 0; i < postArr.length; i++){
-      if(likedPostIdArr.includes(postArr[i].id)){
-        //console.log('true')
-        postArr[i].isLiked = true
+      if(checkArr.includes(postArr[i].id)){
+        //removes previously liked or listened posts
+        postArr.splice(i, 1)
       }else {
-        postArr[i].isLiked = false
+        if(!postArr[i].isLiked){
+          postArr[i].isLiked = false
+        }
       }
     }
   }
-  await addIsLikedPair(postsWRanks)
+  //if user has liked posts add all liked post ids to array to check incoming posts
+  if(likedPosts.length > 0){
+    const likedPostIdArr = await likedPosts.map((post:any) => post.postId)
+    await addUserEngageInfo(postsWRanks, likedPostIdArr)
+  }
+
+  //if user has listened posts add all listened post ids to array to check incoming posts
+  if(listenedPosts.length > 0){
+    const listenedPostIdArr = await listenedPosts.map((post:any) => post.postId)
+    await addUserEngageInfo(postsWRanks, listenedPostIdArr)
+  } 
+
+ 
 
   //get user specific tag rankings (function definition in server/algorithmHelpers)
   const tagRanks = await getTagsByEngagement(userId)
-  //console.log(tagRanks)
 
   //function to add user specific tag ranking to current rank field
   const getFinalRanking = (postRanks, tagRanks) => {
@@ -71,7 +109,7 @@ try{
   }
 }
 await getFinalRanking(postsWRanks, tagRanks)
-console.log('tags', tagRanks)
+console.log('posts to send', postsWRanks)
 //send posts in order of ranking
 await res.send(postsWRanks.sort((a, b) => (a.rank > b.rank ? -1 : 1)))
 }catch(error){
@@ -116,8 +154,8 @@ router.get('/users', async (req: Request, res: Response) => {
 })
 
 //Gets all posts from people user is following (for following feed)
-router.get('/following/:userId', async (req: Request, res: Response) => {
-const { userId } = req.params;
+router.get('/following/:userId/:tag', async (req: Request, res: Response) => {
+const { userId, tag } = req.params;
 try{
   const following = await Follower.findAll({
     where: {
@@ -174,6 +212,7 @@ try{
 }
 
 })
+
 
 //gets all comments for one post
 router.get('/comment/:postId', async (req: Request, res: Response) => {

@@ -9,9 +9,11 @@ interface WaveSurferProps {
     postId: number;
     postObj: any;
     userId: number;
+    getPosts: any;
+    feed: string;
 }
 
-const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, postId, userId}) => {
+const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, postId, userId, getPosts, feed}) => {
     const [wave, setWave] = useState<WaveSurfer | null>(null);
     const [display, setDisplay] = useState<boolean>(false); 
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -88,9 +90,18 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, pos
                 <h3>{postObj.title}</h3>
                 <div>{postObj.rank}</div>
                 <div id={containerId}></div>
-                {postObj.categories.map((cat) => <button className="btn btn-link" >{cat}</button>)}
+                {postObj.categories 
+                ?postObj.categories.map((cat) => (
+                <button 
+                    className="btn btn-link" 
+                    onClick={() => getPosts('explore', cat)}
+                    >{`#${cat}`}</button>))
+                :<div></div>
+                }
                 <div>{postObj.createdAt}</div>
-                <div>{`listens: ${postObj.listenCount}`}</div>
+                {postObj.listenCount 
+                ?<div>{`listens: ${postObj.listenCount}`}</div>
+                :<div>Be the first to listen!</div>}
             {isPlaying ?
                 <button type='button' className="btn btn-danger" id="play-btn" onClick={() => {
                     if (wave) {

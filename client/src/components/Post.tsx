@@ -5,7 +5,7 @@ import { RecordComment } from "./RecordComment"
 import WaveSurferComponent from "./WaveSurfer";
 
  const Post = (props) => {
-  const { postObj, audioContext, feed, user, updatePost } = props
+  const { postObj, audioContext, user, updatePost } = props
   const [commentInputOpen, setCommentInputOpen] = useState<boolean>(false)
   const [commentOpen, setCommentOpen] = useState<boolean>(false)
   const [comments, setComments] = useState<any>()
@@ -85,7 +85,9 @@ useEffect(() => {
         </button>
         <p>{postObj.likeCount}</p> </div>}
       </div>
-      <div>{`comments: ${postObj.commentCount}`}</div>
+      {postObj.commentCount 
+                ?<div>{`comments: ${postObj.commentCount}`}</div>
+                :<div>Be the first to comment!</div>}
       <div className="accordion" id="commentBox">
         <div className="accordion-item"></div>
         <h4 className="accordion-header">

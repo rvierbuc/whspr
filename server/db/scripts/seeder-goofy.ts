@@ -3,7 +3,7 @@ import { Sound, User, Post, Follower, Radio, Comment } from '../../dbmodels';
 //set to 10 posts rn but if you want more or less change in for loop
 const getRandomPosts = () => {
   let postArr:any = []
-  const hashtags = ['#love', '#instagood', '#fashion', '#photography', '#art', '#beautiful', '#nature', '#happy', '#travel', '#cute', '#style', '#summer', '#beauty', '#fitness', '#food', '#photo', '#friends', '#music', '#smile', '#family', '#life']
+  const hashtags = ['love', 'instagood', 'fashion', 'photography', 'art', 'beautiful', 'nature', 'happy', 'travel', 'cute', 'style', 'summer', 'beauty', 'fitness', 'food', 'photo', 'friends', 'music', 'smile', 'family', 'life']
   
   function getRandomDate(start, end) {
     return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));

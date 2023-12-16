@@ -12,10 +12,11 @@ const [feed, setFeed] = useState<string>('explore')
 const user: any = useLoaderData();
 // console.log(user)
 
-const getPosts = async(type) => {
+const getPosts = async(type, tag) => {
   setFeed(type)
   try{
-    const allPosts: AxiosResponse = await axios.get(`/post/${type}/${user.id}`)
+    console.log('request variables', type, user.id, tag)
+    const allPosts: AxiosResponse = await axios.get(`/post/${type}/${user.id}/${tag}`)
     setPosts(allPosts.data)
     console.log('all posts', allPosts.data)
   } catch(error) {
@@ -38,7 +39,7 @@ const updatePost = async(postId, updateType) => {
     }
 }
 useEffect(() => {
-  getPosts('explore')
+  getPosts('explore', 'none')
 }, [])
   return (
     <div>
@@ -50,24 +51,24 @@ useEffect(() => {
         <button
         type="button"
         className="btn btn-dark"
-        onClick={() => getPosts('following')}
+        onClick={() => getPosts('following', 'none')}
         >Following</button>
         <button
         type="button"
         className="btn btn-light"
-        onClick={() => getPosts('explore')}
+        onClick={() => getPosts('explore', 'none')}
         >Explore</button>
     </div>
     : <div>
       <button
         type="button"
         className="btn btn-light"
-        onClick={() => getPosts('following')}
+        onClick={() => getPosts('following', 'none')}
         >Following</button>
         <button
         type="button"
         className="btn btn-dark"
-        onClick={() => getPosts('explore')}
+        onClick={() => getPosts('explore', 'none')}
         >Explore</button>
       </div>}
       {posts ? posts.map((post: any) => (
@@ -76,7 +77,10 @@ useEffect(() => {
           postObj={post} 
           audioUrl={post.soundUrl} 
           postId={post.id} 
-          userId={user.id}/>
+          userId={user.id}
+          getPosts={getPosts}
+          feed={feed}
+          />
           <Post
             key = {post.id}
             postObj = {post}
