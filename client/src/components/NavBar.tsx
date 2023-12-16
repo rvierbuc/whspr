@@ -42,6 +42,7 @@ const NavBar = () => {
                 <Nav.Link onClick={() => handleNavigation('/protected/profile')}>Profile</Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/synthesize')}>Synthesize</Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/room')}>Room</Nav.Link>
+                <Nav.Link onClick={() => handleNavigation('/protected/WhsprAI')}>Whspr AI</Nav.Link>
                 </Nav>
               </Navbar.Collapse>
           </Container>

@@ -20,9 +20,10 @@ import PostCard from './PostCard'
 import UserProfile from './userProfile';
 import ReadOnlyProfile from './ReadOnlyProfile';
 import axios from 'axios';
+import {WhsprAI} from './WhsprAI';
 
 // THE MAIN audio context to be used throughout the application (DO NOT ALTER)
-const audioContext: AudioContext = new AudioContext();
+export const audioContext: AudioContext = new AudioContext();
 /**
  * If this is altered, Pixie will find you and haunt you in your sleep until you
  * learn to sleep with one eye open, and even then that won't be enough.
@@ -47,8 +48,7 @@ const App = () => {
                 <Route path="/" element={<Login />} />
                 <Route path="/protected" element={<PrivateRoutes />} >
                     <Route path="dashboard" element={<WaveSurferComponent />} /> // Outlet is a placeholder for child routes to be rendered
-
-
+                    <Route path="WhsprAI" element={<WhsprAI audioContext={audioContext}/>} />
                     <Route path="profile" element={<UserProfile />} loader={() => getUserLoader()}/>
                     <Route path="feed" element={<Feed audioContext={audioContext} />} loader={() => getUserLoader()}/>
                     <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
