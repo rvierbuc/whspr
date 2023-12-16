@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react'
 import axios from 'axios'
 
 
-export const RecordPost = ({ user, audioContext, title, categories, openPost }: { user: any; audioContext: BaseAudioContext; title: string; categories: string | string[]; openPost: () => void}) => {
+export const RecordPost = ({ user, audioContext, title, categories, openPost }: { user: any; audioContext: BaseAudioContext; title: string; categories: string[]; openPost: () => void}) => {
   const [isRecording, setIsRecording] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([])
