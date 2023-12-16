@@ -15,7 +15,10 @@ const saveAudio = async (audio: any, userId, title: string, category: string): P
       title,
       category,
       userId,
-      soundUrl: downloadURL
+      soundUrl: downloadURL,
+      likeCount: 0,
+      commentCount: 0,
+      listenCount: 0
     })
     const postId = postRecord.get('id')
     if(!postId){

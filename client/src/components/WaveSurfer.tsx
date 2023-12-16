@@ -12,11 +12,12 @@ interface WaveSurferProps {
     postObj: any;
     userId: number;
     getPosts: any;
-    feed: string;
     updatePost: any;
+    onProfile: boolean;
+    setOnProfile: any;
 }
 
-const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, postId, userId, getPosts, updatePost}) => {
+const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, postId, userId, getPosts, updatePost, onProfile, setOnProfile}) => {
     const [wave, setWave] = useState<WaveSurfer | null>(null);
     const [display, setDisplay] = useState<boolean>(false); 
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -90,7 +91,10 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, pos
         <div  className="card">
             <br/>
             <div className="card-body" >
-                <a href={`profile/${postObj.user.id}`} className="card-link">{postObj.user.username}</a>
+                {onProfile
+                    ? <a></a>
+                    : <a href={`profile/${postObj.user.id}`} className="card-link">{postObj.user.username}</a>
+                    }
                 <h3>{postObj.title}</h3>
                 <div>{postObj.rank}</div>
                 <div id={containerId}></div>

@@ -4,7 +4,17 @@ const router = express.Router()
 import sequelize, { Op } from 'sequelize'
 import { User, Follower, Post, Like, Comment, Listen} from '../dbmodels' 
 import { getTagsByEngagement } from '../algorithmHelpers'
-
+// ****HELPER FUNCTIONS***********
+const addIsLikedPair =  (postArr, likedPostIdArr) => {
+  for(let i = 0; i < postArr.length; i++){
+    if(likedPostIdArr.includes(postArr[i].id)){
+      //console.log('true')
+      postArr[i].dataValues.isLiked = true
+    }else {
+      postArr[i].dataValues.isLiked = false
+    }
+  }
+}
 // ************* GET ROUTES **************
 //gets posts and adds personalized ranking and isLiked field to each postObj before sending to client (for explore page)
 router.get('/explore/:userId/:tag', async (req:Request, res: Response) => {
@@ -191,18 +201,8 @@ try{
   
   const likedPostIdArr = await likedPosts.map((post:any) => post.postId)
   //console.log(likedPostIdArr)
-  const addIsLikedPair =  (postArr) => {
-    for(let i = 0; i < postArr.length; i++){
-      if(likedPostIdArr.includes(postArr[i].id)){
-        //console.log('true')
-        postArr[i].dataValues.isLiked = true
-      }else {
-        postArr[i].dataValues.isLiked = false
-      }
-    }
-  }
 
-    await addIsLikedPair(followingPosts)
+    await addIsLikedPair(followingPosts, likedPostIdArr)
     //console.log(followingPosts)
     await res.status(200).send(followingPosts)
 
@@ -251,6 +251,15 @@ try{
     }
   )
     console.log('got user posts', selectedUserPosts)
+
+    const likedPosts = await Like.findAll({
+      where: {id}
+    })
+
+    const likedPostIdArr = await likedPosts.map((post:any) => post.postId)
+    //console.log(likedPostIdArr)
+
+    await addIsLikedPair(selectedUserPosts, likedPostIdArr)
     res.status(200).send(selectedUserPosts)
   } catch(error) {
     console.error('query failed: could not get selected user', error)
@@ -258,6 +267,26 @@ try{
   }
  })
 
+ router.get('/isFollowing/:userId/:followingId', async (req:Request, res:Response) => {
+  const { userId, followingId } = req.params
+  try {
+    const isFollowing = await Follower.findAll({
+      where: {
+        userId,
+        followingId
+      }
+    })
+
+    if(isFollowing.length > 0){
+      res.sendStatus(200)
+    } else {
+      res.sendStatus(404)
+    }
+
+  }catch(error){
+    console.error('error checking following relationship', error)
+  }
+ })
 // *************POST REQUESTS***********************
 //creates comment
   router.post('/createCommentRecord', async (req: Request, res: Response) => {
@@ -360,80 +389,21 @@ let updateResult;
   }
  })
 
-// router.get('/testing/:userId', async (req: Request, res:Response) => {
-//  const { userId } = req.params
-//   try{
-//     //get liked tags
-//     let today = new Date().getTime()
-    
-//     const userLikesData = await Like.findAll({
-//       where: {
-//         userId
-//       },
-//       include: { model: Post,
-//         as: 'post'}
-//     })
-//     const userLikedTagObj = userLikesData
-//     .map((like) => {
-//       let timeSinceCreation = (today - like.dataValues.post.dataValues.createdAt.getTime()) / 14400000
-//       let decay = 1 + (.4 * (timeSinceCreation ** 2))
-//       return {
-//         decay,
-//         tags: like.dataValues.post.dataValues.categories
-//       }
-//       } )
-//       console.log(userLikedTagObj)
-//     // .reduce((acc, curr) =>  {
-//     //   acc[curr] ? acc[curr] += 1 : acc[curr] = 1
-//     //   return acc//
-//     // }, {})
+//allows user to unfollow another user
+router.delete('/stopFollowing/:userId/:followingId', async (req: Request, res: Response) => {
+  const { userId, followingId } = req.params
 
-//     //get listened tags
-//     const userListensData = await Listen.findAll({
-//       where: {
-//         userId
-//       },
-//       include: Post
-//     })
-//     const userListenedTagObj = userListensData
-//     .flatMap((listen) => listen.dataValues.Post.dataValues.categories )
-//     .reduce((acc, curr) =>  {
-//       acc[curr] ? acc[curr] += 1 : acc[curr] = 1
-//       return acc
-//     }, {})
-
-//     //get commented tags
-//     const userCommentData = await Comment.findAll({
-//       where: {
-//         userId
-//       },
-//       include: Post
-//     })
-//     const userCommentedTagObj = userCommentData
-//     .flatMap((comment) => comment.dataValues.Post.dataValues.categories)
-//     .reduce((acc, curr) =>  {
-//       acc[curr] ? acc[curr] += 1 : acc[curr] = 1
-//       return acc
-//     }, {})
-
-//     //combine tag rankings 
-//     let rankedTags = {}
-//     for(let key in userLikedTagObj){
-//       rankedTags[key] ? rankedTags[key] += userLikedTagObj[key] : rankedTags[key] = userLikedTagObj[key]
-//     }
-
-//     for(let key in userCommentedTagObj){
-//       rankedTags[key] ? rankedTags[key] += (.05 * userCommentedTagObj[key]) : rankedTags[key] = (.05 * userCommentedTagObj[key])
-//     }
-
-//     for(let key in userListenedTagObj){
-//       rankedTags[key] ? rankedTags[key] += (.002 * userListenedTagObj[key]) : rankedTags[key] = (.002 * userListenedTagObj[key])
-//     }
-
-//   return rankedTags
-//   }catch(error){
-//     console.error('[algorithmHelpers.ts] tag ranking error:', error)
-//   }
-// })
-
+  try{
+    const destroyFollowing = await Follower.destroy({
+      where: {
+        userId,
+        followingId
+      }
+    })
+    console.log('unfollowed', destroyFollowing)
+    res.sendStatus(201)
+  }catch(error){
+    console.error('server could not unfollow', error)
+  }
+})
 module.exports = router
