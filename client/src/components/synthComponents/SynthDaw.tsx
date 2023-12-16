@@ -1,7 +1,11 @@
 import React, { useState, useEffect, MouseEventHandler, SyntheticEvent } from 'react';
+import { Container, Card } from 'react-bootstrap';
 import Oscillator from './Oscillator';
 import RecordSynth from './RecordSynth';
-import { Container, Card } from 'react-bootstrap';
+import Filters from './Filters';
+import SynthVoice from './SynthVoice';
+import * as Tone from 'tone';
+
 
 interface Props {
   audioContext: AudioContext,
@@ -15,6 +19,8 @@ interface Props {
 const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userId}: Props): React.JSX.Element => {
   // setting base context's state
   const [contextState, setContextState] = useState('');
+  const synth = new Tone.Synth();
+  const [title, setTitle] = useState('');
 
   // oscillator's settings
   const [oscSettings, setOscSettings] = useState({
@@ -64,8 +70,9 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userI
       <h1 className="text-center">Synthesize</h1>
       <div>
         <h3 className="text-center">Set the Tone</h3>
+        <Filters title={title} audioContext={audioContext} userId={userId} />
         <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
-        <RecordSynth audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />
+        <RecordSynth title={title} audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />
       </div>
     </Container>
   );

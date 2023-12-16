@@ -10,13 +10,14 @@ import WaveSurferComponent from "./WaveSurfer";
   const [commentOpen, setCommentOpen] = useState<boolean>(false)
   const [comments, setComments] = useState<any>()
   //const [likedPosts, setLikedPosts] = useState<any>([])
-  const userId = 1
+  //const userId = 1
   const userObj = {
     username: 'syd'
   }
   const handleLike = async()=> {
     try{
-       await axios.post('/post/like', {userId, postId: postObj.id})
+       await axios.post('/post/like', {userId: user.id, postId: postObj.id})
+       await axios.put('/post/updateCount', {type: 'increment', column: 'likeCount', id: postObj.id})
        await getPosts(feed)
     } catch(error){
       console.log('client could not like', error)
@@ -24,26 +25,14 @@ import WaveSurferComponent from "./WaveSurfer";
   }
 const handleUnlike = async() => {
   try{
-    const likeObj = postObj.Likes.filter((likeObj) => likeObj.userId === userId)
+    const likeObj = postObj.Likes.filter((likeObj) => likeObj.userId == user.id)
+    //console.log(likeObj)
     await axios.delete(`/post/unlike/${likeObj[0].id}`)
+    await axios.put('/post/updateCount', {type: 'decrement', column: 'likeCount', id: postObj.id})
     await getPosts(feed)
   } catch(error){
     console.log('client could not unlike', error)
   }
-}
-
-const findLikedPost = () => {
-  //console.log(friendsPosts.data)
-  if(postObj.Likes){
-    if(postObj.Likes.length > 0){
-      for(let j = 0; j < postObj.Likes.length; j++){
-        if(postObj.Likes[j].userId === userId){
-          return true
-        }
-      }
-    }
-    return false
-  } else{ return false }
 }
 
 const getComments = async() => {
@@ -51,9 +40,10 @@ try{
 const commentsArr = await axios.get(`/post/comment/${postObj.id}`)
 if(commentsArr.data.length > 0){
   setComments(commentsArr.data)
+  console.log('got comments', commentsArr.data)
 }
 }catch(error) {
-  console.log()
+  console.error('could not get comments', error)
 }
 }
 
@@ -71,9 +61,9 @@ useEffect(() => {
           <source src={postObj.soundUrl} type="audio/webm" />
         </audio> */}
         {/* <h4>{`category: ${postObj.category}`}</h4> */}
-        {findLikedPost()
+        {postObj.isLiked
         ?
-          <button
+         <div> <button
         type="button"
         className="btn"
         onClick={()=> handleUnlike()}
@@ -83,7 +73,8 @@ useEffect(() => {
   
         </svg>
        </button>
-        : <button
+       <p>{postObj.likeCount}</p> </div>
+        : <div> <button
         type="button"
         className="btn"
         onClick={()=> handleLike()}
@@ -91,7 +82,8 @@ useEffect(() => {
         > <svg width="26" height="26" fill="black" className="bi bi-heart" viewBox="0 0 16 16">
         <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"></path>
       </svg>
-        </button>}
+        </button>
+        <p>{postObj.likeCount}</p> </div>}
       </div>
       <div className="accordion" id="commentBox">
         <div className="accordion-item"></div>

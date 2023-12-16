@@ -82,7 +82,7 @@ app.use(express.static(clientPath))
 
 const routeHandler = express.Router()
 routeHandler.use('/post', postRoutes)
-
+//routeHandler.use('/search', searchRoutes)
 
 app.use('/', routeHandler)
 app.use('/', routes)
@@ -103,7 +103,6 @@ app.get('/google/callback',  passport.authenticate('google', {
   // set cookies
   res.setHeader('Set-Cookie', setCookie);
   req.session.save()
-  console.log('req.session', req.session);
 
   res.redirect('/protected')
 })

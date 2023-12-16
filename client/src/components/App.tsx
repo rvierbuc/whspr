@@ -19,21 +19,25 @@ import Feed from './Feed'
 import PostCard from './PostCard'
 import UserProfile from './userProfile';
 import ReadOnlyProfile from './ReadOnlyProfile';
+import Search from './Search';
 import axios from 'axios';
 import {WhsprAI} from './WhsprAI';
 
 // THE MAIN audio context to be used throughout the application (DO NOT ALTER)
 export const audioContext: AudioContext = new AudioContext();
+<<<<<<< HEAD
 /**
  * If this is altered, Pixie will find you and haunt you in your sleep until you
  * learn to sleep with one eye open, and even then that won't be enough.
  */
+=======
+>>>>>>> 36029a8487a837fc2f5946f7a12c0ceed7dab8aa
 
 const App = () => {
     const getUserLoader = async () => {
         try {
             const response = await axios.get('/current-user');
-            console.log('responseloader', response);
+            // console.log('responseloader', response);
             return response.data;
         } catch(err) {
             console.error('user loader error', err)
@@ -49,10 +53,11 @@ const App = () => {
                 <Route path="/protected" element={<PrivateRoutes />} >
                     <Route path="dashboard" element={<WaveSurferComponent />} /> // Outlet is a placeholder for child routes to be rendered
                     <Route path="WhsprAI" element={<WhsprAI audioContext={audioContext}/>} />
+                    <Route path="search" element={<Search />} />
                     <Route path="profile" element={<UserProfile />} loader={() => getUserLoader()}/>
                     <Route path="feed" element={<Feed audioContext={audioContext} />} loader={() => getUserLoader()}/>
-                    <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
                     <Route path="post" element={<PostCard audioContext={audioContext} />} loader={() => getUserLoader()}/>
+                    <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
                     <Route path="room" element={<Room />} />
                     <Route path="profile/:id" element={<ReadOnlyProfile audioContext={audioContext}/>} loader={() => getUserLoader()} />
                 </Route>
