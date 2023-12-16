@@ -1,12 +1,19 @@
 import React, { useRef, useState } from 'react';
 import { Stack, Button, Container } from 'react-bootstrap';
-import { defaultSettings, alien, wobbly, robot } from './filters';
 import axios from 'axios';
 
 interface Props {
   audioContext: AudioContext;
   userId: any
-  title: string
+  robot: any
+  wobbly: any
+  alien: any
+  defaultSettings: {
+    lowPassFrequency: number
+    highPassFrequency: number
+    lowPassType: any // these need to be refactored to the proper types
+    highPassType: any
+    }
 }
 
 interface Constraints {
@@ -17,15 +24,19 @@ interface Constraints {
   video: boolean
 }
 
-const SynthVoice = ({ title, audioContext, userId }: Props) => {
+const SynthVoice = ({ audioContext, userId, robot, wobbly, alien, defaultSettings }: Props) => {
   const [isRecording, setIsRecording] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const audio = useRef<AudioBufferSourceNode | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
-  const [ filter, setFilter ] = useState(defaultSettings);
-  const [ postTitle, setPostTitle ] = useState(title);
+  const [ filter, setFilter ] = useState(defaultSettings)
+  const [title, setTitle] = useState('');
+
+  const handleEdit = (e: any) => {
+    setTitle(e.target.value);
+  };
 
   const lowpass: BiquadFilterNode = audioContext.createBiquadFilter();
   lowpass.frequency.value = filter.lowPassFrequency;
@@ -47,30 +58,34 @@ const SynthVoice = ({ title, audioContext, userId }: Props) => {
     try {
       setAudioChunks([]);
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      const source = audioContext.createMediaStreamSource(stream);
       mediaRecorder.current = new MediaRecorder(destination.stream);
-
+      const source = audioContext.createMediaStreamSource(stream);
+      // filter audioNodes
       if (filter !== defaultSettings) {
         let options: any = Object.values(filter).slice(4)
-        source.connect(lowpass).connect(highpass).connect(options[0])
+        source.connect(lowpass)
+        lowpass.connect(highpass)
+        highpass.connect(options[0])
         options[0].connect(options[1])
         options[1].connect(options[2])
         options[2].connect(destination);
-      } else {
-        source.connect(destination);
-      }
+      } else { source.connect(destination) }
 
       mediaRecorder.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
           setAudioChunks((prevChunks) => [...prevChunks, event.data]);
         }
       }
+
       mediaRecorder.current.start();
       setIsRecording(true);
-    } catch (error) {console.error(error)}
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const stopRecording = () => {
+  //stop the recording process
+  const stopRecording = async () => {
     if (mediaRecorder.current?.state === 'recording') {
       mediaRecorder.current.stop();
       setIsRecording(false);
@@ -121,6 +136,8 @@ const SynthVoice = ({ title, audioContext, userId }: Props) => {
   };
 
   const saveAudioToGoogleCloud = async () => {
+    let postTitle = title;
+    setTitle('');
     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
     try {
       const formData = new FormData()
@@ -137,7 +154,7 @@ const SynthVoice = ({ title, audioContext, userId }: Props) => {
 
   return (
     <Container className="text-center my-3 pb-3">
-      {/* <input className="mb-2" type="text" value={title} onChange={handleEdit} /> */}
+      <input className="mb-2" type="text" value={title} onChange={handleEdit} />
       <Stack direction="horizontal" className="mx-5 mb-3 typeCard">
         <Button className="mx-2 btn-secondary" disabled={filter === defaultSettings} onClick={() => setFilter(defaultSettings)}>Default</Button>
         <Button className="mx-2 btn-secondary" disabled={filter === alien} onClick={() => setFilter(alien)}>Alien</Button>
