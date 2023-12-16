@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import * as Tone from 'tone';
 
 interface Props {
   userId: any
@@ -35,9 +34,9 @@ const PostSynth = ({ isRecording, audioChunks, userId}: Props) => {
 
   return (
     <div>
-      <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+      <input type="text" className="m-2" value={title} onChange={(e) => setTitle(e.target.value)} />
       <button
-            className="post-button"
+            className="post-button m-2"
             onClick={()=>{
               saveAudioToGoogleCloud()
               handleNavigation('/protected/feed')}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, MouseEventHandler, SyntheticEvent } from 'react';
-import { Container, Card } from 'react-bootstrap';
+import { Container, Stack } from 'react-bootstrap';
 import Oscillator from './Oscillator';
 import RecordSynth from './RecordSynth';
 import Filters from './Filters';
@@ -67,13 +67,12 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userI
 
   return (
     <Container className="synthCont w-50 rounded text-white">
-      <h1 className="text-center">Synthesize</h1>
-      <div>
-        <h3 className="text-center">Set the Tone</h3>
+      <Stack>
+        <h2 className="text-center">Set the Tone!</h2>
         <Filters title={title} audioContext={audioContext} userId={userId} />
         <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
         <RecordSynth title={title} audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />
-      </div>
+      </Stack>
     </Container>
   );
 }

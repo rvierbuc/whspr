@@ -151,7 +151,8 @@ const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, 
   // };
 
   return (
-    <Container className="text-center my-3 pb-3">
+    <Container className="text-center my-3 pb-1">
+      <h5>Try out our new voice filters!</h5>
       <PostSynth isRecording={isRecording} audioChunks={audioChunks} userId={userId} />
       <Stack direction="horizontal" className="mx-5 mb-3 typeCard">
         <Button className="mx-2 btn-secondary" disabled={filter === defaultSettings} onClick={() => setFilter(defaultSettings)}>Default</Button>
