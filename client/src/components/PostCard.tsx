@@ -20,38 +20,88 @@ const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251
 });
 
 
-const Hit = ({ hit, onSelect }: { hit: any; onSelect: (category: string) => void }) => {
+const Hit = ({ hit, onSelect }: { hit: any; onSelect: (category: string[] | string) => void }) => {
   // console.log('hits', hits); //the individual hit obj
   return (
-    <article onClick={() => onSelect(hit.category)}>
+    <article onClick={() => onSelect([hit.category])}>
       {hit.category}
     </article>
   )};
-const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: string) => void }) => {  
-  const [currentSearch, setCurrentSearch] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+// const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: string) => void }) => {  
+//   const [currentSearch, setCurrentSearch] = useState<string>('');
+//   const [selectedCategory, setSelectedCategory] = useState<string>('');
+//   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+//     console.log('working', event.target.value, event);
+//     setCurrentSearch(event.target.value);
+//   }
+//   const handleCategorySelection = (category: string) => {
+//     // console.log('category', category);
+//     setSelectedCategory(category);
+//     onCategorySelect(category);
+//   }
+//   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+//     event.preventDefault();
+//     // console.log('currentSearch', currentSearch);
+//     setCurrentSearch('');
+//     setSelectedCategory(currentSearch);
+//     onCategorySelect(currentSearch);
+//   }
+//   return (
+//     <div>
+//       <InstantSearch 
+//       searchClient={searchClient} 
+//       indexName="category_index"
+//       initialUiState={{ searchBox: { query: currentSearch } }}
+//       >
+//         {/* <SearchBox onInput={handleSearchChange} placeholder={'' || selectedCategory} className='input-control'/> */}
+//         <form onSubmit={handleSubmit}>
+//           <input
+//             type="text"
+//             value={currentSearch}
+//             onInput={handleSearchChange}
+//             placeholder={'Add up to 5 categories!' || selectedCategory}
+//             className='input-control'
+//             id='category-search'
+//           />
+//           </form>
+//         {currentSearch && <Hits hitComponent={(props) => <Hit {...props} onSelect={handleCategorySelection} />} />}
+//         <Configure userToken={userToken} />
+//       </InstantSearch>
+//     </div>
+//   );
+// }
+const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: string[] | string) => void }) => {  
+  const [currentSearch, setCurrentSearch] = useState<string[] | string>('');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log('working', event.target.value, event);
     setCurrentSearch(event.target.value);
   }
-  const handleCategorySelection = (category: string) => {
+  const handleCategorySelection = (category: string[] | string) => {
     // console.log('category', category);
-    setSelectedCategory(category);
-    onCategorySelect(category);
+    const selectedCategory = typeof category === 'string' ? [category] : category;
+    setSelectedCategories(selectedCategory);
+    onCategorySelect(selectedCategory);
   }
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // console.log('currentSearch', currentSearch);
-    setCurrentSearch('');
-    setSelectedCategory(currentSearch);
-    onCategorySelect(currentSearch);
+    if (typeof currentSearch === 'string') {
+      setCurrentSearch('');
+      setSelectedCategories([currentSearch]);
+      onCategorySelect(currentSearch);
+    } else {
+      setCurrentSearch('');
+      setSelectedCategories(currentSearch);
+      onCategorySelect(currentSearch);
+    }
   }
   return (
     <div>
       <InstantSearch 
       searchClient={searchClient} 
       indexName="category_index"
-      initialUiState={{ searchBox: { query: currentSearch } }}
+      initialUiState={{ searchBox: { query: Array.isArray(selectedCategories) ? selectedCategories.join(', ') : selectedCategories } }}
       >
         {/* <SearchBox onInput={handleSearchChange} placeholder={'' || selectedCategory} className='input-control'/> */}
         <form onSubmit={handleSubmit}>
@@ -59,7 +109,7 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
             type="text"
             value={currentSearch}
             onInput={handleSearchChange}
-            placeholder={'Add up to 5 categories!' || selectedCategory}
+            placeholder={'Add up to 5 categories!' || selectedCategories.join(', ')}
             className='input-control'
             id='category-search'
           />
@@ -74,15 +124,19 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
 const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   const [postCreated, setPostCreated] = useState(false)
   const [title, setTitle] = useState('')
-  const [category, setCategory] = useState('')
+  const [categories, setCategories] = useState<string[] | string>('')
   const user = useLoaderData()
 
   const openPost = () => {
     setPostCreated(!postCreated)
   }
-  const handleCategorySelect = (selectedCategory: string) => {
+  const handleCategorySelect = (selectedCategory: string[] | string) => {
     // console.log('selectedCategory', selectedCategory);
-    setCategory(selectedCategory);
+    if (typeof selectedCategory === 'string') {
+      setCategories(selectedCategory);
+    } else {
+      setCategories(selectedCategory[0]);
+    }
   }
   return (
     <div>
@@ -111,7 +165,7 @@ const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
 user={user}
 audioContext={audioContext}
 title={title}
-category={category}
+categories={categories}
 openPost={openPost}
 />
 </div>
