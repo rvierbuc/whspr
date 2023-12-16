@@ -19,7 +19,7 @@ import WaveSurferComponent from "./WaveSurfer";
     try{
        await axios.post('/post/like', {userId: user.id, postId: postObj.id})
        await axios.put('/post/updateCount', {type: 'increment', column: 'likeCount', id: postObj.id})
-       await updatePost(postObj.id, 'like')
+       await updatePost(postObj.id, user.id)
     } catch(error){
       console.log('client could not like', error)
     }
@@ -30,7 +30,7 @@ const handleUnlike = async() => {
     //console.log(likeObj)
     await axios.delete(`/post/unlike/${user.id}/${postObj.id}`)
     await axios.put('/post/updateCount', {type: 'decrement', column: 'likeCount', id: postObj.id})
-    await updatePost(postObj.id, 'unlike')
+    await updatePost(postObj.id, user.id)
   } catch(error){
     console.log('client could not unlike', error)
   }

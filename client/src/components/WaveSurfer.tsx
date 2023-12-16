@@ -63,7 +63,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, pos
             try {
                 const addListen = await axios.post('/post/listen', {userId, postId})
                 const updateListenCount = await axios.put('/post/updateCount', {column: 'listenCount', type: 'increment', id: postId})
-                await updatePost(postId, 'listen')
+                await updatePost(postId, userId)
                 console.log('complete', updateListenCount, addListen)
             }catch(error){
 

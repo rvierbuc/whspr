@@ -24,7 +24,7 @@ const UserProfile = ({audioContext}) => {
       }
       const updatePost = async(postId, updateType) => {
         try{
-            const updatedPost:any = await axios.get(`/post/updatedPost/${postId}/${updateType}`)
+            const updatedPost:any = await axios.get(`/post/updatedPost/${postId}/${currentUser.id}`)
             console.log('updated post obj', updatedPost)
             const postIndex = selectedUser.findIndex((post) => post.id === updatedPost.data.id)
             updatedPost.data.rank = selectedUser[postIndex].rank

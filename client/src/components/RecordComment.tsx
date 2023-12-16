@@ -118,7 +118,7 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
       if (response.status === 200) {
         await axios.put('/post/updateCount', {type: 'increment', column: 'commentCount', id: postObj.id})
         await getComments()
-        await updatePost(postObj.id, 'comment')
+        await updatePost(postObj.id, user.id)
         await console.log('all done')
       } else {
         console.error('Error saving audio:', response.statusText)

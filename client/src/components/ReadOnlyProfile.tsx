@@ -24,7 +24,7 @@ const ReadOnlyProfile = ({audioContext}) => {
     }
     const updatePost = async(postId, updateType) => {
       try{
-          const updatedPost:any = await axios.get(`/post/updatedPost/${postId}/${updateType}`)
+          const updatedPost:any = await axios.get(`/post/updatedPost/${postId}/${user.id}`)
           console.log('updated post obj', updatedPost)
           const postIndex = selectedUserInfo.findIndex((post) => post.id === updatedPost.data.id)
           updatedPost.data.rank = selectedUserInfo[postIndex].rank
