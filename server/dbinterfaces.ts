@@ -24,7 +24,7 @@ export interface SoundInstance extends Model<SoundAttributes>, SoundAttributes {
 export interface PostAttributes {
   userId: number;
   title: string;
-  category: string;
+  category: string[];
   soundUrl: string; 
 }
 export interface PostInstance extends Model<PostAttributes>, PostAttributes {}
