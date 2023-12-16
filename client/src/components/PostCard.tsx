@@ -82,9 +82,13 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
     console.log('category', category);
     const trimmedCategory = category.trim();
     const updatedCategories = [...selectedCategories, trimmedCategory];
-    console.log('updatedCategories', updatedCategories);
-    setSelectedCategories(updatedCategories);
-    onCategorySelect(updatedCategories);
+    // console.log('updatedCategories', updatedCategories);
+    if (updatedCategories.length <= 5) {
+      setSelectedCategories(updatedCategories);
+      onCategorySelect(updatedCategories);
+    } else {
+      alert('You can only add up to 5 categories!');
+    }
     setCurrentSearch('');
   }
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -105,12 +109,14 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
             type="text"
             value={currentSearch}
             onInput={handleSearchChange}
-            placeholder={'Add up to 5 categories!' || selectedCategories.join(', ')}
+            placeholder={'Add up to 5 categories!'}
             className='input-control'
             id='category-search'
           />
           </form>
+          {/* create an input that holds the selected categories */}
         {currentSearch && <Hits hitComponent={(props) => <Hit {...props} onSelect={() => {handleCategorySelection(currentSearch)}} />} />}
+          <input type="text" value={selectedCategories} readOnly={true}  className='input-control' id='category-read-only'/>
         <Configure userToken={userToken} />
       </InstantSearch>
     </div>
