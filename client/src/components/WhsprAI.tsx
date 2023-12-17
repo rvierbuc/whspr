@@ -16,10 +16,10 @@ export const WhsprAI = ({audioContext}) => {
     const analyserRef = useRef<AnalyserNode|null>(null);
     const mediaStreamRef = useRef<MediaStream | null>(null);
 
-//sets up an analyser for the computer's audio
+//sets up an analyser for the computer's speaker audio (when AI is talking)
     const setupAnalyser = (audio) => {
         if (!audioContext) {
-            console.error('AudioContext or audio source is not available.');
+            console.error('AudioContext is not available.');
             return;
         }
         try{
@@ -87,12 +87,14 @@ if(isRecording){
             }
         }
     }, [isRecording])
+
 //creates an analyser
 useEffect(() =>{
     const analyser = audioContext.createAnalyser();
     analyser.fftSize = 2048
     analyserRef.current = analyser
 }, [audioContext])
+
 //animation draws the audio
     const drawAudio = () =>{
         const canvas = canvasRef.current;
@@ -109,7 +111,7 @@ useEffect(() =>{
                 context.lineWidth = 1;
                 context.strokeStyle = 'rgb(4, 217, 255)'
                 context.shadowBlur = 15;
-                context.shadowColor = "white"
+                context.shadowColor = 'white'
                 
 
             let sliceWidth = canvas.width * 1 / bufferLength
@@ -133,7 +135,7 @@ useEffect(() =>{
 
         drawFrame();
     } 
-//gets the bowser based voices and speaks them
+//gets the browser based voices and speaks them
     const browserTextToSpeech = async (responseString, voiceName) => {
         let voices = window.speechSynthesis.getVoices();
         if (voices.length === 0) {
@@ -177,15 +179,16 @@ const playAudio = (buffer) => {
 };
 
 //this voice variable controls which endpoint is used for the tts
+//supported choices are openai, google, browser, elevenlabs
 const VOICE = 'openai'
 const getAIResponse = async () =>{
-    if(text.length === 0){return}
+    if (text.length === 0) return
     let messages = [{ role: "system", content: "You are an old friend named Whisper." }]
     const lastFive = arr => arr.length > 5 ? arr.slice(-5) : arr
     const userMessages = lastFive(text);
     const aiMessages = lastFive(AIResponse);
     for(let i = 0; i < userMessages.length; i++){
-        messages.push({"role": "user", "content": `Respond using a 100 completion_tokens or less: ${userMessages[i]}`})
+        messages.push({"role": "user", "content": `Respond using 100 completion_tokens or less: ${userMessages[i]}`})
         if(aiMessages[i]){
             messages.push({"role": "assistant", "content": aiMessages[i]})
         }
@@ -194,18 +197,12 @@ const getAIResponse = async () =>{
         const resp = await axios.post('/openAIGetResponse', {messages: messages})
         setAIResponse(prevResponses => [...prevResponses, resp.data.response])
         if(VOICE === 'browser'){
-            browserTextToSpeech(resp.data.response, 
-            "Microsoft Zira - English (United States)")
-        }else if(VOICE === 'google'){
-            const spokenResponse = await axios.post('/text-to-speech-google', {text: resp.data.response}, { responseType: 'arraybuffer' })
+            //you can change the browser voice selected here, it searches by the name property on the object
+            browserTextToSpeech(resp.data.response, "Microsoft Zira - English (United States)")
+        }else{
+            const spokenResponse = await axios.post(`/text-to-speech-${VOICE}`, {text: resp.data.response}, { responseType: 'arraybuffer' })
             playAudio(spokenResponse.data)
-            }else if(VOICE === 'openai'){
-                const spokenResponse = await axios.post('/text-to-speech-openai', {text: resp.data.response}, { responseType: 'arraybuffer' })
-                playAudio(spokenResponse.data)
-            }else if(VOICE === 'elevenlabs'){
-                const spokenResponse = await axios.post('/text-to-speech-elevenlabs', {text: resp.data.response}, { responseType: 'arraybuffer' })
-                playAudio(spokenResponse.data)
-            }else{return}
+            }
             setIsLoading(false)
         }catch (error){
         console.error("Error getting response from AI in getAIResponse: ", error)
@@ -301,12 +298,11 @@ initializeAnimation()
                 </button>
             )}
         </div>
-{/* {blobUrl ? <audio controls src={blobUrl}></audio> : null} */}
+{/* this maps the messages of the user/ai to the page for debugging. */}
 {/* {text.map((item, index) => (
     <div key={index}>
-                    These display the text generated from user audio and the text recieved from openai for debugging */}
-                    {/* <div><span className="text-warning">Interlocutor:</span>{" "}{item}</div> */}
-                    {/* {AIResponse[index] && <div><span className="text-warning">The AI: </span>{AIResponse[index]}</div>}
+                    <div><span className="text-warning">Interlocutor:</span>{" "}<span className="text-success">{item}</span></div>
+                     {AIResponse[index] && <div><span className="text-warning">The AI: </span><span className="text-success">{AIResponse[index]}</span></div>}
                 </div>
             ))} */}
             </div>
