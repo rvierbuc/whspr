@@ -4,7 +4,7 @@ import { Sound, User, Post, Follower, Radio, Comment } from '../../dbmodels';
 const getRandomPosts = () => {
   let postArr:any = []
   const hashtags = ['love', 'instagood', 'fashion', 'photography', 'art', 'beautiful', 'nature', 'happy', 'travel', 'cute', 'style', 'summer', 'beauty', 'fitness', 'food', 'photo', 'friends', 'music', 'smile', 'family', 'life']
-  
+
   function getRandomDate(start, end) {
     return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
   }
@@ -14,7 +14,7 @@ const getRandomPosts = () => {
       categories: Array.from({ length: Math.floor(Math.random() * 5) + 1}, () =>
         possibleCategories[Math.floor(Math.random() * possibleCategories.length)]
       ),
-
+    }
 
   function getRandomTags (){
     let tags:any = []
@@ -40,6 +40,7 @@ const getRandomPosts = () => {
     postArr.push(samplePost)
   }
 return postArr
+}
 }
 export const seedDatabase = async () => {
   try {
