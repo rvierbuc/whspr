@@ -123,7 +123,7 @@ app.use('/logout', (req: Request, res: Response) => {
 
 //get current user
 app.get('/current-user', async (req: Request, res: Response) => {
-  console.log('req.session', req);
+  //console.log('req.session', req);
     try {
       const results = await User.findOne({where: {googleId: req.user}})
       if(results){
@@ -168,7 +168,10 @@ app.post('/createPostRecord', async(req, res) =>{
       userId: req.body.userId,
       title: req.body.title,
       category: req.body.category,
-      soundUrl: req.body.soundUrl
+      soundUrl: req.body.soundUrl,
+      likeCount: 0,
+      commentCount: 0,
+      listenCount: 0
       }
       await Post.create(postRecord)
       res.status(200).send('Post record created.')
