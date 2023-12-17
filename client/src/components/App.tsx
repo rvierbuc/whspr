@@ -34,7 +34,7 @@ aa('init', {
     apiKey: 'b0f5d0cdaf312c18df4a45012c4251e4'
 })
 const generateUserToken = (): string => {
-    return uuidv4();
+    return uuidv4()
 };
 
 const userToken = generateUserToken();
