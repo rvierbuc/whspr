@@ -152,3 +152,12 @@ body {
 #category-read-only {
   margin-left: 0px;
 }
+.input-group .form-control {
+  border-radius: 10px;
+  background-color: rgb(33 37 41);
+  color: rgb(255, 255, 255);
+}
+.input-group-text {
+  background-color: rgb(33 37 41);
+  color: rgb(255, 255, 255);
+}

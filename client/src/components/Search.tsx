@@ -57,18 +57,26 @@ const Search:React.FC = () => {
     // refine(event.target.value);
   }
   return (
-    <Form>
-    <InstantSearch 
-    searchClient={searchClient} 
-    indexName="search_index"
-    initialUiState={{ searchBox: { query: currentSearch } }}
-    insights={true}
-    >
-      <Configure clickAnalytics={true} />
-      <SearchBox onInput={handleSearchChange}/>
-      {currentSearch && <Hits hitComponent={Hit} />}
-    </InstantSearch>
-      </Form>
+  <InstantSearch 
+  searchClient={searchClient} 
+  indexName="search_index"
+  initialUiState={{ searchBox: { query: currentSearch } }}
+  insights={true}
+  >
+    {/* <SearchBox onInput={handleSearchChange}/> */}
+    <Form inline className='bg-dark'>
+      <InputGroup>
+        <InputGroup.Text id="basic-addon1">@/#</InputGroup.Text>
+        <Form.Control
+          placeholder="Search"
+          aria-label="Search"
+          aria-describedby="basic-addon1"
+        />
+      </InputGroup>
+    </Form>
+    {currentSearch && <Hits hitComponent={Hit} />}
+    <Configure clickAnalytics={true} />
+  </InstantSearch>
   );
 }
 export default Search
