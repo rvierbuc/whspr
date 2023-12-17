@@ -22,7 +22,7 @@ const getPosts = async(type, tag) => {
     if(tag !== 'none'){
         setTitle(`Explore #${tag}`)
     } else if(type === 'following'){
-        setTitle('Explore Posts from your Friends')
+        setTitle('Posts from your Friends')
     } else {
         setTitle('Explore WHSPR')
     }
