@@ -21,9 +21,9 @@ import UserProfile from './userProfile';
 import ReadOnlyProfile from './ReadOnlyProfile';
 import Search from './Search';
 import axios from 'axios';
+import {WhsprAI} from './WhsprAI';
 import aa from 'search-insights'
 import { v4 as uuidv4 } from 'uuid';
-import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares';
 
 
 // THE MAIN audio context to be used throughout the application (DO NOT ALTER)
@@ -41,6 +41,8 @@ const userToken = generateUserToken();
 
 aa('setUserToken', userToken)
 
+// THE MAIN audio context to be used throughout the application (DO NOT ALTER)
+export const audioContext: AudioContext = new AudioContext();
 
 const App = () => {
     const getUserLoader = async () => {
@@ -61,6 +63,7 @@ const App = () => {
                 <Route path="/" element={<Login />} />
                 <Route path="/protected" element={<PrivateRoutes />} >
                     <Route path="dashboard" element={<WaveSurferComponent />} /> // Outlet is a placeholder for child routes to be rendered
+                    <Route path="WhsprAI" element={<WhsprAI audioContext={audioContext}/>} />
                     <Route path="search" element={<Search />} />
                     <Route path="profile" element={<UserProfile />} loader={() => getUserLoader()}/>
                     <Route path="feed" element={<Feed audioContext={audioContext} />} loader={() => getUserLoader()}/>
