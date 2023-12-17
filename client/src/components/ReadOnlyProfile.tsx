@@ -10,6 +10,8 @@ const ReadOnlyProfile = ({audioContext}) => {
     //const [userPosts, setUserPosts]  = useState<any>()
     const { id } = useParams();
     const user:any = useLoaderData()
+    console.log('user in read', user)
+    console.log('id in read', id)
     const getSelectedUserInfo = async () => {
       try{
         const selectedUserObj = await axios.get(`/post/selected/${id}`)
