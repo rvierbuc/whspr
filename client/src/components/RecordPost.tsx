@@ -1,14 +1,16 @@
 import React, { useState, useRef } from 'react'
 import axios from 'axios'
 
-export const RecordPost = ({ user, audioContext, title, category, openPost }: { user: any; audioContext: BaseAudioContext; title: string; category: string; openPost: () => void}) => {
+
+export const RecordPost = ({ user, audioContext, title, categories, openPost }: { user: any; audioContext: BaseAudioContext; title: string; categories: string[]; openPost: () => void}) => {
   const [isRecording, setIsRecording] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([])
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const audioSource = useRef<AudioBufferSourceNode | null>(null)
   const userId = user.id;
-    
+  console.log('category in record', categories);
+
   const startRecording = async () => {
     try {
       //for now, this resets the recording array to an empty array when recording starts
@@ -93,7 +95,12 @@ export const RecordPost = ({ user, audioContext, title, category, openPost }: { 
       formData.append('audio', audioBlob)
       formData.append('userId', userId)
       formData.append('title', title)
-      formData.append('category', category)
+      // formData.append('category', categories)
+      categories.forEach((category, index) => {
+        console.log('foreach', category, index);
+        formData.append(`category[${index}]`, category)
+      })
+      console.log('formdata', Object.fromEntries(formData.entries()));
       const response = await axios.post(`/upload`, formData)
       if (response.status === 200) {
         console.info('Audio save successfully')

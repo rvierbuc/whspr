@@ -1,4 +1,3 @@
-
 import React, {useEffect} from 'react';
 import {
     Route,
@@ -23,6 +22,24 @@ import ReadOnlyProfile from './ReadOnlyProfile';
 import Search from './Search';
 import axios from 'axios';
 import {WhsprAI} from './WhsprAI';
+import aa from 'search-insights'
+import { v4 as uuidv4 } from 'uuid';
+
+
+// THE MAIN audio context to be used throughout the application (DO NOT ALTER)
+export const audioContext: AudioContext = new AudioContext();
+// algolia initialization
+aa('init', {
+    appId: '2580UW5I69',
+    apiKey: 'b0f5d0cdaf312c18df4a45012c4251e4'
+})
+const generateUserToken = (): string => {
+    return uuidv4();
+};
+
+const userToken = generateUserToken();
+
+aa('setUserToken', userToken)
 
 // THE MAIN audio context to be used throughout the application (DO NOT ALTER)
 export const audioContext: AudioContext = new AudioContext();
