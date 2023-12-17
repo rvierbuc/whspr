@@ -31,7 +31,7 @@ export const audioContext: AudioContext = new AudioContext();
 // algolia initialization
 aa('init', {
     appId: '2580UW5I69',
-    apiKey: '32b038f1c55d83bac4be0f41a0c07524'
+    apiKey: 'b0f5d0cdaf312c18df4a45012c4251e4'
 })
 const generateUserToken = (): string => {
     return uuidv4();

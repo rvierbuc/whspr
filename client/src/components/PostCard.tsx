@@ -27,49 +27,7 @@ const Hit = ({ hit, onSelect }: { hit: any; onSelect: (category: string[] | stri
       {hit.category}
     </article>
   )};
-// const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: string) => void }) => {  
-//   const [currentSearch, setCurrentSearch] = useState<string>('');
-//   const [selectedCategory, setSelectedCategory] = useState<string>('');
-//   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     console.log('working', event.target.value, event);
-//     setCurrentSearch(event.target.value);
-//   }
-//   const handleCategorySelection = (category: string) => {
-//     // console.log('category', category);
-//     setSelectedCategory(category);
-//     onCategorySelect(category);
-//   }
-//   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-//     event.preventDefault();
-//     // console.log('currentSearch', currentSearch);
-//     setCurrentSearch('');
-//     setSelectedCategory(currentSearch);
-//     onCategorySelect(currentSearch);
-//   }
-//   return (
-//     <div>
-//       <InstantSearch 
-//       searchClient={searchClient} 
-//       indexName="category_index"
-//       initialUiState={{ searchBox: { query: currentSearch } }}
-//       >
-//         {/* <SearchBox onInput={handleSearchChange} placeholder={'' || selectedCategory} className='input-control'/> */}
-//         <form onSubmit={handleSubmit}>
-//           <input
-//             type="text"
-//             value={currentSearch}
-//             onInput={handleSearchChange}
-//             placeholder={'Add up to 5 categories!' || selectedCategory}
-//             className='input-control'
-//             id='category-search'
-//           />
-//           </form>
-//         {currentSearch && <Hits hitComponent={(props) => <Hit {...props} onSelect={handleCategorySelection} />} />}
-//         <Configure userToken={userToken} />
-//       </InstantSearch>
-//     </div>
-//   );
-// }
+
 const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: string[] | string) => void }) => {  
   const [currentSearch, setCurrentSearch] = useState<string>('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
