@@ -8,16 +8,13 @@
         "outDir": "dist",
         "baseUrl": "./src",
         "paths": {
-            "@common/*": ["src/common/*"]
+            "@common/*": ["src/common/*"],
+            "wavesurfer.js/dist/plugins/*": ["node_modules/wavesurfer.js/dist/plugins/*"]
         },
         "strict": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "noImplicitAny": false,
-        "baseUrl": ".",
-        "paths": {
-            "wavesurfer.js/dist/plugins/*": ["node_modules/wavesurfer.js/dist/plugins/*"]
-        }
     },
     "include": ["./*.ts", "client/src/**/*.tsx", "server/dbmodels.ts"],
     "exclude": ["node_modules"]

@@ -21,15 +21,29 @@ import PostCard from './PostCard'
 import UserProfile from './userProfile';
 import MagicConch from './MagicConch';
 import ReadOnlyProfile from './ReadOnlyProfile';
+import Search from './Search';
 import Post from './Post';
 import axios from 'axios';
+import {WhsprAI} from './WhsprAI';
+import aa from 'search-insights'
+import { v4 as uuidv4 } from 'uuid';
+
 
 // THE MAIN audio context to be used throughout the application (DO NOT ALTER)
-const audioContext: AudioContext = new AudioContext();
-/**
- * If this is altered, Pixie will find you and haunt you in your sleep until you
- * learn to sleep with one eye open, and even then that won't be enough.
- */
+export const audioContext: AudioContext = new AudioContext();
+// algolia initialization
+aa('init', {
+    appId: '2580UW5I69',
+    apiKey: 'b0f5d0cdaf312c18df4a45012c4251e4'
+})
+const generateUserToken = (): string => {
+    return uuidv4()
+};
+
+const userToken = generateUserToken();
+
+aa('setUserToken', userToken)
+
 
 const App = () => {
     const [channelName, setChannelName] = useState<string>();
@@ -45,7 +59,7 @@ const App = () => {
     const getUserLoader = async () => {
         try {
             const response = await axios.get('/current-user');
-            console.log('responseloader', response);
+            // console.log('responseloader', response);
             return response.data;
         } catch(err) {
             console.error('user loader error', err)
@@ -60,12 +74,12 @@ const App = () => {
                 <Route path="/" element={<Login />} />
                 <Route path="/protected" element={<PrivateRoutes />} >
                     <Route path="dashboard" element={<WaveSurferComponent />} /> // Outlet is a placeholder for child routes to be rendered
-
-
+                    <Route path="WhsprAI" element={<WhsprAI audioContext={audioContext}/>} />
+                    <Route path="search" element={<Search />} />
                     <Route path="profile" element={<UserProfile audioContext={audioContext} />} loader={() => getUserLoader()}/>
                     <Route path="feed" element={<Feed audioContext={audioContext} />} loader={() => getUserLoader()}/>
-                    <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
                     <Route path="post" element={<PostCard audioContext={audioContext} />} loader={() => getUserLoader()}/>
+                    <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
                     <Route path="radio" element={<Radio setRoomProps={setRoomProps} />} />
                     <Route path="room/:name" element={<Room channel={channelName} host={host} id={uid}/>} />
                     <Route path="conch" element={<MagicConch audioContext={audioContext}/>}  loader={() => getUserLoader()}/>

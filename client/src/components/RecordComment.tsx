@@ -12,7 +12,7 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
   const audioSource = useRef<AudioBufferSourceNode | null>(null)
   
 
-  const { postObj, getComments, user } = props
+  const { postObj, getComments, user, updatePost } = props
   const userId = user.id
   const startRecording = async () => {
     try {
@@ -106,19 +106,23 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
         //     console.error('Error saving audio:', error)
         //   }
         // }
-        const saveAudioToGoogleCloud = async () => {
-          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+    const saveAudioToGoogleCloud = async () => {
+    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
       formData.append('userId', userId)
       formData.append('postId', postObj.id)
+
       const response = await axios.post(`/uploadComment`, formData)
       if (response.status === 200) {
-        getComments()
-        console.log('Audio save successfully')
+        await axios.put('/post/updateCount', {type: 'increment', column: 'commentCount', id: postObj.id})
+        await getComments()
+        await updatePost(postObj.id, user.id)
+        await console.log('all done')
       } else {
         console.error('Error saving audio:', response.statusText)
+
       }
     } catch (error) {
       console.error('Error saving audio:', error)
