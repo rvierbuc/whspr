@@ -69,7 +69,7 @@ const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, 
       if (addSynth) {
         poly.volume.value = -2;
         poly.connect(lowpass).connect(destination);
-        poly.triggerAttack(['C#3', 'F3', 'C3'], 3);
+        poly.triggerAttack(['C#4', 'F4', 'G#4'], 3);
       }
       if (filter !== defaultSettings) {
         let options: any = Object.values(filter).slice(4)
