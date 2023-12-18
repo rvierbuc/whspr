@@ -23,7 +23,7 @@ const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251
 const Hit = ({ hit, onSelect }: { hit: any; onSelect: (category: string[] | string) => void }) => {
   // console.log('hits', hits); //the individual hit obj
   return (
-    <article onClick={() => onSelect([...hit.category])}>
+    <article id='cat-hit' onClick={() => onSelect([...hit.category])}>
       {hit.category}
     </article>
   )};
@@ -73,7 +73,7 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
           />
           </form>
           {/* create an input that holds the selected categories */}
-        {currentSearch && <Hits hitComponent={(props) => <Hit {...props} onSelect={() => {handleCategorySelection(currentSearch)}} />} />}
+        {currentSearch && <Hits className="cat-hits" hitComponent={(props) => <Hit {...props} onSelect={() => {handleCategorySelection(currentSearch)}} />} />}
           <input type="text" value={selectedCategories} readOnly={true}  className='input-control' id='category-read-only'/>
         <Configure userToken={userToken} />
       </InstantSearch>

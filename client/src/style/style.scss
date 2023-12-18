@@ -163,6 +163,16 @@ body {
   border-radius: 10px;
   color: #000000;
 }
+.ais-Hits {
+  &.cat-hits {
+    left: 50%;
+    top: 27%;
+    z-index: 100;
+    display: flex;
+    justify-content: left;
+    width: 170px;
+  }
+}
 .input-group .form-control {
   border-radius: 10px;
   background-color: rgb(33 37 41);
