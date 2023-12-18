@@ -1,7 +1,5 @@
 import { Storage } from '@google-cloud/storage'
-
-import { Post, Sound, Comment } from './dbmodels'
-
+import { Post, Sound, Comment, MagicConch } from './dbmodels'
 const storage = new Storage({
   keyFilename: './key.json',
   projectId: 'whspr-406622'
@@ -14,6 +12,7 @@ const saveAudio = async (audio: any, userId, title: string, categories: string[]
   const file = bucket.file(`audio/${Date.now()}.wav`)
   const downloadURL = `https://storage.googleapis.com/${bucket.name}/${file.name}`
   try {
+    
     const postRecord = await Post.create({
       title,
       categories,
@@ -95,7 +94,48 @@ const saveAudioComment = async (audio: any, userId, postId): Promise<void | stri
       }),
     ])
     console.log('Audio saved to cloud')
-    return downloadURL
+  } catch (error) {
+    console.error('Error handling audio upload:', error)
+  }
+}
+
+const saveAudioConch = async (audio: any, sendingUserId, receivingUserId, title: string): Promise<void | string> => {
+  const file = bucket.file(`audio/${Date.now()}.wav`)
+  const downloadURL = `https://storage.googleapis.com/${bucket.name}/${file.name}`
+  try {
+    const writeStream = file.createWriteStream({
+      metadata: {
+        contentType: 'audio/wav'
+      }
+    })
+    await Promise.all([
+      new Promise<void>((resolve, reject) => {
+        writeStream.on('error', (error) => {
+          console.error('Error uploading audio:', error);
+          reject(error);
+        });
+        writeStream.on('finish', () => {
+          resolve();
+        });
+        writeStream.end(audio);
+      }),
+      Sound.create({
+        userId: sendingUserId,  
+        soundUrl: downloadURL,
+      }).catch((soundError) => {
+        console.error('Error creating Sound record:', soundError);
+      }),
+        MagicConch.create({
+        receivingUserId,
+        sendingUserId,
+        title,
+        soundUrl: downloadURL
+      })
+    ])
+    //const commentId = await conchRecord.get('id')
+    // if(!commentId){
+    //   console.error('commentId not found in saveAudioComment')
+    // }
   } catch (error) {
     console.error('Error handling audio upload:', error)
   }
@@ -120,6 +160,4 @@ const getAudioUrl = async (postId: number): Promise<string | null> => {
   }
 };
 
-
-
-export { saveAudio, getAudioUrl, saveAudioComment }
+export { saveAudio, getAudioUrl, saveAudioComment, saveAudioConch }

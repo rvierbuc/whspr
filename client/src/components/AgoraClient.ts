@@ -4,7 +4,7 @@ import socket from './socket';
 import agoraConfig from '../agoraConfig'
 
 const agoraClient: IAgoraRTCClient = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8', appid: agoraConfig.appId, certificate: '15dcfaf2bbc54c83946a127f1a77c18e' });
-const localAudioStream: ILocalAudioTrack =  AgoraRTC.createMicrophoneAudioTrack()
+
 
 
 export const joinChannel = async (channelName: string, uid: number, token: string) => {
@@ -21,22 +21,22 @@ export const leaveChannel = () => {
   socket.emit('leave-channel');
 };
 
-export const startAudio = async (stream: MediaStream) => {
+export const startAudio = async () => {
     const localAudioStream: ILocalAudioTrack =  await AgoraRTC.createMicrophoneAudioTrack()
     console.log('why', localAudioStream)
   agoraClient.publish(localAudioStream);
 };
 
-export const stopAudio = async (stream) => {
+export const stopAudio = async () => {
     try {
         const localAudioStream: ILocalAudioTrack =  await AgoraRTC.createMicrophoneAudioTrack()
-        agoraClient.unpublish(stream);
+        agoraClient.unpublish(localAudioStream);
     } catch (error) {
         console.error('no', error)
     }
 };
 
-export const createChannel = async (channelName: string, uid: number, token: string, stream: MediaStream) => {
+export const createChannel = async (channelName: string, uid: number, token: string) => {
   try {
     
       const localAudioStream: ILocalAudioTrack =  await AgoraRTC.createMicrophoneAudioTrack()

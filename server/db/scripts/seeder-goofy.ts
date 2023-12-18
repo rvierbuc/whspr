@@ -88,6 +88,33 @@ export const seedDatabase = async () => {
   );
 
 
+  await Radio.bulkCreate([
+    {
+      host: 'Anthony',
+      category: 'The Categorical',
+      title: 'The Titular',
+      listenerCount: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      host: 'RandomUser',
+      category: 'The Categorical',
+      title: 'The Titular2',
+      listenerCount: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      host: 'Rando',
+      category: 'The Categorical',
+      title: 'The Titular3',
+      listenerCount: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ]);
+
   await Sound.bulkCreate([
     {
       postId: 1,

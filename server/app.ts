@@ -163,7 +163,8 @@ app.get('/getSoundURLPostId',  async (req, res) =>{
   })
 
 app.post('/createPostRecord', async(req, res) =>{
-   try{
+  //console.log(req.body);
+    try{
       const postRecord = {
       userId: req.body.userId,
       title: req.body.title,

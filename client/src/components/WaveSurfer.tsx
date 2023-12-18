@@ -85,7 +85,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, pos
 
     useEffect(() => {
         createSoundWaves();
-        console.log('wave', wave);
+        console.log('wave', postObj);
     }, [audioUrl]);
     return (
         <div  className="card">

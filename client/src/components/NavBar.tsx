@@ -42,6 +42,7 @@ const NavBar = () => {
               <Nav className="ml-auto">
                 <Nav.Link onClick={() => handleNavigation('/protected/feed')} >Home</Nav.Link>
                 {/* <Nav.Link onClick={() => handleNavigation('/protected/post')}>Post</Nav.Link> */}
+                <Nav.Link onClick={() => handleNavigation('/protected/conch')}>Magic Conch</Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/feed')}>Feed</Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/profile')}>Profile</Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/synthesize')}>Synthesize</Nav.Link>
