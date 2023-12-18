@@ -23,7 +23,9 @@ const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251
 const Hit = ({ hit, onSelect }: { hit: any; onSelect: (category: string[] | string) => void }) => {
   // console.log('hits', hits); //the individual hit obj
   return (
-    <article id='cat-hit' onClick={() => onSelect([...hit.category])}>
+    <article id='cat-hit' onClick={() => onSelect([...hit.category])}
+    style={{ border: '1px solid black', padding: '10px', margin: '10px' }}
+    >
       {hit.category}
     </article>
   )};
