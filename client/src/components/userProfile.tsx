@@ -53,7 +53,6 @@ const UserProfile = ({audioContext}) => {
             />
             {/* each post should have its own instance of a waveSurfer comp */}
             </div>
-            
         )) : <div style={{color: 'white'}}>No Posts Yet!</div>}
         </div>
     )
