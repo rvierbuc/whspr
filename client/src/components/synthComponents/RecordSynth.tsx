@@ -42,6 +42,8 @@ const RecordSynth = ({ title, audioContext, finalDest, mediaDest, start, stop, u
     }
   };
 
+  const categories = ['synth', 'mysound', 'producer'];
+
   const saveRecording = async () => {
     const saveBlob: Blob = new Blob(audioChunks, {type: 'audio/wav'})
     try {
@@ -49,7 +51,11 @@ const RecordSynth = ({ title, audioContext, finalDest, mediaDest, start, stop, u
       formData.append('audio', saveBlob)
       formData.append('userId', userId.toString())
       formData.append('title', title)
-      formData.append('category', 'music')
+      // formData.append('category', 'music')
+      categories.forEach((category, index) => {
+        console.log('howdy', index, category);
+        formData.append(`category[${index}]`, category);
+      })
       const response = await axios.post(`/upload`, formData);
       response.status === 200
       ?
