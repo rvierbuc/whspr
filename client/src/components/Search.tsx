@@ -33,8 +33,10 @@ const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251
 
 function Hit({ hit }) {
   const { hits } = useHits(); // the array of hits
-  // console.log('hits', hits);the individual hit obj
-  // console.log('hit', hit.objectID); the id of the user in the db
+  console.log('hits', hits);//the individual hit obj
+  const { refine } = useSearchBox();
+  console.log('refine', refine);
+  
   return (
     <article>
       <img src={hit.profileImgUrl || ''} alt={hit.name} style={{ width: 'auto', height: '100px', objectFit: 'scale-down' }}/>
@@ -51,24 +53,30 @@ const Search:React.FC = () => {
   const [currentSearch, setCurrentSearch] = useState<string>('');
   // const { refine } = useSearchBox();
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // console.log('working', event.target.value, event);
-    // console.log('userToken', userToken);
     setCurrentSearch(event.target.value);
-    // refine(event.target.value);
   }
   return (
-    <Form>
-    <InstantSearch 
-    searchClient={searchClient} 
-    indexName="search_index"
-    initialUiState={{ searchBox: { query: currentSearch } }}
-    insights={true}
-    >
-      <Configure clickAnalytics={true} />
-      <SearchBox onInput={handleSearchChange}/>
-      {currentSearch && <Hits hitComponent={Hit} />}
-    </InstantSearch>
-      </Form>
+  <InstantSearch 
+  searchClient={searchClient} 
+  indexName="search_index"
+  initialUiState={{ searchBox: { query: currentSearch } }}
+  insights={true}
+  >
+    {/* <SearchBox onInput={handleSearchChange}/> */}
+    <Form inline className='bg-dark'>
+      <InputGroup>
+        <InputGroup.Text id="basic-addon1">@/#</InputGroup.Text>
+        <Form.Control
+          placeholder="Search"
+          aria-label="Search"
+          aria-describedby="basic-addon1"
+          onInput={handleSearchChange}
+        />
+      </InputGroup>
+    </Form>
+    {currentSearch && <Hits hitComponent={Hit} />}
+    <Configure clickAnalytics={true} queryType="prefixLast" />
+  </InstantSearch>
   );
 }
 export default Search

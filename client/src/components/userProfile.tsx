@@ -42,7 +42,8 @@ const UserProfile = ({audioContext}) => {
       }, [])
     return (
         <div className="user-main">
-            <Card style={{ width: '20rem' }}>
+            <div className="user-profile-card">
+            <Card style={{ position: 'absolute', left: '20%', width: '20rem', marginBottom: '1rem' }}>
                 <div className="user-main-card">
                     <div className="user-pfp">
                         <img src={currentUser.profileImgUrl} alt="user profile image" />
@@ -55,14 +56,8 @@ const UserProfile = ({audioContext}) => {
                     </Card.Text>
                 </Card.Body>
             </Card>
-            {/* <div className="user-profile-card">
-                <div className="user-profile-image">
-                    <img src={currentUser.profileImgUrl} alt="user profile image" />
-                </div>
-                <div className="user-profile-info">
-                    <h1 style={{color: 'white'}}>{currentUser.username}</h1>
-                </div>
-            </div> */}
+            </div>
+            <br/>
             {selectedUser.length > 0 ? selectedUser.map((post) => (
             <div>
             <WaveSurferComponent 
