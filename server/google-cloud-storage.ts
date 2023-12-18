@@ -12,9 +12,7 @@ const saveAudio = async (audio: any, userId, title: string, categories: string[]
   const file = bucket.file(`audio/${Date.now()}.wav`)
   const downloadURL = `https://storage.googleapis.com/${bucket.name}/${file.name}`
   try {
-    if(category === 'conch'){
-
-    }
+    
     const postRecord = await Post.create({
       title,
       categories,
