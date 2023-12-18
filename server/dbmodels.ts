@@ -47,10 +47,7 @@ export const MagicConch = db.define('MagicConch', {
   title: {
     type: DataTypes.STRING
   },
-  url: {
-    type: DataTypes.STRING
-  },
-  soundURL: {
+  soundUrl: {
     type: DataTypes.STRING
   }
 })
@@ -104,13 +101,13 @@ export const Comment = db.define('Comment', {
 })
 
 export const Radio = db.define('Radio', {
-  hostId: {
-    type: DataTypes.INTEGER
+  host: {
+    type: DataTypes.STRING
   },
   listenerCount: {
     type: DataTypes.INTEGER
   },
-  url: {
+  soundUrl: {
     type: DataTypes.STRING
   },
   title: {
@@ -173,15 +170,15 @@ Like.belongsTo(User, { foreignKey: 'userId', as: 'user' })
 Post.hasMany(Like, {foreignKey: 'postId'})
 Like.belongsTo(Post, { foreignKey: 'postId', as: 'post' })
 
-// User.hasMany(Comment, {foreignKey: 'userId'})
-// Comment.belongsTo(User, { foreignKey: 'userId' })
-// Post.hasMany(Comment, {foreignKey: 'postId'})
-// Comment.belongsTo(Post, { foreignKey: 'postId'})
+User.hasMany(Comment, {foreignKey: 'userId'})
+Comment.belongsTo(User, { foreignKey: 'userId' })
+Post.hasMany(Comment, {foreignKey: 'postId'})
+Comment.belongsTo(Post, { foreignKey: 'postId'})
 
-UsersRadio.belongsTo(User, { foreignKey: 'userId', as: 'user' })
-UsersRadio.belongsTo(Radio, { foreignKey: 'radiosId', as: 'radio' })
+// UsersRadio.belongsTo(User, { foreignKey: 'userId', as: 'user' })
+// UsersRadio.belongsTo(Radio, { foreignKey: 'radiosId', as: 'radio' })
 
-Radio.belongsTo(User, { foreignKey: 'hostId', as: 'host' })
+// Radio.belongsTo(User, { foreignKey: 'hostId', as: 'host' })
 
 User.hasMany(Post, { foreignKey: 'userId'})
 Post.belongsTo(User, { foreignKey: 'userId', as: 'user' })
@@ -205,7 +202,6 @@ db.authenticate()
   .catch((error: any) => {
     console.error('Error connecting to the database:', error.message)
   })
-
 // export script funcs that ref db:
 
 export const authenticateDatabase = async (): Promise<void> => {

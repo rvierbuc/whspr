@@ -1,17 +1,21 @@
 import React, { useState, useRef } from 'react'
+import { useLoaderData } from 'react-router-dom';
 import axios from 'axios'
 
-export const RecordPost = ({ user, audioContext, title, category, openPost }: { user: any; audioContext: BaseAudioContext; title: string; category: string; openPost: () => void}) => {
+export const RecordComment = (props, { audioContext }: { audioContext: BaseAudioContext }) => {
+  const [title, setTitle] = useState('')
+  const [category, setCategory] = useState('')
   const [isRecording, setIsRecording] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([])
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const audioSource = useRef<AudioBufferSourceNode | null>(null)
-  const userId = user.id;
-    
+  
+
+  const { postObj, getComments, user } = props
+  const userId = user.id
   const startRecording = async () => {
     try {
-      //for now, this resets the recording array to an empty array when recording starts
       setAudioChunks([])
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
       mediaRecorder.current = new MediaRecorder(stream)
@@ -86,17 +90,33 @@ export const RecordPost = ({ user, audioContext, title, category, openPost }: { 
     setAudioChunks([])
   }
 
-  const saveAudioToGoogleCloud = async () => {
-    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+  // const saveAudioToGoogleCloud = async () => {
+  //   const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+  //   try {
+  //     const formData = new FormData()
+  //     formData.append('audio', audioBlob)
+  //     const response = await axios.post(`/upload/${user.id}/${postObj.id}`, formData)
+  //     if (response.status === 200) {
+    //       const downloadURL = response.data
+    //       return downloadURL
+    //     } else {
+      //       console.error('Error saving audio:', response.statusText)
+      //     }
+      //   } catch (error) {
+        //     console.error('Error saving audio:', error)
+        //   }
+        // }
+        const saveAudioToGoogleCloud = async () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
       formData.append('userId', userId)
-      formData.append('title', title)
-      formData.append('category', category)
-      const response = await axios.post(`/upload`, formData)
+      formData.append('postId', postObj.id)
+      const response = await axios.post(`/uploadComment`, formData)
       if (response.status === 200) {
-        console.info('Audio save successfully')
+        getComments()
+        console.log('Audio save successfully')
       } else {
         console.error('Error saving audio:', response.statusText)
       }
@@ -104,37 +124,54 @@ export const RecordPost = ({ user, audioContext, title, category, openPost }: { 
       console.error('Error saving audio:', error)
     }
   }
-
+  // const createPostRecord = async () => {
+  //   try {
+  //     const soundUrl = await saveAudioToGoogleCloud()
+  //     const postResponse = await axios.post('/post/createCommentRecord', {
+  //       userId: user.id,
+  //       postId: postObj.id,
+  //       soundUrl
+  //     })
+  //     if (postResponse.status === 201) {
+  //       console.info('Post saved to Database')
+  //     } else {
+  //       console.error('Error saving post: ', postResponse.statusText)
+  //     }
+  //   } catch (error) {
+  //     console.error('error saving post: ', error)
+  //   }
+  // }
+  
   return (
-        <div className="d-flex justify-content-center" style={{margin:'15px'}}>
-          <button
-            className="record-button"
-            onClick={startRecording}
-            disabled={isRecording}
-            ><img src={require('../style/recordbutton.png')} /></button>
-            <button
-            className="play-button"
-            onClick={playAudio}
-            disabled={isPlaying || audioChunks.length === 0 }
-            ><img src={require('../style/playbutton.png')} /></button>
-            <button
-            className="stop-button"
-            onClick={isRecording ? stopRecording : stopPlaying}
-            disabled={!isRecording && !isPlaying}
-            ><img src={require('../style/stopbutton.png')} /></button>
-            <button
-            className="delete-button"
-            onClick={emptyRecording}
-            disabled={audioChunks.length === 0 || isRecording}
-            ><img src={require('../style/deletebutton.png')} /></button>
-            <button
-            className="post-button"
-            onClick={()=>{
-              openPost()
-              saveAudioToGoogleCloud()}
-            }
-            disabled={audioChunks.length === 0 || isRecording}
-            ><img src={require('../style/postbutton.png')} /></button>
-        </div>
+    <div style={{margin:'15px'}}>
+    <button
+      className="record-button"
+      onClick={startRecording}
+      disabled={isRecording}
+      ><img src={require('../style/recordbutton.png')} /></button>
+      <button
+      className="play-button"
+      onClick={playAudio}
+      disabled={isPlaying || audioChunks.length === 0 }
+      ><img src={require('../style/playbutton.png')} /></button>
+      <button
+      className="stop-button"
+      onClick={isRecording ? stopRecording : stopPlaying}
+      disabled={!isRecording && !isPlaying}
+      ><img src={require('../style/stopbutton.png')} /></button>
+      <button
+      className="delete-button"
+      onClick={emptyRecording}
+      disabled={audioChunks.length === 0 || isRecording}
+      ><img src={require('../style/deletebutton.png')} /></button>
+      <button
+      className="post-button"
+      onClick={() =>{
+        saveAudioToGoogleCloud()
+        emptyRecording()
+      }}
+      disabled={audioChunks.length === 0 || isRecording}
+      ><img src={require('../style/postbutton.png')} /></button>
+  </div>
   )
 }

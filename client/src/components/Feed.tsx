@@ -1,54 +1,35 @@
 import React, { useEffect, useState } from "react";
 import axios, {AxiosResponse} from "axios";
-import { RecordPost } from "./RecordPost"
+import PostCard from "./PostCard"
 import Post from "./Post";
-
+import WaveSurferComponent from "./WaveSurfer";
+import { useLoaderData } from 'react-router-dom';
 
 const Feed = ({ audioContext }: { audioContext: BaseAudioContext }) => {
 const [posts, setPosts] = useState<any>()
-const [record, setRecord] = useState<boolean>(false)
-const [feed, setFeed] = useState<string>('following')
+const [feed, setFeed] = useState<string>('explore')
 
-const userId = 1;
-
-const getFriendsPosts = async() => {
-  try{
-    const friendsPosts: AxiosResponse = await axios.get('/post/following/1')
-    setPosts(friendsPosts.data)
-    console.log(friendsPosts.data)
-  } catch(error) {
-    console.log('client get friends', error)
-  }
-}
+const user: any = useLoaderData();
+console.log('user', user)
 
 const getPosts = async(type) => {
   setFeed(type)
   try{
-    const allPosts: AxiosResponse = await axios.get(`/post/${type}/${userId}`)
+    const allPosts: AxiosResponse = await axios.get(`/post/${type}/${user.id}`)
     setPosts(allPosts.data)
-    console.log(allPosts.data)
+    console.log(allPosts)
   } catch(error) {
     console.log('client get friends', error)
   }
 }
 useEffect(() => {
-  getPosts('following')
+  getPosts('explore')
 }, [])
   return (
     <div>
-      <h2>Audio Feed</h2>
-      <button  
-      type="button"
-      className="btn btn-dark"
-      style={{margin:'15px'}}
-      onClick={() => setRecord(() => !record)}
-      >Create a Post
-      </button>
-       {record 
-        ? <RecordPost
-          audioContext={audioContext}
-         />
-        :<div></div>}
+    <div className="centered">
+<PostCard audioContext={audioContext}/>
+    </div>
     {feed === 'following' ?
     <div>
         <button
@@ -75,12 +56,19 @@ useEffect(() => {
         >Explore</button>
       </div>}
       {posts ? posts.map((post: any) => (
-        <Post
-          key = {post.id}
-          postObj = {post}
-          getFriendsPosts={getFriendsPosts}
-          audioContext={audioContext}
-        />
+        <div>
+          <WaveSurferComponent postObj={post} audioUrl={post.soundUrl} postId={post.id} />
+          <Post
+            key = {post.id}
+            postObj = {post}
+            getPosts={getPosts}
+            audioContext={audioContext}
+            feed={feed}
+            user={user}
+          />
+          {/* each post should have its own instance of a waveSurfer comp */}
+
+        </div>
       )) : <div>Loading...</div>}
     </div>
 

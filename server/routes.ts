@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 import { Router, Request, Response } from 'express'
-import { saveAudio, getAudioUrl } from './google-cloud-storage'
-import {Post} from './dbmodels'
+import { saveAudio, getAudioUrl, saveAudioComment, saveAudioConch } from './google-cloud-storage'
+import { MagicConch, Radio } from './dbmodels';
 
 const router = Router()
 
-router.post('/upload/:postId/:userId', async (req: Request, res: Response) => {
-const {postId, userId} = req.params
+router.post('/upload', async (req: Request, res: Response) => {
+const {userId, title, category} = req.body;
   if (!req.file) {
     console.error('req.file is undefined in route upload.')
     res.sendStatus(400)
   } else {
     try {
-      const downloadUrl = await saveAudio(req.file.buffer, postId, userId)
+      const downloadUrl = await saveAudio(req.file.buffer, userId, title, category)
       if(downloadUrl){
         res.status(200).send(downloadUrl)
       }
@@ -22,6 +22,24 @@ const {postId, userId} = req.params
     }
   }
 })
+
+router.post('/uploadComment', async (req: Request, res: Response) => {
+  const {userId, postId} = req.body;
+    if (!req.file) {
+      console.error('req.file is undefined in route upload.')
+      res.sendStatus(400)
+    } else {
+      try {
+        const downloadUrl = await saveAudioComment(req.file.buffer, userId, postId)
+        if(downloadUrl){
+          res.status(200).send(downloadUrl)
+        }
+      } catch (error) {
+        console.error('Error in upload router: ', error)
+        res.status(500).send('Upload failed')
+      }
+    }
+  })
 
 router.get('/getAudio', async (req: Request, res: Response) => {
   const { postId } = req.query;
@@ -45,20 +63,58 @@ router.get('/getAudio', async (req: Request, res: Response) => {
   }
 });
 
-// router.get('/getAudioAndStore/:postId', async (req: Request, res: Response) => {
-//   try{
-//     const postId = req.params.postId
-//     const postRecord = await Post.findOne({where: {postId}})
-//     if(!postRecord){
-//       res.status(404).send('Post not found')
-//     }
-//     const soundURL = postRecord?.get('soundURL') as string;
-//     if(!soundURL){
-//       res.status(404).send('SoundURL not found')
-//     }
-//     const fileName = soundURL.split('/').pop()
-//     const localFilePath = path.join()
-//   }
-// });
+router.post('/conch', async (req: Request, res: Response) => {
+  const {sendingUserId, title, receivingUserId} = req.body;
+    if (!req.file) {
+      console.error('req.file is undefined in route upload.')
+      res.sendStatus(400)
+    } else {
+      try {
+
+        const downloadUrl = await saveAudioConch(req.file.buffer, sendingUserId, receivingUserId, title)
+        if(downloadUrl){
+          console.log('postconch')
+          res.status(200).send(downloadUrl)
+        }
+      } catch (error) {
+        console.error('Error in upload router: ', error)
+        res.status(500).send('Upload failed')
+      }
+    }
+  })
+
+  router.get('/conch/:receivingUser', async (req: Request, res: Response) => {
+    const {receivingUser} = req.params
+    try{
+      const inbox = await MagicConch.findAll({where: {receivingUserId: receivingUser}})
+      console.log('ji', inbox)
+      res.status(200).send(inbox)
+    }catch{
+      res.sendStatus(500)
+    }
+
+  })
+
+  router.get('/conch/sent/:sendingUser', async (req: Request, res: Response) => {
+    const {sendingUser} = req.params
+    try{
+      const inbox = await MagicConch.findAll({where: {sendingUserId: sendingUser}})
+      console.log('ji', inbox)
+      res.status(200).send(inbox)
+    }catch{
+      res.sendStatus(500)
+    }
+
+  })
+
+  router.get('/radio', async (req: Request, res: Response) => {
+    try{
+      const data = await Radio.findAll({})
+      res.status(200).send(data)
+    }catch{
+      res.sendStatus(500)
+    }
+  })
+  
 
 export default router

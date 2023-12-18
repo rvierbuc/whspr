@@ -2,45 +2,37 @@ import WaveSurfer from 'wavesurfer.js';
 import RecordPlugin from 'wavesurfer.js/dist/plugins/record'
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.js';
 import React, { useEffect, useState } from 'react';
-import { GenericPlugin } from 'wavesurfer.js/dist/base-plugin';
-import { WaveSurferPlugin } from 'wavesurfer.js/types/plugin';
-import  create  from 'wavesurfer.js';
-import axios from 'axios';
 
-let wavesurfer: any;
-let record: RecordPlugin;
-let scrollingWaveForm: boolean = false;
 
-declare module 'wavesurfer.js' {
-    interface WaveSurfer {
-        record: RecordPlugin;
-        regions: RegionsPlugin;
-    }
+interface WaveSurferProps {
+    audioUrl: string;
+    postId: number;
+    postObj: any;
 }
 
-
-const WaveSurferComponent = () => {
+const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, postId}) => {
     const [wave, setWave] = useState<WaveSurfer | null>(null);
     const [display, setDisplay] = useState<boolean>(false); 
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
-    
+    // const { audioUrl, postId } = props;
+    const containerId = `waveform-${postId}`
     const createSoundWaves = () => {
         let regions: RegionsPlugin
         //if there is a wavesurfer already, destroy it
-        if (wavesurfer) {
-            wavesurfer.destroy();
+        if (wave) {
+            wave.destroy();
         }
         //create the new wave
         console.log('creating new wave')
-        wavesurfer = WaveSurfer.create({
+        const wavesurfer = WaveSurfer.create({
             barWidth: 15,
             barRadius: 5,
             barGap: 2,
             interact: true,
-            container: '#waveform',
+            container: `#${containerId}`,
             waveColor: 'rgb(0, 255, 0)',
             progressColor: 'rgb(0, 0, 255)',
-            url: 'https://cdn.freesound.org/previews/462/462807_8386274-lq.mp3',
+            url: audioUrl,
             width: "auto",
             height: "auto",
             normalize: true,
@@ -49,9 +41,6 @@ const WaveSurferComponent = () => {
         regions = wavesurfer.registerPlugin(RegionsPlugin.create());
 
 
-        // wavesurfer.on('interaction', () => {
-        //     wavesurfer.play();
-        // });
         wavesurfer.on('click', () => {
             regions.addRegion({
                 start: wavesurfer.getCurrentTime(),
@@ -77,18 +66,38 @@ const WaveSurferComponent = () => {
 
     useEffect(() => {
         createSoundWaves();
-        console.log('wave', wave);
-    }, []);
+        console.log('wave', postObj);
+    }, [audioUrl]);
     return (
-        <div>
-            <h1>WaveSurfer</h1>
-            <div id="waveform"></div>
-            <button type='button' id="play-btn" onClick={() => {
-                if (wavesurfer) {
-                    wavesurfer.playPause();
-                    setIsPlaying(!isPlaying);
-                }
-            }}>{isPlaying ? 'Stop' : 'Play'}</button>
+        <div  className="card">
+            <br/>
+            <div className="card-body" >
+                <a href={`profile/${postObj.user.id}`} className="card-link">{postObj.user.username}</a>
+                <h3>{postObj.title}</h3>
+            <div id={containerId}></div>
+            {isPlaying ?
+                <button type='button' className="btn btn-danger" id="play-btn" onClick={() => {
+                    if (wave) {
+                        wave.playPause();
+                        setIsPlaying(!isPlaying);
+                    }
+                }}>Stop</button>
+                : <button type='button' className="btn btn-light" id="play-btn" onClick={() => {
+                    if (wave) {
+                        wave.playPause();
+                        setIsPlaying(!isPlaying);
+                    }
+                }}>Play</button>
+            }
+            <div>
+                {/* <button
+                className="btn"
+                // onClick={()=> }
+                style={{backgroundColor:'white', borderColor:'white'}}>
+                <a href="#" className="card-link">{`#${postObj.category}`}</a>
+                </button> */}
+            </div>
+            </div>
         </div>
     )
 }

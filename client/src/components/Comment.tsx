@@ -7,7 +7,7 @@ return (
   <div className="card-body" >
         <a href="#" className="card-link">{comment.User.username}</a>
         <audio controls>
-          <source src={comment.soundURL} type="audio/webm" />
+          <source src={comment.soundUrl} type="audio/webm" />
         </audio>
   </div>
 )

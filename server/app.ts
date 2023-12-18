@@ -9,11 +9,11 @@ import cors from 'cors'
 import http from 'http'
 import {Server, Socket} from 'socket.io'
 import {ExpressPeerServer} from 'peer'
-
+import {HOST, PORT} from './index'
 const clientPath = path.resolve(__dirname, '../client/dist')
 
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: `http://${HOST}:${PORT}`,
   methods: ['GET', 'POST'],
 }
 const storage = multer.memoryStorage();
@@ -76,14 +76,14 @@ app.get('/auth/google', (req: Request, res: Response) => {
 })
 
 app.get('/google/callback',  passport.authenticate('google', {
-  successRedirect: '/protected',
+  successRedirect: '/protected/feed',
   failureRedirect: '/auth/google/failure',
 }),
 (req: Request, res: Response) => {
   // set cookies
   res.setHeader('Set-Cookie', setCookie);
   req.session.save()
-  console.log('req.session', req.session);
+  //console.log('req.session', req.session);
 
   res.redirect('/protected')
 })
@@ -104,7 +104,7 @@ app.use('/logout', (req: Request, res: Response) => {
 
 //get current user
 app.get('/current-user', async (req: Request, res: Response) => {
-  console.log('req.session', req);
+  //console.log('req.session', req);
     try {
       const results = await User.findOne({where: {googleId: req.user}})
       if(results){
@@ -144,13 +144,13 @@ app.get('/getSoundURLPostId',  async (req, res) =>{
   })
 
 app.post('/createPostRecord', async(req, res) =>{
-  console.log(req.body);
+  //console.log(req.body);
     try{
       const postRecord = {
       userId: req.body.userId,
       title: req.body.title,
       category: req.body.category,
-      soundURL: req.body.soundURL
+      soundUrl: req.body.soundUrl
       }
       await Post.create(postRecord)
       res.status(200).send('Post record created.')

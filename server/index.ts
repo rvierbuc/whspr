@@ -4,7 +4,9 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const PORT = process.env.PORT || 3000
+export const PORT = process.env.PORT || 3000
+export const HOST = process.env.HOST || 'localhost'
+
 
 app.listen(PORT, () => {
   console.log(`Server is listening on ${PORT}`)

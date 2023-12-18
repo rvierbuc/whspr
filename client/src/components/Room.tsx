@@ -6,10 +6,10 @@ import { joinChannel, leaveChannel, startAudio, stopAudio, createChannel, subscr
 
 
 
-const Room: React.FC = () => {
+const Room = ({channel, host, id}) => {
 
-  const [channelName, setChannelName] = useState('a');
-  const [uid, setUid] = useState<number>(Math.floor(Math.random() * 20));
+  const [channelName, setChannelName] = useState(channel);
+  const [uid, setUid] = useState<number>(id);
   const [stream, setStream] = useState<MediaStream>()
   const [remoteAudioTracks, setRemoteAudioTracks] = useState<string[]>([]);
 
@@ -37,18 +37,18 @@ const Room: React.FC = () => {
 
   const handleJoinChannel = (stream) => {
     joinChannel(channelName, uid, '007eJxTYPBdOLtmftV7Yz+P1GfSx08pdH/dXbfQbEfv229pB0S8KjYpMCQaJyUbmJgmWphZWphYmJtbGKUYpJoZJhmbmllYWpoaHTlcktoQyMggWH2RlZEBAkF8RoZEBgYAV0cfRw==');
-    startAudio(stream);
+    startAudio();
   };
 
   const handleLeaveChannel = (stream) => {
     leaveChannel();
     console.log('stream', stream)
-    stopAudio(stream);
+    stopAudio();
   };
 
   return (
     <div>
-      <h1>Agora Voice Chat</h1>
+      <h1>{channelName}</h1>
       <audio ref={remoteAudioRef} autoPlay />
 
 
@@ -57,17 +57,8 @@ const Room: React.FC = () => {
           <audio key={index} ref={remoteAudioRef} srcObject={new MediaStream(track)} autoPlay />
         ))} */}
       </div>
-      <label>
-        Channel Name:
-        <input type="text" value={channelName} onChange={(e) => setChannelName(e.target.value)} />
-      </label>
+      
       <br />
-      <label>
-        User ID:
-        <input type="text" value={uid} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setUid(Number(event.target.value))} />
-      </label>
-      <br />
-      <button onClick={(stream) => handleJoinChannel(stream)}>Join Channel</button>
       <button onClick={handleLeaveChannel}>Leave Channel</button>
     </div>
   );

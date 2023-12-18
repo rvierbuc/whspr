@@ -1,6 +1,6 @@
-import React from 'react';
-import NavBar from './NavBar';
+import React, { useState } from 'react';
 import SynthDaw from './synthComponents/SynthDaw';
+import { useLoaderData } from 'react-router-dom';
 
 interface Props {
   audioContext: AudioContext
@@ -8,6 +8,9 @@ interface Props {
 
 const Synthesize = ({audioContext}: Props): React.JSX.Element => {
   // setting up basic audioContext workflow => w/ oscillatorNode
+  const user: any = useLoaderData();
+  const userId = user.id
+  console.log('USER', user.id);
   const oscillator: OscillatorNode = audioContext.createOscillator();
   const filter: BiquadFilterNode = audioContext.createBiquadFilter();
   const mediaDest: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
@@ -19,10 +22,8 @@ const Synthesize = ({audioContext}: Props): React.JSX.Element => {
   filter.connect(mediaDest);
 
   return (
-    <div className="container-sm">
-      <NavBar />
-      <h1 className="text-center">Whspr</h1>
-      <SynthDaw audioContext={audioContext} oscillator={oscillator} filter={filter} mediaDest={mediaDest} finalDest={finalDest} />
+    <div>
+      <SynthDaw audioContext={audioContext} oscillator={oscillator} filter={filter} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />
     </div>
   );
 };
