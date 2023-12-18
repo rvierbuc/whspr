@@ -14,17 +14,23 @@ const PostSynth = ({ isRecording, audioChunks, userId}: Props) => {
   const handleNavigation = (path: string) => {
     navigate(path);
   }
+  const categories: string[] = ['Voice Filter', 'Filter', 'Robot', 'Alien', 'Underwater'];
 
   const saveAudioToGoogleCloud = async () => {
     let postTitle = title;
     setTitle('');
     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+    console.log('posting');
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
       formData.append('userId', userId)
       formData.append('title', postTitle)
-      formData.append('category', 'Voice Synth')
+      // formData.append('category', 'Voice Synth')
+      categories.forEach((category, index) => {
+        console.log('howdy', index, category);
+        formData.append(`category[${index}]`, category);
+      })
       const response = await axios.post(`/upload`, formData)
       response.status === 200 ? console.info('Audio saved successfully') : console.error('Error saving audio', response.statusText);
     } catch (error) {
@@ -37,10 +43,7 @@ const PostSynth = ({ isRecording, audioChunks, userId}: Props) => {
       <input type="text" className="m-2" value={title} onChange={(e) => setTitle(e.target.value)} />
       <button
             className="post-button m-2"
-            onClick={()=>{
-              saveAudioToGoogleCloud()
-              handleNavigation('/protected/feed')}
-            }
+            onClick={saveAudioToGoogleCloud}
             disabled={audioChunks.length === 0 || isRecording}
             ><img src={require('../../style/postbutton.png')} /></button>
     </div>
