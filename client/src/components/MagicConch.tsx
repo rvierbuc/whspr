@@ -24,7 +24,7 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
         try{
           const response: AxiosResponse = await axios.get(`/conch/${user.id}`)
           console.log('message', response)
-            const message = response.data[1]
+            const message = response.data[0]
             message.user = user
             message.userId = user.id
           setMessage(message)
