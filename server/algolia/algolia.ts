@@ -53,12 +53,6 @@ const getUserData = async () => {
     console.log('error', error)
   }
 }
-// Search the index and print the results
-// index
-//   .search('Sydney')
-//   .then(({ hits }) => console.log('then', hits)) //this is not working right now 
-//   .catch((error) => console.log('catch', error))
-
 export const searchIndex = client.initIndex('search_index');
 
 const getSearchData = async () => {
@@ -85,13 +79,13 @@ const getSearchData = async () => {
     //map through the data 
     mappedPostDataWithUsername.map(async (record) =>{
       try{
-        // console.log('record log', record); this successfully logs everything from the post + the associated user record with the username
+        console.log('record log', record);// this successfully logs everything from the post + the associated user record with the username
         // extract the values we want to save to the search index instead of all the data from the post and user tables
         const valuesToSave = {
           title: record.title,
           category: record.category,
           username: record.username,
-          objectID: record.id,
+          objectID: record.userId,
           soundUrl: record.soundUrl
         }
         // save the values to the search index
@@ -114,7 +108,8 @@ const setSearchIndexSettings = async () => {
         'username',
         'title',
         'category'
-      ]
+      ],
+      
     });
     console.log('set settings');
   } catch (error) {
@@ -124,9 +119,36 @@ const setSearchIndexSettings = async () => {
 
 //init a category index
 export const categoryIndex = client.initIndex('category_index');
+// check if the index exists and make it if not
+const createCategoryIndex = async () => {
+  try {
+    const doesIndexExist = await categoryIndex.exists();
+    const defaultCategoryIndex = ['comedy', 'sports', 'music', 'gaming', 'news', 'politics', 'random']
+    const categoryDataToSave = defaultCategoryIndex.map((category) => {
+      return {
+        objectID: category,
+        category: category
+      }
+    })
+    if (!doesIndexExist) {
+      console.log('index does not exist, creating index');
+      await categoryIndex.saveObjects(categoryDataToSave, {
+        autoGenerateObjectIDIfNotExist: false
+      });
+    }
+
+  } catch(err) {
+    console.log('error creating category index', err);
+  }
+}
 //create a helper to check if the category already exists in the index
 const doesCategoryExist = async (category: string) => {
   try {
+    const indexExists = await categoryIndex.exists();
+    if (!indexExists) {
+      console.log('index does not exist, skipping check');
+      return false;
+    }
     const results = await categoryIndex.search(category);
     const hits = results.hits;
     console.log('hits', hits);
@@ -193,7 +215,7 @@ export const getCategoryData = async () => {
 
 
 
-
+createCategoryIndex();
 getCategoryData();
 getSearchData();
 getUserData();
