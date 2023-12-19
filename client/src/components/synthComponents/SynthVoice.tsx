@@ -58,7 +58,6 @@ const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, 
     video: false
   }
 
-  
   const startRecording = async () => {
     try {
       setAudioChunks([]);

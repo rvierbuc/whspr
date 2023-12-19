@@ -20,7 +20,6 @@ const PostSynth = ({ isRecording, audioChunks, userId}: Props) => {
     let postTitle = title;
     setTitle('');
     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
-    console.log('posting');
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
@@ -40,12 +39,20 @@ const PostSynth = ({ isRecording, audioChunks, userId}: Props) => {
 
   return (
     <div>
-      <input type="text" className="m-2" value={title} onChange={(e) => setTitle(e.target.value)} />
+      <div className="d-flex justify-content-center">
+        <input type="text"
+        maxLength={22}
+        placeholder="What's on your mind?"
+        value={title}
+        onChange={(e) => { setTitle(e.target.value) }}
+        className='input-control'
+        />
+      </div>
       <button
-            className="post-button m-2"
-            onClick={saveAudioToGoogleCloud}
-            disabled={audioChunks.length === 0 || isRecording}
-            ><img src={require('../../style/postbutton.png')} /></button>
+        className="post-button m-2"
+        onClick={saveAudioToGoogleCloud}
+        disabled={audioChunks.length === 0 || isRecording}
+        ><img src={require('../../style/postbutton.png')} /></button>
     </div>
   );
 };

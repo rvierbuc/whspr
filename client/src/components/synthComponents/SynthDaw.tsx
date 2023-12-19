@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Container, Stack } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Container, Stack, Button } from 'react-bootstrap';
 import Oscillator from './Oscillator';
 import RecordSynth from './RecordSynth';
 import Filters from './Filters';
@@ -16,6 +16,21 @@ interface Props {
 const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userId}: Props): React.JSX.Element => {
   const [contextState, setContextState] = useState('');
   const [title, setTitle] = useState('');
+  const [ addFilter, setAddFilter ] = useState(false);
+  const [ addSynth, setAddSynth ] = useState(false);
+
+  useEffect(() => {
+    setAddFilter(false);
+    setAddSynth(false);
+  }, [])
+
+  const toggleFilter = () => {
+    addFilter === false ? setAddFilter(true) : setAddFilter(false);
+  };
+
+  const toggleSynth = () => {
+    addSynth === false ? setAddSynth(true) : setAddSynth(false);
+  };
 
   const [oscSettings, setOscSettings] = useState({
     frequency: oscillator.frequency.value,
@@ -56,12 +71,13 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userI
   };
 
   return (
-    <Container className="synthCont w-50 rounded text-white">
+    <Container className="w-50 rounded text-white text-center">
+        <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleFilter}>Make a post</button>
+        <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleSynth}>Add a synth</button>
       <Stack>
-        <h2 className="text-center">Set the Tone!</h2>
-        <Filters title={title} audioContext={audioContext} userId={userId} />
-        <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
-        <RecordSynth title={title} audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />
+        {addFilter === true && <Filters title={title} audioContext={audioContext} userId={userId} />}
+        {addSynth === true && <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />}
+        {addSynth === true && <RecordSynth title={title} audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />}
       </Stack>
     </Container>
   );
