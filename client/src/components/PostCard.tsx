@@ -21,9 +21,12 @@ const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251
 
 
 const Hit = ({ hit, onSelect }: { hit: any; onSelect: (category: string[] | string) => void }) => {
-  // console.log('hits', hits); //the individual hit obj
+  console.log('hits', hit); //the individual hit obj
+  // this log logs each category but letter by letter
+  // console.log('onselect hit', [...hit.category]);
   return (
-    <article id='cat-hit' onClick={() => onSelect([...hit.category])}
+    // TODO: issue, when you click on a hit, it just adds the input value to the selected categories instead of the hit value
+    <article id='cat-hit' onClick={() => onSelect([hit.category])}
     style={{ border: '1px solid black', padding: '10px', margin: '10px' }}
     >
       {hit.category}
@@ -39,7 +42,7 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
     setCurrentSearch(event.target.value);
   }
   const handleCategorySelection = (category: string) => {
-    console.log('category', category);
+    console.log('handlecategoryselection on click', category);
     const trimmedCategory = category.trim();
     const updatedCategories = [...selectedCategories, trimmedCategory];
     // console.log('updatedCategories', updatedCategories);

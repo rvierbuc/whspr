@@ -85,7 +85,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, pos
 
     useEffect(() => {
         createSoundWaves();
-        console.log('wave', postObj);
+        console.log('on profile', onProfile);
+        console.log('wavesurfer useeffect wave', postObj);
     }, [audioUrl]);
     return (
         <div  className="card">
@@ -98,7 +99,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ postObj, audioUrl, pos
                 <h3>{postObj.title}</h3>
                 {/* <div>{postObj.rank}</div> */}
                 <div id={containerId}></div>
-                {postObj.categories 
+                {postObj.categories
                 ?postObj.categories.map((cat) => (
                 <button 
                     className="btn btn-link" 

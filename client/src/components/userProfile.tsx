@@ -10,7 +10,6 @@ const UserProfile = ({audioContext}) => {
     const [selectedUser, setSelectedUser] = useState<any>({});
     const [onProfile, setOnProfile] =useState<boolean>(true)
     const currentUser: any = useLoaderData();
-    console.log('userLoader', currentUser);
 
     const getSelectedUserInfo = async () => {
         try{
@@ -43,7 +42,7 @@ const UserProfile = ({audioContext}) => {
     return (
         <div className="user-main">
             <div className="user-profile-card">
-            <Card style={{ position: 'absolute', left: '20%', width: '20rem', marginBottom: '1rem' }}>
+            <Card >
                 <div className="user-main-card">
                     <div className="user-pfp">
                         <img src={currentUser.profileImgUrl} alt="user profile image" />
