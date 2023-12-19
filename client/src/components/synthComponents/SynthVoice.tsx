@@ -5,7 +5,6 @@ import * as Tone from 'tone';
 
 interface Props {
   audioContext: AudioContext;
-  userId: any
   robot: any
   wobbly: any
   alien: any
@@ -15,8 +14,7 @@ interface Props {
     lowPassType: any // these need to be refactored to the proper types
     highPassType: any
   }
-  notes1: string[]
-  sampleSynth: any
+  setRootAudioChunks: any
 }
 
 interface Constraints {
@@ -27,7 +25,7 @@ interface Constraints {
   video: boolean
 }
 
-const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, alien, defaultSettings }: Props) => {
+const SynthVoice = ({ setRootAudioChunks, audioContext, robot, wobbly, alien, defaultSettings }: Props) => {
   const [isRecording, setIsRecording] = useState(false)
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const audio = useRef<AudioBufferSourceNode | null>(null);
@@ -82,11 +80,9 @@ const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, 
       mediaRecorder.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
           setAudioChunks((prevChunks) => [...prevChunks, event.data]);
+          setRootAudioChunks((prevChunks) => [...prevChunks, event.data]);
         }
       }
-      mediaRecorder.current.onstop = () => {
-        poly.disconnect()
-      };
       mediaRecorder.current.start();
       setIsRecording(true);
     } catch (error) {
@@ -152,7 +148,7 @@ const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, 
   return (
     <Container className="text-center my-3 pb-1">
       <h5>Try out our new voice filters!</h5>
-      <PostSynth isRecording={isRecording} audioChunks={audioChunks} userId={userId} />
+      {/* <PostSynth isRecording={isRecording} audioChunks={audioChunks} userId={userId} /> */}
       <Stack direction="horizontal" className="mx-5 mb-3 typeCard">
         <Button className="mx-2 btn-secondary" disabled={filter === defaultSettings} onClick={() => setFilter(defaultSettings)}>Default</Button>
         <Button className="mx-2 btn-secondary" disabled={filter === alien} onClick={() => setFilter(alien)}>Alien</Button>

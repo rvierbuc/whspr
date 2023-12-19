@@ -4,16 +4,20 @@ import { useNavigate } from 'react-router-dom';
 
 interface Props {
   userId: any
-  audioChunks: any
-  isRecording: boolean
+  audioChunks: Blob[]
+  synthAudioChunks: Blob[]
+  // isRecording: boolean
 }
 
-const PostSynth = ({ isRecording, audioChunks, userId}: Props) => {
+const PostSynth = ({ synthAudioChunks, userId, audioChunks}: Props) => {
   const [ title, setTitle ] = useState('');
   const navigate = useNavigate();
   const handleNavigation = (path: string) => {
     navigate(path);
   }
+
+  console.log('VoiceAudioChunks in PostSynth', audioChunks);
+  console.log('SynthAudioChunks in PostSynth', synthAudioChunks)
   const categories: string[] = ['Voice Filter', 'Filter', 'Robot', 'Alien', 'Underwater'];
 
   const saveAudioToGoogleCloud = async () => {
@@ -24,8 +28,7 @@ const PostSynth = ({ isRecording, audioChunks, userId}: Props) => {
       const formData = new FormData()
       formData.append('audio', audioBlob)
       formData.append('userId', userId)
-      formData.append('title', postTitle)
-      // formData.append('category', 'Voice Synth')
+      formData.append('title', postTitle);
       categories.forEach((category, index) => {
         console.log('howdy', index, category);
         formData.append(`category[${index}]`, category);
@@ -48,11 +51,11 @@ const PostSynth = ({ isRecording, audioChunks, userId}: Props) => {
         className='input-control'
         />
       </div>
-      <button
+      {/* <button
         className="post-button m-2"
         onClick={saveAudioToGoogleCloud}
         disabled={audioChunks.length === 0 || isRecording}
-        ><img src={require('../../style/postbutton.png')} /></button>
+        ><img src={require('../../style/postbutton.png')} /></button> */}
     </div>
   );
 };

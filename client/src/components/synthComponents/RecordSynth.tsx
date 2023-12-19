@@ -9,19 +9,21 @@ interface Props {
   start: () => void;
   stop: () => void;
   userId: number
-  title: string
+  setSynthAudioChunks: any
 }
 
-const RecordSynth = ({ title, audioContext, finalDest, mediaDest, start, stop, userId }: Props) => {
+const RecordSynth = ({ setSynthAudioChunks, audioContext, finalDest, mediaDest, start, stop, userId }: Props) => {
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const recorder = useRef<MediaRecorder | null>(null);
-
+  // const [postTitle, setPostTitle] = useState(title);
+  // console.log('In RecordSynth', postTitle)
   const startRecording = async () => {
     try {
       recorder.current = new MediaRecorder(mediaDest.stream);
       recorder.current.ondataavailable = event => {
         if (event.data.size > 0) {
-          setAudioChunks((prevChunks) => [...prevChunks, event.data])
+          setAudioChunks((prevChunks) => [...prevChunks, event.data]);
+          setSynthAudioChunks((prevChunks) => [...prevChunks, event.data])
         }
       };
       recorder.current.start();
@@ -50,7 +52,7 @@ const RecordSynth = ({ title, audioContext, finalDest, mediaDest, start, stop, u
       const formData = new FormData()
       formData.append('audio', saveBlob)
       formData.append('userId', userId.toString())
-      formData.append('title', title)
+      // formData.append('title', title)
       // formData.append('category', 'music')
       categories.forEach((category, index) => {
         console.log('howdy', index, category);

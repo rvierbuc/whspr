@@ -3,6 +3,7 @@ import { Container, Stack, Button } from 'react-bootstrap';
 import Oscillator from './Oscillator';
 import RecordSynth from './RecordSynth';
 import Filters from './Filters';
+import PostSynth from './PostSynth';
 
 interface Props {
   audioContext: AudioContext,
@@ -18,6 +19,10 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userI
   const [title, setTitle] = useState('');
   const [ addFilter, setAddFilter ] = useState(false);
   const [ addSynth, setAddSynth ] = useState(false);
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+  const [synthAudioChunks, setSynthAudioChunks] = useState<Blob[]>([])
+
+  console.log('SynthDaw', synthAudioChunks);
 
   useEffect(() => {
     setAddFilter(false);
@@ -72,12 +77,13 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userI
 
   return (
     <Container className="w-50 rounded text-white text-center">
-        <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleFilter}>Make a post</button>
-        <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleSynth}>Add a synth</button>
+      <PostSynth synthAudioChunks={synthAudioChunks} audioChunks={audioChunks} userId={userId} />
+      <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleFilter}>Make a post</button>
+      <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleSynth}>Add a synth</button>
       <Stack>
-        {addFilter === true && <Filters title={title} audioContext={audioContext} userId={userId} />}
+        {addFilter === true && <Filters setAudioChunks={setAudioChunks} title={title} audioContext={audioContext} />}
         {addSynth === true && <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />}
-        {addSynth === true && <RecordSynth title={title} audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />}
+        {addSynth === true && <RecordSynth setSynthAudioChunks={setSynthAudioChunks} audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />}
       </Stack>
     </Container>
   );
