@@ -10,13 +10,13 @@ interface Props {
   stop: () => void;
   userId: number
   setSynthAudioChunks: any
+  setIsRecording: any
 }
 
-const RecordSynth = ({ setSynthAudioChunks, audioContext, finalDest, mediaDest, start, stop, userId }: Props) => {
+const RecordSynth = ({ setIsRecording, setSynthAudioChunks, audioContext, finalDest, mediaDest, start, stop, userId }: Props) => {
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const recorder = useRef<MediaRecorder | null>(null);
-  // const [postTitle, setPostTitle] = useState(title);
-  // console.log('In RecordSynth', postTitle)
+
   const startRecording = async () => {
     try {
       recorder.current = new MediaRecorder(mediaDest.stream);
@@ -28,6 +28,7 @@ const RecordSynth = ({ setSynthAudioChunks, audioContext, finalDest, mediaDest, 
       };
       recorder.current.start();
       start();
+      setIsRecording(true);
     } catch(error) {
       console.error('Could not start recording', error)
     }
@@ -38,36 +39,35 @@ const RecordSynth = ({ setSynthAudioChunks, audioContext, finalDest, mediaDest, 
       if (recorder.current?.state === 'recording') {
         stop();
         recorder.current.stop();
+        setIsRecording(false);
       }
     } catch(error) {
       console.error('Could not stop recording', error);
     }
   };
 
-  const categories = ['synth', 'mysound', 'producer'];
-
-  const saveRecording = async () => {
-    const saveBlob: Blob = new Blob(audioChunks, {type: 'audio/wav'})
-    try {
-      const formData = new FormData()
-      formData.append('audio', saveBlob)
-      formData.append('userId', userId.toString())
-      // formData.append('title', title)
-      // formData.append('category', 'music')
-      categories.forEach((category, index) => {
-        console.log('howdy', index, category);
-        formData.append(`category[${index}]`, category);
-      })
-      const response = await axios.post(`/upload`, formData);
-      response.status === 200
-      ?
-      console.log('Synth saved to cloud')
-      :
-      console.error('Error saving synth', response.statusText);
-    } catch(error) {
-      console.error('Error saving audio', error);
-    }
-  };
+  // const saveRecording = async () => {
+  //   const saveBlob: Blob = new Blob(audioChunks, {type: 'audio/wav'})
+  //   try {
+  //     const formData = new FormData()
+  //     formData.append('audio', saveBlob)
+  //     formData.append('userId', userId.toString())
+  //     // formData.append('title', title)
+  //     // formData.append('category', 'music')
+  //     categories.forEach((category, index) => {
+  //       console.log('howdy', index, category);
+  //       formData.append(`category[${index}]`, category);
+  //     })
+  //     const response = await axios.post(`/upload`, formData);
+  //     response.status === 200
+  //     ?
+  //     console.log('Synth saved to cloud')
+  //     :
+  //     console.error('Error saving synth', response.statusText);
+  //   } catch(error) {
+  //     console.error('Error saving audio', error);
+  //   }
+  // };
 
   return (
     <Container className="text-center my-3 pb-3">
@@ -77,7 +77,6 @@ const RecordSynth = ({ setSynthAudioChunks, audioContext, finalDest, mediaDest, 
         <Button className="btn-secondary" onClick={stop}>⏸️</Button>
         <Button className="btn-secondary" onClick={startRecording}>🔴</Button>
         <Button className="btn-secondary" onClick={stopRecording}>🟥</Button>
-        <Button className="btn-secondary" onClick={saveRecording}>🎶 </Button>
       </Stack>
     </Container>
   );

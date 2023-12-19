@@ -17,12 +17,13 @@ interface Props {
 const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userId}: Props): React.JSX.Element => {
   const [contextState, setContextState] = useState('');
   const [title, setTitle] = useState('');
-  const [ addFilter, setAddFilter ] = useState(false);
-  const [ addSynth, setAddSynth ] = useState(false);
+  const [addFilter, setAddFilter ] = useState(false);
+  const [addSynth, setAddSynth ] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
-  const [synthAudioChunks, setSynthAudioChunks] = useState<Blob[]>([])
+  const [synthAudioChunks, setSynthAudioChunks] = useState<Blob[]>([]);
+  const [isRecording, setIsRecording] = useState<boolean>(false);
 
-  console.log('SynthDaw', synthAudioChunks);
+  console.log('SynthDaw', isRecording);
 
   useEffect(() => {
     setAddFilter(false);
@@ -77,13 +78,13 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userI
 
   return (
     <Container className="w-50 rounded text-white text-center">
-      <PostSynth synthAudioChunks={synthAudioChunks} audioChunks={audioChunks} userId={userId} />
+      <PostSynth isRecording={isRecording} synthAudioChunks={synthAudioChunks} audioChunks={audioChunks} userId={userId} />
       <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleFilter}>Make a post</button>
       <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleSynth}>Add a synth</button>
       <Stack>
-        {addFilter === true && <Filters setAudioChunks={setAudioChunks} title={title} audioContext={audioContext} />}
+        {addFilter === true && <Filters isRecording={isRecording} setIsRecording={setIsRecording} setAudioChunks={setAudioChunks} title={title} audioContext={audioContext} />}
         {addSynth === true && <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />}
-        {addSynth === true && <RecordSynth setSynthAudioChunks={setSynthAudioChunks} audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />}
+        {addSynth === true && <RecordSynth setIsRecording={setIsRecording} setSynthAudioChunks={setSynthAudioChunks} audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />}
       </Stack>
     </Container>
   );

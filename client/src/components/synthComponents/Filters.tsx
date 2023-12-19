@@ -2,15 +2,16 @@ import React, { SetStateAction } from 'react';
 import Tuna from 'tunajs';
 import SynthVoice from './SynthVoice';
 import * as Tone from 'tone';
-import { StringLiteralLike } from 'typescript';
 
 interface Props {
   audioContext: AudioContext
   title: string
   setAudioChunks: any
+  setIsRecording: any
+  isRecording: boolean
 }
 
-const Filters = ({ setAudioChunks, audioContext }: Props) => {
+const Filters = ({ isRecording, setIsRecording, setAudioChunks, audioContext }: Props) => {
   const tuna = new Tuna(audioContext);
   Tone.setContext(audioContext);
 
@@ -100,6 +101,8 @@ const Filters = ({ setAudioChunks, audioContext }: Props) => {
   return (
     <div>
       <SynthVoice
+        isRecording={isRecording}
+        setIsRecording={setIsRecording}
         setRootAudioChunks={setAudioChunks}
         audioContext={audioContext}
         robot={robot}

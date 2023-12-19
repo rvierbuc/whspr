@@ -6,31 +6,35 @@ interface Props {
   userId: any
   audioChunks: Blob[]
   synthAudioChunks: Blob[]
-  // isRecording: boolean
+  isRecording: boolean
 }
 
-const PostSynth = ({ synthAudioChunks, userId, audioChunks}: Props) => {
+const PostSynth = ({ isRecording, synthAudioChunks, userId, audioChunks}: Props) => {
   const [ title, setTitle ] = useState('');
   const navigate = useNavigate();
   const handleNavigation = (path: string) => {
     navigate(path);
   }
 
-  console.log('VoiceAudioChunks in PostSynth', audioChunks);
-  console.log('SynthAudioChunks in PostSynth', synthAudioChunks)
   const categories: string[] = ['Voice Filter', 'Filter', 'Robot', 'Alien', 'Underwater'];
+
+
+  let audioBlob: Blob;
+  if (!audioChunks.length && synthAudioChunks.length) {
+    audioBlob = new Blob(synthAudioChunks, { type: 'audio/wav' })
+  } else if (audioChunks.length && !synthAudioChunks.length) {
+    audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+  }
 
   const saveAudioToGoogleCloud = async () => {
     let postTitle = title;
     setTitle('');
-    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
       formData.append('userId', userId)
       formData.append('title', postTitle);
       categories.forEach((category, index) => {
-        console.log('howdy', index, category);
         formData.append(`category[${index}]`, category);
       })
       const response = await axios.post(`/upload`, formData)
@@ -41,21 +45,19 @@ const PostSynth = ({ synthAudioChunks, userId, audioChunks}: Props) => {
   }
 
   return (
-    <div>
-      <div className="d-flex justify-content-center">
-        <input type="text"
-        maxLength={22}
-        placeholder="What's on your mind?"
-        value={title}
-        onChange={(e) => { setTitle(e.target.value) }}
-        className='input-control'
-        />
-      </div>
-      {/* <button
+    <div className="d-flex justify-content-center mt-5">
+      <input type="text"
+      maxLength={22}
+      placeholder="What's on your mind?"
+      value={title}
+      onChange={(e) => { setTitle(e.target.value) }}
+      className='input-control text-white'
+      />
+      <button
         className="post-button m-2"
         onClick={saveAudioToGoogleCloud}
-        disabled={audioChunks.length === 0 || isRecording}
-        ><img src={require('../../style/postbutton.png')} /></button> */}
+        disabled={isRecording}
+      ><img src={require('../../style/postbutton.png')} /></button>
     </div>
   );
 };
