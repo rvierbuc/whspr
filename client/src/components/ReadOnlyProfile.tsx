@@ -115,15 +115,7 @@ const ReadOnlyProfile = ({audioContext}) => {
                 updatePost={updatePost}
                 setOnProfile={setOnProfile}
                 />
-                <Post
-                  key = {post.id}
-                  postObj = {post}
-                  audioContext={audioContext}
-                  updatePost={updatePost}
-                  user={user}
-                />
                 {/* each post should have its own instance of a waveSurfer comp */}
-      
               </div>
               )) }
             </div>

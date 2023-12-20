@@ -22,7 +22,7 @@ const getPosts = async(type, tag) => {
     if(tag !== 'none'){
         setTitle(`Explore #${tag}`)
     } else if(type === 'following'){
-        setTitle('Posts from your Friends')
+        setTitle('Explore Posts from your Friends')
     } else {
         setTitle('Explore WHSPR')
     }
@@ -34,7 +34,7 @@ const getPosts = async(type, tag) => {
 
 const updatePost = async(postId, updateType) => {
     try{
-        const updatedPost:any = await axios.get(`/post/updatedPost/${postId}/${user.id}`)
+        const updatedPost:any = await axios.get(`/post/updatedPost/${postId}/${updateType}`)
         console.log('updated post obj', updatedPost)
         const postIndex = posts.findIndex((post) => post.id === updatedPost.data.id)
         updatedPost.data.rank = posts[postIndex].rank
@@ -82,22 +82,22 @@ useEffect(() => {
       </div>}
       {posts ? posts.map((post: any) => (
         <div>
-          <WaveSurferComponent 
-          postObj={post} 
-          audioUrl={post.soundUrl} 
-          postId={post.id} 
+          <WaveSurferComponent
+          postObj={post}
+          audioUrl={post.soundUrl}
+          postId={post.id}
           userId={user.id}
           getPosts={getPosts}
           updatePost={updatePost}
+          audioContext={audioContext}
           />
-          <Post
+          {/* <Post
             key = {post.id}
             postObj = {post}
             updatePost={updatePost}
             audioContext={audioContext}
-            feed={feed}
             user={user}
-          />
+          /> */}
           {/* each post should have its own instance of a waveSurfer comp */}
 
         </div>

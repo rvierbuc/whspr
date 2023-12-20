@@ -12,8 +12,8 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
   const audioSource = useRef<AudioBufferSourceNode | null>(null)
   
 
-  const { postObj, getComments, user, updatePost } = props
-  const userId = user.id
+  const { postObj, getComments, userId, updatePost } = props
+
   const startRecording = async () => {
     try {
       setAudioChunks([])
@@ -118,7 +118,7 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
       if (response.status === 200) {
         await axios.put('/post/updateCount', {type: 'increment', column: 'commentCount', id: postObj.id})
         await getComments()
-        await updatePost(postObj.id, user.id)
+        await updatePost(postObj.id, userId)
         await console.log('all done')
       } else {
         console.error('Error saving audio:', response.statusText)

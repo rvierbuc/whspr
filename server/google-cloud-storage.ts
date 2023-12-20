@@ -94,6 +94,7 @@ const saveAudioComment = async (audio: any, userId, postId): Promise<void | stri
       }),
     ])
     console.log('Audio saved to cloud')
+    return downloadURL
   } catch (error) {
     console.error('Error handling audio upload:', error)
   }
