@@ -2,13 +2,13 @@ import React, {useState, useEffect} from "react";
 import axios, {AxiosResponse} from "axios";
 import Comment from "./Comment";
 import { RecordComment } from "./RecordComment";
-import WaveSurferComponent from "./WaveSurfer";
+//import WaveSurferComponent from "./WaveSurfer";
 
  const Post = (props) => {
   const { postObj, userId, updatePost, audioContext } = props
-  const [commentInputOpen, setCommentInputOpen] = useState<boolean>(false)
-  const [commentOpen, setCommentOpen] = useState<boolean>(false)
-  const [comments, setComments] = useState<any>()
+  // const [commentInputOpen, setCommentInputOpen] = useState<boolean>(false)
+  // const [commentOpen, setCommentOpen] = useState<boolean>(false)
+  const [comments, setComments] = useState<any>([])
   
   const handleLike = async()=> {
     try{
@@ -31,10 +31,13 @@ import WaveSurferComponent from "./WaveSurfer";
   }
 }
 
-const getComments = async() => {
+const getComments = async(limit: number, type: string) => {
 try{
-const commentsArr = await axios.get(`/post/comment/${postObj.id}`)
-if(commentsArr.data.length > 0){
+const commentsArr = await axios.get(`/post/comment/${postObj.id}/${limit}`)
+if(commentsArr.data.length > 0 && type === 'more'){
+  setComments(commentsArr.data)
+  console.log('got new comments', commentsArr.data)
+} else if(commentsArr.data.length > 0 && type === 'first'){
   setComments(commentsArr.data)
   console.log('got comments', commentsArr.data)
 }
@@ -44,7 +47,7 @@ if(commentsArr.data.length > 0){
 }
 
 useEffect(() => {
-  getComments()
+  getComments(2, 'first')
 }, [])
 //style={{borderRadius: "75px"}}
   return(
@@ -80,6 +83,7 @@ useEffect(() => {
          <RecordComment
          audioContext={audioContext}
          postObj={postObj}
+         commentStateLength={comments.length}
          getComments={getComments}
          userId={userId}
          updatePost={updatePost}
@@ -94,6 +98,13 @@ useEffect(() => {
           ))
           : <div>No Comments Yet!</div>
           }
+          { comments && postObj.commentCount > comments.length
+                ? <button
+                  className='btn btn-light'
+                  onClick={() => {getComments(comments.length + 5, 'more')}}
+                  >see more comments</button>
+                : <div></div>
+             }
       {/* <div className="accordion" id="commentBox">
         <div className="accordion-item"></div>
         <h4 className="accordion-header">

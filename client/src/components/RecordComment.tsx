@@ -12,7 +12,7 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
   const audioSource = useRef<AudioBufferSourceNode | null>(null);
   
 
-  const { postObj, getComments, userId, updatePost } = props
+  const { postObj, getComments, userId, updatePost, commentStateLength } = props
 
   const startRecording = async () => {
     try {
@@ -117,7 +117,7 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
       const response = await axios.post('/uploadComment', formData);
       if (response.status === 200) {
         await axios.put('/post/updateCount', {type: 'increment', column: 'commentCount', id: postObj.id})
-        await getComments()
+        await getComments(commentStateLength + 1, 'more')
         await updatePost(postObj.id, userId)
         await console.log('all done')
       } else {
