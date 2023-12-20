@@ -394,6 +394,31 @@ try{
     console.error('error checking following relationship', error)
   }
  })
+
+ router.get('/followers/:userId', async (req:Request, res:Response) => {
+  const { userId} = req.params
+  console.log('iddd', userId)
+  try {
+    const followers = await Follower.findAll({
+      where: {
+        folowingId: userId,
+        include: [{
+          model: User
+        }]
+      }
+    })
+    console.log('followers', followers)
+
+    res.status(200).send(followers)
+
+  }catch(error){
+    console.error('error checking following relationship', error)
+  }
+ })
+
+ 
+
+
 // *************POST REQUESTS***********************
 //creates comment
   router.post('/createCommentRecord', async (req: Request, res: Response) => {

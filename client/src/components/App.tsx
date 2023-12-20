@@ -14,6 +14,7 @@ import Login from './Login';
 import Room from './Room'
 import Radio from './Radio'
 import PrivateRoutes from './PrivateRoutes';
+import RadioConfig from './RadioConfig';
 import Synthesize from './Synthesize';
 import WaveSurferComponent from './WaveSurfer';
 import Feed from './Feed'
@@ -77,6 +78,7 @@ const App = () => {
                     <Route path="WhsprAI" element={<WhsprAI audioContext={audioContext}/>} />
                     <Route path="search" element={<Search />} />
                     <Route path="profile" element={<UserProfile audioContext={audioContext} />} loader={() => getUserLoader()}/>
+                    <Route path="radio-config" element={<RadioConfig/>} loader={() => getUserLoader()}/>
                     <Route path="feed" element={<Feed audioContext={audioContext} />} loader={() => getUserLoader()}/>
                     <Route path="post" element={<PostCard audioContext={audioContext} />} loader={() => getUserLoader()}/>
                     <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
