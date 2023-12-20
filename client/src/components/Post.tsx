@@ -7,7 +7,7 @@ import { RecordComment } from "./RecordComment";
  const Post = (props) => {
   const { postObj, userId, updatePost, audioContext } = props
   // const [commentInputOpen, setCommentInputOpen] = useState<boolean>(false)
-  // const [commentOpen, setCommentOpen] = useState<boolean>(false)
+  const [hearLess, setHearLess] = useState<boolean>(false)
   const [comments, setComments] = useState<any>([])
   
   const handleLike = async()=> {
@@ -36,6 +36,7 @@ try{
 const commentsArr = await axios.get(`/post/comment/${postObj.id}/${limit}`)
 if(commentsArr.data.length > 0 && type === 'more'){
   setComments(commentsArr.data)
+  setHearLess(true)
   console.log('got new comments', commentsArr.data)
 } else if(commentsArr.data.length > 0 && type === 'first'){
   setComments(commentsArr.data)
@@ -44,6 +45,12 @@ if(commentsArr.data.length > 0 && type === 'more'){
 }catch(error) {
   console.error('could not get comments', error)
 }
+}
+
+const handleHearLess = () => {
+  const lessComments = comments.slice(0, 2)
+  setComments(lessComments)
+  setHearLess(false)
 }
 
 useEffect(() => {
@@ -79,7 +86,8 @@ useEffect(() => {
        {/* {postObj.likeCount ? <p style={{marginLeft: '3%', fontSize:'x-large'}}>{`${postObj.likeCount} likes`}</p> : <p></p>} */}
         </div>}
       </div>
-      <p>Record Your Comment</p>
+      <div style={{backgroundColor:'lightgrey', borderRadius:'40px', margin: '16px', display: 'flex', flexDirection: 'column', alignContent:'center'}}>
+      <h3 style={{marginLeft: '55px', marginTop:'20px'}}>Record Your Comment</h3>
          <RecordComment
          audioContext={audioContext}
          postObj={postObj}
@@ -88,6 +96,7 @@ useEffect(() => {
          userId={userId}
          updatePost={updatePost}
          />
+      </div>
       { comments
           ? comments.map((commentObj: any) => (
             <Comment 
@@ -98,13 +107,25 @@ useEffect(() => {
           ))
           : <div>No Comments Yet!</div>
           }
-          { comments && postObj.commentCount > comments.length
-                ? <button
-                  className='btn btn-light'
-                  onClick={() => {getComments(comments.length + 5, 'more')}}
-                  >see more comments</button>
-                : <div></div>
-             }
+          <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'end'}}>
+            { comments && postObj.commentCount > comments.length
+                  ? <button
+                    style={{margin:'5px'}}
+                    className='btn btn-light'
+                    onClick={() => {getComments(comments.length + 5, 'more')}}
+                    >hear more</button>
+                  : <div></div>
+              }
+            {hearLess
+            ? <button
+            style={{margin:'5px'}}
+              className= 'btn btn-light'
+              onClick={() => handleHearLess()}>
+              hear less
+              </button> 
+            : <div></div>}
+          </div>
+         
       {/* <div className="accordion" id="commentBox">
         <div className="accordion-item"></div>
         <h4 className="accordion-header">

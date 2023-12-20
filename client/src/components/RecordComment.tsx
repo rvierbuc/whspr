@@ -147,7 +147,7 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
   // }
   
   return (
-    <div style={{ margin: '15px' }}>
+    <div style={{ display:'flex', flexDirection: 'row', justifyContent:'space-around', marginBottom:'20px'}}>
     <button
       className="record-button"
       onClick={startRecording}
