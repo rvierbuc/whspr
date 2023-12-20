@@ -23,7 +23,7 @@ export const leaveChannel = () => {
 
 export const startAudio = async () => {
   const localAudioStream: ILocalAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-  console.log('why', localAudioStream);
+  // console.log('why', localAudioStream);
   agoraClient.publish(localAudioStream);
 };
 
@@ -38,7 +38,7 @@ export const stopAudio = async () => {
 
 export const createChannel = async (channelName: string, uid: number, token: string) => {
   try {
-    
+
     const localAudioStream: ILocalAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
     
       
@@ -46,9 +46,9 @@ export const createChannel = async (channelName: string, uid: number, token: str
       
     // localAudioStream.setStream(stream)
     await agoraClient.join('a3bc045a8698487782d0e61b35689952', channelName, token, uid);
-    console.log('break');
+    // console.log('break');
     await agoraClient.publish(localAudioStream);
-    console.log('break2');
+    // console.log('break2');
   } catch (error) {
     console.error('Failed to create channel', error);
   }
