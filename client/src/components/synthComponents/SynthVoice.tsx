@@ -16,9 +16,7 @@ interface Props {
   setRootAudioChunks: any
   setIsRecording: any
   isRecording: boolean
-  start: () => void
-  stop: () => void
-  oscillator: OscillatorNode
+  synthAudioChunks: Blob[]
 }
 
 interface Constraints {
@@ -29,7 +27,7 @@ interface Constraints {
   video: boolean
 }
 
-const SynthVoice = ({ oscillator, start, stop, isRecording, setIsRecording, setRootAudioChunks, audioContext, robot, wobbly, alien, defaultSettings }: Props) => {
+const SynthVoice = ({ synthAudioChunks, isRecording, setIsRecording, setRootAudioChunks, audioContext, robot, wobbly, alien, defaultSettings }: Props) => {
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const audio = useRef<AudioBufferSourceNode | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -64,10 +62,18 @@ const SynthVoice = ({ oscillator, start, stop, isRecording, setIsRecording, setR
       const source = audioContext.createMediaStreamSource(stream);
 
       if (addSynth) {
-        const osc = oscillator;
-        osc.connect(destination);
-        osc.connect(audioContext.destination);
-        start();
+        let synthBlob: Blob = new Blob(synthAudioChunks, {type: 'audio/wav'});
+        const synthBuffer = await synthBlob.arrayBuffer();
+        let synthAudio;
+        audioContext.decodeAudioData(
+          synthBuffer,
+          (buffer) => {
+            synthAudio = audioContext.createBufferSource()
+            synthAudio.buffer = buffer
+            synthAudio.connect(destination);
+          }
+        )
+        console.log('synth buffer', synthAudio);
       }
 
       if (filter !== defaultSettings) {
@@ -95,7 +101,6 @@ const SynthVoice = ({ oscillator, start, stop, isRecording, setIsRecording, setR
   const stopRecording = async () => {
     if (mediaRecorder.current?.state === 'recording') {
       mediaRecorder.current.stop();
-      stop()
       setIsRecording(false);
     }
   };
