@@ -82,9 +82,9 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userI
       <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleFilter}>Make a post</button>
       <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleSynth}>Add a synth</button>
       <Stack>
-        {addFilter === true && <Filters isRecording={isRecording} setIsRecording={setIsRecording} setAudioChunks={setAudioChunks} title={title} audioContext={audioContext} />}
+        {addFilter === true && <Filters synthAudioChunks={synthAudioChunks} isRecording={isRecording} setIsRecording={setIsRecording} setAudioChunks={setAudioChunks} title={title} audioContext={audioContext} />}
         {addSynth === true && <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />}
-        {addSynth === true && <RecordSynth setIsRecording={setIsRecording} setSynthAudioChunks={setSynthAudioChunks} audioContext={audioContext} stop={stop} start={start} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />}
+        {addSynth === true && <RecordSynth setIsRecording={setIsRecording} setSynthAudioChunks={setSynthAudioChunks} stop={stop} start={start} mediaDest={mediaDest} />}
       </Stack>
     </Container>
   );

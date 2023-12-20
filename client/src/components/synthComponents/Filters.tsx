@@ -1,4 +1,4 @@
-import React, { SetStateAction } from 'react';
+import React from 'react';
 import Tuna from 'tunajs';
 import SynthVoice from './SynthVoice';
 import * as Tone from 'tone';
@@ -9,9 +9,10 @@ interface Props {
   setAudioChunks: any
   setIsRecording: any
   isRecording: boolean
+  synthAudioChunks: Blob[]
 }
 
-const Filters = ({ isRecording, setIsRecording, setAudioChunks, audioContext }: Props) => {
+const Filters = ({ synthAudioChunks, isRecording, setIsRecording, setAudioChunks, audioContext }: Props) => {
   const tuna = new Tuna(audioContext);
   Tone.setContext(audioContext);
 
@@ -101,6 +102,7 @@ const Filters = ({ isRecording, setIsRecording, setAudioChunks, audioContext }: 
   return (
     <div>
       <SynthVoice
+        synthAudioChunks={synthAudioChunks}
         isRecording={isRecording}
         setIsRecording={setIsRecording}
         setRootAudioChunks={setAudioChunks}

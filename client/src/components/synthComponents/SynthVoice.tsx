@@ -16,6 +16,7 @@ interface Props {
   setRootAudioChunks: any
   setIsRecording: any
   isRecording: boolean
+  synthAudioChunks: Blob[]
 }
 
 interface Constraints {
@@ -26,7 +27,7 @@ interface Constraints {
   video: boolean
 }
 
-const SynthVoice = ({ isRecording, setIsRecording, setRootAudioChunks, audioContext, robot, wobbly, alien, defaultSettings }: Props) => {
+const SynthVoice = ({ synthAudioChunks, isRecording, setIsRecording, setRootAudioChunks, audioContext, robot, wobbly, alien, defaultSettings }: Props) => {
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const audio = useRef<AudioBufferSourceNode | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -36,9 +37,9 @@ const SynthVoice = ({ isRecording, setIsRecording, setRootAudioChunks, audioCont
   const [addSynth, setAddSynth] = useState(false);
   const [bgColor, setBgColor] = useState('secondary')
 
-  useEffect(() => {
-    setAddSynth(false);
-  },[])
+  // useEffect(() => {
+  //   setAddSynth(false);
+  // },[])
 
   const lowpass: BiquadFilterNode = audioContext.createBiquadFilter();
   lowpass.frequency.value = filter.lowPassFrequency;
@@ -62,6 +63,9 @@ const SynthVoice = ({ isRecording, setIsRecording, setRootAudioChunks, audioCont
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       mediaRecorder.current = new MediaRecorder(destination.stream);
       const source = audioContext.createMediaStreamSource(stream);
+      if (addSynth) {
+        console.log('WORKING', synthAudioChunks)
+      }
       if (filter !== defaultSettings) {
         let options: any = Object.values(filter).slice(4)
         source.connect(lowpass)

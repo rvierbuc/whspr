@@ -21,9 +21,9 @@ const PostSynth = ({ isRecording, synthAudioChunks, userId, audioChunks}: Props)
 
   let audioBlob: Blob;
   if (!audioChunks.length && synthAudioChunks.length) {
-    audioBlob = new Blob(synthAudioChunks, { type: 'audio/wav' })
+    audioBlob = new Blob(synthAudioChunks, { type: 'audio/wav' });
   } else if (audioChunks.length && !synthAudioChunks.length) {
-    audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+    audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
   }
 
   const saveAudioToGoogleCloud = async () => {
