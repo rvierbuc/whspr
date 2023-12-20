@@ -20,7 +20,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ audioUrl, postId, audi
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const [decodedData, setDecodedData] = useState<any>()
     // const { audioUrl, postId } = props;
-    const containerId = `waveform-${postId || ''}`
+    const containerId = `waveform-${postId || ''}-comment`
     const createSoundWaves = () => {
         let regions: RegionsPlugin
         //if there is a wavesurfer already, destroy it
@@ -76,7 +76,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({ audioUrl, postId, audi
         //         color: 'hsla(250, 100%, 30%, 0.5)',
         //     })
         // })
-        wavesurfer.getDecodedData()
         setWave(wavesurfer);
         setDisplay(true);
         console.log('wave created!',)
