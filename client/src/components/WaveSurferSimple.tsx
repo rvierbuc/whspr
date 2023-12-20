@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 //import axios from 'axios';
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { Container, Row, Col } from "react-bootstrap";
+import { Col } from "react-bootstrap";
 //import Post from "./Post"
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
