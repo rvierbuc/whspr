@@ -9,7 +9,7 @@ const Feed = ({ audioContext }: { audioContext: BaseAudioContext }) => {
 const [posts, setPosts] = useState<any>()
 const [feed, setFeed] = useState<string>('explore')
 const [title, setTitle] = useState<string>('Explore WHSPR')
-const [onProfile, setOnProfile] =useState<boolean>(false)
+const [onProfile, setOnProfile] = useState<boolean>(false)
 const user: any = useLoaderData();
 // console.log(user)
 

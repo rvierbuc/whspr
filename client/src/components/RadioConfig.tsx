@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from 'react'
-import axios from 'axios'
-import { useLoaderData } from 'react-router-dom';
+import axios, { AxiosResponse } from 'axios'
+import { useLoaderData, useNavigate } from 'react-router-dom';
 
-const RadioConfig = () => {
-    const [select, setSelect] = useState(null)
-    const [options, setOptions] = useState([])
+const RadioConfig = ({setRoomProps}) => {
+    const [select, setSelect] = useState([])
+    const [options, setOptions] = useState<AxiosResponse[]>([])
+    const [name, setName] = useState('')
+    const navigate = useNavigate()
     const user: any = useLoaderData();
 
     useEffect(() => {
@@ -15,8 +17,32 @@ const RadioConfig = () => {
         try{
             const followers = await axios.get(`/post/followers/${user.id}`)
             console.log('followers', followers)
-            setOptions(followers.data)
+            for(let i in followers.data){
+                console.log('iii')
+                const users = await axios.get(`/post/use/${followers.data[i].id}`)
+                console.log('usee', users)
+                setOptions((pre) => [...pre, users.data])
+            }
+
         } catch {
+
+        }
+    }
+    const channelChange = (e) => {
+        setName(e.target.value)
+    }
+
+    const createChannel = async () => {
+
+        try {
+
+            const room = await axios.post('/post/radio', {host: user.username, title: name, })
+
+            console.log('room', room)
+            
+            setRoomProps(name, user.username, room.data.id)
+            navigate(`/protected/room/${name}`)
+        }catch {
 
         }
     }
@@ -30,13 +56,11 @@ const RadioConfig = () => {
             <span>
                 <h3>Channel Name</h3>
                 
-                <input className='whaa'></input>
+                <input className='whaa' onChange={(e) => {channelChange(e)}}></input>
             </span>
 
             <span>
                 <h3>Speaking Guests (up to 5)</h3>
-                
-                <input className='whaa'></input>
             </span>
 
                 <div className="selectable-box">
@@ -46,6 +70,16 @@ const RadioConfig = () => {
                         onClick={() => optionClick(option)}
                         >{option.username}</div>
                     ))}
+                </div>
+                        <button 
+                        onClick={() => createChannel()}
+                        type="button"
+                        className='btn btn-dark'
+                        >
+                            Create Channel
+                        </button>
+                <div>
+                    
                 </div>
 
         </div>

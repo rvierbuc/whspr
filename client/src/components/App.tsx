@@ -50,6 +50,7 @@ const App = () => {
     const [channelName, setChannelName] = useState<string>();
     const [host, setHost] = useState<string>()
     const [uid, setUid] = useState<number>();
+    const [img, setImg] = useState<string>()
 
     const setRoomProps = (channelName, host, uid) => {
         setChannelName(channelName)
@@ -78,7 +79,7 @@ const App = () => {
                     <Route path="WhsprAI" element={<WhsprAI audioContext={audioContext}/>} />
                     <Route path="search" element={<Search />} />
                     <Route path="profile" element={<UserProfile audioContext={audioContext} />} loader={() => getUserLoader()}/>
-                    <Route path="radio-config" element={<RadioConfig/>} loader={() => getUserLoader()}/>
+                    <Route path="radio-config" element={<RadioConfig setRoomProps={setRoomProps} />} loader={() => getUserLoader()}/>
                     <Route path="feed" element={<Feed audioContext={audioContext} />} loader={() => getUserLoader()}/>
                     <Route path="post" element={<PostCard audioContext={audioContext} />} loader={() => getUserLoader()}/>
                     <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />

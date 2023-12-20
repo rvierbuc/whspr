@@ -125,7 +125,7 @@ app.use('/logout', (req: Request, res: Response) => {
 app.get('/current-user', async (req: Request, res: Response) => {
   //console.log('req.session', req);
     try {
-      console.log('req', req)
+      //console.log('req', req)
       const results = await User.findOne({where: {googleId: req.user}})
       if(results){
         res.status(200).send(results);

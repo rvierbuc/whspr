@@ -2,7 +2,7 @@ const express = require('express')
 import { Request, Response } from 'express'
 const router = express.Router()
 import sequelize, { Op } from 'sequelize'
-import { User, Follower, Post, Like, Comment, Listen} from '../dbmodels' 
+import { User, Follower, Post, Like, Comment, Listen, Radio} from '../dbmodels' 
 import { getTagsByEngagement } from '../algorithmHelpers'
 // ****HELPER FUNCTIONS***********
 const addIsLikedPair =  (postArr, likedPostIdArr) => {
@@ -219,6 +219,24 @@ try{
 
 })
 
+router.get('/use/:id', async (req: Request, res: Response) => {
+  const {id} = req.params
+  console.log('hi')
+  try{
+    const users = await User.findOne({
+      where: {
+        id
+      }
+    })
+    console.log("usee" ,users)
+    res.status(200).send(users)
+  
+  }catch(error){
+    res.sendStatus(500)
+    console.log('could not get following posts', error)
+  }
+  
+  })
 
 
 router.get('/users', async (req: Request, res: Response) => {
@@ -285,6 +303,18 @@ router.get('/explore/:userId', async (req: Request, res: Response) => {
     }catch(error){
       console.error('could not follow', error)
       res.sendStatus(500)
+    }
+   })
+
+   router.post('/radio', async(req: Request, res: Response) => {
+    const {host, listenerCount, category, soundUrl, title} = req.body
+
+    try {
+      const radio = await Radio.create({host, listenerCount: 0, title})
+      console.log('radio', radio)
+      res.status(201).send(radio)
+    }catch {
+
     }
    })
 //allows user to like a post and add a record to the like table
@@ -397,17 +427,14 @@ try{
 
  router.get('/followers/:userId', async (req:Request, res:Response) => {
   const { userId} = req.params
-  console.log('iddd', userId)
+  //console.log('iddd', userId)
   try {
     const followers = await Follower.findAll({
       where: {
-        folowingId: userId,
-        include: [{
-          model: User
-        }]
+        followingId: 4
       }
     })
-    console.log('followers', followers)
+    //console.log('fol', followers[0])
 
     res.status(200).send(followers)
 

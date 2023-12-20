@@ -3,6 +3,7 @@ import Peer from 'peerjs'
 import AgoraRTC from 'agora-rtc-sdk'
 // import agoraConfig from '../agoraConfig'
 import { joinChannel, leaveChannel, startAudio, stopAudio, createChannel, subscribeRemoteUser } from './AgoraClient';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 
 
 
@@ -12,13 +13,15 @@ const Room = ({channel, host, id}) => {
   const [uid, setUid] = useState<number>(id);
   const [stream, setStream] = useState<MediaStream>()
   const [remoteAudioTracks, setRemoteAudioTracks] = useState<string[]>([]);
-
-    const remoteAudioRef = useRef<HTMLAudioElement | null>(null)
+  const remoteAudioRef = useRef<HTMLAudioElement | null>(null)
+  const navigate = useNavigate()
+  const user: any = useLoaderData();
 
     useEffect(() => {
+      console.log('stream', user)
         navigator.mediaDevices.getUserMedia({video: false, audio: true})
         .then((stream) => {
-            // console.log('stream', stream)
+             console.log('stream', user)
 
             createChannel(channelName, uid, '007eJxTYPBdOLtmftV7Yz+P1GfSx08pdH/dXbfQbEfv229pB0S8KjYpMCQaJyUbmJgmWphZWphYmJtbGKUYpJoZJhmbmllYWpoaHTlcktoQyMggWH2RlZEBAkF8RoZEBgYAV0cfRw==', stream)
             setStream(stream)
@@ -44,6 +47,7 @@ const Room = ({channel, host, id}) => {
     leaveChannel();
     console.log('stream', stream)
     stopAudio();
+    navigate('/protected/radio')
   };
 
   return (
@@ -52,11 +56,8 @@ const Room = ({channel, host, id}) => {
       <audio ref={remoteAudioRef} autoPlay />
 
 
-      <div>
-      {/* {remoteAudioTracks.map((track, index) => (
-          <audio key={index} ref={remoteAudioRef} srcObject={new MediaStream(track)} autoPlay />
-        ))} */}
-      </div>
+          <img src="https://lh3.googleusercontent.com/a/ACg8ocI6UOrLKNPeKzMpAobwFfMo2jVBc2SccK66hzTPMkEk=s96-c" alt="user profile image" />
+        
       
       <br />
       <button onClick={handleLeaveChannel}>Leave Channel</button>

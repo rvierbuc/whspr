@@ -4,6 +4,7 @@ import RoomCard from './RoomCard';
 import Room from './Room';
 import axios from 'axios'
 
+
 const Radio = ({setRoomProps}) => {
     const [radios, setRadios] = useState<any>([])
     const navigate = useNavigate()
@@ -35,8 +36,8 @@ const Radio = ({setRoomProps}) => {
             </button>
 
             {radios.map(radio => (<RoomCard 
-            name={radio.host}
-            title={radio.title}
+            name={radio.title}
+            host={radio.host}
             listeners={radio.listenerCount}
             setRoomProps={setRoomProps}
             id={radio.id}
