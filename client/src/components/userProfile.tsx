@@ -39,30 +39,23 @@ const UserProfile = ({audioContext}) => {
       useEffect(() => {
         getSelectedUserInfo()
       }, [])
-    return (
+      return (
         <div className="user-main">
             <div className="user-profile-card">
-            <Card >
-                <div className="user-main-card">
-                    <div className="user-pfp">
-                        <img src={currentUser.profileImgUrl} alt="user profile image" />
-                    </div>
+                <div className="user-profile-image">
+                    <img src={currentUser.profileImgUrl} alt="user profile image" />
                 </div>
-                <Card.Body>
-                    <Card.Title>{currentUser.username}</Card.Title>
-                    <Card.Text>
-                        {currentUser.bio || 'No bio yet'}
-                    </Card.Text>
-                </Card.Body>
-            </Card>
+                <div className="user-profile-info">
+                  <h2 style={{color: 'white'}}>{currentUser.username}</h2>
+                </div>
             </div>
-            <br/>
+            <div>
             {selectedUser.length > 0 ? selectedUser.map((post) => (
             <div>
-            <WaveSurferComponent 
-            postObj={post} 
-            audioUrl={post.soundUrl} 
-            postId={post.id} 
+            <WaveSurferComponent
+            postObj={post}
+            audioUrl={post.soundUrl}
+            postId={post.id}
             userId={currentUser.id}
             updatePost={updatePost}
             getPosts={getSelectedUserInfo}
@@ -76,11 +69,11 @@ const UserProfile = ({audioContext}) => {
             user={currentUser}
             updatePost={updatePost}
             />
-            {/* each post should have its own instance of a waveSurfer comp */}
             </div>
-        )) : <div style={{color: 'white'}}>No Posts Yet!</div>}
+            )) : <div style={{color: 'white'}}>No Posts Yet!</div>}
+            </div>
         </div>
-    )
+      )
 };
 
 export default UserProfile;
