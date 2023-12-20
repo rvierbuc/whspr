@@ -1,5 +1,5 @@
 import algoliasearch from 'algoliasearch/lite';
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { InstantSearch, SearchBox, Hits, Configure, useHits, useSearchBox } from 'react-instantsearch';
 // require('dotenv').config();
 import { v4 as uuidv4 } from 'uuid';
@@ -27,7 +27,7 @@ const userToken = generateUserToken();
 const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251e4', {
   headers: {
     'X-Algolia-UserToken': userToken,
-  }
+  },
 });
 
 
@@ -47,14 +47,14 @@ function Hit({ hit }) {
     </article>
   );
 }
-  //creating a custom search box to stuff into the navbar
+//creating a custom search box to stuff into the navbar
 
 const Search:React.FC = () => {
   const [currentSearch, setCurrentSearch] = useState<string>('');
   // const { refine } = useSearchBox();
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentSearch(event.target.value);
-  }
+  };
   return (
   <InstantSearch 
   searchClient={searchClient} 
@@ -78,5 +78,5 @@ const Search:React.FC = () => {
     <Configure clickAnalytics={true} queryType="prefixLast" />
   </InstantSearch>
   );
-}
-export default Search
+};
+export default Search;

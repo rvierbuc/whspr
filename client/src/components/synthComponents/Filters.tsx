@@ -20,7 +20,7 @@ const Filters = ({ isRecording, setIsRecording, setAudioChunks, audioContext }: 
     highPassFrequency: 350,
     highPassType: 'highpass',
     lowPassType: 'lowpass',
-  }
+  };
 
   const robot = {
     lowPassType: 'lowpass',
@@ -41,9 +41,9 @@ const Filters = ({ isRecording, setIsRecording, setAudioChunks, audioContext }: 
       ratio: 9,
       knee: 36,
       automakeup: false,
-      bypass: false
+      bypass: false,
     }),
-    gain: new tuna.Gain({ gain: 90 })
+    gain: new tuna.Gain({ gain: 90 }),
   };
 
   const wobbly = {
@@ -58,7 +58,7 @@ const Filters = ({ isRecording, setIsRecording, setAudioChunks, audioContext }: 
       sweep: 0.35,
       resonance: 36,
       sensitivity: -0.3,
-      bypass: false
+      bypass: false,
     }),
     pingPongDelay: new tuna.PingPongDelay({
       wetLevel: 0.6,
@@ -66,8 +66,8 @@ const Filters = ({ isRecording, setIsRecording, setAudioChunks, audioContext }: 
       delayTimeLeft: 60,
       delayTimeRight: 100,
     }),
-    gain: new tuna.Gain({ gain: 250})
-  }
+    gain: new tuna.Gain({ gain: 250 }),
+  };
 
   const alien = {
     lowPassType: 'lowpass',
@@ -83,7 +83,7 @@ const Filters = ({ isRecording, setIsRecording, setAudioChunks, audioContext }: 
       ratio: 4,
       knee: 5,
       automakeup: false,
-      bypass: false
+      bypass: false,
     }),
     phaser: new tuna.Phaser({
       rate: 23,
@@ -91,9 +91,9 @@ const Filters = ({ isRecording, setIsRecording, setAudioChunks, audioContext }: 
       feedback: 0.6,
       stereoPhase: 20,
       baseModulationFrequency: 1000,
-      bypass: false
+      bypass: false,
     }),
-  }
+  };
 
   const notes1: string[] = ['G#4', 'E4', 'G#4', 'A#4', 'B4', 'A#4', 'G#4', 'E4', 'D#4'];
   const sampleSynth = new Tone.MonoSynth();

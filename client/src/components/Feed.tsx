@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import axios, {AxiosResponse} from "axios";
-import PostCard from "./PostCard"
-import Post from "./Post";
-import WaveSurferComponent from "./WaveSurfer";
+import React, { useEffect, useState } from 'react';
+import axios, { AxiosResponse } from 'axios';
+import PostCard from './PostCard';
+import Post from './Post';
+import WaveSurferComponent from './WaveSurfer';
 import { useLoaderData } from 'react-router-dom';
 
 const Feed = ({ audioContext }: { audioContext: BaseAudioContext }) => {
-const [posts, setPosts] = useState<any>()
-const [feed, setFeed] = useState<string>('explore')
-const [title, setTitle] = useState<string>('Explore WHSPR')
-const [onProfile, setOnProfile] =useState<boolean>(false)
-const user: any = useLoaderData();
-// console.log(user)
+  const [posts, setPosts] = useState<any>();
+  const [feed, setFeed] = useState<string>('explore');
+  const [title, setTitle] = useState<string>('Explore WHSPR');
+  const [onProfile, setOnProfile] = useState<boolean>(false);
+  const user: any = useLoaderData();
+  // console.log(user)
 
 const getPosts = async(type, tag) => {
   setFeed(type)
@@ -45,16 +45,16 @@ const updatePost = async(postId, updateType) => {
     } catch(error){
         console.log('could not update post', error)
     }
-}
-useEffect(() => {
-  getPosts('explore', 'none')
-}, [])
+  };
+  useEffect(() => {
+    getPosts('explore', 'none');
+  }, []);
   return (
     <div>
     <div className="centered">
 <PostCard audioContext={audioContext}/>
     </div>
-    <h2 style={{color: 'white'}}>{title}</h2>
+    <h2 style={{ color: 'white' }}>{title}</h2>
     {feed === 'following' ?
     <div>
         <button
@@ -68,7 +68,7 @@ useEffect(() => {
         onClick={() => getPosts('explore', 'none')}
         >Explore</button>
     </div>
-    : <div>
+      : <div>
       <button
         type="button"
         className="btn btn-light"
@@ -104,8 +104,8 @@ useEffect(() => {
       )) : <div>Loading...</div>}
     </div>
 
-  )
-}
+  );
+};
 export default Feed;
 
 /**

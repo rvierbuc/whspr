@@ -27,7 +27,7 @@ const PostSynth = ({ isRecording, synthAudioChunks, userId, audioChunks}: Props)
   }
 
   const saveAudioToGoogleCloud = async () => {
-    let postTitle = title;
+    const postTitle = title;
     setTitle('');
     try {
       const formData = new FormData()
@@ -36,13 +36,13 @@ const PostSynth = ({ isRecording, synthAudioChunks, userId, audioChunks}: Props)
       formData.append('title', postTitle);
       categories.forEach((category, index) => {
         formData.append(`category[${index}]`, category);
-      })
-      const response = await axios.post(`/upload`, formData)
+      });
+      const response = await axios.post('/upload', formData);
       response.status === 200 ? console.info('Audio saved successfully') : console.error('Error saving audio', response.statusText);
     } catch (error) {
-      console.error('Error saving audio:', error)
+      console.error('Error saving audio:', error);
     }
-  }
+  };
 
   return (
     <div className="d-flex justify-content-center mt-5">
