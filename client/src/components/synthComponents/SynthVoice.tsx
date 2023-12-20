@@ -73,7 +73,6 @@ const SynthVoice = ({ synthAudioChunks, isRecording, setIsRecording, setRootAudi
             synthAudio.connect(destination);
           }
         )
-        console.log('synth buffer', synthAudio);
       }
 
       if (filter !== defaultSettings) {
