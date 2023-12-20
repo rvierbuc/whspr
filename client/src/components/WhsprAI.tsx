@@ -4,6 +4,7 @@ import axios from 'axios'
 // import {audioContext} from './App'
 
 export const WhsprAI = ({audioContext}) => {
+    const [isPhone, setIsPhone] = useState(false);
     const [isRecording, setIsRecording] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [text, setText] = useState<string[]>([])
@@ -17,6 +18,14 @@ export const WhsprAI = ({audioContext}) => {
     const frameRef = useRef<number | null>(null);
     const analyserRef = useRef<AnalyserNode|null>(null);
     const mediaStreamRef = useRef<MediaStream | null>(null);
+
+//checks if the user's device is a phone
+    useEffect(() =>{
+        
+        if('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0){
+            setIsPhone(true);
+        }
+    }, []);
 
 //sets up an analyser for the computer's speaker audio (when AI is talking)
     const setupAnalyser = (audio) => {
@@ -300,18 +309,12 @@ initializeAnimation()
             ? (<img src={require('../style/loading.gif')} 
             className="loading-img"></img>) 
             : (<button 
-                onMouseDown={() => {
-                    setIsRecording(true)
-                    startUserMedia()
-                }} 
-                onMouseUp={() => setIsRecording(false)} 
-                onMouseLeave={() => setIsRecording(false)} 
-                onTouchStart={() => {
-                    setIsRecording(true)
-                    startUserMedia()
-                }} 
-                onTouchEnd={() => setIsRecording(false)} 
-                onTouchCancel={() => setIsRecording(false)}
+                onMouseDown={!isPhone ? () => {setIsRecording(true); startUserMedia();} : undefined}
+                onMouseUp={!isPhone ? () => setIsRecording(false) : undefined} 
+                onMouseLeave={!isPhone ? () => setIsRecording(false) : undefined} 
+                onTouchStart={isPhone ? () => {setIsRecording(true); startUserMedia();} : undefined} 
+                onTouchEnd={isPhone ? () => setIsRecording(false) : undefined}
+                onTouchCancel={isPhone ? () => setIsRecording(false) : undefined} 
                 onContextMenu={(e) => e.preventDefault()} 
                 className="btn" 
                 style={{border: "none"}}>
@@ -324,12 +327,9 @@ initializeAnimation()
                 </button>
             )}
         </div>
-{/* this maps the messages of the user/ai to the page for debugging. */}
-
-
-{(showText && text.length > 0) && <div className='floating-text-whsprAI'>
+{showText && <div className='floating-text-whsprAI'>
 {text.map((item, index) => (
-    <div key={index} >
+        <div key={index} >
                     <div><span className="text-warning">You: </span><span className="text-success">{item}</span></div>
                      {AIResponse[index] && <div><span className="text-warning">Whisper: </span><span className="text-success">{AIResponse[index]}</span></div>}
                 </div>
