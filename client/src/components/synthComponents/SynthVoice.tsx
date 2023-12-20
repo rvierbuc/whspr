@@ -16,7 +16,9 @@ interface Props {
   setRootAudioChunks: any
   setIsRecording: any
   isRecording: boolean
-  synthAudioChunks: Blob[]
+  start: () => void
+  stop: () => void
+  oscillator: OscillatorNode
 }
 
 interface Constraints {
@@ -27,7 +29,7 @@ interface Constraints {
   video: boolean
 }
 
-const SynthVoice = ({ synthAudioChunks, isRecording, setIsRecording, setRootAudioChunks, audioContext, robot, wobbly, alien, defaultSettings }: Props) => {
+const SynthVoice = ({ oscillator, start, stop, isRecording, setIsRecording, setRootAudioChunks, audioContext, robot, wobbly, alien, defaultSettings }: Props) => {
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const audio = useRef<AudioBufferSourceNode | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -36,10 +38,6 @@ const SynthVoice = ({ synthAudioChunks, isRecording, setIsRecording, setRootAudi
   const [filter, setFilter] = useState(defaultSettings);
   const [addSynth, setAddSynth] = useState(false);
   const [bgColor, setBgColor] = useState('secondary')
-
-  // useEffect(() => {
-  //   setAddSynth(false);
-  // },[])
 
   const lowpass: BiquadFilterNode = audioContext.createBiquadFilter();
   lowpass.frequency.value = filter.lowPassFrequency;
@@ -57,15 +55,21 @@ const SynthVoice = ({ synthAudioChunks, isRecording, setIsRecording, setRootAudi
     video: false
   }
 
+
   const startRecording = async () => {
     try {
       setAudioChunks([]);
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const stream: MediaStream = await navigator.mediaDevices.getUserMedia(constraints);
       mediaRecorder.current = new MediaRecorder(destination.stream);
       const source = audioContext.createMediaStreamSource(stream);
+
       if (addSynth) {
-        console.log('WORKING', synthAudioChunks)
+        const osc = oscillator;
+        osc.connect(destination);
+        osc.connect(audioContext.destination);
+        start();
       }
+
       if (filter !== defaultSettings) {
         let options: any = Object.values(filter).slice(4)
         source.connect(lowpass)
@@ -91,6 +95,7 @@ const SynthVoice = ({ synthAudioChunks, isRecording, setIsRecording, setRootAudi
   const stopRecording = async () => {
     if (mediaRecorder.current?.state === 'recording') {
       mediaRecorder.current.stop();
+      stop()
       setIsRecording(false);
     }
   };

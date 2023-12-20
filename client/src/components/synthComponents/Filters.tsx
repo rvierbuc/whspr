@@ -9,10 +9,12 @@ interface Props {
   setAudioChunks: any
   setIsRecording: any
   isRecording: boolean
-  synthAudioChunks: Blob[]
+  start: () => void
+  stop: () => void
+  oscillator: OscillatorNode
 }
 
-const Filters = ({ synthAudioChunks, isRecording, setIsRecording, setAudioChunks, audioContext }: Props) => {
+const Filters = ({ oscillator, start, stop, isRecording, setIsRecording, setAudioChunks, audioContext }: Props) => {
   const tuna = new Tuna(audioContext);
   Tone.setContext(audioContext);
 
@@ -102,7 +104,9 @@ const Filters = ({ synthAudioChunks, isRecording, setIsRecording, setAudioChunks
   return (
     <div>
       <SynthVoice
-        synthAudioChunks={synthAudioChunks}
+        oscillator={oscillator}
+        start={start}
+        stop={stop}
         isRecording={isRecording}
         setIsRecording={setIsRecording}
         setRootAudioChunks={setAudioChunks}
