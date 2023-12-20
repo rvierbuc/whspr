@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import axios, {AxiosResponse} from "axios";
-import PostCard from "./PostCard"
-import Post from "./Post";
-import WaveSurferComponent from "./WaveSurfer";
+import React, { useEffect, useState } from 'react';
+import axios, { AxiosResponse } from 'axios';
+import PostCard from './PostCard';
+import Post from './Post';
+import WaveSurferComponent from './WaveSurfer';
 import { useLoaderData } from 'react-router-dom';
 
 const Feed = ({ audioContext }: { audioContext: BaseAudioContext }) => {
-const [posts, setPosts] = useState<any>()
-const [feed, setFeed] = useState<string>('explore')
-const [title, setTitle] = useState<string>('Explore WHSPR')
-const [onProfile, setOnProfile] = useState<boolean>(false)
-const user: any = useLoaderData();
-// console.log(user)
+  const [posts, setPosts] = useState<any>();
+  const [feed, setFeed] = useState<string>('explore');
+  const [title, setTitle] = useState<string>('Explore WHSPR');
+  const [onProfile, setOnProfile] = useState<boolean>(false);
+  const user: any = useLoaderData();
+  // console.log(user)
 
 const getPosts = async(type, tag) => {
   setFeed(type)
@@ -22,7 +22,7 @@ const getPosts = async(type, tag) => {
     if(tag !== 'none'){
         setTitle(`Explore #${tag}`)
     } else if(type === 'following'){
-        setTitle('Posts from your Friends')
+        setTitle('Explore Posts from your Friends')
     } else {
         setTitle('Explore WHSPR')
     }
@@ -34,7 +34,7 @@ const getPosts = async(type, tag) => {
 
 const updatePost = async(postId, updateType) => {
     try{
-        const updatedPost:any = await axios.get(`/post/updatedPost/${postId}/${user.id}`)
+        const updatedPost:any = await axios.get(`/post/updatedPost/${postId}/${updateType}`)
         console.log('updated post obj', updatedPost)
         const postIndex = posts.findIndex((post) => post.id === updatedPost.data.id)
         updatedPost.data.rank = posts[postIndex].rank
@@ -45,16 +45,16 @@ const updatePost = async(postId, updateType) => {
     } catch(error){
         console.log('could not update post', error)
     }
-}
-useEffect(() => {
-  getPosts('explore', 'none')
-}, [])
+  };
+  useEffect(() => {
+    getPosts('explore', 'none');
+  }, []);
   return (
     <div>
     <div className="centered">
 <PostCard audioContext={audioContext}/>
     </div>
-    <h2 style={{color: 'white'}}>{title}</h2>
+    <h2 style={{ color: 'white' }}>{title}</h2>
     {feed === 'following' ?
     <div>
         <button
@@ -68,7 +68,7 @@ useEffect(() => {
         onClick={() => getPosts('explore', 'none')}
         >Explore</button>
     </div>
-    : <div>
+      : <div>
       <button
         type="button"
         className="btn btn-light"
@@ -82,30 +82,30 @@ useEffect(() => {
       </div>}
       {posts ? posts.map((post: any) => (
         <div>
-          <WaveSurferComponent 
-          postObj={post} 
-          audioUrl={post.soundUrl} 
-          postId={post.id} 
+          <WaveSurferComponent
+          postObj={post}
+          audioUrl={post.soundUrl}
+          postId={post.id}
           userId={user.id}
           getPosts={getPosts}
           updatePost={updatePost}
+          audioContext={audioContext}
           />
-          <Post
+          {/* <Post
             key = {post.id}
             postObj = {post}
             updatePost={updatePost}
             audioContext={audioContext}
-            feed={feed}
             user={user}
-          />
+          /> */}
           {/* each post should have its own instance of a waveSurfer comp */}
 
         </div>
       )) : <div>Loading...</div>}
     </div>
 
-  )
-}
+  );
+};
 export default Feed;
 
 /**

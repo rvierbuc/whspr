@@ -1,72 +1,119 @@
+// .eslintrc.js
 module.exports = {
-    "env": {
-        "browser": true,
-        "es2021": true,
-        "node": true
+  'env': {
+    'browser': true,
+    'es2021': true,
+    'node': true,
+  },
+  'extends': [
+    'airbnb-typescript',
+    'plugin:react/recommended',
+  ],
+  'overrides': [
+    {
+      'files': ['*.ts', '*.tsx'],
+      'parser': '@typescript-eslint/parser',
+      'extends': [
+        'airbnb-typescript',
+        'plugin:react/recommended',
+        'plugin:@typescript-eslint/recommended',
+      ],
     },
-    "extends": [
-        "airbnb",
-        "airbnb-typescript",
-        "plugin:react/recommended"
-    ],
-    "overrides": [
-        {
-            "env": {
-                "node": true
-            },
-            "files": [
-                ".eslintrc.{js,cjs}"
-            ],
-            "parserOptions": {
-                "sourceType": "script"
-            }
-        }
-    ],
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
+    {
+      'env': {
+        'node': true,
+      },
+      'files': [
+        '.eslintrc.{js,cjs}',
+      ],
+      'parserOptions': {
+        'sourceType': 'script',
+      },
     },
-    "plugins": [
-        "react"
-    ],
-    "rules": {
-        'no-mixed-spaces-and-tabs': 2,
+  ],
+  'parserOptions': {
+    'ecmaVersion': 'latest',
+    'sourceType': 'module',
+    'project': './tsconfig.json',
+    'module': 'ESNext',
+  },
+  'plugins': [
+    'react',
+    '@typescript-eslint',
+  ],
+  'rules': {
+    'no-mixed-spaces-and-tabs': 'error',
     indent: [2, 2],
     /* Variable cames */
-    camelcase: 2,
+    camelcase: 'error',
     /* Language constructs */
-    curly: 2,
-    eqeqeq: [2, 'smart'],
-    'func-style': [2, 'expression'],
-    'no-var': 2,
-    'prefer-const': 2,
+    curly: 'error',
+    eqeqeq: ['error', 'smart'],
+    'func-style': ['error', 'expression'],
+    'no-var': 'error',
+    'prefer-const': 'error',
     /* Semicolons */
-    semi: 2,
-    'no-extra-semi': 2,
+    semi: 'error',
+    'no-extra-semi': 'error',
     /* Padding & additional whitespace (preferred but optional) */
-    'brace-style': [2, '1tbs', { allowSingleLine: true }],
-    'semi-spacing': 1,
-    'key-spacing': 1,
-    'block-spacing': 1,
-    'comma-spacing': 1,
-    'no-multi-spaces': 1,
-    'space-before-blocks': 1,
-    'keyword-spacing': [1, { before: true, after: true }],
-    'space-infix-ops': 1,
+    'brace-style': ['error', '1tbs', { allowSingleLine: true }],
+    'semi-spacing': 'warn',
+    'key-spacing': 'warn',
+    'block-spacing': 'warn',
+    'comma-spacing': 'warn',
+    'no-multi-spaces': 'warn',
+    'space-before-blocks': 'warn',
+    'keyword-spacing': ['warn', { before: true, after: true }],
+    'space-infix-ops': 'warn',
     /* Minuta */
-    'comma-style': [2, 'last'],
-    quotes: [1, 'single'],
-    'eol-last': 0,
-    'no-trailing-spaces': 0,
-    'spaced-comment': 0,
-    'no-console': 0,
-    'react/function-component-definition': 0,
-    'arrow-body-style': 0,
-    'no-unused-vars': 0,
-    'no-plusplus': 0,
-    "react/prop-types": 0,
-    'react/jsx-one-expression-per-line' : 0,
-    'import/no-extraneous-dependencies': 0,
-    'jsx-a11y/click-events-have-key-events': 0,
-    }
-}
+    'comma-style': ['error', 'last'],
+    quotes: ['warn', 'single'],
+    'eol-last': 'off',
+    'no-trailing-spaces': 'off',
+    'spaced-comment': 'off',
+    'no-console': 'off',
+    'react/function-component-definition': 'off',
+    'arrow-body-style': 'off',
+    'no-unused-vars': 'off',
+    'no-plusplus': 'off',
+    'react/prop-types': 'off',
+    'react/jsx-one-expression-per-line': 'off',
+    'import/no-extraneous-dependencies': 'off',
+    'jsx-a11y/click-events-have-key-events': 'off',
+    // typescript rules
+    '@typescript-eslint/indent': [2, 2],
+    '@typescript-eslint/explicit-function-return-type': 'warn',
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-explicit-any': ['error', { ignoreRestArgs: true }],
+    '@typescript-eslint/no-use-before-define': ['error', { functions: false, classes: false }],
+    '@typescript-eslint/no-empty-function': ['error', { allow: ['arrowFunctions'] }],
+    '@typescript-eslint/no-mixed-spaces-and-tabs': 'error',
+    '@typescript-eslint/camelcase': 'error',
+    '@typescript-eslint/curly': 'error',
+    '@typescript-eslint/eqeqeq': ['error', 'smart'],
+    '@typescript-eslint/func-style': ['error', 'expression'],
+    '@typescript-eslint/no-var-requires': 'error',
+    '@typescript-eslint/no-var': 'error',
+    '@typescript-eslint/prefer-const': 'error',
+    '@typescript-eslint/semi': 'error',
+    '@typescript-eslint/no-extra-semi': 'error',
+    '@typescript-eslint/brace-style': ['error', '1tbs', { 'allowSingleLine': true }],
+    '@typescript-eslint/semi-spacing': 'error',
+    '@typescript-eslint/key-spacing': ['error', { 'beforeColon': false, 'afterColon': true }],
+    '@typescript-eslint/block-spacing': 'error',
+    '@typescript-eslint/comma-spacing': 'error',
+    '@typescript-eslint/no-multi-spaces': 'error',
+    '@typescript-eslint/space-before-blocks': 'error',
+    '@typescript-eslint/keyword-spacing': ['error', { 'before': true, 'after': true }],
+    '@typescript-eslint/space-infix-ops': 'error',
+    '@typescript-eslint/comma-style': ['error', 'last'],
+    '@typescript-eslint/quotes': ['error', 'single'],
+    '@typescript-eslint/eol-last': 'off',
+    '@typescript-eslint/no-trailing-spaces': 'off',
+    '@typescript-eslint/spaced-comment': 'off',
+    '@typescript-eslint/no-console': 'off',
+    '@typescript-eslint/react/function-component-definition': 'off',
+    '@typescript-eslint/arrow-body-style': 'off',
+    
+  },
+};

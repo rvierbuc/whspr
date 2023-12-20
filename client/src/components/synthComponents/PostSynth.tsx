@@ -4,45 +4,60 @@ import { useNavigate } from 'react-router-dom';
 
 interface Props {
   userId: any
-  audioChunks: any
+  audioChunks: Blob[]
+  synthAudioChunks: Blob[]
   isRecording: boolean
 }
 
-const PostSynth = ({ isRecording, audioChunks, userId}: Props) => {
+const PostSynth = ({ isRecording, synthAudioChunks, userId, audioChunks}: Props) => {
   const [ title, setTitle ] = useState('');
   const navigate = useNavigate();
   const handleNavigation = (path: string) => {
     navigate(path);
   }
 
+  const categories: string[] = ['Voice Filter', 'Filter', 'Robot', 'Alien', 'Underwater'];
+
+
+  let audioBlob: Blob;
+  if (!audioChunks.length && synthAudioChunks.length) {
+    audioBlob = new Blob(synthAudioChunks, { type: 'audio/wav' })
+  } else if (audioChunks.length && !synthAudioChunks.length) {
+    audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+  }
+
   const saveAudioToGoogleCloud = async () => {
-    let postTitle = title;
+    const postTitle = title;
     setTitle('');
-    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
       formData.append('userId', userId)
-      formData.append('title', postTitle)
-      formData.append('category', 'Voice Synth')
-      const response = await axios.post(`/upload`, formData)
+      formData.append('title', postTitle);
+      categories.forEach((category, index) => {
+        formData.append(`category[${index}]`, category);
+      });
+      const response = await axios.post('/upload', formData);
       response.status === 200 ? console.info('Audio saved successfully') : console.error('Error saving audio', response.statusText);
     } catch (error) {
-      console.error('Error saving audio:', error)
+      console.error('Error saving audio:', error);
     }
-  }
+  };
 
   return (
-    <div>
-      <input type="text" className="m-2" value={title} onChange={(e) => setTitle(e.target.value)} />
+    <div className="d-flex justify-content-center mt-5">
+      <input type="text"
+      maxLength={22}
+      placeholder="What's on your mind?"
+      value={title}
+      onChange={(e) => { setTitle(e.target.value) }}
+      className='input-control text-white'
+      />
       <button
-            className="post-button m-2"
-            onClick={()=>{
-              saveAudioToGoogleCloud()
-              handleNavigation('/protected/feed')}
-            }
-            disabled={audioChunks.length === 0 || isRecording}
-            ><img src={require('../../style/postbutton.png')} /></button>
+        className="post-button m-2"
+        onClick={saveAudioToGoogleCloud}
+        disabled={isRecording}
+      ><img src={require('../../style/postbutton.png')} /></button>
     </div>
   );
 };

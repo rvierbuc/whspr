@@ -214,7 +214,9 @@ app.post('/createPostRecord', async(req, res) =>{
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${OPENAI_API_KEY}`
     };
-    const airesp = await axios.post('https://api.openai.com/v1/chat/completions', request, { headers: headers });
+    const airesp = await axios.post('https://api.openai.com/v1/chat/completions', 
+    request, 
+    { headers: headers });
     const responseText = airesp.data.choices[0].message.content;
     res.status(200).send({ response: responseText });
   } catch (error) {
@@ -267,7 +269,11 @@ app.post('/text-to-speech-google', async(req, res) =>{
 app.post('/text-to-speech-openai', async(req, res) =>{
   const text = req.body.text
   try{
-   const response = await openai.audio.speech.create({model: 'tts-1', input: text, voice: "fable"})
+   const response = await openai.audio.speech.create({
+      model: 'tts-1', 
+      input: text, 
+      voice: "fable"
+    })
     const buffer = Buffer.from(await response.arrayBuffer())
     res.status(200).send(buffer)
   }catch(error){

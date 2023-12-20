@@ -1,20 +1,31 @@
 import React, { useState, useEffect, useRef } from 'react'
+import {Modal} from './Modal'
 import axios from 'axios'
 // import {audioContext} from './App'
 
 export const WhsprAI = ({audioContext}) => {
+    const [isPhone, setIsPhone] = useState(false);
     const [isRecording, setIsRecording] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [text, setText] = useState<string[]>([])
+    const [showText, setShowText] = useState(false);
     const [AIResponse, setAIResponse] = useState<string[]>([])
     const [lengthTracker, setLengthTracker] = useState(0)
-    const [AISpeech, setAISpeech] = useState<Blob | null>(null)
+    const [modalOpen, setModalOpen] = useState(false);
     const [animationInitialized, setAnimationInitialized] = useState(false);
     const canvasRef = useRef(null);
     const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
     const frameRef = useRef<number | null>(null);
     const analyserRef = useRef<AnalyserNode|null>(null);
     const mediaStreamRef = useRef<MediaStream | null>(null);
+
+//checks if the user's device is a phone
+    useEffect(() =>{
+        
+        if('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0){
+            setIsPhone(true);
+        }
+    }, []);
 
 //sets up an analyser for the computer's speaker audio (when AI is talking)
     const setupAnalyser = (audio) => {
@@ -36,7 +47,7 @@ export const WhsprAI = ({audioContext}) => {
         }
     };
 
-// browser speech recognition
+// browser speech transcription
     useEffect(() =>{
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
             const recognize = new SpeechRecognition()
@@ -49,150 +60,152 @@ export const WhsprAI = ({audioContext}) => {
                     setText(prevText => [...prevText, currentText]);
         
         }
-    }
-}
-//starts the recording and hooks it up to the analyzer so mic sounds are also drawn
-const startRecording = async() =>{
-    try{
-        const stream = await navigator.mediaDevices.getUserMedia({audio: true})
-        mediaStreamRef.current = stream
+      }
+    };
+    //starts the recording and hooks it up to the analyzer so mic sounds are also drawn
+    const startRecording = async () =>{
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaStreamRef.current = stream;
         analyserRef.current = audioContext.createAnalyser();
         analyserRef.current.fftSize = 2048;
         const audio = audioContext.createMediaStreamSource(stream);        
         audio.connect(analyserRef.current);
         drawAudio();
-    }catch(error){console.error('error starting recording:', error)}
-}
+      } catch (error) { console.error('error starting recording:', error); }
+    };
 
-//fires start recording and speech recognition when is recording is true
-if(isRecording){
-    recognize.start();        
-    startRecording();
-}else{
-    if(sourceRef.current){
-        sourceRef.current = null
+    //fires start recording and speech recognition when is recording is true
+    if (isRecording) {
+      recognize.start();        
+      startRecording();
+    } else {
+      if (sourceRef.current) {
+        sourceRef.current = null;
+      }
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+      }
     }
-    if(frameRef.current){
-    cancelAnimationFrame(frameRef.current);
-    }
-}
     return () => {
-        if(recognize){
-            recognize.stop()
-        }
-        if (mediaStreamRef.current) {
-            const tracks = mediaStreamRef.current.getTracks();
-            tracks.forEach(track => track.stop());
-            mediaStreamRef.current = null;
-            }
-        }
-    }, [isRecording])
+      if (recognize) {
+        recognize.stop();
+      }
+      if (mediaStreamRef.current) {
+        const tracks = mediaStreamRef.current.getTracks();
+        tracks.forEach(track => track.stop());
+        mediaStreamRef.current = null;
+      }
+    };
+  }, [isRecording]);
 
-//creates an analyser
-useEffect(() =>{
+  //creates an analyser
+  useEffect(() =>{
     const analyser = audioContext.createAnalyser();
-    analyser.fftSize = 2048
-    analyserRef.current = analyser
-}, [audioContext])
+    analyser.fftSize = 2048;
+    analyserRef.current = analyser;
+  }, [audioContext]);
 
-//animation draws the audio
-    const drawAudio = () =>{
-        const canvas = canvasRef.current;
-        const analyser = analyserRef.current;
+  //animation draws the audio
+  const drawAudio = () =>{
+    const canvas = canvasRef.current;
+    const analyser = analyserRef.current;
         
-        if (!canvas || !analyser) return;
-            const context = canvas.getContext('2d')
-            const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
-            const drawFrame = () =>{
-                frameRef.current = requestAnimationFrame(drawFrame)
-                analyser.getByteTimeDomainData(dataArray)
-                context.clearRect(0, 0, canvas.width, canvas.height)
-                context.lineWidth = 1;
-                context.strokeStyle = 'rgb(4, 217, 255)'
-                context.shadowBlur = 15;
-                context.shadowColor = 'white'
+    if (!canvas || !analyser) { return; }
+    const context = canvas.getContext('2d');
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    const drawFrame = () =>{
+      frameRef.current = requestAnimationFrame(drawFrame);
+      analyser.getByteTimeDomainData(dataArray);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.lineWidth = 1;
+      context.strokeStyle = 'rgb(4, 217, 255)';
+      context.shadowBlur = 15;
+      context.shadowColor = 'white';
                 
 
-            let sliceWidth = canvas.width * 1 / bufferLength
+            const sliceWidth = canvas.width * 1 / bufferLength
             let x = 0;
                 
                 context.beginPath();
             for (let i = 0; i < bufferLength; i++){
-                let v = dataArray[i] / 128;
-                let y = v * canvas.height / 2;
+                const v = dataArray[i] / 128;
+                const y = v * canvas.height / 2;
 
-                if(i === 0){
-                    context.moveTo(x, y);
-                }else{
-                    context.lineTo(x, y);
-                }
-                x += sliceWidth;
-            }
-            context.lineTo(canvas.width, canvas.height / 2)
-            context.stroke();
-        }
-
-        drawFrame();
-    } 
-//gets the browser based voices and speaks them
-    const browserTextToSpeech = async (responseString, voiceName) => {
-        let voices = window.speechSynthesis.getVoices();
-        if (voices.length === 0) {
-            await new Promise<void>(resolve => {
-                const voicesChanged = () => {
-                    voices = window.speechSynthesis.getVoices();
-                    resolve();
-                    window.speechSynthesis.onvoiceschanged = null;
-                };
-                window.speechSynthesis.onvoiceschanged = voicesChanged;
-            });
-        }
-        const utterance = new SpeechSynthesisUtterance(responseString);
-        const selectedVoice = voices.find(voice => voice.name === voiceName);
-        if (selectedVoice) {
-            utterance.voice = selectedVoice;
+        if (i === 0) {
+          context.moveTo(x, y);
         } else {
-            console.warn('Selected voice not found, using default voice');
+          context.lineTo(x, y);
         }
-        window.speechSynthesis.speak(utterance);
+        x += sliceWidth;
+      }
+      context.lineTo(canvas.width, canvas.height / 2);
+      context.stroke();
     };
 
-//////////////////////////////gets ai generated text and speaks it
-const playAudio = (buffer) => {
-    const array = new Uint8Array(buffer)
-    const blob = new Blob([array], {type: "audio/mpeg"})
-    const blobUrl = URL.createObjectURL(blob)
-    const audio = new Audio()
+    drawFrame();
+  }; 
+  //gets the browser based voices and speaks them
+  const browserTextToSpeech = async (responseString, voiceName) => {
+    let voices = window.speechSynthesis.getVoices();
+    if (voices.length === 0) {
+      await new Promise<void>(resolve => {
+        const voicesChanged = () => {
+          voices = window.speechSynthesis.getVoices();
+          resolve();
+          window.speechSynthesis.onvoiceschanged = null;
+        };
+        window.speechSynthesis.onvoiceschanged = voicesChanged;
+      });
+    }
+    const utterance = new SpeechSynthesisUtterance(responseString);
+    const selectedVoice = voices.find(voice => voice.name === voiceName);
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+    } else {
+      console.warn('Selected voice not found, using default voice');
+    }
+    window.speechSynthesis.speak(utterance);
+  };
+
+  //////////////////////////////gets ai generated text and speaks it
+  const playAudio = (buffer) => {
+    const array = new Uint8Array(buffer);
+    const blob = new Blob([array], { type: 'audio/mpeg' });
+    const blobUrl = URL.createObjectURL(blob);
+    const audio = new Audio();
     audio.src = blobUrl;
     setupAnalyser(audio);
     drawAudio();
     audio.addEventListener('ended', () =>{
-        if(sourceRef.current){
-            sourceRef.current = null
-        }
-        if(frameRef.current){
-            cancelAnimationFrame(frameRef.current);
-        }
-    })
-    audio.play()
-};
+      if (sourceRef.current) {
+        sourceRef.current = null;
+      }
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+      }
+    });
+    audio.play();
+  };
 
 //this voice variable controls which endpoint is used for the tts
 //supported choices are openai, google, browser, elevenlabs
 const VOICE = 'openai'
+//sends user messages as text and gets text message back from open AI
 const getAIResponse = async () =>{
     if (text.length === 0) return
-    let messages = [{ role: "system", content: "You are an old friend named Whisper." }]
+    const messages = [{ role: "system", content: "You are an old friend named Whisper." }]
     const lastFive = arr => arr.length > 5 ? arr.slice(-5) : arr
     const userMessages = lastFive(text);
     const aiMessages = lastFive(AIResponse);
-    for(let i = 0; i < userMessages.length; i++){
-        messages.push({"role": "user", "content": `Respond using 100 completion_tokens or less: ${userMessages[i]}`})
-        if(aiMessages[i]){
-            messages.push({"role": "assistant", "content": aiMessages[i]})
-        }
+    for (let i = 0; i < userMessages.length; i++) {
+      messages.push({ 'role': 'user', 'content': `Respond using 100 completion_tokens or less: ${userMessages[i]}` });
+      if (aiMessages[i]) {
+        messages.push({ 'role': 'assistant', 'content': aiMessages[i] });
+      }
     }
+    //converts AI message to audio (TTS)
     try{
         const resp = await axios.post('/openAIGetResponse', {messages: messages})
         setAIResponse(prevResponses => [...prevResponses, resp.data.response])
@@ -207,24 +220,24 @@ const getAIResponse = async () =>{
         }catch (error){
         console.error("Error getting response from AI in getAIResponse: ", error)
     }
-}
+  };
 
-//cleans up animation
-useEffect(() => {
+  //cleans up animation
+  useEffect(() => {
     return () => {
-        if (frameRef.current) {
-            cancelAnimationFrame(frameRef.current);
-        }
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+      }
     };
-}, []);
-//send ai question
-useEffect(() =>{
-    if(!isRecording && text.length > lengthTracker){
-        setIsLoading(true)
-        getAIResponse()
-        setLengthTracker(text.length)
+  }, []);
+  //send ai question
+  useEffect(() =>{
+    if (!isRecording && text.length > lengthTracker) {
+      setIsLoading(true);
+      getAIResponse();
+      setLengthTracker(text.length);
     }
-}, [isRecording, text])
+  }, [isRecording, text]);
 
 //starts the audio context
 function startUserMedia(){
@@ -234,42 +247,57 @@ function startUserMedia(){
 audioContext.resume()
 }
 
-//sets canvas width to the whole screen
-useEffect(() => {
+//displays the text of the conversation
+function handleSetShowText(){
+    setShowText(!showText)
+}
+
+  //sets canvas width to the whole screen
+  useEffect(() => {
     if (canvasRef.current) {
       canvasRef.current.width = window.innerWidth;
     }
-    window.addEventListener('resize', handleResize)
-    return
+    window.addEventListener('resize', handleResize);
+    return;
     
   }, []);
-const handleResize = () =>{
-if(canvasRef.current){
-    canvasRef.current.width = window.innerWidth;
-    initializeAnimation()
-}
-}
-//starts and stops the animation so that a line appears on the screen
-const initializeAnimation = () =>{
+  const handleResize = () =>{
+    if (canvasRef.current) {
+      canvasRef.current.width = window.innerWidth;
+      initializeAnimation();
+    }
+  };
+  //starts and stops the animation so that a line appears on the screen
+  const initializeAnimation = () =>{
     if (!animationInitialized) {
-        setTimeout(() =>{
-          drawAudio();
-          if(frameRef.current){
-              cancelAnimationFrame(frameRef.current)
-          }
-      }, 0)
+      setTimeout(() =>{
+        drawAudio();
+        if (frameRef.current) {
+          cancelAnimationFrame(frameRef.current);
+        }
+      }, 0);
       setAnimationInitialized(true);
-      }
-}
-//fires initialize animation on pageload
-useEffect(() => {
-initializeAnimation()
+    }
+  };
+  //fires initialize animation on pageload
+  useEffect(() => {
+    initializeAnimation();
   }, [animationInitialized]);
 
 
-// const blobUrl = AISpeech ? URL.createObjectURL(AISpeech) : null;
-// blobUrl ? console.log(blobUrl) : null
+  // const blobUrl = AISpeech ? URL.createObjectURL(AISpeech) : null;
+  // blobUrl ? console.log(blobUrl) : null
   return (
+    <div>
+        <img 
+        src={require('../style/help.png')} 
+        className='help-btn' 
+        onClick={() => setModalOpen(!modalOpen)}
+        style={{opacity: modalOpen ? .25 : 1}}
+        />
+        <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+        <p>Press and hold the button to talk to Whisper, our AI chatbot.</p>
+        </Modal>
     <div className='container-whsprAI'>
         <div className="centered-whsprAI">
             <div className="canvas-container-whsprAI">
@@ -278,33 +306,43 @@ initializeAnimation()
         </div>
         <div className="centered-whsprAI">
             {isLoading 
-            ? (<img src={require('../style/loading.gif')} 
+              ? (<img src={require('../style/loading.gif')} 
             className="loading-img"></img>) 
             : (<button 
-                onMouseDown={() => {
-                    setIsRecording(true)
-                    startUserMedia()
-                }} 
-                onMouseUp={() => setIsRecording(false)} 
-                onMouseLeave={() => setIsRecording(false)} 
+                onMouseDown={!isPhone ? () => {setIsRecording(true); startUserMedia();} : undefined}
+                onMouseUp={!isPhone ? () => setIsRecording(false) : undefined} 
+                onMouseLeave={!isPhone ? () => setIsRecording(false) : undefined} 
+                onTouchStart={isPhone ? () => {setIsRecording(true); startUserMedia();} : undefined} 
+                onTouchEnd={isPhone ? () => setIsRecording(false) : undefined}
+                onTouchCancel={isPhone ? () => setIsRecording(false) : undefined} 
+                onContextMenu={(e) => e.preventDefault()} 
                 className="btn" 
-                style={{border: "none"}}>
+                style={{ border: 'none' }}>
                 {!isRecording 
-                ? (<img src={require('../style/presstotalk.png')} 
+                  ? (<img src={require('../style/presstotalk.png')} 
                 className="presstotalk-img"/>) 
-                : <img src={require('../style/pressedtotalk.png')} 
+                  : <img src={require('../style/pressedtotalk.png')} 
                 draggable="false" 
                 className="presstotalk-img"/>}
                 </button>
-            )}
+              )}
         </div>
-{/* this maps the messages of the user/ai to the page for debugging. */}
-{/* {text.map((item, index) => (
-    <div key={index}>
-                    <div><span className="text-warning">Interlocutor:</span>{" "}<span className="text-success">{item}</span></div>
-                     {AIResponse[index] && <div><span className="text-warning">The AI: </span><span className="text-success">{AIResponse[index]}</span></div>}
+{showText && <div className='floating-text-whsprAI'>
+{text.map((item, index) => (
+        <div key={index} >
+                    <div><span className="text-warning">You: </span><span className="text-success">{item}</span></div>
+                     {AIResponse[index] && <div><span className="text-warning">Whisper: </span><span className="text-success">{AIResponse[index]}</span></div>}
                 </div>
-            ))} */}
+            ))}
+</div>}
+</div>
+    <img 
+        src={require('../style/posticon.png')} 
+        className='text-btn' 
+        onClick={() => setShowText(!showText)}
+        style={{opacity: showText ? .25 : 1}}
+        />
+
             </div>
   );
-}
+};

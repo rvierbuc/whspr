@@ -1,25 +1,26 @@
-import React from 'react';
+import React, { SetStateAction } from 'react';
 import Tuna from 'tunajs';
 import SynthVoice from './SynthVoice';
 import * as Tone from 'tone';
 
 interface Props {
   audioContext: AudioContext
-  userId: any
   title: string
+  setAudioChunks: any
+  setIsRecording: any
+  isRecording: boolean
 }
 
-const Filters = ({ audioContext, userId }: Props) => {
+const Filters = ({ isRecording, setIsRecording, setAudioChunks, audioContext }: Props) => {
   const tuna = new Tuna(audioContext);
   Tone.setContext(audioContext);
-  console.log(audioContext, Tone.context);
 
   const defaultSettings = {
     lowPassFrequency: 350,
     highPassFrequency: 350,
     highPassType: 'highpass',
     lowPassType: 'lowpass',
-  }
+  };
 
   const robot = {
     lowPassType: 'lowpass',
@@ -40,9 +41,9 @@ const Filters = ({ audioContext, userId }: Props) => {
       ratio: 9,
       knee: 36,
       automakeup: false,
-      bypass: false
+      bypass: false,
     }),
-    gain: new tuna.Gain({ gain: 90 })
+    gain: new tuna.Gain({ gain: 90 }),
   };
 
   const wobbly = {
@@ -57,7 +58,7 @@ const Filters = ({ audioContext, userId }: Props) => {
       sweep: 0.35,
       resonance: 36,
       sensitivity: -0.3,
-      bypass: false
+      bypass: false,
     }),
     pingPongDelay: new tuna.PingPongDelay({
       wetLevel: 0.6,
@@ -65,8 +66,8 @@ const Filters = ({ audioContext, userId }: Props) => {
       delayTimeLeft: 60,
       delayTimeRight: 100,
     }),
-    gain: new tuna.Gain({ gain: 250})
-  }
+    gain: new tuna.Gain({ gain: 250 }),
+  };
 
   const alien = {
     lowPassType: 'lowpass',
@@ -82,7 +83,7 @@ const Filters = ({ audioContext, userId }: Props) => {
       ratio: 4,
       knee: 5,
       automakeup: false,
-      bypass: false
+      bypass: false,
     }),
     phaser: new tuna.Phaser({
       rate: 23,
@@ -90,9 +91,9 @@ const Filters = ({ audioContext, userId }: Props) => {
       feedback: 0.6,
       stereoPhase: 20,
       baseModulationFrequency: 1000,
-      bypass: false
+      bypass: false,
     }),
-  }
+  };
 
   const notes1: string[] = ['G#4', 'E4', 'G#4', 'A#4', 'B4', 'A#4', 'G#4', 'E4', 'D#4'];
   const sampleSynth = new Tone.MonoSynth();
@@ -100,10 +101,10 @@ const Filters = ({ audioContext, userId }: Props) => {
   return (
     <div>
       <SynthVoice
-        sampleSynth={sampleSynth}
-        notes1={notes1}
+        isRecording={isRecording}
+        setIsRecording={setIsRecording}
+        setRootAudioChunks={setAudioChunks}
         audioContext={audioContext}
-        userId={userId}
         robot={robot}
         wobbly={wobbly}
         alien={alien}

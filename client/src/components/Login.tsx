@@ -2,11 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const handleAuth = () => {
-    window.location.href = '/auth/google';
-}
+  window.location.href = '/auth/google';
+};
 
 const Login = () => {
-    return (
+  return (
         <div className="d-flex justify-content-center align-items-center vh-100">
             <div>
             <img 
@@ -15,18 +15,18 @@ const Login = () => {
             height={100}
             alt="whspr logo"
             onClick={() => handleAuth()}
-            style={{cursor: 'pointer'}}
+            style={{ cursor: 'pointer' }}
             />
             </div>
             <div>
             <button type='button' 
             className="btn btn-dark"
-            onClick={()=> {handleAuth()}}>
+            onClick={()=> { handleAuth(); }}>
                 Login
             </button>
             </div>
         </div>
-    )
-}
+  );
+};
 
 export default Login;

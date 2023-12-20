@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react'
-import socket from './socket'
-import PostConch from './PostConch'
-import Post from './Post'
-import WaveSurferComponent from './WaveSurfer'
-import { useLoaderData } from 'react-router-dom'
-import axios, {AxiosResponse} from 'axios'
+import React, { useEffect, useState } from 'react';
+import socket from './socket';
+import PostConch from './PostConch';
+import Post from './Post';
+import WaveSurferComponent from './WaveSurfer';
+import { useLoaderData } from 'react-router-dom';
+import axios, { AxiosResponse } from 'axios';
 
 const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
-    const [message, setMessage] = useState<any>()
-    const [type, setType] = useState<string>('inbox')
-    const [title, setTitle] = useState<string>('')
-    const [category, setCategory] = useState<string>('')
-    const user: any = useLoaderData();
-    console.log('user', user)
+  const [message, setMessage] = useState<any>();
+  const [type, setType] = useState<string>('inbox');
+  const [title, setTitle] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
+  const user: any = useLoaderData();
+  console.log('user', user);
 
 
-    useEffect(() => {
-        getMessage()
-    }, [])
+  useEffect(() => {
+    getMessage();
+  }, []);
 
 
     const getMessage = async() => {
@@ -48,22 +48,22 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
 
 
 
-    const getMessages = (type) => {
-        if (type === 'inbox') {
-          setType(type)
-          getMessage()
-        }else{
-          setType(type)
-          getOutbox()
+  const getMessages = (type) => {
+    if (type === 'inbox') {
+      setType(type);
+      getMessage();
+    } else {
+      setType(type);
+      getOutbox();
           
-        }
     }
+  };
 
-    const openPost = () => {
+  const openPost = () => {
 
-    }
+  };
 
-    return (
+  return (
         <div>
 
             <PostConch audioContext={audioContext} />
@@ -109,7 +109,7 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
         onClick={() => getMessages('outbox')}
         >Outbox</button>
     </div>
-    : <div>
+  : <div>
       <button
         type="button"
         className="btn btn-light"
@@ -125,11 +125,11 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
             <div>
                 {message ? 
                     <WaveSurferComponent postObj={message} audioUrl={message.soundUrl} postId={message.id} />
-                 : <div>No messages!</div>}
+                  : <div>No messages!</div>}
             </div>
         </div>
 
-    )
-}
+  );
+};
 
-export default MagicConch
+export default MagicConch;

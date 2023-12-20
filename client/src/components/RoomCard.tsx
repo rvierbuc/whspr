@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react'
-import {useNavigate} from 'react-router-dom'
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 const RoomCard = ({name, host, listeners, setRoomProps, id}) => {
@@ -13,7 +13,7 @@ const RoomCard = ({name, host, listeners, setRoomProps, id}) => {
         navigate(`/protected/room/${name}`)
     }
 
-    return (
+  return (
         <div className='card'>
             <div className='card-body'>
                 <button onClick={() => navigateTo()}>
@@ -25,7 +25,7 @@ const RoomCard = ({name, host, listeners, setRoomProps, id}) => {
 
         </div>
         </div>
-    )
-}
+  );
+};
 
-export default RoomCard
+export default RoomCard;

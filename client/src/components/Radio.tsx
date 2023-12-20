@@ -19,17 +19,17 @@ const Radio = ({setRoomProps}) => {
 
     
 
-    const getRadios = async() => {
-        try {
-            const radios = await axios.get('/radio')
-            console.log('radios', radios.data)
-            setRadios(radios.data)
-        }catch{
-            console.log('couldnt get radios')
-        }
-      }
+  const getRadios = async () => {
+    try {
+      const radios = await axios.get('/radio');
+      console.log('radios', radios.data);
+      setRadios(radios.data);
+    } catch {
+      console.log('couldnt get radios');
+    }
+  };
 
-    return (
+  return (
         <div>
             <button type='button' onClick={()=> {navigateTo()}}>
                 Create Channel
@@ -46,7 +46,7 @@ const Radio = ({setRoomProps}) => {
 
             
         </div>
-    )
-}
+  );
+};
 
 export default Radio;
