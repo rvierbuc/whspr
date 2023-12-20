@@ -1,11 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Stack, Button, Container } from 'react-bootstrap';
-import PostSynth from './PostSynth';
 import * as Tone from 'tone';
 
 interface Props {
   audioContext: AudioContext;
-  userId: any
   robot: any
   wobbly: any
   alien: any
@@ -15,8 +13,9 @@ interface Props {
     lowPassType: any // these need to be refactored to the proper types
     highPassType: any
   }
-  notes1: string[]
-  sampleSynth: any
+  setRootAudioChunks: any
+  setIsRecording: any
+  isRecording: boolean
 }
 
 interface Constraints {
@@ -27,15 +26,14 @@ interface Constraints {
   video: boolean
 }
 
-const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, alien, defaultSettings }: Props) => {
-  const [isRecording, setIsRecording] = useState(false)
+const SynthVoice = ({ isRecording, setIsRecording, setRootAudioChunks, audioContext, robot, wobbly, alien, defaultSettings }: Props) => {
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const audio = useRef<AudioBufferSourceNode | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
-  const [ filter, setFilter ] = useState(defaultSettings);
-  const [ addSynth, setAddSynth ] = useState(false);
+  const [filter, setFilter] = useState(defaultSettings);
+  const [addSynth, setAddSynth] = useState(false);
   const [bgColor, setBgColor] = useState('secondary')
 
   useEffect(() => {
@@ -58,19 +56,12 @@ const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, 
     video: false
   }
 
-  
   const startRecording = async () => {
     try {
       setAudioChunks([]);
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       mediaRecorder.current = new MediaRecorder(destination.stream);
       const source = audioContext.createMediaStreamSource(stream);
-      const poly: Tone.PolySynth = new Tone.PolySynth(Tone.Synth).toDestination();
-      if (addSynth) {
-        poly.volume.value = -2;
-        poly.connect(lowpass).connect(destination);
-        poly.triggerAttack(['C#4', 'F4', 'G#4'], 3);
-      }
       if (filter !== defaultSettings) {
         let options: any = Object.values(filter).slice(4)
         source.connect(lowpass)
@@ -83,13 +74,11 @@ const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, 
       mediaRecorder.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
           setAudioChunks((prevChunks) => [...prevChunks, event.data]);
+          setRootAudioChunks((prevChunks) => [...prevChunks, event.data]);
         }
       }
-      mediaRecorder.current.onstop = () => {
-        poly.disconnect()
-      };
       mediaRecorder.current.start();
-      setIsRecording(true);
+      setIsRecording(true); // This is stopping the voice filters from staying disabled
     } catch (error) {
       console.error(error);
     }
@@ -153,7 +142,6 @@ const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, 
   return (
     <Container className="text-center my-3 pb-1">
       <h5>Try out our new voice filters!</h5>
-      <PostSynth isRecording={isRecording} audioChunks={audioChunks} userId={userId} />
       <Stack direction="horizontal" className="mx-5 mb-3 typeCard">
         <Button className="mx-2 btn-secondary" disabled={filter === defaultSettings} onClick={() => setFilter(defaultSettings)}>Default</Button>
         <Button className="mx-2 btn-secondary" disabled={filter === alien} onClick={() => setFilter(alien)}>Alien</Button>

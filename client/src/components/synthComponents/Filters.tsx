@@ -1,18 +1,19 @@
-import React from 'react';
+import React, { SetStateAction } from 'react';
 import Tuna from 'tunajs';
 import SynthVoice from './SynthVoice';
 import * as Tone from 'tone';
 
 interface Props {
   audioContext: AudioContext
-  userId: any
   title: string
+  setAudioChunks: any
+  setIsRecording: any
+  isRecording: boolean
 }
 
-const Filters = ({ audioContext, userId }: Props) => {
+const Filters = ({ isRecording, setIsRecording, setAudioChunks, audioContext }: Props) => {
   const tuna = new Tuna(audioContext);
   Tone.setContext(audioContext);
-  console.log(audioContext, Tone.context);
 
   const defaultSettings = {
     lowPassFrequency: 350,
@@ -100,10 +101,10 @@ const Filters = ({ audioContext, userId }: Props) => {
   return (
     <div>
       <SynthVoice
-        sampleSynth={sampleSynth}
-        notes1={notes1}
+        isRecording={isRecording}
+        setIsRecording={setIsRecording}
+        setRootAudioChunks={setAudioChunks}
         audioContext={audioContext}
-        userId={userId}
         robot={robot}
         wobbly={wobbly}
         alien={alien}
