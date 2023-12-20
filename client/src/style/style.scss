@@ -120,13 +120,16 @@ body {
       position: fixed;
       right: 15px;
       bottom: 15px;
+      width: 15%;
+      height: 15%;
+      max-width: 50px;
+      max-height: 50px;
     }
     .help-btn{
       margin-left: 15px;
       margin-top: 15px;
       width: 3%;
       height: 3%;
-      opacity: .25;
       max-width: 35px;
       max-height: 35px;
     }

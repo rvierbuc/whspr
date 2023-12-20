@@ -11,7 +11,6 @@ export const WhsprAI = ({audioContext}) => {
     const [AIResponse, setAIResponse] = useState<string[]>([])
     const [lengthTracker, setLengthTracker] = useState(0)
     const [modalOpen, setModalOpen] = useState(false);
-    const [AISpeech, setAISpeech] = useState<Blob | null>(null)
     const [animationInitialized, setAnimationInitialized] = useState(false);
     const canvasRef = useRef(null);
     const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
@@ -117,13 +116,13 @@ useEffect(() =>{
                 context.shadowColor = 'white'
                 
 
-            let sliceWidth = canvas.width * 1 / bufferLength
+            const sliceWidth = canvas.width * 1 / bufferLength
             let x = 0;
                 
                 context.beginPath();
             for (let i = 0; i < bufferLength; i++){
-                let v = dataArray[i] / 128;
-                let y = v * canvas.height / 2;
+                const v = dataArray[i] / 128;
+                const y = v * canvas.height / 2;
 
                 if(i === 0){
                     context.moveTo(x, y);
@@ -187,7 +186,7 @@ const VOICE = 'openai'
 //sends user messages as text and gets text message back from open AI
 const getAIResponse = async () =>{
     if (text.length === 0) return
-    let messages = [{ role: "system", content: "You are an old friend named Whisper." }]
+    const messages = [{ role: "system", content: "You are an old friend named Whisper." }]
     const lastFive = arr => arr.length > 5 ? arr.slice(-5) : arr
     const userMessages = lastFive(text);
     const aiMessages = lastFive(AIResponse);
@@ -239,7 +238,7 @@ function startUserMedia(){
 audioContext.resume()
 }
 
-//displays teh text of the conversation
+//displays the text of the conversation
 function handleSetShowText(){
     setShowText(!showText)
 }
@@ -281,7 +280,12 @@ initializeAnimation()
 // blobUrl ? console.log(blobUrl) : null
   return (
     <div>
-        <img src={require('../style/help.png')} className='help-btn' onClick={() => setModalOpen(!modalOpen)}/>
+        <img 
+        src={require('../style/help.png')} 
+        className='help-btn' 
+        onClick={() => setModalOpen(!modalOpen)}
+        style={{opacity: modalOpen ? .25 : 1}}
+        />
         <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
         <p>Press and hold the button to talk to Whisper, our AI chatbot.</p>
         </Modal>
@@ -332,7 +336,13 @@ initializeAnimation()
             ))}
 </div>}
 </div>
-<button className='btn btn-dark text-btn' onClick={handleSetShowText}>text</button>
+    <img 
+        src={require('../style/posticon.png')} 
+        className='text-btn' 
+        onClick={() => setShowText(!showText)}
+        style={{opacity: showText ? .25 : 1}}
+        />
+
             </div>
   );
 }
