@@ -21,13 +21,13 @@ const RecordSynth = ({ title, audioContext, finalDest, mediaDest, start, stop, u
       recorder.current = new MediaRecorder(mediaDest.stream);
       recorder.current.ondataavailable = event => {
         if (event.data.size > 0) {
-          setAudioChunks((prevChunks) => [...prevChunks, event.data])
+          setAudioChunks((prevChunks) => [...prevChunks, event.data]);
         }
       };
       recorder.current.start();
       start();
-    } catch(error) {
-      console.error('Could not start recording', error)
+    } catch (error) {
+      console.error('Could not start recording', error);
     }
   };
 
@@ -37,7 +37,7 @@ const RecordSynth = ({ title, audioContext, finalDest, mediaDest, start, stop, u
         stop();
         recorder.current.stop();
       }
-    } catch(error) {
+    } catch (error) {
       console.error('Could not stop recording', error);
     }
   };
@@ -45,24 +45,24 @@ const RecordSynth = ({ title, audioContext, finalDest, mediaDest, start, stop, u
   const categories = ['synth', 'mysound', 'producer'];
 
   const saveRecording = async () => {
-    const saveBlob: Blob = new Blob(audioChunks, {type: 'audio/wav'})
+    const saveBlob: Blob = new Blob(audioChunks, { type: 'audio/wav' });
     try {
-      const formData = new FormData()
-      formData.append('audio', saveBlob)
-      formData.append('userId', userId.toString())
-      formData.append('title', title)
+      const formData = new FormData();
+      formData.append('audio', saveBlob);
+      formData.append('userId', userId.toString());
+      formData.append('title', title);
       // formData.append('category', 'music')
       categories.forEach((category, index) => {
         console.log('howdy', index, category);
         formData.append(`category[${index}]`, category);
-      })
-      const response = await axios.post(`/upload`, formData);
+      });
+      const response = await axios.post('/upload', formData);
       response.status === 200
-      ?
-      console.log('Synth saved to cloud')
-      :
-      console.error('Error saving synth', response.statusText);
-    } catch(error) {
+        ?
+        console.log('Synth saved to cloud')
+        :
+        console.error('Error saving synth', response.statusText);
+    } catch (error) {
       console.error('Error saving audio', error);
     }
   };

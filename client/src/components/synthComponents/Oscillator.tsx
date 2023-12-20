@@ -11,7 +11,7 @@ interface Props {
   changeValue: (e: any) => void;
 }
 
-const Oscillator = ({oscSettings, changeType, changeValue}: Props): React.JSX.Element => {
+const Oscillator = ({ oscSettings, changeType, changeValue }: Props): React.JSX.Element => {
   const { type, frequency, detune } = oscSettings;
 
   return (
@@ -34,11 +34,11 @@ const Oscillator = ({oscSettings, changeType, changeValue}: Props): React.JSX.El
         <Stack direction="horizontal" className="typeCard mb-2">
           <div className="text-center">
             <h6>Frequency</h6>
-            <input value={frequency} max="880"  onChange={changeValue} id="frequency" type="range" />
+            <input value={frequency} max="880" onChange={changeValue} id="frequency" type="range" />
           </div>
           <div className="text-center">
             <h6>Detune</h6>
-            <input  value={detune} max="150" min="-150" onChange={changeValue} id="detune" type="range" />
+            <input value={detune} max="150" min="-150" onChange={changeValue} id="detune" type="range" />
           </div>
         </Stack>
     </Container>

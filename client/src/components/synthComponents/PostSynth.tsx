@@ -8,35 +8,35 @@ interface Props {
   isRecording: boolean
 }
 
-const PostSynth = ({ isRecording, audioChunks, userId}: Props) => {
+const PostSynth = ({ isRecording, audioChunks, userId }: Props) => {
   const [ title, setTitle ] = useState('');
   const navigate = useNavigate();
   const handleNavigation = (path: string) => {
     navigate(path);
-  }
+  };
   const categories: string[] = ['Voice Filter', 'Filter', 'Robot', 'Alien', 'Underwater'];
 
   const saveAudioToGoogleCloud = async () => {
-    let postTitle = title;
+    const postTitle = title;
     setTitle('');
-    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
     console.log('posting');
     try {
-      const formData = new FormData()
-      formData.append('audio', audioBlob)
-      formData.append('userId', userId)
-      formData.append('title', postTitle)
+      const formData = new FormData();
+      formData.append('audio', audioBlob);
+      formData.append('userId', userId);
+      formData.append('title', postTitle);
       // formData.append('category', 'Voice Synth')
       categories.forEach((category, index) => {
         console.log('howdy', index, category);
         formData.append(`category[${index}]`, category);
-      })
-      const response = await axios.post(`/upload`, formData)
+      });
+      const response = await axios.post('/upload', formData);
       response.status === 200 ? console.info('Audio saved successfully') : console.error('Error saving audio', response.statusText);
     } catch (error) {
-      console.error('Error saving audio:', error)
+      console.error('Error saving audio:', error);
     }
-  }
+  };
 
   return (
     <div>

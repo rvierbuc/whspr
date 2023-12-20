@@ -1,60 +1,60 @@
-import React, { useEffect, useState } from "react";
-import axios, {AxiosResponse} from "axios";
-import PostCard from "./PostCard"
-import Post from "./Post";
-import WaveSurferComponent from "./WaveSurfer";
+import React, { useEffect, useState } from 'react';
+import axios, { AxiosResponse } from 'axios';
+import PostCard from './PostCard';
+import Post from './Post';
+import WaveSurferComponent from './WaveSurfer';
 import { useLoaderData } from 'react-router-dom';
 
 const Feed = ({ audioContext }: { audioContext: BaseAudioContext }) => {
-const [posts, setPosts] = useState<any>()
-const [feed, setFeed] = useState<string>('explore')
-const [title, setTitle] = useState<string>('Explore WHSPR')
-const [onProfile, setOnProfile] =useState<boolean>(false)
-const user: any = useLoaderData();
-// console.log(user)
+  const [posts, setPosts] = useState<any>();
+  const [feed, setFeed] = useState<string>('explore');
+  const [title, setTitle] = useState<string>('Explore WHSPR');
+  const [onProfile, setOnProfile] = useState<boolean>(false);
+  const user: any = useLoaderData();
+  // console.log(user)
 
-const getPosts = async(type, tag) => {
-  setFeed(type)
-  try{
-   // console.log('request variables', type, user.id, tag)
-    const allPosts: AxiosResponse = await axios.get(`/post/${type}/${user.id}/${tag}`)
-    setPosts(allPosts.data)
-    if(tag !== 'none'){
-        setTitle(`Explore #${tag}`)
-    } else if(type === 'following'){
-        setTitle('Posts from your Friends')
-    } else {
-        setTitle('Explore WHSPR')
+  const getPosts = async (type, tag) => {
+    setFeed(type);
+    try {
+      // console.log('request variables', type, user.id, tag)
+      const allPosts: AxiosResponse = await axios.get(`/post/${type}/${user.id}/${tag}`);
+      setPosts(allPosts.data);
+      if (tag !== 'none') {
+        setTitle(`Explore #${tag}`);
+      } else if (type === 'following') {
+        setTitle('Posts from your Friends');
+      } else {
+        setTitle('Explore WHSPR');
+      }
+      console.log('all posts', allPosts.data);
+    } catch (error) {
+      console.log('client get friends', error);
     }
-    console.log('all posts', allPosts.data)
-  } catch(error) {
-    console.log('client get friends', error)
-  }
-}
+  };
 
-const updatePost = async(postId, updateType) => {
-    try{
-        const updatedPost:any = await axios.get(`/post/updatedPost/${postId}/${user.id}`)
-        console.log('updated post obj', updatedPost)
-        const postIndex = posts.findIndex((post) => post.id === updatedPost.data.id)
-        updatedPost.data.rank = posts[postIndex].rank
-        //console.log('post index', updatePostIndex)
-        const postsWUpdatedPost = posts.toSpliced(postIndex, 1, updatedPost.data )
-        console.log(postsWUpdatedPost)
-        setPosts(postsWUpdatedPost)
-    } catch(error){
-        console.log('could not update post', error)
+  const updatePost = async (postId, updateType) => {
+    try {
+      const updatedPost:any = await axios.get(`/post/updatedPost/${postId}/${user.id}`);
+      console.log('updated post obj', updatedPost);
+      const postIndex = posts.findIndex((post) => post.id === updatedPost.data.id);
+      updatedPost.data.rank = posts[postIndex].rank;
+      //console.log('post index', updatePostIndex)
+      const postsWUpdatedPost = posts.toSpliced(postIndex, 1, updatedPost.data );
+      console.log(postsWUpdatedPost);
+      setPosts(postsWUpdatedPost);
+    } catch (error) {
+      console.log('could not update post', error);
     }
-}
-useEffect(() => {
-  getPosts('explore', 'none')
-}, [])
+  };
+  useEffect(() => {
+    getPosts('explore', 'none');
+  }, []);
   return (
     <div>
     <div className="centered">
 <PostCard audioContext={audioContext}/>
     </div>
-    <h2 style={{color: 'white'}}>{title}</h2>
+    <h2 style={{ color: 'white' }}>{title}</h2>
     {feed === 'following' ?
     <div>
         <button
@@ -68,7 +68,7 @@ useEffect(() => {
         onClick={() => getPosts('explore', 'none')}
         >Explore</button>
     </div>
-    : <div>
+      : <div>
       <button
         type="button"
         className="btn btn-light"
@@ -104,8 +104,8 @@ useEffect(() => {
       )) : <div>Loading...</div>}
     </div>
 
-  )
-}
+  );
+};
 export default Feed;
 
 /**

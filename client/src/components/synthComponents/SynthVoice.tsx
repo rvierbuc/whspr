@@ -28,19 +28,19 @@ interface Constraints {
 }
 
 const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, alien, defaultSettings }: Props) => {
-  const [isRecording, setIsRecording] = useState(false)
+  const [isRecording, setIsRecording] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const audio = useRef<AudioBufferSourceNode | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const mediaRecorder = useRef<MediaRecorder | null>(null)
+  const mediaRecorder = useRef<MediaRecorder | null>(null);
   const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
   const [ filter, setFilter ] = useState(defaultSettings);
   const [ addSynth, setAddSynth ] = useState(false);
-  const [bgColor, setBgColor] = useState('secondary')
+  const [bgColor, setBgColor] = useState('secondary');
 
   useEffect(() => {
     setAddSynth(false);
-  },[])
+  }, []);
 
   const lowpass: BiquadFilterNode = audioContext.createBiquadFilter();
   lowpass.frequency.value = filter.lowPassFrequency;
@@ -53,10 +53,10 @@ const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, 
   const constraints: Constraints = {
     audio: {
       noiseSuppression: true,
-      echoCancellation: true
+      echoCancellation: true,
     },
-    video: false
-  }
+    video: false,
+  };
 
   
   const startRecording = async () => {
@@ -72,21 +72,21 @@ const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, 
         poly.triggerAttack(['C#4', 'F4', 'G#4'], 3);
       }
       if (filter !== defaultSettings) {
-        let options: any = Object.values(filter).slice(4)
-        source.connect(lowpass)
-        lowpass.connect(highpass)
-        highpass.connect(options[0])
-        options[0].connect(options[1])
-        options[1].connect(options[2])
+        const options: any = Object.values(filter).slice(4);
+        source.connect(lowpass);
+        lowpass.connect(highpass);
+        highpass.connect(options[0]);
+        options[0].connect(options[1]);
+        options[1].connect(options[2]);
         options[2].connect(destination);
-      } else { source.connect(destination) }
+      } else { source.connect(destination); }
       mediaRecorder.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
           setAudioChunks((prevChunks) => [...prevChunks, event.data]);
         }
-      }
+      };
       mediaRecorder.current.onstop = () => {
-        poly.disconnect()
+        poly.disconnect();
       };
       mediaRecorder.current.start();
       setIsRecording(true);
@@ -104,34 +104,34 @@ const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, 
 
   const playAudio = async (): Promise<void> => {
     if ((audioChunks.length === 0) || !audioContext) {
-      console.error('something was null: ', audioChunks.length === 0, !audioContext)
+      console.error('something was null: ', audioChunks.length === 0, !audioContext);
       return;
     }
-    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
-    const arrayBuffer = await audioBlob.arrayBuffer()
+    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    const arrayBuffer = await audioBlob.arrayBuffer();
     audioContext.decodeAudioData(
       arrayBuffer,
       (buffer) => {
         if (!audioContext) {
-          console.error('audio context is null')
-          return
+          console.error('audio context is null');
+          return;
         }
-        audio.current = audioContext.createBufferSource()
-        audio.current.buffer = buffer
+        audio.current = audioContext.createBufferSource();
+        audio.current.buffer = buffer;
         audio.current.connect(audioContext.destination);
         audio.current.onended = () => {
-          setIsPlaying(false)
-        }
-        audio.current.start()
-        setIsPlaying(true)
+          setIsPlaying(false);
+        };
+        audio.current.start();
+        setIsPlaying(true);
       },
       (error) => {
-        console.error('error playing audio: ', error)
-      }
+        console.error('error playing audio: ', error);
+      },
     ).catch((playError) => {
-      console.error('error playing: ', playError)
-    })
-  }
+      console.error('error playing: ', playError);
+    });
+  };
 
   const stopPlaying = () => {
     if (audio.current) {
@@ -141,10 +141,10 @@ const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, 
   };
 
   const emptyRecording = () => {
-    setAudioChunks([])
+    setAudioChunks([]);
   };
 
-    // POLISHING FOR EACH BUTTON
+  // POLISHING FOR EACH BUTTON
   // const filterSetter = (filter: any) => {
   //   setFilter(filter);
   //   bgColor === 'secondary' ? setBgColor('danger') : setBgColor('secondary');
@@ -162,7 +162,7 @@ const SynthVoice = ({ notes1, sampleSynth, audioContext, userId, robot, wobbly, 
         <Button className="mx-2" variant={bgColor} onClick={() => {
           addSynth === false ? setAddSynth(true) : setAddSynth(false);
           bgColor === 'secondary' ? setBgColor('danger') : setBgColor('secondary');
-          }}>Synth/Voice</Button>
+        }}>Synth/Voice</Button>
       </Stack>
       <Stack direction="horizontal" className="mx-5 mb-3 typeCard">
       <button className="record-button mx-2" onClick={startRecording} disabled={isRecording}><img src={require('../../style/recordbutton.png')} /></button>

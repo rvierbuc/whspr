@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { RecordPost } from './RecordPost'
-import { useLoaderData } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { RecordPost } from './RecordPost';
+import { useLoaderData } from 'react-router-dom';
 import algoliasearch from 'algoliasearch';
 import { InstantSearch, SearchBox, Hits, useSearchBox, Configure } from 'react-instantsearch';
 import { v4 as uuidv4 } from 'uuid';
@@ -16,7 +16,7 @@ const userToken = generateUserToken();
 const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251e4', {
   headers: {
     'X-Algolia-UserToken': userToken,
-  }
+  },
 });
 
 
@@ -31,7 +31,8 @@ const Hit = ({ hit, onSelect }: { hit: any; onSelect: (category: string[] | stri
     >
       {hit.category}
     </article>
-  )};
+  );
+};
 
 const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: string[] | string) => void }) => {  
   const [currentSearch, setCurrentSearch] = useState<string>('');
@@ -40,7 +41,7 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log('working', event.target.value, event);
     setCurrentSearch(event.target.value);
-  }
+  };
   const handleCategorySelection = (category: string) => {
     console.log('handlecategoryselection on click', category);
     const trimmedCategory = category.trim();
@@ -53,18 +54,18 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
       alert('You can only add up to 5 categories!');
     }
     setCurrentSearch('');
-  }
+  };
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // console.log('currentSearch', currentSearch);
     handleCategorySelection(currentSearch);
-  }
+  };
   return (
     <div>
       <InstantSearch 
       searchClient={searchClient} 
       indexName="category_index"
-      initialUiState={{ searchBox: { query: currentSearch }}}
+      initialUiState={{ searchBox: { query: currentSearch } }}
       >
         {/* <SearchBox onInput={handleSearchChange} placeholder={'' || selectedCategory} className='input-control'/> */}
         <form onSubmit={handleSubmit}>
@@ -78,35 +79,35 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
           />
           </form>
           {/* create an input that holds the selected categories */}
-        {currentSearch && <Hits className="cat-hits" hitComponent={(props) => <Hit {...props} onSelect={() => {handleCategorySelection(currentSearch)}} />} />}
-          <input type="text" value={selectedCategories} readOnly={true}  className='input-control' id='category-read-only'/>
+        {currentSearch && <Hits className="cat-hits" hitComponent={(props) => <Hit {...props} onSelect={() => { handleCategorySelection(currentSearch); }} />} />}
+          <input type="text" value={selectedCategories} readOnly={true} className='input-control' id='category-read-only'/>
         <Configure userToken={userToken} />
       </InstantSearch>
     </div>
   );
-}
+};
 
 const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
-  const [postCreated, setPostCreated] = useState(false)
-  const [title, setTitle] = useState('')
-  const [categories, setCategories] = useState<string[]>([])
-  const user = useLoaderData()
+  const [postCreated, setPostCreated] = useState(false);
+  const [title, setTitle] = useState('');
+  const [categories, setCategories] = useState<string[]>([]);
+  const user = useLoaderData();
 
   const openPost = () => {
-    setPostCreated(!postCreated)
-  }
+    setPostCreated(!postCreated);
+  };
   const handleCategorySelect = (selectedCategory: string | string[]) => {
     const array = Array.isArray(selectedCategory) ? selectedCategory : [selectedCategory];
     setCategories(array);
     // setCategories(selectedCategory);
-  }
+  };
   return (
     <div>
       <div className="d-flex justify-content-center">
 <button  
       type="button"
       className="btn btn-dark"
-      style={{margin:'15px'}}
+      style={{ margin: '15px' }}
       onClick={openPost}>
         {(!postCreated) ? 'Say something' : 'Nevermind'}
       </button>
@@ -118,7 +119,7 @@ const PostCard = ({ audioContext }: { audioContext: BaseAudioContext }) => {
           maxLength={22}
           placeholder="What's on your mind?"
           value={title} 
-          onChange={(e) => { setTitle(e.target.value) }}
+          onChange={(e) => { setTitle(e.target.value); }}
           className='input-control'
           />
           <CategorySearch onCategorySelect={handleCategorySelect}/>
@@ -134,7 +135,7 @@ openPost={openPost}
 )}
 
   </div>
-  )
-}
+  );
+};
 
-export default PostCard
+export default PostCard;

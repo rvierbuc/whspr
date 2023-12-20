@@ -16,6 +16,6 @@
         "forceConsistentCasingInFileNames": true,
         "noImplicitAny": false,
     },
-    "include": ["./*.ts", "client/src/**/*.tsx", "server/dbmodels.ts"],
+    "include": ["./*.ts", "client/src/**/*.tsx", "server/dbmodels.ts", ".eslintrc.js"],
     "exclude": ["node_modules"]
 }
