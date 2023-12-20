@@ -23,9 +23,9 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost }: 
           setAudioChunks((prevChunks) => [...prevChunks, event.data])
         }
       }
-      mediaRecorder.current.onstop = async () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
-      }
+      // mediaRecorder.current.onstop = async () => {
+      //   const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+      // }
       mediaRecorder.current.start()
       setIsRecording(true)
     } catch (error) {
@@ -95,7 +95,6 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost }: 
       formData.append('audio', audioBlob)
       formData.append('userId', userId)
       formData.append('title', title)
-      // formData.append('category', categories)
       categories.forEach((category, index) => {
         console.log('foreach', category, index);
         formData.append(`category[${index}]`, category)

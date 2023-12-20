@@ -32,12 +32,6 @@ body {
   height: auto;
 }
 
-.presstotalk-img{
-  border: none;
-  width: 50px;
-  height: 50px;
-}
-
 .mt-incont{
   margin-top: 200px;
 }
@@ -91,38 +85,90 @@ body {
     }
 
 
-    .loading-img{
-      max-width: 75px;
-      max-height: 75px;
-      margin:auto
-    }
-
+    ///////////////////////whspr ai
     .centered-whsprAI {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-  .container-whsprAI {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100vh;
+    .container-whsprAI {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100vh;
+    }
+    
+    .canvas-container-whsprAI{
+      margin-top: calc(100vh/3)
+    }
+    
+    .floating-text-whsprAI{
+      position: fixed;
+      top: 100;
+      right: 15px;
+      width: 33%;
+      height: auto;
+      background-color: rgba(128, 128, 128, .2);
+      border-left: 1px solid (128, 128, 128, .4);
+      overflow-y: auto;
+      z-index:1000;
+      padding: 10px;
+      box-shadow: -3px 0px 3px (128, 128, 128, .4);
+    }
+    .text-btn{
+      position: fixed;
+      right: 15px;
+      bottom: 15px;
+      width: 15%;
+      height: 15%;
+      max-width: 50px;
+      max-height: 50px;
+    }
+    .help-btn{
+      margin-left: 15px;
+      margin-top: 15px;
+      width: 3%;
+      height: 3%;
+      max-width: 35px;
+      max-height: 35px;
+    }
+    .modalCustom{
+      position: fixed;
+      top: 175px;
+      left: 60px;
+      width: auto;
+      height: auto;
+      color: rgba(209, 209, 209, 0.6);
+      background-color: rgba(128, 128, 128, .2);
+      border-left: 1px solid (128, 128, 128, .4);
+      overflow-y: auto;
+      z-index:1000;
+      padding: 10px;
+      box-shadow: -3px 0px 3px (128, 128, 128, .4);
+    }
+    .presstotalk-img{
+      border: none;
+      width: 80%;
+      height: 80%;
     }
 
-  .canvas-container-whsprAI{
-    margin-top: calc(100vh/3)
-  }
+    .loading-img{
+      max-width: 25%;
+      max-height: 25%;
+      margin:auto
+    }
 
     .typeCard {
       display: flex;
       justify-content: center;
     }//USER PROFILE
-.user-main {
-  display: flex;
-  justify-content:center;
-  align-items: flex-start;
-  height: 100vh; 
+
+    .user-main {
+      display: flex;
+      justify-content:center;
+      align-items: flex-start;
+      height: 100vh; 
   padding-top: 50px;
 }
 .user-main-card {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import {Modal} from './Modal'
 import axios from 'axios'
 // import {audioContext} from './App'
 
@@ -6,9 +7,10 @@ export const WhsprAI = ({audioContext}) => {
     const [isRecording, setIsRecording] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [text, setText] = useState<string[]>([])
+    const [showText, setShowText] = useState(false);
     const [AIResponse, setAIResponse] = useState<string[]>([])
     const [lengthTracker, setLengthTracker] = useState(0)
-    const [AISpeech, setAISpeech] = useState<Blob | null>(null)
+    const [modalOpen, setModalOpen] = useState(false);
     const [animationInitialized, setAnimationInitialized] = useState(false);
     const canvasRef = useRef(null);
     const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
@@ -36,7 +38,7 @@ export const WhsprAI = ({audioContext}) => {
         }
     };
 
-// browser speech recognition
+// browser speech transcription
     useEffect(() =>{
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
             const recognize = new SpeechRecognition()
@@ -114,13 +116,13 @@ useEffect(() =>{
                 context.shadowColor = 'white'
                 
 
-            let sliceWidth = canvas.width * 1 / bufferLength
+            const sliceWidth = canvas.width * 1 / bufferLength
             let x = 0;
                 
                 context.beginPath();
             for (let i = 0; i < bufferLength; i++){
-                let v = dataArray[i] / 128;
-                let y = v * canvas.height / 2;
+                const v = dataArray[i] / 128;
+                const y = v * canvas.height / 2;
 
                 if(i === 0){
                     context.moveTo(x, y);
@@ -181,9 +183,10 @@ const playAudio = (buffer) => {
 //this voice variable controls which endpoint is used for the tts
 //supported choices are openai, google, browser, elevenlabs
 const VOICE = 'openai'
+//sends user messages as text and gets text message back from open AI
 const getAIResponse = async () =>{
     if (text.length === 0) return
-    let messages = [{ role: "system", content: "You are an old friend named Whisper." }]
+    const messages = [{ role: "system", content: "You are an old friend named Whisper." }]
     const lastFive = arr => arr.length > 5 ? arr.slice(-5) : arr
     const userMessages = lastFive(text);
     const aiMessages = lastFive(AIResponse);
@@ -193,6 +196,7 @@ const getAIResponse = async () =>{
             messages.push({"role": "assistant", "content": aiMessages[i]})
         }
     }
+    //converts AI message to audio (TTS)
     try{
         const resp = await axios.post('/openAIGetResponse', {messages: messages})
         setAIResponse(prevResponses => [...prevResponses, resp.data.response])
@@ -234,6 +238,11 @@ function startUserMedia(){
 audioContext.resume()
 }
 
+//displays the text of the conversation
+function handleSetShowText(){
+    setShowText(!showText)
+}
+
 //sets canvas width to the whole screen
 useEffect(() => {
     if (canvasRef.current) {
@@ -270,6 +279,16 @@ initializeAnimation()
 // const blobUrl = AISpeech ? URL.createObjectURL(AISpeech) : null;
 // blobUrl ? console.log(blobUrl) : null
   return (
+    <div>
+        <img 
+        src={require('../style/help.png')} 
+        className='help-btn' 
+        onClick={() => setModalOpen(!modalOpen)}
+        style={{opacity: modalOpen ? .25 : 1}}
+        />
+        <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+        <p>Press and hold the button to talk to Whisper, our AI chatbot.</p>
+        </Modal>
     <div className='container-whsprAI'>
         <div className="centered-whsprAI">
             <div className="canvas-container-whsprAI">
@@ -287,6 +306,13 @@ initializeAnimation()
                 }} 
                 onMouseUp={() => setIsRecording(false)} 
                 onMouseLeave={() => setIsRecording(false)} 
+                onTouchStart={() => {
+                    setIsRecording(true)
+                    startUserMedia()
+                }} 
+                onTouchEnd={() => setIsRecording(false)} 
+                onTouchCancel={() => setIsRecording(false)}
+                onContextMenu={(e) => e.preventDefault()} 
                 className="btn" 
                 style={{border: "none"}}>
                 {!isRecording 
@@ -299,12 +325,24 @@ initializeAnimation()
             )}
         </div>
 {/* this maps the messages of the user/ai to the page for debugging. */}
-{/* {text.map((item, index) => (
-    <div key={index}>
-                    <div><span className="text-warning">Interlocutor:</span>{" "}<span className="text-success">{item}</span></div>
-                     {AIResponse[index] && <div><span className="text-warning">The AI: </span><span className="text-success">{AIResponse[index]}</span></div>}
+
+
+{(showText && text.length > 0) && <div className='floating-text-whsprAI'>
+{text.map((item, index) => (
+    <div key={index} >
+                    <div><span className="text-warning">You: </span><span className="text-success">{item}</span></div>
+                     {AIResponse[index] && <div><span className="text-warning">Whisper: </span><span className="text-success">{AIResponse[index]}</span></div>}
                 </div>
-            ))} */}
+            ))}
+</div>}
+</div>
+    <img 
+        src={require('../style/posticon.png')} 
+        className='text-btn' 
+        onClick={() => setShowText(!showText)}
+        style={{opacity: showText ? .25 : 1}}
+        />
+
             </div>
   );
 }
