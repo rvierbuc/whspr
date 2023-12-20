@@ -81,7 +81,7 @@ const UserProfile = ({ audioContext }) => {
     getSelectedUserInfo();
   }, []);
   const numberOfPostsPerRow = 3;
-  const rows: object[] = [];
+  const rows: PostAttributes[][] = [];
   for (let i = 0; i < selectedUserPosts.length; i += numberOfPostsPerRow) {
     const row = selectedUserPosts.slice(i, i + numberOfPostsPerRow);
     rows.push(row);
@@ -98,10 +98,9 @@ const UserProfile = ({ audioContext }) => {
           </div>
         </div>
         <div className="grid-post-container">
-          {selectedUserPosts.length > 0 ? (
-            <Row>
-              {selectedUserPosts.map((post) => (
-                // console.log('post in map', post);
+          {rows.map((row, index) => (
+            <Row key={index}>
+              {row.map((post) => (
                 <Col key={post.id}>
                   <div className="grid-post-item">
                     <WaveSurferComponent
@@ -125,9 +124,7 @@ const UserProfile = ({ audioContext }) => {
                 </Col>
               ))}
             </Row>
-          ) : (
-            <p> No Posts Yet!</p>
-          )}
+          ))}
         </div>
       </div>
     </Container>
@@ -135,3 +132,34 @@ const UserProfile = ({ audioContext }) => {
 };
 
 export default UserProfile;
+
+// {selectedUserPosts.length > 0 ? (
+//   <Row>
+//     {selectedUserPosts.map((post) => (
+//       // console.log('post in map', post);
+//       <Col key={post.id}>
+        // <div className="grid-post-item">
+        //   <WaveSurferComponent
+        //     postObj={post}
+        //     audioUrl={post.soundUrl}
+        //     postId={post.id}
+        //     userId={currentUser.id}
+        //     updatePost={updatePost}
+        //     getPosts={getSelectedUserInfo}
+        //     onProfile={onProfile}
+        //     setOnProfile={setOnProfile}
+        //   />
+        //   <Post
+        //     key={post.id}
+        //     postObj={post}
+        //     audioContext={audioContext}
+        //     user={currentUser}
+        //     updatePost={updatePost}
+        //   />
+        // </div>;
+//       </Col>
+//     ))}
+//   </Row>
+// ) : (
+//   <p> No Posts Yet!</p>
+// )}
