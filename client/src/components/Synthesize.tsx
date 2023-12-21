@@ -25,18 +25,18 @@ const Synthesize = ({audioContext}: Props): React.JSX.Element => {
   const user: any = useLoaderData();
   const userId = user.id
   const oscillator: OscillatorNode = audioContext.createOscillator();
-  const filter: BiquadFilterNode = audioContext.createBiquadFilter();
+  const finalFilter: BiquadFilterNode = audioContext.createBiquadFilter();
   const mediaDest: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
   const finalDest: AudioDestinationNode = audioContext.destination;
 
   // connect the workflow of audioNodes
-  oscillator.connect(filter);
-  filter.connect(finalDest);
-  filter.connect(mediaDest);
+  oscillator.connect(finalFilter);
+  finalFilter.connect(finalDest);
+  finalFilter.connect(mediaDest);
 
   return (
     <Container className="p-3 rounded w-75 waveBG" style={{backgroundColor: 'rgb(166, 197, 255)'}}>
-      <SynthDaw audioContext={audioContext} oscillator={oscillator} filter={filter} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />
+      <SynthDaw audioContext={audioContext} oscillator={oscillator} mediaDest={mediaDest} userId={userId} />
     </Container>
   );
 };
