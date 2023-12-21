@@ -1,16 +1,16 @@
-import React, { useState } from 'react'
-import { RecordConch } from './RecordConch'
-import { useLoaderData } from 'react-router-dom'
+import React, { useState } from 'react';
+import { RecordConch } from './RecordConch';
+import { useLoaderData } from 'react-router-dom';
 
 const PostConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
-  const [postCreated, setPostCreated] = useState(false)
-  const [title, setTitle] = useState('')
-  const [category, setCategory] = useState('')
-  const user = useLoaderData()
+  const [postCreated, setPostCreated] = useState(false);
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const user = useLoaderData();
 
   const openPost = () => {
-    setPostCreated(!postCreated)
-  }
+    setPostCreated(!postCreated);
+  };
   
   return (
     <div>
@@ -18,7 +18,7 @@ const PostConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
 <button  
       type="button"
       className="btn btn-dark"
-      style={{margin:'15px'}}
+      style={{ margin: '15px' }}
       onClick={openPost}>
         Write Post
       </button>
@@ -30,7 +30,7 @@ const PostConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
           maxLength={22}
           placeholder="What's on your mind?"
           value={title} 
-          onChange={(e) => { setTitle(e.target.value) }}
+          onChange={(e) => { setTitle(e.target.value); }}
           className='input-control'
           />
           </div>
@@ -45,7 +45,7 @@ openPost={openPost}
 )}
 
   </div>
-  )
-}
+  );
+};
 
-export default PostConch
+export default PostConch;

@@ -4,17 +4,17 @@ import NavBar from './NavBar';
 import { Navigate, Outlet } from 'react-router-dom';
 
 const PrivateRoutes = () => {
-    const auth = true;
-    return (
+  const auth = true;
+  return (
         <div>
             <NavBar />
             {auth ? (
                 <Outlet />
                 // <div>ok</div>
-                ) :
+            ) :
             <Navigate to="/"/>}
         </div>
-    )
-}
+  );
+};
 
 export default PrivateRoutes;

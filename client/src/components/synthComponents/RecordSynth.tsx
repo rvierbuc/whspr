@@ -41,7 +41,7 @@ const RecordSynth = ({ setIsRecording, setSynthAudioChunks, audioContext, finalD
         recorder.current.stop();
         setIsRecording(false);
       }
-    } catch(error) {
+    } catch (error) {
       console.error('Could not stop recording', error);
     }
   };

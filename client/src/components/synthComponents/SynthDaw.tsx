@@ -14,7 +14,7 @@ interface Props {
   userId: number
 }
 
-const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userId}: Props): React.JSX.Element => {
+const SynthDaw = ({ audioContext, finalDest, oscillator, mediaDest, filter, userId }: Props): React.JSX.Element => {
   const [contextState, setContextState] = useState('');
   const [title, setTitle] = useState('');
   const [addFilter, setAddFilter ] = useState(false);
@@ -41,7 +41,7 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userI
   const [oscSettings, setOscSettings] = useState({
     frequency: oscillator.frequency.value,
     detune: oscillator.detune.value,
-    type: oscillator.type
+    type: oscillator.type,
   });
 
   const start: () => void = () => {
@@ -60,15 +60,15 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userI
   };
 
   const changeType: (e: any) => void = (e) => {
-    let { id } = e.target;
-    setOscSettings({...oscSettings, type: id});
+    const { id } = e.target;
+    setOscSettings({ ...oscSettings, type: id });
     oscillator.type = id;
   };
 
   const changeValue = (e: any) => {
-    let value: number = e.target.value;
-    let id: string = e.target.id;
-    setOscSettings({...oscSettings, [id]: Number(value)})
+    const value: number = e.target.value;
+    const id: string = e.target.id;
+    setOscSettings({ ...oscSettings, [id]: Number(value) });
     if (id === 'frequency') {
       oscillator.frequency.value = Number(value);
     } else if (id === 'detune') {
@@ -88,6 +88,6 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userI
       </Stack>
     </Container>
   );
-}
+};
 
 export default SynthDaw;

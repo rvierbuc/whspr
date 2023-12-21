@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Navigate, useNavigate, Outlet } from 'react-router-dom';
-import Nav  from 'react-bootstrap/Nav';
+import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -15,10 +15,10 @@ const NavBar = () => {
   const navigate = useNavigate();
   const handleNavigation = (path: string) => {
     navigate(path);
-  }
+  };
   const toggleMenu = () => {
     setShowMenu(!showMenu);
-  }
+  };
 
   return (
     <div>
@@ -32,7 +32,7 @@ const NavBar = () => {
             className="d-inline-block align-top"
             alt="whspr logo"
             onClick={() => toggleMenu()}
-            style={{cursor: 'pointer'}}
+            style={{ cursor: 'pointer' }}
             />
             {' '}
             </Navbar.Brand>
