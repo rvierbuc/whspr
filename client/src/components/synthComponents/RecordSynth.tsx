@@ -39,9 +39,9 @@ const RecordSynth = ({ setIsRecording, setSynthAudioChunks, mediaDest, start, st
   };
 
   return (
-    <Container className="text-center my-3 pb-3">
+    <Container className="text-center p-3 rounded">
       <h3 className="mb-2">Record the synth</h3>
-      <Stack direction="horizontal" gap={4} className="mx-5 mb-3 typeCard">
+      <Stack direction="horizontal" gap={4} className="mx-5 typeCard">
         <Button className="btn-secondary" variant="secondary" onClick={start}>▶️</Button>
         <Button className="btn-secondary" onClick={stop}>⏸️</Button>
         <Button className="btn-secondary" onClick={startRecording}>🔴</Button>

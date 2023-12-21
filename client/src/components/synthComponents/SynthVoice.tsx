@@ -153,7 +153,7 @@ const SynthVoice = ({ synthAudioChunks, isRecording, setIsRecording, setRootAudi
   // };
 
   return (
-    <Container className="text-center my-3 pb-1">
+    <Container className="text-center my-3 pb-1 synthRecorder rounded">
       <h5>Try out our new voice filters!</h5>
       <Stack direction="horizontal" className="mx-5 mb-3 typeCard">
         <Button className="mx-2 btn-secondary" disabled={filter === defaultSettings} onClick={() => setFilter(defaultSettings)}>Default</Button>
@@ -166,10 +166,10 @@ const SynthVoice = ({ synthAudioChunks, isRecording, setIsRecording, setRootAudi
           }}>Synth/Voice</Button>
       </Stack>
       <Stack direction="horizontal" className="mx-5 mb-3 typeCard">
-      <button className="record-button mx-2" onClick={startRecording} disabled={isRecording}><img src={require('../../style/recordbutton.png')} /></button>
-      <button className="play-button mx-2" onClick={playAudio} disabled={isPlaying || audioChunks.length === 0 }><img src={require('../../style/playbutton.png')} /></button>
-      <button className="stop-button mx-2" onClick={isRecording ? stopRecording : stopPlaying} disabled={!isRecording && !isPlaying}><img src={require('../../style/stopbutton.png')} /></button>
-      <button className="delete-button mx-2" onClick={emptyRecording} disabled={audioChunks.length === 0 || isRecording}><img src={require('../../style/deletebutton.png')} /></button>
+        {/* <Button className="record-button mx-2" onClick={startRecording} disabled={isRecording}><img src={require('../../style/recordbutton.png')} /></Button>
+        <Button className="play-button mx-2" onClick={playAudio} disabled={isPlaying || audioChunks.length === 0 }><img src={require('../../style/playbutton.png')} /></Button>
+        <Button className="stop-button mx-2" onClick={isRecording ? stopRecording : stopPlaying} disabled={!isRecording && !isPlaying}><img src={require('../../style/stopbutton.png')} /></Button>
+        <Button className="delete-button mx-2" onClick={emptyRecording} disabled={audioChunks.length === 0 || isRecording}><img src={require('../../style/deletebutton.png')} /></Button> */}
       </Stack>
     </Container>
   );

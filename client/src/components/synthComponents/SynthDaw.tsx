@@ -23,20 +23,13 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userI
   const [synthAudioChunks, setSynthAudioChunks] = useState<Blob[]>([]);
   const [isRecording, setIsRecording] = useState<boolean>(false);
 
-  console.log('SynthDaw', isRecording);
-
   useEffect(() => {
     setAddFilter(false);
     setAddSynth(false);
   }, [])
 
-  const toggleFilter = () => {
-    addFilter === false ? setAddFilter(true) : setAddFilter(false);
-  };
-
-  const toggleSynth = () => {
-    addSynth === false ? setAddSynth(true) : setAddSynth(false);
-  };
+  const toggleFilter = () => addFilter === false ? setAddFilter(true) : setAddFilter(false);
+  const toggleSynth = () => addSynth === false ? setAddSynth(true) : setAddSynth(false);
 
   const [oscSettings, setOscSettings] = useState({
     frequency: oscillator.frequency.value,
@@ -77,14 +70,20 @@ const SynthDaw = ({audioContext, finalDest, oscillator, mediaDest, filter, userI
   };
 
   return (
-    <Container className="w-50 rounded text-white text-center">
+    <Container className="w-75 rounded text-white text-center">
       <PostSynth isRecording={isRecording} synthAudioChunks={synthAudioChunks} audioChunks={audioChunks} userId={userId} />
-      <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleFilter}>Make a post</button>
-      <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleSynth}>Add a synth</button>
-      <Stack>
+      <Stack className="w-50 synthRecorder mx-auto rounded" style={{display: 'd-flex', justifyContent: 'center'}}>
+        <div>
+          <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleFilter}>Filters</button>
+          <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleSynth}>Synth</button>
+        </div>
+      </Stack>
+      <Stack direction="vertical">
         {addFilter === true && <Filters synthAudioChunks={synthAudioChunks} isRecording={isRecording} setIsRecording={setIsRecording} setAudioChunks={setAudioChunks} title={title} audioContext={audioContext} />}
-        {addSynth === true && <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />}
-        {addSynth === true && <RecordSynth setIsRecording={setIsRecording} setSynthAudioChunks={setSynthAudioChunks} stop={stop} start={start} mediaDest={mediaDest} />}
+        <Container className="synthRecorder rounded mt-3">
+          {addSynth === true && <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />}
+          {addSynth === true && <RecordSynth setIsRecording={setIsRecording} setSynthAudioChunks={setSynthAudioChunks} stop={stop} start={start} mediaDest={mediaDest} />}
+        </Container>
       </Stack>
     </Container>
   );

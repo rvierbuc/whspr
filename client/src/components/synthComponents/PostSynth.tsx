@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Container, Stack, Button } from 'react-bootstrap';
 
 interface Props {
   userId: any
@@ -45,20 +46,26 @@ const PostSynth = ({ isRecording, synthAudioChunks, userId, audioChunks}: Props)
   }
 
   return (
-    <div className="d-flex justify-content-center mt-5">
-      <input type="text"
-      maxLength={22}
-      placeholder="What's on your mind?"
-      value={title}
-      onChange={(e) => { setTitle(e.target.value) }}
-      className='input-control text-white'
-      />
-      <button
-        className="post-button m-2"
-        onClick={saveAudioToGoogleCloud}
-        disabled={isRecording}
-      ><img src={require('../../style/postbutton.png')} /></button>
-    </div>
+    <Container className="d-flex justify-content-center my-3 pt-3 synthRecorder rounded w-75">
+      <Stack direction="vertical">
+        <div>
+          <input type="text"
+          maxLength={25}
+          placeholder="What's on your mind?"
+          value={title}
+          onChange={(e) => { setTitle(e.target.value) }}
+          className='input-control text-white'
+          />
+        </div>
+        <div>
+          <button className="record-button mx-2" disabled={isRecording}><img src={require('../../style/recordbutton.png')} /></button>
+          <button className="play-button mx-2" disabled={audioChunks.length === 0 }><img src={require('../../style/playbutton.png')} /></button>
+          <button className="stop-button mx-2"  ><img src={require('../../style/stopbutton.png')} /></button>
+          <button className="delete-button mx-2" disabled={audioChunks.length === 0 || isRecording}><img src={require('../../style/deletebutton.png')} /></button>
+          <button className="post-button m-2" onClick={saveAudioToGoogleCloud} disabled={isRecording} ><img src={require('../../style/postbutton.png')} /></button>
+        </div>
+      </Stack>
+    </Container>
   );
 };
 
