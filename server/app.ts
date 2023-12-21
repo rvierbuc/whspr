@@ -12,7 +12,7 @@ import OpenAI from 'openai'
 import ElevenLabs from 'elevenlabs-node'
 import cors from 'cors'
 import http from 'http'
-import {Server, Socket} from 'socket.io'
+// import {Server, Socket} from 'socket.io'
 import {ExpressPeerServer} from 'peer'
 import dotenv from 'dotenv'
 import fs from 'fs'
@@ -41,7 +41,7 @@ const upload = multer({storage: storage})
 
 
 const postRoutes = require('./routes/postRoutes')
-import { Sound, Post, User } from './dbmodels'
+import { Sound, Post, User, AIMessage } from './dbmodels'
 
 
 const app = express()
@@ -69,7 +69,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 const server = http.createServer(app)
-const io = new Server(server)
+// const io = new Server(server)
 // const peerServer = ExpressPeerServer(server, { path: '/peerjs'})
 
 app.use(cors(corsOptions))
@@ -224,25 +224,25 @@ app.post('/createPostRecord', async(req, res) =>{
   }
 });
 
-io.on('connection', (socket) => {
-  console.log('User connected');
+// io.on('connection', (socket) => {
+//   console.log('User connected');
   
-  socket.on('join-channel', (channelName, uid) => {
-    socket.join(channelName);
-    io.to(channelName).emit('user-joined', uid);
-  });
+//   socket.on('join-channel', (channelName, uid) => {
+//     socket.join(channelName);
+//     io.to(channelName).emit('user-joined', uid);
+//   });
   
-  socket.on('leave-channel', () => {
-    const rooms = Object.keys(socket.rooms);
-    rooms.forEach((room) => {
-      socket.leave(room);
-    });
-  });
+//   socket.on('leave-channel', () => {
+//     const rooms = Object.keys(socket.rooms);
+//     rooms.forEach((room) => {
+//       socket.leave(room);
+//     });
+//   });
   
-  socket.on('disconnect', () => {
-    console.log('User disconnected');
-  });
-});
+//   socket.on('disconnect', () => {
+//     console.log('User disconnected');
+//   });
+// });
 
 const speech = new textToSpeech.TextToSpeechClient({
   keyFilename: './key.json',
@@ -290,6 +290,50 @@ app.post('/text-to-speech-elevenlabs', async(req, res) =>{
   }catch(error){
     console.error('error in text to speech: ', error)
     res.status(500).send('Error synthesizing speech from open AI')
+  }
+})
+app.post('/createRecordsAIMessages', async(req, res) =>{
+  const {newUserMessage, newAIMessage, userId} = req.body 
+  try{
+    const newAImessageRecord = await AIMessage.create({
+      userId: userId,
+      message: newUserMessage,
+      role: 'assistant'
+    })
+    const newUserMessageRecord = await AIMessage.create({
+      userId: userId,
+      message: newAIMessage,
+      role: 'user'
+    })
+    res.status(200).send({user: newUserMessageRecord, ai: newAImessageRecord})
+  }catch(error){
+    console.error('error in AIMessage record creation: ', error)
+    res.status(500).send('Error creating record in AIMessages')
+  }
+})
+
+app.get('/retrieveRecordsAIMessages', async(req, res) =>{
+  const {userId, nMessages} = req.query
+  try{
+    if(typeof userId === 'string' && typeof nMessages === 'string'){
+      const nMessagesNumber = parseFloat(nMessages)
+      const userIdNumber = parseFloat(userId)
+      
+      const latestAIMessages = await AIMessage.findAll({
+        where: {userId: userIdNumber, role: 'assistant'},
+        limit: nMessagesNumber,
+        order: [['createdAt', 'DESC']]
+      })
+      const latestUserMessages = await AIMessage.findAll({
+        where: {userId: userIdNumber, role: 'user'},
+        limit: nMessagesNumber,
+        order: [['createdAt', 'DESC']]
+      })
+      res.status(200).send({latestAIMessages: latestAIMessages, latestUserMessages: latestUserMessages})
+    }
+  }catch(error){
+    console.error('error in AIMessage retrieval: ', error)
+    res.status(500).send('Error retrieving record in AIMessages')
   }
 })
 

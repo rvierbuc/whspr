@@ -178,6 +178,19 @@ export const Stat = db.define('Stat', {
     type: DataTypes.STRING
   }
 })
+
+export const AIMessage = db.define('AIMessage', {
+  userId: {
+    type: DataTypes.INTEGER
+  },
+  role: {
+    type: DataTypes.STRING
+  },
+  message: {
+    type: DataTypes.TEXT
+  }
+})
+
 // defines table relations
 User.hasMany(MagicConch, { foreignKey: 'sendingUserId'})
 MagicConch.belongsTo(User, { foreignKey: 'sendingUserId' })

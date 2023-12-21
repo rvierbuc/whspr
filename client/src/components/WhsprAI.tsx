@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import {Modal} from './Modal'
 import axios from 'axios'
+import { useLoaderData } from 'react-router-dom';
 // import {audioContext} from './App'
 
 export const WhsprAI = ({audioContext}) => {
@@ -18,14 +19,36 @@ export const WhsprAI = ({audioContext}) => {
     const frameRef = useRef<number | null>(null);
     const analyserRef = useRef<AnalyserNode|null>(null);
     const mediaStreamRef = useRef<MediaStream | null>(null);
-
+    // const user = useLoaderData()
+    // const userId = parseFloat(user.id);
+    const userId = 1
+    //this sets the number of messages that will be retrieved from the database and sent in the conversation to the ai
+    const nMessages = 5
 //checks if the user's device is a phone
     useEffect(() =>{
-        
         if('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0){
             setIsPhone(true);
+            console.log('is phone')
         }
     }, []);
+
+//gets past messages from the db
+useEffect(()=>{
+    const getPastMessages = async () => {
+        try{
+            const response = await axios.get('/retrieveRecordsAIMessages', {params: {userId: userId, nMessages: nMessages}})
+            const {latestUserMessages, latestAIMessages} = response.data;
+            const userMessages = latestUserMessages.map((record) => record.message)
+            const AIMessages = latestAIMessages.map((record) => record.message)
+            setText(userMessages)
+            setAIResponse(AIMessages)
+            setLengthTracker(userMessages.length)
+            console.log('setmessages')
+        }catch(error){
+            console.error('error getting past messages: ', error)}
+    }
+    getPastMessages();
+}, [])
 
 //sets up an analyser for the computer's speaker audio (when AI is talking)
     const setupAnalyser = (audio) => {
@@ -194,11 +217,11 @@ const playAudio = (buffer) => {
 const VOICE = 'openai'
 //sends user messages as text and gets text message back from open AI
 const getAIResponse = async () =>{
-    if (text.length === 0) return
-    const messages = [{ role: "system", content: "You are an old friend named Whisper." }]
-    const lastFive = arr => arr.length > 5 ? arr.slice(-5) : arr
-    const userMessages = lastFive(text);
-    const aiMessages = lastFive(AIResponse);
+    if (text.length === lengthTracker) return
+    const messages = [{ role: "system", content: "You are an my helpful friend Whisper." }]
+    const lastNMessages = arr => arr.length > nMessages ? arr.slice(-nMessages) : arr
+    const userMessages = lastNMessages(text);
+    const aiMessages = lastNMessages(AIResponse);
     for(let i = 0; i < userMessages.length; i++){
         messages.push({"role": "user", "content": `Respond using 100 completion_tokens or less: ${userMessages[i]}`})
         if(aiMessages[i]){
@@ -216,7 +239,11 @@ const getAIResponse = async () =>{
             const spokenResponse = await axios.post(`/text-to-speech-${VOICE}`, {text: resp.data.response}, { responseType: 'arraybuffer' })
             playAudio(spokenResponse.data)
             }
-            setIsLoading(false)
+            try{
+                const recordsCreated = await axios.post('/createRecordsAIMessages', {newUserMessage: text[text.length-1], newAIMessage: resp.data.response, userId: userId})
+                console.log('records created:', recordsCreated)
+                setIsLoading(false)
+            }catch(error){console.error("Error creating records: ", error)}
         }catch (error){
         console.error("Error getting response from AI in getAIResponse: ", error)
     }
@@ -242,6 +269,7 @@ useEffect(() =>{
 //starts the audio context
 function startUserMedia(){
    if(!audioContext){
+    console.log("new audio for some reason")
     audioContext = new AudioContext;
 }
 audioContext.resume()
@@ -284,9 +312,14 @@ useEffect(() => {
 initializeAnimation()
   }, [animationInitialized]);
 
+const handlePressToTalkPress = () =>{
+    setIsRecording(true); 
+}
+const handlePressToTalkRelease = () =>{
+    setIsRecording(false)
+}
 
-// const blobUrl = AISpeech ? URL.createObjectURL(AISpeech) : null;
-// blobUrl ? console.log(blobUrl) : null
+
   return (
     <div>
         <img 
@@ -309,12 +342,12 @@ initializeAnimation()
             ? (<img src={require('../style/loading.gif')} 
             className="loading-img"></img>) 
             : (<button 
-                onMouseDown={!isPhone ? () => {setIsRecording(true); startUserMedia();} : undefined}
-                onMouseUp={!isPhone ? () => setIsRecording(false) : undefined} 
-                onMouseLeave={!isPhone ? () => setIsRecording(false) : undefined} 
-                onTouchStart={isPhone ? () => {setIsRecording(true); startUserMedia();} : undefined} 
-                onTouchEnd={isPhone ? () => setIsRecording(false) : undefined}
-                onTouchCancel={isPhone ? () => setIsRecording(false) : undefined} 
+                onMouseDown={!isPhone ? () => {startUserMedia(); handlePressToTalkPress()} : undefined}
+                onMouseUp={!isPhone ? handlePressToTalkRelease : undefined} 
+                onMouseLeave={!isPhone ? handlePressToTalkRelease : undefined} 
+                onTouchStart={isPhone ? () => {startUserMedia(); handlePressToTalkPress()} : undefined}
+                onTouchEnd={isPhone ? handlePressToTalkRelease : undefined}
+                onTouchCancel={isPhone ? handlePressToTalkRelease : undefined} 
                 onContextMenu={(e) => e.preventDefault()} 
                 className="btn" 
                 style={{border: "none"}}>
@@ -339,7 +372,7 @@ initializeAnimation()
     <img 
         src={require('../style/posticon.png')} 
         className='text-btn' 
-        onClick={() => setShowText(!showText)}
+        onClick={handleSetShowText}
         style={{opacity: showText ? .25 : 1}}
         />
 
