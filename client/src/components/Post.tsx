@@ -86,7 +86,7 @@ useEffect(() => {
        {/* {postObj.likeCount ? <p style={{marginLeft: '3%', fontSize:'x-large'}}>{`${postObj.likeCount} likes`}</p> : <p></p>} */}
         </div>}
       </div>
-      <div style={{backgroundColor:'lightgrey', borderRadius:'40px', margin: '16px', display: 'flex', flexDirection: 'column', alignContent:'center'}}>
+      <div id="header" style={{borderRadius:'40px', margin: '16px', display: 'flex', flexDirection: 'column', alignContent:'center'}}>
       <h3 style={{marginLeft: '55px', marginTop:'20px'}}>Record Your Comment</h3>
          <RecordComment
          audioContext={audioContext}

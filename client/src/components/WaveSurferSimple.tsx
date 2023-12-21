@@ -11,7 +11,7 @@ dayjs.extend(relativeTime);
 interface WaveSurferProps {
   audioUrl: string;
   postId: number;
-  audioContext: any;
+  audioContext: AudioContext;
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
@@ -22,8 +22,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [wave, setWave] = useState<WaveSurfer | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  //const [decodedData, setDecodedData] = useState<any>()
-  // const { audioUrl, postId } = props;
+
   const containerId = `waveform-${postId || ""}-comment`;
   const createSoundWaves = () => {
     let regions: RegionsPlugin;
@@ -60,24 +59,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
     });
     wavesurfer.on("finish", async () => {
       setIsPlaying(false);
-      //console.log(userId)
-      // try {
-      //     const addListen = await axios.post('/post/listen', {userId, postId})
-      //     const updateListenCount = await axios.put('/post/updateCount', {column: 'listenCount', type: 'increment', id: postId})
-      //     await updatePost(postId, userId)
-      //     console.log('complete', updateListenCount, addListen)
-      // }catch(error){
-      //     console.error('on audio finish error', error)
-      // }
     });
-    // wavesurfer.on('decode', () => { THIS CODE WORKS AND IS LEFT COMMENTED OUT UNTIL SOMEONE NEEDS TO USE IT,
-    //     regions.addRegion({          IT ADDS A REGIONE TO THE WAVE FORM THAT THE USER CAN DRAG TO HIGHLIGHT SPECIFIC PARTS OF THE WAVE
-    //         start: 0.25,         THIS WILL BE TINKERED WITH A LOT FOR USER CREATED SOUNDS
-    //         end: 0.5,
-    //         drag: true,
-    //         color: 'hsla(250, 100%, 30%, 0.5)',
-    //     })
-    // })
+ 
     setWave(wavesurfer);
     setDisplay(true);
     console.log("wave created!");

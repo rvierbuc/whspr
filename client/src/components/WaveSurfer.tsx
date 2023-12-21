@@ -17,6 +17,7 @@ interface WaveSurferProps {
   onProfile: boolean;
   setOnProfile: any;
   audioContext: any;
+  feed: string;
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
@@ -29,12 +30,13 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   onProfile,
   setOnProfile,
   audioContext,
+  feed
 }) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [decodedData, setDecodedData] = useState<any>();
-  const [following, setFollowing] = useState<boolean>(false)
+  const [following, setFollowing] = useState<boolean> (false)
   // const { audioUrl, postId } = props;
   const containerId = `waveform-${postId || ""}`;
 
@@ -89,7 +91,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       // barGap: 2,
       interact: true,
       container: `#${containerId}`,
-      waveColor: "rgb(0, 255, 0)",
+      waveColor: "rgb(166, 197, 255)",
       progressColor: "rgb(0, 0, 255)",
       url: audioUrl,
       width: "auto",
@@ -140,7 +142,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
 
   useEffect(() => {
     createSoundWaves();
-    isFollowing();
+    isFollowing()
   }, [audioUrl]);
   return (
     <div
@@ -160,7 +162,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
               {onProfile ? (
                 <a></a>
               ) : (
-                <div className="card-header d-flex flex-row align-items-center justify-content-start">
+                <div className="card-header d-flex flex-row align-items-center justify-content-start" id="header">
                   <img
                     src={postObj.user.profileImgUrl}
                     className="rounded-circle"
@@ -171,17 +173,18 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                       objectFit: "scale-down",
                       borderStyle: "solid",
                       borderWidth: "medium",
+                      borderColor:'#3c3556'
                     }}
                   />
                   <a
                     href={`profile/${postObj.user.id}`}
-                    className="p-2 card-link"
-                    style={{ fontSize: "xx-large" }}
+                    style={{ fontSize: "xx-large", color: '#3c3556' }}
                     id="feed-username"
                   >
                     {postObj.user.username}
                   </a>
-                  {following
+                  { feed === 'explore' ?
+                  following 
                   ? <button
                     className="p-2 btn btn-danger"
                     style={{ marginLeft: "auto", marginRight: "2%" }}
@@ -195,14 +198,16 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     onClick={() => startFollowing()}
                   >
                     Follow
-                  </button>}
+                  </button>
+                  : <div></div>}
                 </div>
+                
               )}
               <div
                 className="d-flex flex-row align-items-end justify-content-start"
                 style={{ marginTop: "3%" }}
               >
-                <div style={{ fontSize: "xxx-large", marginLeft: "20px" }}>
+                <div style={{fontSize: "xxx-large", marginLeft: "20px"}}>
                   {postObj.title}
                 </div>
                 <div
