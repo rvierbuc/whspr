@@ -18,9 +18,9 @@ import WaveSurferComponent from "./WaveSurfer";
     } catch(error){
       console.log('client could not like', error)
     }
-  }
-const handleUnlike = async() => {
-  try{
+  };
+  const handleUnlike = async () => {
+    try {
     //const likeObj = postObj.Likes.filter((likeObj) => likeObj.userId == user.id)
     //console.log(likeObj)
     await axios.delete(`/post/unlike/${userId}/${postObj.id}`)
@@ -51,7 +51,7 @@ useEffect(() => {
     <div  >
       <div >
         {postObj.isLiked
-        ?
+          ?
          <div> <button
         type="button"
         className="btn"
@@ -120,7 +120,7 @@ useEffect(() => {
          
         </div>
         </div>
-        : <div id="pastComments" className="accordion-collapse collapse" /> }
+          : <div id="pastComments" className="accordion-collapse collapse" /> }
         </div>
        </div>
      </div>
@@ -128,6 +128,6 @@ useEffect(() => {
       </div> */}
        
     </div>
-  )
-}
-export default Post
+  );
+};
+export default Post;

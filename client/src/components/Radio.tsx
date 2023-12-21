@@ -1,29 +1,29 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import RoomCard from './RoomCard';
 import Room from './Room';
-import axios from 'axios'
+import axios from 'axios';
 
-const Radio = ({setRoomProps}) => {
-    const [radios, setRadios] = useState<any>([])
+const Radio = ({ setRoomProps }) => {
+  const [radios, setRadios] = useState<any>([]);
 
-    useEffect(() => {
-        getRadios()
-    }, [])
+  useEffect(() => {
+    getRadios();
+  }, []);
 
     
 
-    const getRadios = async() => {
-        try {
-            const radios = await axios.get('/radio')
-            console.log('radios', radios.data)
-            setRadios(radios.data)
-        }catch{
-            console.log('couldnt get radios')
-        }
-      }
+  const getRadios = async () => {
+    try {
+      const radios = await axios.get('/radio');
+      console.log('radios', radios.data);
+      setRadios(radios.data);
+    } catch {
+      console.log('couldnt get radios');
+    }
+  };
 
-    return (
+  return (
         <div>
             <button type='button' onClick={()=> {}}>
                 Create Channel
@@ -40,7 +40,7 @@ const Radio = ({setRoomProps}) => {
 
             
         </div>
-    )
-}
+  );
+};
 
 export default Radio;
