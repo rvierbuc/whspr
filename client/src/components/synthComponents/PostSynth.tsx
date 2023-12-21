@@ -26,7 +26,6 @@ const PostSynth = ({ filter, audioContext, isRecording, synthAudioChunks, userId
   const audio = useRef<AudioBufferSourceNode | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const mediaRecorder = useRef<MediaRecorder | null>(null);
-  // const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
   const navigate = useNavigate();
   const handleNavigation = async (path: string) => navigate(path);
 
@@ -102,7 +101,6 @@ const PostSynth = ({ filter, audioContext, isRecording, synthAudioChunks, userId
       (error) => console.error('error playing audio: ', error)
     ).catch((playError) => console.error('error playing: ', playError))
   }
-
 
   // sends audio file to db and cloud
   const saveAudioToGoogleCloud = async () => {

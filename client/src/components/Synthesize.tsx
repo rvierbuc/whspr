@@ -35,7 +35,7 @@ const Synthesize = ({audioContext}: Props): React.JSX.Element => {
   finalFilter.connect(mediaDest);
 
   return (
-    <Container className="p-3 rounded w-75 waveBG" style={{backgroundColor: 'rgb(166, 197, 255)'}}>
+    <Container className="p-3 rounded w-75 waveBG" style={{backgroundColor: 'rgb(96, 96, 96)'}}>
       <SynthDaw audioContext={audioContext} oscillator={oscillator} mediaDest={mediaDest} userId={userId} />
     </Container>
   );
