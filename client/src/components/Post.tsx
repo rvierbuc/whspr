@@ -86,7 +86,7 @@ useEffect(() => {
        {/* {postObj.likeCount ? <p style={{marginLeft: '3%', fontSize:'x-large'}}>{`${postObj.likeCount} likes`}</p> : <p></p>} */}
         </div>}
       </div>
-      <div id="header" style={{borderRadius:'40px', margin: '16px', display: 'flex', flexDirection: 'column', alignContent:'center'}}>
+      <div id="header" style={{margin: '16px', display: 'flex', flexDirection: 'column', alignContent:'center'}}>
       <h3 style={{marginLeft: '55px', marginTop:'20px'}}>Record Your Comment</h3>
          <RecordComment
          audioContext={audioContext}
@@ -125,40 +125,7 @@ useEffect(() => {
               </button> 
             : <div></div>}
           </div>
-         
-      {/* <div className="accordion" id="commentBox">
-        <div className="accordion-item"></div>
-        <h4 className="accordion-header">
-          <button className="accordion-button collapsed"
-           type="button"
-           onClick={() => setCommentInputOpen(() => !commentInputOpen)}
-           >Comment</button>
-        </h4>
-       {commentInputOpen ?
-       <div id="commentInput" className="accordion-collapse show" data-bs-parent="#commentBox">
-       <div className="accordion-body">
-      
-        <div className="accordion" id="previousComments">
-        <div className="accordion-item"></div>
-        <h4 className="accordion-header">
-          <button className="accordion-button collapsed"
-           type="button"
-           onClick={() => setCommentOpen(() => !commentOpen)}
-           >Show Comment</button>
-        </h4>
-        {commentOpen ?
-        <div id="pastComments" className="accordion-collapse show" data-bs-parent="#commentBox"> 
-        <div className="accordion-body">
-         
-        </div>
-        </div>
-          : <div id="pastComments" className="accordion-collapse collapse" /> }
-        </div>
-       </div>
-     </div>
-       : <div id="commentInput" className="accordion-collapse collapse" />}
-      </div> */}
-       
+          
     </div>
   );
 };
