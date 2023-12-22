@@ -21,8 +21,11 @@ export const WhsprAI = ({ audioContext }) => {
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const user = useLoaderData()
   const userId = parseFloat(user.id);
+
+
   //this sets the number of messages that will be retrieved from the database and sent in the conversation to the ai
   const nMessages = 5
+
   //checks if the user's device is a phone
   useEffect(() => {
     if ('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0) {
@@ -71,24 +74,39 @@ export const WhsprAI = ({ audioContext }) => {
 
   // browser speech transcription
   useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-    const recognize = new SpeechRecognition()
-    recognize.continuous = true;
-    recognize.onresult = (e) => {
-      let currentText = ''
-      for (let i = e.resultIndex; i < e.results.length; ++i) {
-        if (e.results[i].isFinal) {
-          currentText = e.results[i][0].transcript;
-          setText(prevText => [...prevText, currentText]);
+    // const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    // const recognize = new SpeechRecognition()
+    // recognize.continuous = true;
+    // recognize.onresult = (e) => {
+    //   let currentText = ''
+    //   for (let i = e.resultIndex; i < e.results.length; ++i) {
+    //     if (e.results[i].isFinal) {
+    //       currentText = e.results[i][0].transcript;
+    //       setText(prevText => [...prevText, currentText]);
 
-        }
-      }
-    };
+    //     }
+    //   }
+    // };
+    let audioChunks = [];
     //starts the recording and hooks it up to the analyzer so mic sounds are also drawn
     const startRecording = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaStreamRef.current = stream;
+        const recorder = new MediaRecorder(stream)
+        audioChunks = []
+
+        recorder.ondataavailable = e => {
+          audioChunks.push(e.data)
+        }
+
+        recorder.onstop = async () => {
+          const blob = new Blob(audioChunks)
+          getTextFromSpeech(blob)
+        }
+
+        recorder.start();
+
         analyserRef.current = audioContext.createAnalyser();
         analyserRef.current.fftSize = 2048;
         const audio = audioContext.createMediaStreamSource(stream);
@@ -97,9 +115,24 @@ export const WhsprAI = ({ audioContext }) => {
       } catch (error) { console.error('error starting recording:', error); }
     };
 
+    const getTextFromSpeech = async (blob) => {
+      const formData = new FormData();
+      formData.append('audio', blob);
+      try {
+        const response = await axios.post('/speechToTextOpenAI', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
+        const currentText = response.data;
+        console.log('currentText', currentText)
+        setText(prevText => [...prevText, currentText]);
+      } catch (error) {
+        console.error('error sending audio to server in getTextFromSpeech', error)
+      }
+    }
+
     //fires start recording and speech recognition when is recording is true
     if (isRecording) {
-      recognize.start();
+      // recognize.start();
       startRecording();
     } else {
       if (sourceRef.current) {
@@ -110,9 +143,9 @@ export const WhsprAI = ({ audioContext }) => {
       }
     }
     return () => {
-      if (recognize) {
-        recognize.stop();
-      }
+      // if (recognize) {
+      //   recognize.stop();
+      // }
       if (mediaStreamRef.current) {
         const tracks = mediaStreamRef.current.getTracks();
         tracks.forEach(track => track.stop());
@@ -318,8 +351,11 @@ export const WhsprAI = ({ audioContext }) => {
   }
 
 
+
+
+  console.log('text in state', text)
   return (
-    <div>
+    <div className='container-whsprAI'>
       <img
         src={require('../style/help.png')}
         className='help-btn'
@@ -329,13 +365,13 @@ export const WhsprAI = ({ audioContext }) => {
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
         <p>Press and hold the button to talk to Whisper, our AI chatbot.</p>
       </Modal>
-      <div className='container-whsprAI'>
+      <div>
         <div className="centered-whsprAI">
           <div className="canvas-container-whsprAI">
             <canvas ref={canvasRef} width="100vh" height="100" className="mt5"></canvas>
           </div>
         </div>
-        <div className="centered-whsprAI">
+        <div className="press-to-talk-container">
           {isLoading
             ? (<img src={require('../style/loading.gif')}
               className="loading-img"></img>)

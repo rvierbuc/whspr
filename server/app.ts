@@ -8,12 +8,15 @@ import * as protos from "@google-cloud/text-to-speech/build/protos/protos"
 // const db = require('./db')
 // const express = require('express')
 // const session = require('express-session')
+import { v4 } from 'uuid';
+import { promisify } from 'util'
 import OpenAI from 'openai'
 import ElevenLabs from 'elevenlabs-node'
 import cors from 'cors'
 import http from 'http'
 import { Server, Socket } from 'socket.io'
 import { ExpressPeerServer } from 'peer'
+import { Readable } from 'stream';
 import dotenv from 'dotenv'
 import fs from 'fs'
 
@@ -340,6 +343,38 @@ app.get('/retrieveRecordsAIMessages', async (req, res) => {
     console.error('error in AIMessage retrieval: ', error)
     res.status(500).send('Error retrieving record in AIMessages')
   }
+})
+
+const writeFileAsync = promisify(fs.writeFile)
+
+app.post('/speechToTextOpenAI', async (req, res) => {
+  console.log(req.body, 'reqbody')
+  if (!req.file) {
+    return res.status(400).send('Empty file in request')
+  }
+  const tempDir = path.join(__dirname, 'temp')
+  fs.mkdirSync(tempDir, { recursive: true })
+  const temp = path.join(__dirname, 'temp', `${v4()}.wav`)
+
+  try {
+    await writeFileAsync(temp, req.file.buffer)
+    const response = await openai.audio.transcriptions.create({
+      model: "whisper-1",
+      file: fs.createReadStream(temp),
+      response_format: "text"
+    })
+    res.send(response)
+    console.log(response)
+    fs.unlink(temp, (err) => {
+      if (err) console.error('Error deleting temp file:', err);
+    });
+  } catch (error) {
+    console.error('error in speechToTextOpenAI', error)
+    fs.unlink(temp, (err) => {
+      if (err) console.error('Error deleting temp file:', err);
+    });
+  }
+
 })
 
 // MAKE SURE THIS IS LAST
