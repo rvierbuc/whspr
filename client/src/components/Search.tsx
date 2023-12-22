@@ -1,34 +1,34 @@
-// import algoliasearch from 'algoliasearch/lite';
-// import React, { useState, useEffect } from 'react';
-// import { InstantSearch, SearchBox, Hits, Configure, useHits, useSearchBox } from 'react-instantsearch';
-// // require('dotenv').config();
-// import { v4 as uuidv4 } from 'uuid';
-// import { Link } from 'react-router-dom';
-// import Form from 'react-bootstrap/Form';
-// import Button from 'react-bootstrap/Button';
-// import InputGroup from 'react-bootstrap/InputGroup';
-// const generateUserToken = (): string => {
-//   return uuidv4();
-// };
+import algoliasearch from 'algoliasearch/lite';
+import React, { useState, useEffect } from 'react';
+import { InstantSearch, SearchBox, Hits, Configure, useHits, useSearchBox } from 'react-instantsearch';
+// require('dotenv').config();
+import { v4 as uuidv4 } from 'uuid';
+import { Link } from 'react-router-dom';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import InputGroup from 'react-bootstrap/InputGroup';
+const generateUserToken = (): string => {
+  return uuidv4();
+};
 
-// // TODO:
-// interface EnvironmentVariables {
-//   APP_ID: string;
-//   ADMIN_API_KEY: string;
-// }
-// interface SearchPropTypes {
-//   children: React.ReactNode;
-// }
+// TODO:
+interface EnvironmentVariables {
+  APP_ID: string;
+  ADMIN_API_KEY: string;
+}
+interface SearchPropTypes {
+  children: React.ReactNode;
+}
 
 
 
-// const userToken = generateUserToken();
+const userToken = generateUserToken();
 
-// const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251e4', {
-//   headers: {
-//     'X-Algolia-UserToken': userToken,
-//   },
-// });
+const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251e4', {
+  headers: {
+    'X-Algolia-UserToken': userToken,
+  },
+});
 
 
 // function Hit({ hit }) {
@@ -42,7 +42,7 @@
 //       <img src={hit.profileImgUrl || ''} alt={hit.name} style={{ width: 'auto', height: '100px', objectFit: 'scale-down' }} />
 //       <Link to={`/protected/profile/${hit.objectID}`}>{hit.username}</Link>
 
-//       <p>{hit.title || ''}</p>
+      <p>{hit.title || ''}</p>
 
 //     </article>
 //   );
