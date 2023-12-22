@@ -21,16 +21,15 @@ const Filters = ({ setFilter, audioContext }: Props) => {
       setFilter(defaultSettings)
     }
     filter === wobbly ? setBgColor2('danger') : setBgColor2('secondary');
-    if (filter === wobbly && bgColor1 === 'danger') {
-      setBgColor1('secondary');
+    if (filter === wobbly && bgColor2 === 'danger') {
+      setBgColor2('secondary');
       setFilter(defaultSettings)
     }
     filter === robot ? setBgColor3('danger') : setBgColor3('secondary');
-    if (filter === robot && bgColor1 === 'danger') {
-      setBgColor1('secondary');
+    if (filter === robot && bgColor3 === 'danger') {
+      setBgColor3('secondary');
       setFilter(defaultSettings)
     }
-    console.log('currentFilter', filter)
   };
 
   const defaultSettings = {

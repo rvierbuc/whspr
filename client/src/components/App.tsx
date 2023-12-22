@@ -30,7 +30,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 // THE MAIN audio context to be used throughout the application (DO NOT ALTER)
-export const audioContext: AudioContext = new AudioContext();
+// const AudioContext = window.AudioContext;
+const audioContext: AudioContext = new AudioContext();
 // algolia initialization
 aa('init', {
   appId: '2580UW5I69',

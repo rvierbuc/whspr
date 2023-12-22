@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Stack, Button } from 'react-bootstrap';
+import { Container, Stack } from 'react-bootstrap';
 import Oscillator from './Oscillator';
 import RecordSynth from './RecordSynth';
 import Filters from './Filters';
@@ -30,11 +30,11 @@ const SynthDaw = ({audioContext, oscillator, mediaDest, userId}: Props): React.J
   useEffect(() => {
     setAddFilter(false);
     setAddSynth(false);
-  }, [])
+  }, []);
 
   // conditional rendering of filters and synth
-  const toggleFilter = () => addFilter === false ? setAddFilter(true) : setAddFilter(false);
-  const toggleSynth = () => addSynth === false ? setAddSynth(true) : setAddSynth(false);
+  const toggleFilter: () => void = () => addFilter === false ? setAddFilter(true) : setAddFilter(false);
+  const toggleSynth: () => void = () => addSynth === false ? setAddSynth(true) : setAddSynth(false);
 
   const [oscSettings, setOscSettings] = useState({
     frequency: oscillator.frequency.value,
@@ -63,7 +63,7 @@ const SynthDaw = ({audioContext, oscillator, mediaDest, userId}: Props): React.J
     oscillator.type = id;
   };
 
-  const changeValue = (e: any) => {
+  const changeValue: (e: any) => void = (e) => {
     const value: number = e.target.value;
     const id: string = e.target.id;
     setOscSettings({ ...oscSettings, [id]: Number(value) });
@@ -77,10 +77,10 @@ const SynthDaw = ({audioContext, oscillator, mediaDest, userId}: Props): React.J
   return (
     <Container className="w-75 rounded text-white text-center">
       <PostSynth filter={filter} audioContext={audioContext} synthAudioChunks={synthAudioChunks} />
-      <Stack className="w-50 synthRecorder mx-auto rounded" style={{display: 'd-flex', justifyContent: 'center'}}>
+      <Stack className="w-50 synthRecorder mx-auto rounded" style={ { display: 'd-flex', justifyContent: 'center' } }>
         <div>
-          <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleFilter}>Filters</button>
-          <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleSynth}>Synth</button>
+          <button type="button" className="btn btn-dark" style={ { margin: '15px', width: '25%' } } onClick={toggleFilter}>Filters</button>
+          <button type="button" className="btn btn-dark" style={ { margin: '15px', width: '25%' } } onClick={toggleSynth}>Synth</button>
         </div>
       </Stack>
       <Stack direction="vertical">

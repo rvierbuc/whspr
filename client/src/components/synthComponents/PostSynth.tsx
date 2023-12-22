@@ -9,7 +9,7 @@ interface Props {
   filter: any
 }
 
-const PostSynth = ({ filter, audioContext, synthAudioChunks}: Props) => {
+const PostSynth = ({ filter, audioContext, synthAudioChunks }: Props) => {
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const navigate = useNavigate();
   const handleNavigation = async (path: string) => navigate(path);

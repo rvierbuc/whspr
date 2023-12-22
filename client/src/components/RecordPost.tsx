@@ -16,35 +16,40 @@ const constraints: Constraints = {
   video: false
 }
 
-export const RecordPost = ({ user, audioContext, title, categories, openPost, filter, synthAudioChunks }: { user: any; audioContext: AudioContext; title: string; categories: string[]; openPost: () => void, filter: any, synthAudioChunks: Blob[] }) => {
+export const RecordPost = ({ user, audioContext, title, categories, openPost, filter, synthAudioChunks }: { user: any; audioContext:AudioContext; title: string; categories: string[]; openPost: () => void, filter: any, synthAudioChunks: Blob[] }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioSource = useRef<AudioBufferSourceNode | null>(null);
   const userId = user.id;
-
+  
   // functionality for recording/filtering the audio
   const lowpass = audioContext.createBiquadFilter();
-  filter.lowPassFrequency ? lowpass.frequency.value = filter.lowPassFrequency : lowpass.frequency.value = 350;
+  if (filter.lowPassFrequency) {
+    lowpass.frequency.value = filter.lowPassFrequency;
+  } else {
+    lowpass.frequency.value = 350;
+  }
   lowpass.type = 'lowpass';
   const highpass = audioContext.createBiquadFilter();
-  filter.highPassFrequency ? highpass.frequency.value = filter.highPassFrequency : highpass.frequency.value = 350;
+  if (filter.highPassFrequency) {
+    highpass.frequency.value = filter.highPassFrequency
+  } else {
+    highpass.frequency.value = 350
+  }
   highpass.type = 'highpass';
-
+  
   const startRecording = async () => {
+    const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
     try {
       setAudioChunks([]);
-      const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
       //changed stream and destination.stream so voice filters can work => still works without the filters (plain voice)
       const stream: MediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-      mediaRecorder.current = new MediaRecorder(destination.stream);
       const source = audioContext.createMediaStreamSource(stream);
-      // if the filter is the default setting
-      if (Object.values(filter).length === 4) {
-        source.connect(destination);
-        // if the filter is one of my self-made filters
-      } else if (Object.values(filter).length > 4) {
+      mediaRecorder.current = new MediaRecorder(destination.stream);
+
+       if (Object.values(filter).length > 4) {
         let options: any = Object.values(filter).slice(4)
         source.connect(lowpass)
         lowpass.connect(highpass)
@@ -52,6 +57,8 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
         options[0].connect(options[1])
         options[1].connect(options[2])
         options[2].connect(destination);
+      } else {
+        source.connect(destination);
       }
       mediaRecorder.current.ondataavailable = (event) => {
         if (event.data.size > 0) {setAudioChunks((prevChunks) => [...prevChunks, event.data])}
@@ -80,9 +87,11 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
     }
     let audioBlob: Blob;
     // either voice or synth audio is played back
-    synthAudioChunks.length > 0
-    ?
-    audioBlob = new Blob(synthAudioChunks, {type: 'audio/wav'}) : audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    if (synthAudioChunks.length > 0) {
+      audioBlob = new Blob(synthAudioChunks, {type: 'audio/wav'})
+    } else {
+      audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    }
     const arrayBuffer = await audioBlob.arrayBuffer();
     audioContext.decodeAudioData(
       arrayBuffer,
