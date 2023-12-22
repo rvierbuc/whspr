@@ -8,7 +8,7 @@ import Col from 'react-bootstrap/Col';
 import Post from './Post';
 import Container from 'react-bootstrap/Container';
 import WaveSurferComponent from './WaveSurfer';
-import { collapseTextChangeRangesAcrossMultipleVersions, getPositionOfLineAndCharacter } from 'typescript';
+import WaveSurferSimple from './WaveSurferSimple';
 interface PostAttributes {
   id: number;
   userId: number;
@@ -48,6 +48,7 @@ interface PostAttributes {
 const UserProfile = ({ audioContext }) => {
   const [selectedUserPosts, setSelectedUserPosts] = useState<PostAttributes[]>([]);
   const [onProfile, setOnProfile] = useState<boolean>(true);
+  const [onUserProfile, setOnUserProfile] = useState<boolean>(true);
   const currentUser: any = useLoaderData();
   
 
@@ -79,6 +80,8 @@ const UserProfile = ({ audioContext }) => {
   // console.log('hey', selectedUserPosts)
   useEffect(() => {
     getSelectedUserInfo();
+    console.log('onProfile in user profile', onProfile);
+    console.log('onUserProfile in user profile', onUserProfile);
   }, []);
   const numberOfPostsPerRow = 3;
   const rows: PostAttributes[][] = [];
@@ -111,14 +114,8 @@ const UserProfile = ({ audioContext }) => {
                       updatePost={updatePost}
                       getPosts={getSelectedUserInfo}
                       onProfile={onProfile}
+                      onUserProfile={onUserProfile}
                       setOnProfile={setOnProfile}
-                    />
-                    <Post
-                      key={post.id}
-                      postObj={post}
-                      audioContext={audioContext}
-                      user={currentUser}
-                      updatePost={updatePost}
                     />
                   </div>
                 </Col>

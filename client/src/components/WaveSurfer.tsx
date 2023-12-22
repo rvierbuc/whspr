@@ -1,11 +1,11 @@
-import WaveSurfer from "wavesurfer.js";
-import RecordPlugin from "wavesurfer.js/dist/plugins/record";
-import RegionsPlugin from "wavesurfer.js/dist/plugins/regions.js";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import Post from "./Post";
+import WaveSurfer from 'wavesurfer.js';
+import RecordPlugin from 'wavesurfer.js/dist/plugins/record';
+import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.js';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import Post from './Post';
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
   audioUrl: string;
@@ -15,6 +15,7 @@ interface WaveSurferProps {
   getPosts: any;
   updatePost: any;
   onProfile: boolean;
+  onUserProfile: boolean;
   setOnProfile: any;
   audioContext: any;
 }
@@ -27,6 +28,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   getPosts,
   updatePost,
   onProfile,
+  onUserProfile,
   setOnProfile,
   audioContext,
 }) => {
@@ -35,7 +37,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [decodedData, setDecodedData] = useState<any>();
   // const { audioUrl, postId } = props;
-  const containerId = `waveform-${postId || ""}`;
+  const containerId = `waveform-${postId || ''}`;
   const createSoundWaves = () => {
     let regions: RegionsPlugin;
     //if there is a wavesurfer already, destroy it
@@ -43,46 +45,78 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       wave.destroy();
     }
     //create the new wave
-    console.log("creating new wave");
+    console.log('creating new wave');
     const wavesurfer = WaveSurfer.create({
       // barWidth: 15,
       // barRadius: 5,
       // barGap: 2,
       interact: true,
       container: `#${containerId}`,
-      waveColor: "rgb(0, 255, 0)",
-      progressColor: "rgb(0, 0, 255)",
+      waveColor: 'rgb(0, 255, 0)',
+      progressColor: 'rgb(0, 0, 255)',
       url: audioUrl,
-      width: "auto",
-      height: 500,
+      width: 'auto',
+      height: onUserProfile ? 200 : 500,
       normalize: true,
+      renderFunction: (channels, ctx) => {
+        const { width, height } = ctx.canvas;
+        const scale = channels[0].length / width;
+        const step = 10;
+  
+        ctx.translate(0, height / 2);
+        ctx.strokeStyle = ctx.fillStyle;
+        ctx.beginPath();
+  
+        for (let i = 0; i < width; i += step * 2) {
+          const index = Math.floor(i * scale);
+          const value = Math.abs(channels[0][index]);
+          let x = i;
+          let y = value * height;
+  
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, y);
+          ctx.arc(x + step / 2, y, step / 2, Math.PI, 0, true);
+          ctx.lineTo(x + step, 0);
+  
+          x = x + step;
+          y = -y;
+  
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, y);
+          ctx.arc(x + step / 2, y, step / 2, Math.PI, 0, false);
+          ctx.lineTo(x + step, 0);
+        }
+  
+        ctx.stroke();
+        ctx.closePath();
+      },
     });
 
     regions = wavesurfer.registerPlugin(RegionsPlugin.create());
 
-    wavesurfer.on("click", () => {
+    wavesurfer.on('click', () => {
       regions.addRegion({
         start: wavesurfer.getCurrentTime(),
         end: wavesurfer.getCurrentTime() + 0.25,
         drag: true,
-        color: "hsla(250, 100%, 30%, 0.5)",
-        id: "test",
+        color: 'hsla(250, 100%, 30%, 0.5)',
+        id: 'test',
       });
     });
-    wavesurfer.on("finish", async () => {
+    wavesurfer.on('finish', async () => {
       setIsPlaying(false);
       //console.log(userId)
       try {
-        const addListen = await axios.post("/post/listen", { userId, postId });
-        const updateListenCount = await axios.put("/post/updateCount", {
-          column: "listenCount",
-          type: "increment",
+        const addListen = await axios.post('/post/listen', { userId, postId });
+        const updateListenCount = await axios.put('/post/updateCount', {
+          column: 'listenCount',
+          type: 'increment',
           id: postId,
         });
         await updatePost(postId, userId);
-        console.log("complete", updateListenCount, addListen);
+        console.log('complete', updateListenCount, addListen);
       } catch (error) {
-        console.error("on audio finish error", error);
+        console.error('on audio finish error', error);
       }
     });
     // wavesurfer.on('decode', () => { THIS CODE WORKS AND IS LEFT COMMENTED OUT UNTIL SOMEONE NEEDS TO USE IT,
@@ -96,17 +130,19 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
     wavesurfer.getDecodedData();
     setWave(wavesurfer);
     setDisplay(true);
-    console.log("wave created!");
+    console.log('wave created!');
   };
 
   useEffect(() => {
     createSoundWaves();
+    console.log('wavesurfer, on profile', onProfile);
+    console.log('wavesurfer, on user profile', onUserProfile);
   }, [audioUrl]);
   return (
     <div
       className="container-fluid"
       id="feed-container"
-      style={{ width: "100%", height: "100%" }}
+      style={{ width: '100%', height: '100%' }}
     >
       <div className="row" id="feed-row">
         <div className="col-sm" id="feed-col-sm" >
@@ -125,25 +161,25 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     src={postObj.user.profileImgUrl}
                     className="rounded-circle"
                     style={{
-                      width: "auto",
-                      height: "70px",
-                      margin: "20px",
-                      objectFit: "scale-down",
-                      borderStyle: "solid",
-                      borderWidth: "medium",
+                      width: 'auto',
+                      height: '70px',
+                      margin: '20px',
+                      objectFit: 'scale-down',
+                      borderStyle: 'solid',
+                      borderWidth: 'medium',
                     }}
                   />
                   <a
                     href={`profile/${postObj.user.id}`}
                     className="p-2 card-link"
-                    style={{ fontSize: "xx-large" }}
+                    style={{ fontSize: 'xx-large' }}
                     id="feed-username"
                   >
                     {postObj.user.username}
                   </a>
                   <button
                     className="p-2 btn btn-primary"
-                    style={{ marginLeft: "auto", marginRight: "2%" }}
+                    style={{ marginLeft: 'auto', marginRight: '2%' }}
                   >
                     Follow
                   </button>
@@ -151,16 +187,16 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
               )}
               <div
                 className="d-flex flex-row align-items-end justify-content-start"
-                style={{ marginTop: "3%" }}
+                style={{ marginTop: '3%' }}
               >
-                <div style={{ fontSize: "xxx-large", marginLeft: "20px" }}>
+                <div style={{ fontSize: 'xxx-large', marginLeft: '20px' }}>
                   {postObj.title}
                 </div>
                 <div
                   style={{
-                    marginLeft: "auto",
-                    marginRight: "2%",
-                    fontSize: "large",
+                    marginLeft: 'auto',
+                    marginRight: '2%',
+                    fontSize: 'large',
                   }}
                 >
                   {dayjs(postObj.createdAt).fromNow()}
@@ -172,11 +208,11 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   <button
                     className="btn btn-link"
                     style={{
-                      color: "#424242",
-                      fontSize: "x-large",
-                      marginBottom: "3%",
+                      color: '#424242',
+                      fontSize: 'x-large',
+                      marginBottom: '3%',
                     }}
-                    onClick={() => getPosts("explore", cat)}
+                    onClick={() => getPosts('explore', cat)}
                   >{`#${cat}`}</button>
                 ))
               ) : (
@@ -185,7 +221,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
               <div id={containerId}></div>
               <div
                 className="d-flex flex-row align-items-center justify-content-start"
-                style={{ margin: "2%" }}
+                style={{ margin: '2%' }}
               >
                 {isPlaying ? (
                   <button
@@ -218,52 +254,52 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 )}
                 <div
                   style={{
-                    padding: "2px",
-                    marginLeft: "auto",
-                    display: "flex",
-                    justifyContent: "space-evenly",
-                    alignContent: "center",
+                    padding: '2px',
+                    marginLeft: 'auto',
+                    display: 'flex',
+                    justifyContent: 'space-evenly',
+                    alignContent: 'center',
                   }}
                 >
                   <div>
                     <img
-                      src={require("../style/listenIcon.png")}
+                      src={require('../style/listenIcon.png')}
                       style={{
-                        width: "auto",
-                        height: "35px",
-                        objectFit: "scale-down",
+                        width: 'auto',
+                        height: '35px',
+                        objectFit: 'scale-down',
                       }}
                     />
                   </div>
                   <div
                     style={{
-                      marginLeft: "2px",
-                      marginRight: "2%",
-                      fontSize: "x-large",
+                      marginLeft: '2px',
+                      marginRight: '2%',
+                      fontSize: 'x-large',
                     }}
                   >
                     {postObj.listenCount}
                   </div>
-                  <div style={{ marginLeft: "3%" }}>
+                  <div style={{ marginLeft: '3%' }}>
                     <img
-                      src={require("../style/commentIcon.png")}
+                      src={require('../style/commentIcon.png')}
                       style={{
-                        width: "auto",
-                        height: "40px",
-                        objectFit: "scale-down",
+                        width: 'auto',
+                        height: '40px',
+                        objectFit: 'scale-down',
                       }}
                     />
                   </div>
                   <div
                     style={{
-                      marginLeft: "2px",
-                      marginRight: "2%",
-                      fontSize: "x-large",
+                      marginLeft: '2px',
+                      marginRight: '2%',
+                      fontSize: 'x-large',
                     }}
                   >
                     {postObj.commentCount}
                   </div>
-                  <div style={{ marginLeft: "5px" }}>
+                  <div style={{ marginLeft: '5px' }}>
                     <svg
                       width="32"
                       height="32"
@@ -276,23 +312,28 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   </div>
                   <div
                     style={{
-                      marginLeft: "3px",
-                      marginRight: "2%",
-                      fontSize: "x-large",
+                      marginLeft: '3px',
+                      marginRight: '2%',
+                      fontSize: 'x-large',
                     }}
                   >
                     {postObj.likeCount}
                   </div>
                 </div>
               </div>
-
-              <Post
-                key={postId}
-                postObj={postObj}
-                updatePost={updatePost}
-                userId={userId}
-                audioContext={audioContext}
-              />
+              {onUserProfile ? (
+                <a></a> 
+              ) : (
+                <div>
+                  <Post
+                    key={postId}
+                    postObj={postObj}
+                    updatePost={updatePost}
+                    userId={userId}
+                    audioContext={audioContext}
+                  />
+                  </div>
+              )}
             </div>
           </div>
         </div>

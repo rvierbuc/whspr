@@ -13,37 +13,37 @@ const Feed = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   const user: any = useLoaderData();
   // console.log(user)
 
-const getPosts = async(type, tag) => {
-  setFeed(type)
-  try{
-   // console.log('request variables', type, user.id, tag)
-    const allPosts: AxiosResponse = await axios.get(`/post/${type}/${user.id}/${tag}`)
-    setPosts(allPosts.data)
-    if(tag !== 'none'){
-        setTitle(`Explore #${tag}`)
-    } else if(type === 'following'){
-        setTitle('Explore Posts from your Friends')
-    } else {
-        setTitle('Explore WHSPR')
+  const getPosts = async (type, tag) => {
+    setFeed(type);
+    try {
+      // console.log('request variables', type, user.id, tag)
+      const allPosts: AxiosResponse = await axios.get(`/post/${type}/${user.id}/${tag}`);
+      setPosts(allPosts.data);
+      if (tag !== 'none') {
+        setTitle(`Explore #${tag}`);
+      } else if (type === 'following') {
+        setTitle('Explore Posts from your Friends');
+      } else {
+        setTitle('Explore WHSPR');
+      }
+      console.log('all posts', allPosts.data);
+    } catch (error) {
+      console.log('client get friends', error);
     }
-    console.log('all posts', allPosts.data)
-  } catch(error) {
-    console.log('client get friends', error)
-  }
-}
+  };
 
-const updatePost = async(postId, updateType) => {
-    try{
-        const updatedPost:any = await axios.get(`/post/updatedPost/${postId}/${updateType}`)
-        console.log('updated post obj', updatedPost)
-        const postIndex = posts.findIndex((post) => post.id === updatedPost.data.id)
-        updatedPost.data.rank = posts[postIndex].rank
-        //console.log('post index', updatePostIndex)
-        const postsWUpdatedPost = posts.toSpliced(postIndex, 1, updatedPost.data )
-        console.log(postsWUpdatedPost)
-        setPosts(postsWUpdatedPost)
-    } catch(error){
-        console.log('could not update post', error)
+  const updatePost = async (postId, updateType) => {
+    try {
+      const updatedPost:any = await axios.get(`/post/updatedPost/${postId}/${updateType}`);
+      console.log('updated post obj', updatedPost);
+      const postIndex = posts.findIndex((post) => post.id === updatedPost.data.id);
+      updatedPost.data.rank = posts[postIndex].rank;
+      //console.log('post index', updatePostIndex)
+      const postsWUpdatedPost = posts.toSpliced(postIndex, 1, updatedPost.data );
+      console.log(postsWUpdatedPost);
+      setPosts(postsWUpdatedPost);
+    } catch (error) {
+      console.log('could not update post', error);
     }
   };
   useEffect(() => {
