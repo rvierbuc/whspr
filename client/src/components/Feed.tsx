@@ -58,10 +58,24 @@ const updatePost = async(postId, updateType) => {
   useEffect(() => {
     getPosts('explore', 'none');
   }, []);
+
+// SYDNEY => these are placeholders passing into PostCard so my added functionality in RecordPost doesn't conflict
+// placeholder is a default for synthAudioChunks as either voice or synth is saved
+// default settings are the base settings for the filters
+  const defaultSettings = {
+    lowPassFrequency: 350,
+    highPassFrequency: 350,
+    highPassType: 'highpass',
+    lowPassType: 'lowpass',
+  }
+  const placeHolder: Blob[] = [];
   return (
     <div>
-    {/* <h2 style={{color: 'white'}}>{title}</h2> */}
-    {/* {feed === 'following' ?
+    <div className="centered">
+<PostCard audioContext={audioContext} filter={defaultSettings} synthAudioChunks={placeHolder} />
+    </div>
+    <h2 style={{ color: 'white' }}>{title}</h2>
+    {feed === 'following' ?
     <div>
         <button
         type="button"
@@ -85,7 +99,7 @@ const updatePost = async(postId, updateType) => {
         className="btn btn-dark"
         onClick={() => getPosts('explore', 'none')}
         >Explore</button>
-      </div>} */}
+      </div>}
         {/* {feed === 'explore' ?  */}
       <Nav variant="tabs" >
         <Nav.Item>
