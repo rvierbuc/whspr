@@ -56,10 +56,11 @@ const updatePost = async(postId, updateType) => {
     highPassType: 'highpass',
     lowPassType: 'lowpass',
   }
+  const placeHolder: Blob[] = [];
   return (
     <div>
     <div className="centered">
-<PostCard audioContext={audioContext} filter={defaultSettings}/>
+<PostCard audioContext={audioContext} filter={defaultSettings} synthAudioChunks={placeHolder} />
     </div>
     <h2 style={{ color: 'white' }}>{title}</h2>
     {feed === 'following' ?

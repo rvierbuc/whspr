@@ -76,7 +76,7 @@ const SynthDaw = ({audioContext, oscillator, mediaDest, userId}: Props): React.J
 
   return (
     <Container className="w-75 rounded text-white text-center">
-      <PostSynth filter={filter} audioContext={audioContext} isRecording={isRecording} synthAudioChunks={synthAudioChunks} userId={userId} />
+      <PostSynth filter={filter} audioContext={audioContext} synthAudioChunks={synthAudioChunks} />
       <Stack className="w-50 synthRecorder mx-auto rounded" style={{display: 'd-flex', justifyContent: 'center'}}>
         <div>
           <button type="button" className="btn btn-dark" style={{margin:'15px', width: '25%'}} onClick={toggleFilter}>Filters</button>

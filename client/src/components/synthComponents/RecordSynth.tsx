@@ -16,7 +16,7 @@ const RecordSynth = ({ setIsRecording, setSynthAudioChunks, mediaDest, start, st
       recorder.current = new MediaRecorder(mediaDest.stream);
       recorder.current.ondataavailable = event => {
         if (event.data.size > 0) {
-          setSynthAudioChunks((prevChunks) => [...prevChunks, event.data])
+          setSynthAudioChunks((prevChunks: Blob[]) => [...prevChunks, event.data])
         }
       };
       recorder.current.start();

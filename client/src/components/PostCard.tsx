@@ -87,7 +87,7 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
   );
 };
 
-const PostCard = ({ audioContext, filter }: { audioContext: AudioContext, filter: any }) => {
+const PostCard = ({ audioContext, filter, synthAudioChunks }: { audioContext: AudioContext, filter: any, synthAudioChunks: Blob[] }) => {
   const [postCreated, setPostCreated] = useState(false);
   const [title, setTitle] = useState('');
   const [categories, setCategories] = useState<string[]>([]);
@@ -125,6 +125,7 @@ const PostCard = ({ audioContext, filter }: { audioContext: AudioContext, filter
           <CategorySearch onCategorySelect={handleCategorySelect}/>
           </div>
 <RecordPost
+synthAudioChunks={synthAudioChunks}
 filter={filter}
 user={user}
 audioContext={audioContext}

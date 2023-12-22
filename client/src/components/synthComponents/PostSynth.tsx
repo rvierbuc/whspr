@@ -25,7 +25,7 @@ const PostSynth = ({ filter, audioContext, synthAudioChunks}: Props) => {
   return (
     <Container className="d-flex justify-content-center my-3 pt-3 synthRecorder rounded w-75">
       <Stack direction="vertical">
-        <PostCard audioContext={audioContext} filter={filter} />
+        <PostCard audioContext={audioContext} filter={filter} synthAudioChunks={synthAudioChunks} />
       </Stack>
     </Container>
   );

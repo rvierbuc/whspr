@@ -16,7 +16,7 @@ const constraints: Constraints = {
   video: false
 }
 
-export const RecordPost = ({ user, audioContext, title, categories, openPost, filter }: { user: any; audioContext: AudioContext; title: string; categories: string[]; openPost: () => void, filter: any }) => {
+export const RecordPost = ({ user, audioContext, title, categories, openPost, filter, synthAudioChunks }: { user: any; audioContext: AudioContext; title: string; categories: string[]; openPost: () => void, filter: any, synthAudioChunks: Blob[] }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
@@ -71,11 +71,15 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
   };
 
   const playAudio = async (): Promise<void> => {
-    if ((audioChunks.length === 0) || !audioContext) {
+    if (!audioContext) {
       console.error('something was null: ', audioChunks.length === 0, !audioContext);
       return;
     }
-    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    let audioBlob: Blob;
+    // either or
+    synthAudioChunks.length > 0
+    ?
+    audioBlob = new Blob(synthAudioChunks, {type: 'audio/wav'}) : audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
     const arrayBuffer = await audioBlob.arrayBuffer();
     audioContext.decodeAudioData(
       arrayBuffer,
@@ -114,7 +118,10 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
   };
 
   const saveAudioToGoogleCloud = async () => {
-    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    let audioBlob: Blob;
+    // either or
+    synthAudioChunks.length > 0 ?
+    audioBlob = new Blob(synthAudioChunks, {type: 'audio/wav'}) : audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
@@ -124,7 +131,6 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
         console.log('foreach', category, index);
         formData.append(`category[${index}]`, category);
       });
-      console.log('formdata', Object.fromEntries(formData.entries()));
       const response = await axios.post('/upload', formData);
       if (response.status === 200) {
         console.info('Audio save successfully');
@@ -146,7 +152,7 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
             <button
             className="play-button"
             onClick={playAudio}
-            disabled={isPlaying || audioChunks.length === 0 }
+            disabled={isPlaying || (audioChunks.length === 0 && synthAudioChunks.length === 0)}
             ><img src={require('../style/playbutton.png')} /></button>
             <button
             className="stop-button"
@@ -165,7 +171,7 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
               saveAudioToGoogleCloud();
             }
             }
-            disabled={audioChunks.length === 0 || isRecording}
+            disabled={(audioChunks.length === 0 && synthAudioChunks.length === 0) || isRecording}
             ><img src={require('../style/postbutton.png')} /></button>
         </div>
   );
