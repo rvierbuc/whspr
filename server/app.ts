@@ -42,7 +42,7 @@ const upload = multer({ storage: storage })
 
 
 const postRoutes = require('./routes/postRoutes')
-import { Sound, Post, User } from './dbmodels'
+import { Sound, Post, User, AIMessage } from './dbmodels'
 
 
 const app = express()
@@ -293,6 +293,7 @@ app.post('/text-to-speech-elevenlabs', async (req, res) => {
     res.status(500).send('Error synthesizing speech from open AI')
   }
 })
+
 
 app.post('/createRecordsAIMessages', async (req, res) => {
   const { newUserMessage, newAIMessage, userId } = req.body
