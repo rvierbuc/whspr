@@ -95,7 +95,35 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
         setFollowing(false);
       }
     } catch (error) {
-      console.error('could not follow user', error);
+      console.error("could not follow user", error);
+    }
+  };
+  const handleLike = async () => {
+    try {
+      await axios.post("/post/like", { userId, postId: postObj.id });
+      await axios.put("/post/updateCount", {
+        type: "increment",
+        column: "likeCount",
+        id: postObj.id,
+      });
+      await updatePost(postObj.id, userId);
+    } catch (error) {
+      console.log("client could not like", error);
+    }
+  };
+  const handleUnlike = async () => {
+    try {
+      //const likeObj = postObj.Likes.filter((likeObj) => likeObj.userId == user.id)
+      //console.log(likeObj)
+      await axios.delete(`/post/unlike/${userId}/${postObj.id}`);
+      await axios.put("/post/updateCount", {
+        type: "decrement",
+        column: "likeCount",
+        id: postObj.id,
+      });
+      await updatePost(postObj.id, userId);
+    } catch (error) {
+      console.log("client could not unlike", error);
     }
   };
   const createSoundWaves = () => {
@@ -394,99 +422,81 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     Play
                   </button>
                 )}
-                <div
-                  style={{
-                    padding: '2px',
-                    marginLeft: 'auto',
-                    display: 'flex',
-                    justifyContent: 'space-evenly',
-                    alignContent: 'center',
-                  }}
-                >
-                  <div>
-                    <img
-                      src={require('../style/listenIcon.png')}
-                      style={{
-                        width: 'auto',
-                        height: '35px',
-                        objectFit: 'scale-down',
-                        color: '#e1e1e5',
-                      }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      marginLeft: '2px',
-                      marginRight: '2%',
-                      fontSize: 'x-large',
-                      color: '#e1e1e5',
-                    }}
-                  >
-                    {postObj.listenCount}
-                  </div>
-                  <div style={{ marginLeft: '3%' }}>
-                    <img
-                      src={require('../style/commentIcon.png')}
-                      style={{
-                        width: 'auto',
-                        height: '40px',
-                        objectFit: 'scale-down',
-                        color: '#e1e1e5',
-                      }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      marginLeft: '2px',
-                      marginRight: '2%',
-                      fontSize: 'x-large',
-                      color: '#e1e1e5',
-                    }}
-                  >
-                    {postObj.commentCount}
-                  </div>
-                  <div style={{ marginLeft: '5px' }}>
-                    <svg
-                      width="32"
-                      height="32"
-                      fill="black"
-                      className="bi bi-heart"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"></path>
-                    </svg>
-                  </div>
-                  <div
-                    style={{
-                      marginLeft: '3px',
-                      marginRight: '2%',
-                      fontSize: 'x-large',
-                      color: '#e1e1e5',
-                    }}
-                  >
-                    {postObj.likeCount}
-                  </div>
-                  <div>
-                    <img
-                      src={require('../style/bin.png')}
-                      style={{
-                        width: 'auto',
-                        height: '40px',
-                        objectFit: 'scale-down',
-                        color: '#e1e1e5',
-                      }}
-                      onClick={() => {
-                        if (deleting === false) {
-                          setDeleting(true);
-                        } else {
-                          setDeleting(false);
-                        }
-                      }}
-                    />
-                  </div>
-                  <div>
-                    {deleting === true && (
-                      <Modal
+                <div>
+                  {postObj.isLiked ? (
+                    <div>
+                      {" "}
+                      <button
+                        type="button"
+                        className="btn"
+                        onClick={() => handleUnlike()}
+                        style={{
+                          backgroundColor: "rgba(233, 236, 243, 0.00)",
+                          borderColor: "rgba(233, 236, 243, 0.00)",
+                          marginLeft: "35%",
+                        }}
+                      >
+                        <svg
+                          width="50"
+                          height="50"
+                          fill="black"
+                          className="bi bi-heart-fill"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+                          ></path>
+                        </svg>
+                      </button>
+                      {/* {postObj.likeCount ? <p style={{marginLeft: '3%', fontSize:'x-large'}}>{`${postObj.likeCount} likes`}</p> : <p></p>}  */}
+                    </div>
+                  ) : (
+                    <div>
+                      <button
+                        type="button"
+                        className="btn btn-light"
+                        onClick={() => handleLike()}
+                        style={{
+                          backgroundColor: "rgba(233, 236, 243, 0.00)",
+                          borderColor: "rgba(233, 236, 243, 0.00)",
+                          marginLeft: "35%",
+                        }}
+                      >
+                        {" "}
+                        <svg
+                          width="50"
+                          height="50"
+                          fill="black"
+                          className="bi bi-heart"
+                          viewBox="0 0 16 16"
+                        >
+                          <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"></path>
+                        </svg>
+                      </button>
+                      {/* {postObj.likeCount ? <p style={{marginLeft: '3%', fontSize:'x-large'}}>{`${postObj.likeCount} likes`}</p> : <p></p>} */}
+                    </div>
+                  )}
+                    <div>
+                      <img
+                        src={require("../style/bin.png")}
+                        style={{
+                          width: "auto",
+                          height: "40px",
+                          objectFit: "scale-down",
+                          color:'#e1e1e5'
+                        }}
+                        onClick={() => {
+                          if (deleting === false) {
+                            setDeleting(true);
+                          } else {
+                            setDeleting(false)
+                          }
+                        }}
+                      />
+                    </div>
+                    <div>
+                      {deleting === true && <Modal
                         isOpen={deleting}
                         onClose={() => setDeleting(false)}
                         children={<Delete userId={userId} id={postId} />}
