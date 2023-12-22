@@ -1,36 +1,61 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 
+interface Constraints {
+  audio: {
+    noiseSuppression: boolean,
+    echoCancellation: boolean
+  }
+  video: boolean
+}
+const constraints: Constraints = {
+  audio: {
+    noiseSuppression: true,
+    echoCancellation: true
+  },
+  video: false
+}
 
-export const RecordPost = ({ user, audioContext, title, categories, openPost }: { user: any; audioContext: BaseAudioContext; title: string; categories: string[]; openPost: () => void }) => {
+export const RecordPost = ({ user, audioContext, title, categories, openPost, filter }: { user: any; audioContext: AudioContext; title: string; categories: string[]; openPost: () => void, filter: any }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioSource = useRef<AudioBufferSourceNode | null>(null);
   const userId = user.id;
-  console.log('category in record', categories);
+
+  // functionality for recording/filtering the audio
+  const lowpass = audioContext.createBiquadFilter();
+  filter.lowPassFrequency ? lowpass.frequency.value = filter.lowPassFrequency : lowpass.frequency.value = 350;
+  lowpass.type = 'lowpass';
+  const highpass = audioContext.createBiquadFilter();
+  filter.highPassFrequency ? highpass.frequency.value = filter.highPassFrequency : highpass.frequency.value = 350;
+  highpass.type = 'highpass';
 
   const startRecording = async () => {
     try {
-      //for now, this resets the recording array to an empty array when recording starts
       setAudioChunks([]);
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder.current = new MediaRecorder(stream);
-
-      mediaRecorder.current.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          setAudioChunks((prevChunks) => [...prevChunks, event.data]);
-        }
+      const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
+      const stream: MediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+      mediaRecorder.current = new MediaRecorder(destination.stream);
+      const source = audioContext.createMediaStreamSource(stream);
+      if (Object.values(filter).length === 4) {
+        source.connect(destination);
+      } else if (Object.values(filter).length > 4) {
+        let options: any = Object.values(filter).slice(4)
+        source.connect(lowpass)
+        lowpass.connect(highpass)
+        highpass.connect(options[0])
+        options[0].connect(options[1])
+        options[1].connect(options[2])
+        options[2].connect(destination);
       }
-      // mediaRecorder.current.onstop = async () => {
-      //   const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
-      // }
-      mediaRecorder.current.start()
-      setIsRecording(true)
-    } catch (error) {
-      console.error('Error accessing microphone:', error);
-    }
+      mediaRecorder.current.ondataavailable = (event) => {
+        if (event.data.size > 0) {setAudioChunks((prevChunks) => [...prevChunks, event.data])}
+      }
+      mediaRecorder.current.start();
+      setIsRecording(true);
+    } catch (error) {console.error(error)}
   };
 
   const stopRecording = async () => {

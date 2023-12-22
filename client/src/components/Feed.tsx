@@ -5,7 +5,7 @@ import Post from './Post';
 import WaveSurferComponent from './WaveSurfer';
 import { useLoaderData } from 'react-router-dom';
 
-const Feed = ({ audioContext }: { audioContext: BaseAudioContext }) => {
+const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   const [posts, setPosts] = useState<any>();
   const [feed, setFeed] = useState<string>('explore');
   const [title, setTitle] = useState<string>('Explore WHSPR');
@@ -49,10 +49,17 @@ const updatePost = async(postId, updateType) => {
   useEffect(() => {
     getPosts('explore', 'none');
   }, []);
+
+  const defaultSettings = {
+    lowPassFrequency: 350,
+    highPassFrequency: 350,
+    highPassType: 'highpass',
+    lowPassType: 'lowpass',
+  }
   return (
     <div>
     <div className="centered">
-<PostCard audioContext={audioContext}/>
+<PostCard audioContext={audioContext} filter={defaultSettings}/>
     </div>
     <h2 style={{ color: 'white' }}>{title}</h2>
     {feed === 'following' ?
