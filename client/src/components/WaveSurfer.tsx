@@ -23,6 +23,7 @@ interface WaveSurferProps {
   setOnProfile: any;
   audioContext: any;
   feed: string;
+  key: number;
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
@@ -95,20 +96,20 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
         setFollowing(false);
       }
     } catch (error) {
-      console.error("could not follow user", error);
+      console.error('could not follow user', error);
     }
   };
   const handleLike = async () => {
     try {
-      await axios.post("/post/like", { userId, postId: postObj.id });
-      await axios.put("/post/updateCount", {
-        type: "increment",
-        column: "likeCount",
+      await axios.post('/post/like', { userId, postId: postObj.id });
+      await axios.put('/post/updateCount', {
+        type: 'increment',
+        column: 'likeCount',
         id: postObj.id,
       });
       await updatePost(postObj.id, userId);
     } catch (error) {
-      console.log("client could not like", error);
+      console.log('client could not like', error);
     }
   };
   const handleUnlike = async () => {
@@ -116,14 +117,14 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       //const likeObj = postObj.Likes.filter((likeObj) => likeObj.userId == user.id)
       //console.log(likeObj)
       await axios.delete(`/post/unlike/${userId}/${postObj.id}`);
-      await axios.put("/post/updateCount", {
-        type: "decrement",
-        column: "likeCount",
+      await axios.put('/post/updateCount', {
+        type: 'decrement',
+        column: 'likeCount',
         id: postObj.id,
       });
       await updatePost(postObj.id, userId);
     } catch (error) {
-      console.log("client could not unlike", error);
+      console.log('client could not unlike', error);
     }
   };
   const createSoundWaves = () => {
@@ -259,7 +260,11 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   />
                   <a
                     href={`profile/${postObj.user.id}`}
-                    style={{ fontSize: 'xx-large', color: '#0f0c0c' }}
+                    style={{
+                      fontSize: 'xx-large',
+                      color: '#0f0c0c',
+                      textDecoration: 'none',
+                    }}
                     id="feed-username"
                   >
                     {postObj.user.username}
@@ -352,12 +357,25 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                       fontSize: 'xxx-large',
                       marginLeft: '20px',
                       color: '#e1e1e5',
+                      marginLeft: '2px',
+                      marginRight: '2%',
+                      fontSize: 'x-large',
+                      color: '#e1e1e5',
                     }}
                   >
                     {postObj.title}
                   </div>
-                </div>
-                <div className="categories-text-overlay">
+                  <div style={{ marginLeft: '3%' }}>
+                    <img
+                      src={require('../style/commentIcon.png')}
+                      style={{
+                        width: 'auto',
+                        height: '40px',
+                        objectFit: 'scale-down',
+                        color: '#e1e1e5',
+                      }}
+                    />
+                  </div>
                   <div
                     className="category btn"
                     style={{
@@ -425,15 +443,15 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 <div>
                   {postObj.isLiked ? (
                     <div>
-                      {" "}
+                      {' '}
                       <button
                         type="button"
                         className="btn"
                         onClick={() => handleUnlike()}
                         style={{
-                          backgroundColor: "rgba(233, 236, 243, 0.00)",
-                          borderColor: "rgba(233, 236, 243, 0.00)",
-                          marginLeft: "35%",
+                          backgroundColor: 'rgba(233, 236, 243, 0.00)',
+                          borderColor: 'rgba(233, 236, 243, 0.00)',
+                          marginLeft: '35%',
                         }}
                       >
                         <svg
@@ -458,12 +476,12 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                         className="btn btn-light"
                         onClick={() => handleLike()}
                         style={{
-                          backgroundColor: "rgba(233, 236, 243, 0.00)",
-                          borderColor: "rgba(233, 236, 243, 0.00)",
-                          marginLeft: "35%",
+                          backgroundColor: 'rgba(233, 236, 243, 0.00)',
+                          borderColor: 'rgba(233, 236, 243, 0.00)',
+                          marginLeft: '35%',
                         }}
                       >
-                        {" "}
+                        {' '}
                         <svg
                           width="50"
                           height="50"
