@@ -1,36 +1,64 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 
+interface Constraints {
+  audio: {
+    noiseSuppression: boolean,
+    echoCancellation: boolean
+  }
+  video: boolean
+}
+const constraints: Constraints = {
+  audio: {
+    noiseSuppression: true,
+    echoCancellation: true
+  },
+  video: false
+}
 
-export const RecordPost = ({ user, audioContext, title, categories, openPost }: { user: any; audioContext: BaseAudioContext; title: string; categories: string[]; openPost: () => void }) => {
+export const RecordPost = ({ user, audioContext, title, categories, openPost, filter, synthAudioChunks }: { user: any; audioContext: AudioContext; title: string; categories: string[]; openPost: () => void, filter: any, synthAudioChunks: Blob[] }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioSource = useRef<AudioBufferSourceNode | null>(null);
   const userId = user.id;
-  console.log('category in record', categories);
+
+  // functionality for recording/filtering the audio
+  const lowpass = audioContext.createBiquadFilter();
+  filter.lowPassFrequency ? lowpass.frequency.value = filter.lowPassFrequency : lowpass.frequency.value = 350;
+  lowpass.type = 'lowpass';
+  const highpass = audioContext.createBiquadFilter();
+  filter.highPassFrequency ? highpass.frequency.value = filter.highPassFrequency : highpass.frequency.value = 350;
+  highpass.type = 'highpass';
 
   const startRecording = async () => {
     try {
-      //for now, this resets the recording array to an empty array when recording starts
       setAudioChunks([]);
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder.current = new MediaRecorder(stream);
-
-      mediaRecorder.current.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          setAudioChunks((prevChunks) => [...prevChunks, event.data]);
-        }
+      const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
+      //changed stream and destination.stream so voice filters can work => still works without the filters (plain voice)
+      const stream: MediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+      mediaRecorder.current = new MediaRecorder(destination.stream);
+      const source = audioContext.createMediaStreamSource(stream);
+      // if the filter is the default setting
+      if (Object.values(filter).length === 4) {
+        source.connect(destination);
+        // if the filter is one of my self-made filters
+      } else if (Object.values(filter).length > 4) {
+        let options: any = Object.values(filter).slice(4)
+        source.connect(lowpass)
+        lowpass.connect(highpass)
+        highpass.connect(options[0])
+        options[0].connect(options[1])
+        options[1].connect(options[2])
+        options[2].connect(destination);
       }
-      // mediaRecorder.current.onstop = async () => {
-      //   const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
-      // }
-      mediaRecorder.current.start()
-      setIsRecording(true)
-    } catch (error) {
-      console.error('Error accessing microphone:', error);
-    }
+      mediaRecorder.current.ondataavailable = (event) => {
+        if (event.data.size > 0) {setAudioChunks((prevChunks) => [...prevChunks, event.data])}
+      }
+      mediaRecorder.current.start();
+      setIsRecording(true);
+    } catch (error) {console.error(error)}
   };
 
   const stopRecording = async () => {
@@ -46,11 +74,15 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost }: 
   };
 
   const playAudio = async (): Promise<void> => {
-    if ((audioChunks.length === 0) || !audioContext) {
+    if (!audioContext) {
       console.error('something was null: ', audioChunks.length === 0, !audioContext);
       return;
     }
-    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    let audioBlob: Blob;
+    // either voice or synth audio is played back
+    synthAudioChunks.length > 0
+    ?
+    audioBlob = new Blob(synthAudioChunks, {type: 'audio/wav'}) : audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
     const arrayBuffer = await audioBlob.arrayBuffer();
     audioContext.decodeAudioData(
       arrayBuffer,
@@ -89,7 +121,10 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost }: 
   };
 
   const saveAudioToGoogleCloud = async () => {
-    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    let audioBlob: Blob;
+    // either synth or voice audio is saved
+    synthAudioChunks.length > 0 ?
+    audioBlob = new Blob(synthAudioChunks, {type: 'audio/wav'}) : audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)
@@ -99,7 +134,6 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost }: 
         console.log('foreach', category, index);
         formData.append(`category[${index}]`, category);
       });
-      console.log('formdata', Object.fromEntries(formData.entries()));
       const response = await axios.post('/upload', formData);
       if (response.status === 200) {
         console.info('Audio save successfully');
@@ -121,7 +155,8 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost }: 
             <button
             className="play-button"
             onClick={playAudio}
-            disabled={isPlaying || audioChunks.length === 0 }
+            // if either of the chunks has a valid length => either one can be played back
+            disabled={isPlaying || (audioChunks.length === 0 && synthAudioChunks.length === 0)}
             ><img src={require('../style/playbutton.png')} /></button>
             <button
             className="stop-button"
@@ -140,7 +175,8 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost }: 
               saveAudioToGoogleCloud();
             }
             }
-            disabled={audioChunks.length === 0 || isRecording}
+            // if either set of chunks is valid then that version of audio can be saved
+            disabled={(audioChunks.length === 0 && synthAudioChunks.length === 0) || isRecording}
             ><img src={require('../style/postbutton.png')} /></button>
         </div>
   );

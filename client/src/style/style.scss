@@ -361,46 +361,6 @@ body {
       }
     }
 
-
-  // .post-button-comment,
-  // .delete-button-comment,
-  // .stop-button-comment,
-  // .play-button-comment,
-  // .record-button-comment {
-  //   width: 95px;
-  //   height: 95px;
-  //   border-radius: 90%;
-  //   overflow: hidden;
-  //   background-color: #000210;
-  // }
-  // .post-button-comment:not(:disabled):hover,
-  // .delete-button-comment:not(:disabled):hover,
-  // .stop-button-comment:not(:disabled):hover,
-  // .play-button-comment:not(:disabled):hover,
-  // .record-button-comment:not(:disabled):hover {
-  //   background-color: #1e1a2a;
-  // }
-  // .post-button-comment img,
-  // .delete-button-comment img,
-  // .stop-button-comment img,
-  // .play-button-comment img,
-  // .record-button-comment img {
-  //   width: 100%;
-  //   height: 100%;
-  //   object-fit: contain;
-  // }
-  // .post-button-comment:disabled,
-  // .delete-button-comment:disabled,
-  // .play-button-comment:disabled,
-  // .record-button-comment:disabled,
-  // .stop-button-comment:disabled {
-  //   opacity: 0.55;
-  //   border: 1px solid #000000;
-  // }
-  // .post-button-comment:active,
-  // .delete-button-comment:active,
-  //   .record-button-comment:active,
-  //   .play-button-comment:active,
-  //   .stop-button-comment:active {
-  //     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-  //   }
+.synthRecorder {
+  background-color: rgb(60, 53, 86);
+}
