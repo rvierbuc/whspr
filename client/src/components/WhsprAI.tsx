@@ -346,12 +346,17 @@ export const WhsprAI = ({ audioContext }) => {
 
   const handlePressToTalkPress = () => {
     setIsRecording(true);
+    vibratePhone();
   }
   const handlePressToTalkRelease = () => {
     setIsRecording(false)
   }
 
-
+  const vibratePhone = () => {
+    if ("vibrate" in navigator) {
+      navigator.vibrate(200)
+    }
+  }
 
 
   console.log('text in state', text)
