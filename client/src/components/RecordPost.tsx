@@ -36,11 +36,14 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
     try {
       setAudioChunks([]);
       const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
+      //changed stream and destination.stream so voice filters can work => still works without the filters (plain voice)
       const stream: MediaStream = await navigator.mediaDevices.getUserMedia(constraints);
       mediaRecorder.current = new MediaRecorder(destination.stream);
       const source = audioContext.createMediaStreamSource(stream);
+      // if the filter is the default setting
       if (Object.values(filter).length === 4) {
         source.connect(destination);
+        // if the filter is one of my self-made filters
       } else if (Object.values(filter).length > 4) {
         let options: any = Object.values(filter).slice(4)
         source.connect(lowpass)
@@ -76,7 +79,7 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
       return;
     }
     let audioBlob: Blob;
-    // either or
+    // either voice or synth audio is played back
     synthAudioChunks.length > 0
     ?
     audioBlob = new Blob(synthAudioChunks, {type: 'audio/wav'}) : audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
@@ -119,7 +122,7 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
 
   const saveAudioToGoogleCloud = async () => {
     let audioBlob: Blob;
-    // either or
+    // either synth or voice audio is saved
     synthAudioChunks.length > 0 ?
     audioBlob = new Blob(synthAudioChunks, {type: 'audio/wav'}) : audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
     try {
@@ -152,6 +155,7 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
             <button
             className="play-button"
             onClick={playAudio}
+            // if either of the chunks has a valid length => either one can be played back
             disabled={isPlaying || (audioChunks.length === 0 && synthAudioChunks.length === 0)}
             ><img src={require('../style/playbutton.png')} /></button>
             <button
@@ -171,6 +175,7 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
               saveAudioToGoogleCloud();
             }
             }
+            // if either set of chunks is valid then that version of audio can be saved
             disabled={(audioChunks.length === 0 && synthAudioChunks.length === 0) || isRecording}
             ><img src={require('../style/postbutton.png')} /></button>
         </div>

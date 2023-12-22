@@ -50,6 +50,9 @@ const updatePost = async(postId, updateType) => {
     getPosts('explore', 'none');
   }, []);
 
+// SYDNEY => these are placeholders passing into PostCard so my added functionality in RecordPost doesn't conflict
+// placeholder is a default for synthAudioChunks as either voice or synth is saved
+// default settings are the base settings for the filters
   const defaultSettings = {
     lowPassFrequency: 350,
     highPassFrequency: 350,

@@ -87,6 +87,12 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
   );
 };
 
+/**
+ * DANIEL => filter and synthAudioChunks are being passed down with valid data from PostSynth
+ * both props are then being passed into RecordPost to be saved to the cloud/db
+ * FROM THE FEED => I have placeholders in Feed that keep RecordPost's functionality in place
+ * In other words, your PostCard component still functions as it should.
+ */
 const PostCard = ({ audioContext, filter, synthAudioChunks }: { audioContext: AudioContext, filter: any, synthAudioChunks: Blob[] }) => {
   const [postCreated, setPostCreated] = useState(false);
   const [title, setTitle] = useState('');
