@@ -9,10 +9,10 @@ const Comment = (props) => {
   return (
     <div className="d-flex flex-column">
       <div className="d-flex flex-row justify-content-between">
-        <a href="#" className="card-link" style={{ fontSize: "x-large" }}>
+        <a href="#" className="card-link" style={{ fontSize: "x-large",    color:'#e1e1e5' }}>
           {comment.User.username}
         </a>
-        <div>{dayjs(comment.createdAt).fromNow()}</div>
+        <div style={{color:'#e1e1e5' }}>{dayjs(comment.createdAt).fromNow()}</div>
       </div>
       <WaveSurferSimple
         postId={comment.id}
