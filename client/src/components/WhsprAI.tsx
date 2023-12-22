@@ -19,6 +19,7 @@ export const WhsprAI = ({ audioContext }) => {
   const frameRef = useRef<number | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
+  const cardRef = useRef(null)
   const user = useLoaderData()
   const userId = parseFloat(user.id);
 
@@ -313,16 +314,16 @@ export const WhsprAI = ({ audioContext }) => {
 
   //sets canvas width to the whole screen
   useEffect(() => {
-    if (canvasRef.current) {
-      canvasRef.current.width = window.innerWidth;
+    if (canvasRef.current && cardRef.current.offsetWidth) {
+      canvasRef.current.width = cardRef.current.offsetWidth;
     }
     window.addEventListener('resize', handleResize);
     return;
 
   }, []);
   const handleResize = () => {
-    if (canvasRef.current) {
-      canvasRef.current.width = window.innerWidth;
+    if (canvasRef.current && cardRef.current.offsetWidth) {
+      canvasRef.current.width = cardRef.current.offsetWidth;
       initializeAnimation();
     }
   };
@@ -356,59 +357,63 @@ export const WhsprAI = ({ audioContext }) => {
   console.log('text in state', text)
   return (
     <div className='container-whsprAI'>
-      <img
-        src={require('../style/help.png')}
-        className='help-btn'
-        onClick={() => setModalOpen(!modalOpen)}
-        style={{ opacity: modalOpen ? .25 : 1 }}
-      />
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
-        <p>Press and hold the button to talk to Whisper, our AI chatbot.</p>
-      </Modal>
-      <div>
-        <div className="centered-whsprAI">
-          <div className="canvas-container-whsprAI">
-            <canvas ref={canvasRef} width="100vh" height="100" className="mt5"></canvas>
-          </div>
-        </div>
-        <div className="press-to-talk-container">
-          {isLoading
-            ? (<img src={require('../style/loading.gif')}
-              className="loading-img"></img>)
-            : (<button
-              onMouseDown={!isPhone ? () => { startUserMedia(); handlePressToTalkPress() } : undefined}
-              onMouseUp={!isPhone ? handlePressToTalkRelease : undefined}
-              onMouseLeave={!isPhone ? handlePressToTalkRelease : undefined}
-              onTouchStart={isPhone ? () => { startUserMedia(); handlePressToTalkPress() } : undefined}
-              onTouchEnd={isPhone ? handlePressToTalkRelease : undefined}
-              onContextMenu={(e) => e.preventDefault()}
-              className="btn"
-              style={{ border: 'none' }}>
-              {!isRecording
-                ? (<img src={require('../style/presstotalk.png')}
-                  className="presstotalk-img" />)
-                : <img src={require('../style/pressedtotalk.png')}
-                  draggable="false"
-                  className="presstotalk-img" />}
-            </button>
-            )}
-        </div>
-        {showText && <div className='floating-text-whsprAI'>
-          {text.map((item, index) => (
-            <div key={index} >
-              <div><span className="text-warning">You: </span><span className="text-success">{item}</span></div>
-              {AIResponse[index] && <div><span className="text-warning">Whisper: </span><span className="text-success">{AIResponse[index]}</span></div>}
-            </div>
-          ))}
-        </div>}
-      </div>
-      <img
-        src={require('../style/posticon.png')}
-        className='text-btn'
-        onClick={handleSetShowText}
-        style={{ opacity: showText ? .25 : 1 }}
-      />
+      <div className='card' ref={cardRef} style={{ height: "calc(100vh - 150px)" }}>
 
+
+        <img
+          src={require('../style/help.png')}
+          className='help-btn'
+          onClick={() => setModalOpen(!modalOpen)}
+          style={{ opacity: modalOpen ? .25 : 1 }}
+        />
+        <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+          <p>Press and hold the button to talk to Whisper, our AI chatbot.</p>
+        </Modal>
+        <div>
+          <div className="centered-whsprAI">
+            <div className="canvas-container-whsprAI">
+              <canvas ref={canvasRef} width="100vh" height="100" className="mt5"></canvas>
+            </div>
+          </div>
+          <div className="press-to-talk-container">
+            {isLoading
+              ? (<img src={require('../style/loading.gif')}
+                className="loading-img"></img>)
+              : (<button
+                onMouseDown={!isPhone ? () => { startUserMedia(); handlePressToTalkPress() } : undefined}
+                onMouseUp={!isPhone ? handlePressToTalkRelease : undefined}
+                onMouseLeave={!isPhone ? handlePressToTalkRelease : undefined}
+                onTouchStart={isPhone ? () => { startUserMedia(); handlePressToTalkPress() } : undefined}
+                onTouchEnd={isPhone ? handlePressToTalkRelease : undefined}
+                onContextMenu={(e) => e.preventDefault()}
+                className="btn"
+                style={{ border: 'none' }}>
+                {!isRecording
+                  ? (<img src={require('../style/presstotalk.png')}
+                    className="presstotalk-img" />)
+                  : <img src={require('../style/pressedtotalk.png')}
+                    draggable="false"
+                    className="presstotalk-img" />}
+              </button>
+              )}
+          </div>
+          {showText && <div className='floating-text-whsprAI'>
+            {text.map((item, index) => (
+              <div key={index} >
+                <div><span className="text-warning">You: </span><span className="text-success">{item}</span></div>
+                {AIResponse[index] && <div><span className="text-warning">Whisper: </span><span className="text-success">{AIResponse[index]}</span></div>}
+              </div>
+            ))}
+          </div>}
+        </div>
+        <img
+          src={require('../style/posticon.png')}
+          className='text-btn'
+          onClick={handleSetShowText}
+          style={{ opacity: showText ? .25 : 1 }}
+        />
+
+      </div>
     </div>
   );
 };
