@@ -71,16 +71,11 @@ const updatePost = async(postId, updateType) => {
   const placeHolder: Blob[] = [];
   return (
     <div>
-<<<<<<< HEAD
     <div className="centered">
 <PostCard audioContext={audioContext} filter={defaultSettings} synthAudioChunks={placeHolder} />
     </div>
     <h2 style={{ color: 'white' }}>{title}</h2>
     {feed === 'following' ?
-=======
-    {/* <h2 style={{color: 'white'}}>{title}</h2> */}
-    {/* {feed === 'following' ?
->>>>>>> 380ee796cd51f9add9ac7343302ebbc597165cd0
     <div>
         <button
         type="button"
@@ -104,7 +99,7 @@ const updatePost = async(postId, updateType) => {
         className="btn btn-dark"
         onClick={() => getPosts('explore', 'none')}
         >Explore</button>
-      </div>} */}
+      </div>}
         {/* {feed === 'explore' ?  */}
       <Nav variant="tabs" >
         <Nav.Item>
