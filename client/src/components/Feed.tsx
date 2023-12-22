@@ -4,17 +4,26 @@ import PostCard from './PostCard';
 import Post from './Post';
 import WaveSurferComponent from './WaveSurfer';
 import { useLoaderData } from 'react-router-dom';
+import { Nav } from 'react-bootstrap';
 
-const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
-  const [posts, setPosts] = useState<any>();
-  const [feed, setFeed] = useState<string>('explore');
-  const [title, setTitle] = useState<string>('Explore WHSPR');
-  const [onProfile, setOnProfile] = useState<boolean>(false);
-  const user: any = useLoaderData();
-  // console.log(user)
-
+const Feed = ({ audioContext }: { audioContext: BaseAudioContext }) => {
+const [posts, setPosts] = useState<any>()
+const [feed, setFeed] = useState<string>('explore')
+const [title, setTitle] = useState<string>('Explore WHSPR')
+const [onProfile, setOnProfile] =useState<boolean>(false)
+const [isExplore, setIsExplore] = useState<boolean>(true)
+const [isFollowFeed, setIsFollowFeed] = useState<boolean>(false)
+const user: any = useLoaderData();
+// console.log(user)
 const getPosts = async(type, tag) => {
   setFeed(type)
+  if(type === 'explore'){
+    setIsExplore(true)
+    setIsFollowFeed(false)
+  } else if(type === 'following'){
+    setIsFollowFeed(true)
+    setIsExplore(false)
+  }
   try{
    // console.log('request variables', type, user.id, tag)
     const allPosts: AxiosResponse = await axios.get(`/post/${type}/${user.id}/${tag}`)
@@ -62,11 +71,16 @@ const updatePost = async(postId, updateType) => {
   const placeHolder: Blob[] = [];
   return (
     <div>
+<<<<<<< HEAD
     <div className="centered">
 <PostCard audioContext={audioContext} filter={defaultSettings} synthAudioChunks={placeHolder} />
     </div>
     <h2 style={{ color: 'white' }}>{title}</h2>
     {feed === 'following' ?
+=======
+    {/* <h2 style={{color: 'white'}}>{title}</h2> */}
+    {/* {feed === 'following' ?
+>>>>>>> 380ee796cd51f9add9ac7343302ebbc597165cd0
     <div>
         <button
         type="button"
@@ -90,9 +104,28 @@ const updatePost = async(postId, updateType) => {
         className="btn btn-dark"
         onClick={() => getPosts('explore', 'none')}
         >Explore</button>
-      </div>}
+      </div>} */}
+        {/* {feed === 'explore' ?  */}
+      <Nav variant="tabs" >
+        <Nav.Item>
+            <Nav.Link onClick={() => getPosts('explore', 'none')} active={isExplore}>Explore</Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+            <Nav.Link onClick={() => getPosts('following', 'none')} active={isFollowFeed}>Following</Nav.Link>
+        </Nav.Item>
+      </Nav >
+    {/* //  : <Nav variant="tabs" >
+    //     <Nav.Item>
+    //   <Nav.Link onClick={() => getPosts('explore', 'none')} >Explore</Nav.Link>
+    //   </Nav.Item>
+    //   <Nav.Item>
+    //       <Nav.Link onClick={() => getPosts('following', 'none')} active>Following</Nav.Link>
+    //   </Nav.Item>
+    //       </Nav> 
+    //     } */}
+
       {posts ? posts.map((post: any) => (
-        <div>
+        <div style={{marginBottom: '10px'}}>
           <WaveSurferComponent
           postObj={post}
           audioUrl={post.soundUrl}
@@ -101,6 +134,7 @@ const updatePost = async(postId, updateType) => {
           getPosts={getPosts}
           updatePost={updatePost}
           audioContext={audioContext}
+          feed={feed}
           />
           {/* <Post
             key = {post.id}
