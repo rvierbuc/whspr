@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect } from 'react';
 import { Link, Navigate, useNavigate, Outlet } from 'react-router-dom';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 // import '../style/style.scss'
-import Search from './Search';
+// import Search from './Search';
 
 const NavBar = () => {
   const [showMenu, setShowMenu] = useState(false);
