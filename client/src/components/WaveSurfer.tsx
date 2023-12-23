@@ -381,10 +381,10 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                           objectFit: "scale-down",
                           color:'#e1e1e5'
                         }}
-                        onClick={handleDelete}
+                        onClick={() => setDeleting(true)}
                         // insert the delete modal
                         />
-                        {deleting === true && <Modal isOpen={deleting} onClose={setDeleting(false)} children={<Delete userId={userId} id={postId} />} />}
+                        {deleting === true && <Modal isOpen={deleting} onClose={handleDelete} children={<Delete userId={userId} id={postId} />} />}
                   </div>
                 </div>
               </div>
