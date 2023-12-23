@@ -31,7 +31,7 @@ export const WhsprAI = ({ audioContext }) => {
   useEffect(() => {
     if ('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0) {
       setIsPhone(true);
-      console.log('is phone')
+      console.info('is phone')
     }
   }, []);
 
@@ -124,7 +124,6 @@ export const WhsprAI = ({ audioContext }) => {
           headers: { 'Content-Type': 'multipart/form-data' }
         })
         const currentText = response.data;
-        console.log('currentText', currentText)
         setText(prevText => [...prevText, currentText]);
       } catch (error) {
         console.error('error sending audio to server in getTextFromSpeech', error)
@@ -171,6 +170,8 @@ export const WhsprAI = ({ audioContext }) => {
     const context = canvas.getContext('2d');
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
+
+
     const drawFrame = () => {
       frameRef.current = requestAnimationFrame(drawFrame);
       analyser.getByteTimeDomainData(dataArray);
@@ -301,7 +302,7 @@ export const WhsprAI = ({ audioContext }) => {
   //starts the audio context
   function startUserMedia() {
     if (!audioContext) {
-      console.log("new audio for some reason")
+      console.error("new audio for some reason")
       audioContext = new AudioContext;
     }
     audioContext.resume()
@@ -346,10 +347,10 @@ export const WhsprAI = ({ audioContext }) => {
 
   const handlePressToTalkPress = () => {
     setIsRecording(true);
-    vibratePhone();
   }
   const handlePressToTalkRelease = () => {
     setIsRecording(false)
+    vibratePhone();
   }
 
   const vibratePhone = () => {
@@ -358,8 +359,6 @@ export const WhsprAI = ({ audioContext }) => {
     }
   }
 
-
-  console.log('text in state', text)
   return (
     <div className='container-whsprAI'>
       <div className='card' ref={cardRef} style={{ height: "calc(100vh - 150px)" }}>

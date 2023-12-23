@@ -348,7 +348,6 @@ app.get('/retrieveRecordsAIMessages', async (req, res) => {
 const writeFileAsync = promisify(fs.writeFile)
 
 app.post('/speechToTextOpenAI', async (req, res) => {
-  console.log(req.body, 'reqbody')
   if (!req.file) {
     return res.status(400).send('Empty file in request')
   }
@@ -364,7 +363,6 @@ app.post('/speechToTextOpenAI', async (req, res) => {
       response_format: "text"
     })
     res.send(response)
-    console.log(response)
     fs.unlink(temp, (err) => {
       if (err) console.error('Error deleting temp file:', err);
     });
