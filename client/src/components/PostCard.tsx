@@ -27,14 +27,14 @@ const Hit = ({ hit, onSelect }: { hit: any; onSelect: (category: string[] | stri
   return (
     // TODO: issue, when you click on a hit, it just adds the input value to the selected categories instead of the hit value
     <article id='cat-hit' onClick={() => onSelect([hit.category])}
-    style={{ border: '1px solid black', padding: '10px', margin: '10px' }}
+      style={{ border: '1px solid black', padding: '10px', margin: '10px' }}
     >
       {hit.category}
     </article>
   );
 };
 
-const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: string[] | string) => void }) => {  
+const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: string[] | string) => void }) => {
   const [currentSearch, setCurrentSearch] = useState<string>('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
@@ -62,10 +62,10 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
   };
   return (
     <div>
-      <InstantSearch 
-      searchClient={searchClient} 
-      indexName="category_index"
-      initialUiState={{ searchBox: { query: currentSearch } }}
+      <InstantSearch
+        searchClient={searchClient}
+        indexName="category_index"
+        initialUiState={{ searchBox: { query: currentSearch } }}
       >
         {/* <SearchBox onInput={handleSearchChange} placeholder={'' || selectedCategory} className='input-control'/> */}
         <form onSubmit={handleSubmit}>
@@ -77,10 +77,10 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
             className='input-control'
             id='category-search'
           />
-          </form>
-          {/* create an input that holds the selected categories */}
+        </form>
+        {/* create an input that holds the selected categories */}
         {currentSearch && <Hits className="cat-hits" hitComponent={(props) => <Hit {...props} onSelect={() => { handleCategorySelection(currentSearch); }} />} />}
-          <input type="text" value={selectedCategories} readOnly={true} className='input-control' id='category-read-only'/>
+        <input type="text" value={selectedCategories} readOnly={true} className='input-control' id='category-read-only' />
         <Configure userToken={userToken} />
       </InstantSearch>
     </div>
@@ -110,39 +110,40 @@ const PostCard = ({ audioContext, filter, synthAudioChunks }: { audioContext: Au
   return (
     <div>
       <div className="d-flex justify-content-center">
-<button  
-      type="button"
-      className="btn btn-dark"
-      style={{ margin: '15px' }}
-      onClick={openPost}>
-        {(!postCreated) ? 'Say something' : 'Nevermind'}
-      </button>
+        <button
+          type="button"
+          className="btn btn-dark"
+          style={{ margin: '15px' }}
+          onClick={openPost}
+        >
+          {(!postCreated) ? 'Say something' : 'Nevermind'}
+        </button>
       </div>
-{postCreated && (
-<div id="responsive-navbar-nav" className={postCreated ? 'show' : ''}>
-<div className="d-flex justify-content-center">
-          <input type="text"
-          maxLength={22}
-          placeholder="What's on your mind?"
-          value={title} 
-          onChange={(e) => { setTitle(e.target.value); }}
-          className='input-control'
-          />
-          <CategorySearch onCategorySelect={handleCategorySelect}/>
+      {postCreated && (
+        <div id="responsive-navbar-nav" className={postCreated ? 'show' : ''}>
+          <div className="d-flex justify-content-center">
+            <input type="text"
+              maxLength={22}
+              placeholder="What's on your mind?"
+              value={title}
+              onChange={(e) => { setTitle(e.target.value); }}
+              className='input-control'
+            />
+            <CategorySearch onCategorySelect={handleCategorySelect} />
           </div>
-<RecordPost
-synthAudioChunks={synthAudioChunks}
-filter={filter}
-user={user}
-audioContext={audioContext}
-title={title}
-categories={categories}
-openPost={openPost}
-/>
-</div>
-)}
+          <RecordPost
+            synthAudioChunks={synthAudioChunks}
+            filter={filter}
+            user={user}
+            audioContext={audioContext}
+            title={title}
+            categories={categories}
+            openPost={openPost}
+          />
+        </div>
+      )}
 
-  </div>
+    </div>
   );
 };
 
