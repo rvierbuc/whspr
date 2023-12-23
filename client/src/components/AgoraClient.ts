@@ -40,10 +40,10 @@ export const createChannel = async (channelName: string, uid: number, token: str
   try {
 
     const localAudioStream: ILocalAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-    
-      
+
+
     console.log('yes', agoraConfig.appId);
-      
+
     // localAudioStream.setStream(stream)
     await agoraClient.join('a3bc045a8698487782d0e61b35689952', channelName, token, uid);
     // console.log('break');
@@ -57,7 +57,7 @@ export const createChannel = async (channelName: string, uid: number, token: str
 export const subscribeRemoteUser = (callback) => {
   agoraClient.on('user-published', async (user, mediaType) => {
     await agoraClient.subscribe(user, mediaType);
-  
+
     if (callback) {
       callback(user, mediaType);
     }
