@@ -23,7 +23,6 @@ interface WaveSurferProps {
   setOnProfile: any;
   audioContext: any;
   feed: string;
-  key: number;
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({

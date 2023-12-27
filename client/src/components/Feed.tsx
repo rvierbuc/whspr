@@ -3,24 +3,26 @@ import axios, { AxiosResponse } from 'axios';
 import PostCard from './PostCard';
 import Post from './Post';
 import WaveSurferComponent from './WaveSurfer';
-import { useLoaderData } from 'react-router-dom';
+import { Params, useLoaderData } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
+import { useParams } from 'react-router';
 
 const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   const [posts, setPosts] = useState<any>();
-  const [feed, setFeed] = useState<string>('explore');
   const [title, setTitle] = useState<string>('Explore WHSPR');
   const [onProfile, setOnProfile] = useState<boolean>(false);
+  const [feed, setFeed] = useState<any>('following');
   const [isExplore, setIsExplore] = useState<boolean>(true);
   const [isFollowFeed, setIsFollowFeed] = useState<boolean>(false);
   const user: any = useLoaderData();
-  // console.log(user)
-  const getPosts = async (type, tag) => {
-    setFeed(type);
-    if (type === 'explore') {
+  const { type }:Readonly<Params<string>> = useParams();
+   console.log(type)
+  const getPosts = async (feedType, tag) => {
+    setFeed(feedType);
+    if (feedType === 'explore') {
       setIsExplore(true);
       setIsFollowFeed(false);
-    } else if (type === 'following') {
+    } else if (feedType === 'following') {
       setIsFollowFeed(true);
       setIsExplore(false);
     }
@@ -56,8 +58,10 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
     }
   };
   useEffect(() => {
-    getPosts('explore', 'none');
-  }, []);
+    //setFeed(type)
+    console.log('feed', type)
+    getPosts(type, 'none');
+  }, [type]);
 
 // SYDNEY => these are placeholders passing into PostCard so my added functionality in RecordPost doesn't conflict
 // placeholder is a default for synthAudioChunks as either voice or synth is saved
@@ -74,7 +78,7 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
     {/* <div className="centered">
 <PostCard audioContext={audioContext} filter={defaultSettings} synthAudioChunks={placeHolder} />
     </div> */}
-      <Nav variant="tabs" style={{ marginBottom: '15px', marginTop:'5px', marginLeft: '5px'}} >
+      {/* <Nav variant="tabs" style={{ marginBottom: '15px', marginTop:'5px', marginLeft: '5px'}} >
         <Nav.Item>
             <Nav.Link className='feed-nav' onClick={() => getPosts('explore', 'none')} active={isExplore}>Explore</Nav.Link>
         </Nav.Item>
@@ -82,7 +86,7 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
             <Nav.Link className='feed-nav' onClick={() => getPosts('following', 'none')} active={isFollowFeed}>Following</Nav.Link>
         </Nav.Item>
       </Nav >
-  
+   */}
 
       {posts ? posts.map((post: any) => (
         <div style={{ marginBottom: '10px', maxWidth: '950px', marginLeft: 'auto', marginRight: 'auto' }} className="centered">

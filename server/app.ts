@@ -45,7 +45,7 @@ const upload = multer({ storage: storage })
 
 
 const postRoutes = require('./routes/postRoutes')
-import { Sound, Post, User, AIMessage } from './dbmodels'
+import { Sound, Post, User, AIMessage} from './dbmodels'
 
 
 const app = express()
@@ -56,7 +56,6 @@ require('./auth');
 const secret = crypto.randomBytes(64).toString('hex'); //secret hash for session
 const cookieParser = require('cookie-parser');
 const cookie = require('cookie');
-
 app.use(cors())
 app.use(upload.single('audio'))
 
@@ -99,8 +98,8 @@ app.get('/auth/google', (req: Request, res: Response) => {
   passport.authenticate('google', { scope: ['email', 'profile'] })(req, res);
 })
 
-app.get('/google/callback', passport.authenticate('google', {
-  successRedirect: '/protected/feed',
+app.get('/google/callback',  passport.authenticate('google', {
+  successRedirect: '/protected/feed/following',
   failureRedirect: '/auth/google/failure',
 }),
   (req: Request, res: Response) => {

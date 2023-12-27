@@ -30,8 +30,8 @@ body {
 .card {
   background: rgba(233, 236, 243, 0.075);
   //opacity: 60%;
-  width: calc(200vw / 3);
-  max-width: 1000px;
+  //width: calc(200vw / 3);
+  //max-width: 1000px;
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   @include blur(4.2px);

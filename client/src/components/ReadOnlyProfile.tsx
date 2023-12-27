@@ -105,7 +105,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
                 onClick={() => startFollowing()}
                 >Follow</button>}
             </div>
-            <div>
+            <div style={{ marginBottom: '10px', maxWidth: '950px', marginLeft: 'auto', marginRight: 'auto' }}>
               {selectedUserInfo.map((post) => (
                 <div>
                 <WaveSurferComponent
