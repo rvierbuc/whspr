@@ -385,3 +385,8 @@ body {
 .synthRecorder {
   background-color: rgb(60, 53, 86);
 }
+
+#synthesize {
+  border: 1px solid rgba(236, 210, 210, 0.36);
+  @include blur(4.2px);
+}
