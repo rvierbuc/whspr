@@ -372,20 +372,23 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   >
                     {postObj.likeCount}
                   </div>
-                  <div>
-                    <img
-                        src={require("../style/bin.png")}
-                        style={{
-                          width: "auto",
-                          height: "40px",
-                          objectFit: "scale-down",
-                          color:'#e1e1e5'
-                        }}
-                        onClick={() => setDeleting(true)}
-                        // insert the delete modal
-                        />
-                        {deleting === true && <Modal isOpen={deleting} onClose={handleDelete} children={<Delete userId={userId} id={postId} />} />}
-                  </div>
+                  {onProfile === true ?
+                    <div>
+                      <img
+                          src={require("../style/bin.png")}
+                          style={{
+                            width: "auto",
+                            height: "40px",
+                            objectFit: "scale-down",
+                            color:'#e1e1e5'
+                          }}
+                          onClick={() => setDeleting(true)}
+                          // insert the delete modal
+                          />
+                          {deleting === true && <Modal isOpen={deleting} onClose={handleDelete} children={<Delete userId={userId} id={postId} />} />}
+                    </div>
+                    : null
+                  }
                 </div>
               </div>
               </div>
