@@ -1,5 +1,4 @@
-import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { Container, Stack } from 'react-bootstrap';
 import PostCard from '../PostCard';
 
@@ -11,8 +10,6 @@ interface Props {
 
 const PostSynth = ({ filter, audioContext, synthAudioChunks }: Props) => {
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
-  const navigate = useNavigate();
-  const handleNavigation = async (path: string) => navigate(path);
 
   // setting the new blob to save to the db and cloud
   let audioBlob: Blob;

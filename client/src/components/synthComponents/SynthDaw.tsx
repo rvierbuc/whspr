@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, BaseSyntheticEvent } from 'react';
 import { Container, Stack } from 'react-bootstrap';
 import Oscillator from './Oscillator';
 import RecordSynth from './RecordSynth';
@@ -9,7 +9,6 @@ interface Props {
   audioContext: AudioContext,
   oscillator: OscillatorNode,
   mediaDest: MediaStreamAudioDestinationNode
-  userId: number
 }
 
 const defaultSettings = {
@@ -19,7 +18,7 @@ const defaultSettings = {
   lowPassType: 'lowpass',
 }
 
-const SynthDaw = ({audioContext, oscillator, mediaDest, userId}: Props): React.JSX.Element => {
+const SynthDaw = ({audioContext, oscillator, mediaDest}: Props): React.JSX.Element => {
   const [contextState, setContextState] = useState('');
   const [addFilter, setAddFilter ] = useState(false);
   const [addSynth, setAddSynth ] = useState(false);
@@ -57,13 +56,13 @@ const SynthDaw = ({audioContext, oscillator, mediaDest, userId}: Props): React.J
     }
   };
 
-  const changeType: (e: any) => void = (e) => {
+  const changeType: (e: BaseSyntheticEvent) => void = (e) => {
     const { id } = e.target;
     setOscSettings({ ...oscSettings, type: id });
     oscillator.type = id;
   };
 
-  const changeValue: (e: any) => void = (e) => {
+  const changeValue: (e: BaseSyntheticEvent) => void = (e) => {
     const value: number = e.target.value;
     const id: string = e.target.id;
     setOscSettings({ ...oscSettings, [id]: Number(value) });
@@ -85,7 +84,7 @@ const SynthDaw = ({audioContext, oscillator, mediaDest, userId}: Props): React.J
       </Stack>
       <Stack direction="vertical">
         {addFilter === true && <Filters setFilter={setFilter} audioContext={audioContext} />}
-        <Container className="synthRecorder rounded mt-3">
+        <Container className="syntheSize rounded mt-3" style={{border: '1px solid rgba(236, 210, 210, 0.36)'}}>
           {addSynth === true && <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />}
           {addSynth === true && <RecordSynth setIsRecording={setIsRecording} setSynthAudioChunks={setSynthAudioChunks} stop={stop} start={start} mediaDest={mediaDest} />}
         </Container>

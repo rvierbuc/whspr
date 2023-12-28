@@ -1,5 +1,5 @@
-import React from 'react';
-import { Container, Button, Stack, Card } from 'react-bootstrap';
+import React, { BaseSyntheticEvent, EventHandler, MouseEventHandler, useState } from 'react';
+import { Container, Button, Stack } from 'react-bootstrap';
 
 interface Props {
   oscSettings: {
@@ -18,16 +18,16 @@ const Oscillator = ({ oscSettings, changeType, changeValue }: Props): React.JSX.
     <Container className="">
         <h5 className="text-center">Select wave type</h5>
         <Stack direction="horizontal" gap={2} className="mx-5 mb-3 typeCard">
-          <Button className={`${type === 'sine' && 'active'}`} variant="secondary" id="sine" onClick={changeType}>
+          <Button className={`${type === 'sine' && 'active'} synthRecorder text-white`} id="sine" onClick={changeType}>
             Sine
           </Button>
-          <Button className={`${type === 'triangle' && 'active'}`} variant="secondary" id="triangle" onClick={changeType}>
+          <Button className={`${type === 'triangle' && 'active'} synthRecorder text-white`} id="triangle" onClick={changeType}>
             Triangle
           </Button>
-          <Button className={`${type === 'square' && 'active'}`} variant="secondary" id="square" onClick={changeType}>
+          <Button className={`${type === 'square' && 'active'} synthRecorder text-white`} id="square" onClick={changeType}>
             Square
           </Button>
-          <Button className={`${type === 'sawtooth' && 'active'}`} variant="secondary" id="sawtooth" onClick={changeType}>
+          <Button className={`${type === 'sawtooth' && 'active'} synthRecorder text-white`} id="sawtooth" onClick={changeType}>
             Sawtooth
           </Button>
         </Stack>
