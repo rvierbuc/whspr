@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import { Button, Container } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom';
 
 interface Props {
@@ -11,7 +12,7 @@ const Delete = ({ userId, id }: Props) => {
   const navigate = useNavigate();
   const handleDelete: () => void = async () => {
     try {
-      const profileNavigate: (path: string) => void = async (path) => await navigate(path);
+      const profileNavigate: (path: string) => void = (path) => navigate(path);
       const deletePost = await axios.delete(`/deletePost/${userId}/${id}`);
       profileNavigate('/protected/profile')
       console.log(deletePost.status);
@@ -20,12 +21,12 @@ const Delete = ({ userId, id }: Props) => {
     }
   };
   return (
-    <div>
+    <Container className="deleteModal text-center text-white rounded" style={{display: "block"}}>
       <p>
-        Are you sure you want to delete this post?
+        Delete this post?
       </p>
-      <button onClick={handleDelete}>Delete</button>
-    </div>
+      <Button type="button" className="btn-rounded" variant="danger" onClick={handleDelete}>Delete</Button>
+    </Container>
   );
 };
 
