@@ -385,3 +385,17 @@ body {
 .synthRecorder {
   background-color: rgb(60, 53, 86);
 }
+
+#synthesize {
+  border: 1px solid rgba(236, 210, 210, 0.36);
+  @include blur(4.2px);
+}
+
+.modalCustom {
+  position: absolute;
+  top: 56%;
+  left: 74%;
+  background-color: grey;
+  border: 1px solid rgba(236, 210, 210, 0.36);
+  border-radius: 3px;
+}

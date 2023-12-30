@@ -10,7 +10,7 @@ export const Modal: React.FC<ModalProps> = ({isOpen, onClose, children}) =>{
     if(!isOpen)return null;
 return(
 <div className='modalCustom' onClick={onClose}>
-    <div onClick={() => console.log('hello')}>
+    <div>
     {children}
     </div>
 </div>

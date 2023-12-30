@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface Constraints {
   audio: {
@@ -16,7 +17,7 @@ const constraints: Constraints = {
   video: false
 }
 
-export const RecordPost = ({ user, audioContext, title, categories, openPost, filter, synthAudioChunks }: { user: any; audioContext: AudioContext; title: string; categories: string[]; openPost: () => void, filter: any, synthAudioChunks: Blob[] }) => {
+export const RecordPost = ({ user, audioContext, title, categories, openPost, filter, synthAudioChunks }: { user: any; audioContext:AudioContext; title: string; categories: string[]; openPost: () => void, filter: any, synthAudioChunks: Blob[], handleNavigation: (path: string) => void }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
@@ -25,12 +26,24 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
   const audioSource = useRef<AudioBufferSourceNode | null>(null);
   const userId = user.id;
 
+  // navigate functionality
+  const navigate = useNavigate();
+  const handleNavigation: (path: string) => void = (path: string) => navigate(path);
+  
   // functionality for recording/filtering the audio
   const lowpass = audioContext.createBiquadFilter();
-  filter.lowPassFrequency ? lowpass.frequency.value = filter.lowPassFrequency : lowpass.frequency.value = 350;
+  if (filter.lowPassFrequency) {
+    lowpass.frequency.value = filter.lowPassFrequency;
+  } else {
+    lowpass.frequency.value = 350;
+  }
   lowpass.type = 'lowpass';
   const highpass = audioContext.createBiquadFilter();
-  filter.highPassFrequency ? highpass.frequency.value = filter.highPassFrequency : highpass.frequency.value = 350;
+  if (filter.highPassFrequency) {
+    highpass.frequency.value = filter.highPassFrequency
+  } else {
+    highpass.frequency.value = 350
+  }
   highpass.type = 'highpass';
 
 
@@ -54,14 +67,15 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
     }
   }
   const startRecording = async () => {
+    // const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
     try {
       resumeAudioContext();
       const stream = await initializeStream();
       setAudioChunks([]);
 
-      const source = audioContext.createMediaStreamSource(stream);
+      const source: MediaStreamAudioSourceNode = audioContext.createMediaStreamSource(stream);
 
-      const destination = audioContext.createMediaStreamDestination();
+      const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
 
       // if the filter is the default setting
       if (Object.values(filter).length === 4) {
@@ -75,6 +89,8 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
         options[0].connect(options[1])
         options[1].connect(options[2])
         options[2].connect(destination);
+      } else {
+        source.connect(destination);
       }
 
       mediaRecorder.current = new MediaRecorder(destination.stream);
@@ -155,10 +171,14 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
   };
 
   const saveAudioToGoogleCloud = async () => {
+    handleNavigation('/protected/feed')
     let audioBlob: Blob;
     // either synth or voice audio is saved
-    synthAudioChunks.length > 0 ?
-      audioBlob = new Blob(synthAudioChunks, { type: 'audio/wav' }) : audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    if (synthAudioChunks.length > 0) {
+      audioBlob = new Blob(synthAudioChunks, { type: 'audio/wav' })
+    } else {
+      audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    }
     try {
       const formData = new FormData()
       formData.append('audio', audioBlob)

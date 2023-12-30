@@ -2,7 +2,9 @@ import WaveSurfer from "wavesurfer.js";
 import RecordPlugin from "wavesurfer.js/dist/plugins/record";
 import RegionsPlugin from "wavesurfer.js/dist/plugins/regions.js";
 import React, { useEffect, useState } from "react";
+import Delete from './Delete';
 import axios from "axios";
+import { Modal } from'./Modal';
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Post from "./Post";
@@ -37,8 +39,19 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [decodedData, setDecodedData] = useState<any>();
   const [following, setFollowing] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<boolean>(false)
   // const { audioUrl, postId } = props;
   const containerId = `waveform-${postId || ""}`;
+
+  // const handleDelete: () => void = async () => {
+  //   try {
+  //     const deletePost = await axios.delete(`/deletePost/${userId}/${postId}`);
+  //     console.log(deletePost.status);
+  //   } catch (error: any) {
+  //     console.error(error);
+  //   }
+  // };
+
 
   const isFollowing = async () => {
     try {
@@ -359,8 +372,32 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   >
                     {postObj.likeCount}
                   </div>
+                    <div>
+                      <img
+                        src={require("../style/bin.png")}
+                        style={{
+                          width: "auto",
+                          height: "40px",
+                          objectFit: "scale-down",
+                          color:'#e1e1e5'
+                        }}
+                        onClick={() => {
+                          if (deleting === false) {
+                            setDeleting(true);
+                          } else {
+                            setDeleting(false)
+                          }
+                        }}
+                      />
+                    </div>
+                    <div>
+                      {deleting === true && <Modal
+                        isOpen={deleting}
+                        onClose={() => setDeleting(false)}
+                        children={<Delete userId={userId} id={postId} />} />}
+                    </div>
+                  </div>
                 </div>
-              </div>
               </div>
               <Post
                 key={postId}
