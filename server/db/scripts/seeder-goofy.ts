@@ -25,7 +25,7 @@ const getRandomPosts = () => {
   }
   for(let i = 0; i < 10; i++){
     let samplePost:any = {
-
+      commentCount: 0,
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702167980979.wav'
     }
     samplePost.userId = Math.floor(Math.random() * 5) + 1
@@ -34,7 +34,6 @@ const getRandomPosts = () => {
     samplePost.updatedAt = samplePost.createdAt
     samplePost.likeCount = Math.floor(Math.random() * 50) + 1
     samplePost.listenCount = Math.floor(Math.random() * 200) + 20
-    samplePost.commentCount = Math.floor(Math.random() * 50) + 1
     samplePost.categories = getRandomTags()
 
     postArr.push(samplePost)
@@ -144,28 +143,28 @@ export const seedDatabase = async () => {
         updatedAt: new Date(),
       },
     ]);
-    await Comment.bulkCreate([
-      {
-        userId: 1,
-        postId: 2,
-        soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
-      },
-    {
-      userId: 2,
-      postId: 2,
-      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
-    },
-    {
-      userId: 1,
-      postId: 1,
-      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
-    },
-    {
-      userId: 3,
-      postId: 1,
-      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
-    }
-  ])
+  //   await Comment.bulkCreate([
+  //     {
+  //       userId: 1,
+  //       postId: 2,
+  //       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
+  //     },
+  //   {
+  //     userId: 2,
+  //     postId: 2,
+  //     soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
+  //   },
+  //   {
+  //     userId: 1,
+  //     postId: 1,
+  //     soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
+  //   },
+  //   {
+  //     userId: 3,
+  //     postId: 1,
+  //     soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/testsound.mp3',
+  //   }
+  // ])
 
 /**
  *  {

@@ -8,23 +8,27 @@ import * as protos from "@google-cloud/text-to-speech/build/protos/protos"
 // const db = require('./db')
 // const express = require('express')
 // const session = require('express-session')
+import { v4 } from 'uuid';
+import { promisify } from 'util'
 import OpenAI from 'openai'
 import ElevenLabs from 'elevenlabs-node'
 import cors from 'cors'
 import http from 'http'
-import {Server, Socket} from 'socket.io'
-import {ExpressPeerServer} from 'peer'
+import { Server, Socket } from 'socket.io'
+import { ExpressPeerServer } from 'peer'
+import { Readable } from 'stream';
 import dotenv from 'dotenv'
 import fs from 'fs'
 
 dotenv.config();
-const {HOST, PORT, OPENAI_API_KEY, TTSKEY} = process.env
+const { HOST, PORT, OPENAI_API_KEY, TTSKEY } = process.env
 
 const clientPath = path.resolve(__dirname, '../client/dist')
 
 const openai = new OpenAI();
 const eleven = new ElevenLabs(
-  { apiKey: TTSKEY,
+  {
+    apiKey: TTSKEY,
     voiceId: 'DVYO7ONqCgr4Bp6CHC1c',
     //Knightly: PcDnPecxCbv82eDtxjXe, Guðrún: DVYO7ONqCgr4Bp6CHC1c
   }
@@ -36,12 +40,12 @@ const corsOptions = {
   methods: ['GET', 'POST'],
 }
 const storage = multer.memoryStorage();
-const upload = multer({storage: storage})
+const upload = multer({ storage: storage })
 
 
 
 const postRoutes = require('./routes/postRoutes')
-import { Sound, Post, User } from './dbmodels'
+import { Sound, Post, User, AIMessage } from './dbmodels'
 
 
 const app = express()
@@ -56,14 +60,14 @@ const cookie = require('cookie');
 app.use(cors())
 app.use(upload.single('audio'))
 
-app.use(cookieParser(secret, {sameSite: 'strict'}))
+app.use(cookieParser(secret, { sameSite: 'strict' }))
 app.use(session({
   secret,
   resave: false,
   saveUninitialized: false,
   cookie: {
     secure: false,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours 
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
 }))
 app.use(passport.initialize());
@@ -95,17 +99,17 @@ app.get('/auth/google', (req: Request, res: Response) => {
   passport.authenticate('google', { scope: ['email', 'profile'] })(req, res);
 })
 
-app.get('/google/callback',  passport.authenticate('google', {
+app.get('/google/callback', passport.authenticate('google', {
   successRedirect: '/protected/feed',
   failureRedirect: '/auth/google/failure',
 }),
-(req: Request, res: Response) => {
-  // set cookies
-  res.setHeader('Set-Cookie', setCookie);
-  req.session.save()
+  (req: Request, res: Response) => {
+    // set cookies
+    res.setHeader('Set-Cookie', setCookie);
+    req.session.save()
 
-  res.redirect('/protected')
-})
+    res.redirect('/protected')
+  })
 
 
 app.get('/auth/google/failure', (req, res) => {
@@ -124,48 +128,48 @@ app.use('/logout', (req: Request, res: Response) => {
 //get current user
 app.get('/current-user', async (req: Request, res: Response) => {
   //console.log('req.session', req);
-    try {
-      const results = await User.findOne({where: {googleId: req.user}})
-      if(results){
-        res.status(200).send(results);
-      } else {
-        res.status(404).send('User not found');
-      }
-    } catch (err) {
-      console.error('Error fetching user:', err);
-      res.status(500).send('Error fetching user');
+  try {
+    const results = await User.findOne({ where: { googleId: req.user } })
+    if (results) {
+      res.status(200).send(results);
+    } else {
+      res.status(404).send('User not found');
     }
+  } catch (err) {
+    console.error('Error fetching user:', err);
+    res.status(500).send('Error fetching user');
+  }
 })
 
 
-app.get('/getSoundURLPostId',  async (req, res) =>{
-  const {postId} = req.query;
-  if(!postId){
+app.get('/getSoundURLPostId', async (req, res) => {
+  const { postId } = req.query;
+  if (!postId) {
     console.error('post Id is undefined or null')
     res.send('post Id is undefined or null').status(400);
     return;
   }
-  try{
-    const soundRecord = await Sound.findOne({where: {postId}});
-    if(!soundRecord){
+  try {
+    const soundRecord = await Sound.findOne({ where: { postId } });
+    if (!soundRecord) {
       console.error('Sound record not found.')
       res.send('Sound record not found.').status(404);
       return
     }
     const soundUrl = soundRecord.get('soundUrl');
-    if(soundUrl){
-      res.status(200).send({soundUrl});
+    if (soundUrl) {
+      res.status(200).send({ soundUrl });
     }
-  }catch(error){
+  } catch (error) {
     console.error('Nonspecific error retrieving audio id:', error);
     res.send('Nonspecific error retrieving audio id.').status(500)
   }
-  })
+})
 
-app.post('/createPostRecord', async(req, res) =>{
+app.post('/createPostRecord', async (req, res) => {
   //console.log(req.body);
-    try{
-      const postRecord = {
+  try {
+    const postRecord = {
       userId: req.body.userId,
       title: req.body.title,
       category: req.body.category,
@@ -173,36 +177,36 @@ app.post('/createPostRecord', async(req, res) =>{
       likeCount: 0,
       commentCount: 0,
       listenCount: 0
-      }
-      await Post.create(postRecord)
-      res.status(200).send('Post record created.')
-    }catch(error){
-      res.status(500).send('Nonspecific error in post create')
     }
-  })
+    await Post.create(postRecord)
+    res.status(200).send('Post record created.')
+  } catch (error) {
+    res.status(500).send('Nonspecific error in post create')
+  }
+})
 
-  // io.on('connection', (socket: Socket) => {
-    //   console.log('Socket connected! ID: ', socket.id)
-    //   socket.emit('id', socket.id)
-    
-    //   socket.on('disconnect', () => {
+// io.on('connection', (socket: Socket) => {
+//   console.log('Socket connected! ID: ', socket.id)
+//   socket.emit('id', socket.id)
+
+//   socket.on('disconnect', () => {
 //     console.log('User disconnected')
 //     io.emit('disconnected', socket.id)
 //   })
 
 //   socket.on('call', (data: dataObj) => {
-  //     console.log('joined')
-  //     io.to(data.userId).emit('call', {signal: data.signal, from: data.from, name: data.name})
-  //   })
-  
-  //   socket.on('answer', (data: dataObj2) => {
-    //     io.to(data.to).emit('accept', data.signal)
-    //   })
-    
-    // })
-   
-    
-  app.post('/openAIGetResponse', async (req, res) => {
+//     console.log('joined')
+//     io.to(data.userId).emit('call', {signal: data.signal, from: data.from, name: data.name})
+//   })
+
+//   socket.on('answer', (data: dataObj2) => {
+//     io.to(data.to).emit('accept', data.signal)
+//   })
+
+// })
+
+
+app.post('/openAIGetResponse', async (req, res) => {
   try {
     const { messages } = req.body;
     const request = {
@@ -213,9 +217,9 @@ app.post('/createPostRecord', async(req, res) =>{
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${OPENAI_API_KEY}`
     };
-    const airesp = await axios.post('https://api.openai.com/v1/chat/completions', 
-    request, 
-    { headers: headers });
+    const airesp = await axios.post('https://api.openai.com/v1/chat/completions',
+      request,
+      { headers: headers });
     const responseText = airesp.data.choices[0].message.content;
     res.status(200).send({ response: responseText });
   } catch (error) {
@@ -226,19 +230,19 @@ app.post('/createPostRecord', async(req, res) =>{
 
 io.on('connection', (socket) => {
   console.log('User connected');
-  
+
   socket.on('join-channel', (channelName, uid) => {
     socket.join(channelName);
     io.to(channelName).emit('user-joined', uid);
   });
-  
+
   socket.on('leave-channel', () => {
     const rooms = Object.keys(socket.rooms);
     rooms.forEach((room) => {
       socket.leave(room);
     });
   });
-  
+
   socket.on('disconnect', () => {
     console.log('User disconnected');
   });
@@ -249,48 +253,126 @@ const speech = new textToSpeech.TextToSpeechClient({
   projectId: 'whspr-406622'
 })
 
-app.post('/text-to-speech-google', async(req, res) =>{
-  try{
+app.post('/text-to-speech-google', async (req, res) => {
+  try {
     const text = req.body.text
     const request = {
-      input: {text: text},
-      voice: {languageCode: 'en-US', ssmlGender: protos.google.cloud.texttospeech.v1.SsmlVoiceGender.NEUTRAL},
-      audioConfig: {audioEncoding: protos.google.cloud.texttospeech.v1.AudioEncoding.MP3}
+      input: { text: text },
+      voice: { languageCode: 'en-US', ssmlGender: protos.google.cloud.texttospeech.v1.SsmlVoiceGender.NEUTRAL },
+      audioConfig: { audioEncoding: protos.google.cloud.texttospeech.v1.AudioEncoding.MP3 }
     }
     const [response] = await speech.synthesizeSpeech(request)
     res.status(200).send(response.audioContent)
-  }catch(error){
+  } catch (error) {
     console.error('error in text to speech: ', error)
     res.status(500).send('Error synthesizing speech')
   }
 })
 
-app.post('/text-to-speech-openai', async(req, res) =>{
+app.post('/text-to-speech-openai', async (req, res) => {
   const text = req.body.text
-  try{
-   const response = await openai.audio.speech.create({
-      model: 'tts-1', 
-      input: text, 
+  try {
+    const response = await openai.audio.speech.create({
+      model: 'tts-1',
+      input: text,
       voice: "fable"
     })
     const buffer = Buffer.from(await response.arrayBuffer())
     res.status(200).send(buffer)
-  }catch(error){
+  } catch (error) {
     console.error('error in text to speech: ', error)
     res.status(500).send('Error synthesizing speech from open AI')
   }
 })
 
-app.post('/text-to-speech-elevenlabs', async(req, res) =>{
+app.post('/text-to-speech-elevenlabs', async (req, res) => {
   const text = req.body.text
-  try{
-   const stream = await eleven.textToSpeechStream({textInput: text, responseType: 'stream'}) 
-   res.setHeader('Content-Type', 'audio/mpeg')
+  try {
+    const stream = await eleven.textToSpeechStream({ textInput: text, responseType: 'stream' })
+    res.setHeader('Content-Type', 'audio/mpeg')
     stream.pipe(res)
-  }catch(error){
+  } catch (error) {
     console.error('error in text to speech: ', error)
     res.status(500).send('Error synthesizing speech from open AI')
   }
+})
+
+
+app.post('/createRecordsAIMessages', async (req, res) => {
+  const { newUserMessage, newAIMessage, userId } = req.body
+  try {
+    const newUserMessageRecord = await AIMessage.create({
+      userId: userId,
+      message: newUserMessage,
+      role: 'user'
+    })
+    const newAImessageRecord = await AIMessage.create({
+      userId: userId,
+      message: newAIMessage,
+      role: 'assistant'
+    })
+    res.status(200).send({ user: newUserMessageRecord, ai: newAImessageRecord })
+  } catch (error) {
+    console.error('error in AIMessage record creation: ', error)
+    res.status(500).send('Error creating record in AIMessages')
+  }
+})
+
+app.get('/retrieveRecordsAIMessages', async (req, res) => {
+  const { userId, nMessages } = req.query
+  try {
+    if (typeof userId === 'string' && typeof nMessages === 'string') {
+      const nMessagesNumber = parseFloat(nMessages)
+      const userIdNumber = parseFloat(userId)
+
+      const latestAIMessages = await AIMessage.findAll({
+        where: { userId: userIdNumber, role: 'assistant' },
+        limit: nMessagesNumber,
+        order: [['createdAt', 'DESC']]
+      })
+      const latestUserMessages = await AIMessage.findAll({
+        where: { userId: userIdNumber, role: 'user' },
+        limit: nMessagesNumber,
+        order: [['createdAt', 'DESC']]
+      })
+      res.status(200).send({ latestAIMessages: latestAIMessages, latestUserMessages: latestUserMessages })
+    } else {
+      console.log('not strings')
+    }
+  } catch (error) {
+    console.error('error in AIMessage retrieval: ', error)
+    res.status(500).send('Error retrieving record in AIMessages')
+  }
+})
+
+const writeFileAsync = promisify(fs.writeFile)
+
+app.post('/speechToTextOpenAI', async (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('Empty file in request')
+  }
+  const tempDir = path.join(__dirname, 'temp')
+  fs.mkdirSync(tempDir, { recursive: true })
+  const temp = path.join(__dirname, 'temp', `${v4()}.wav`)
+
+  try {
+    await writeFileAsync(temp, req.file.buffer)
+    const response = await openai.audio.transcriptions.create({
+      model: "whisper-1",
+      file: fs.createReadStream(temp),
+      response_format: "text"
+    })
+    res.send(response)
+    fs.unlink(temp, (err) => {
+      if (err) console.error('Error deleting temp file:', err);
+    });
+  } catch (error) {
+    console.error('error in speechToTextOpenAI', error)
+    fs.unlink(temp, (err) => {
+      if (err) console.error('Error deleting temp file:', err);
+    });
+  }
+
 })
 
 // MAKE SURE THIS IS LAST

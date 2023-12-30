@@ -36,10 +36,10 @@ function Hit({ hit }) {
   console.log('hits', hits);//the individual hit obj
   const { refine } = useSearchBox();
   console.log('refine', refine);
-  
+
   return (
     <article>
-      <img src={hit.profileImgUrl || ''} alt={hit.name} style={{ width: 'auto', height: '100px', objectFit: 'scale-down' }}/>
+      <img src={hit.profileImgUrl || ''} alt={hit.name} style={{ width: 'auto', height: '100px', objectFit: 'scale-down' }} />
       <Link to={`/protected/profile/${hit.objectID}`}>{hit.username}</Link>
 
       <p>{hit.title || ''}</p>
@@ -49,34 +49,34 @@ function Hit({ hit }) {
 }
 //creating a custom search box to stuff into the navbar
 
-const Search:React.FC = () => {
+const Search: React.FC = () => {
   const [currentSearch, setCurrentSearch] = useState<string>('');
   // const { refine } = useSearchBox();
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentSearch(event.target.value);
   };
   return (
-  <InstantSearch 
-  searchClient={searchClient} 
-  indexName="search_index"
-  initialUiState={{ searchBox: { query: currentSearch } }}
-  insights={true}
-  >
-    {/* <SearchBox onInput={handleSearchChange}/> */}
-    <Form inline className='bg-dark'>
-      <InputGroup>
-        <InputGroup.Text id="basic-addon1">@/#</InputGroup.Text>
-        <Form.Control
-          placeholder="Search"
-          aria-label="Search"
-          aria-describedby="basic-addon1"
-          onInput={handleSearchChange}
-        />
-      </InputGroup>
-    </Form>
-    {currentSearch && <Hits hitComponent={Hit} />}
-    <Configure clickAnalytics={true} queryType="prefixLast" />
-  </InstantSearch>
+    <InstantSearch
+      searchClient={searchClient}
+      indexName="search_index"
+      initialUiState={{ searchBox: { query: currentSearch } }}
+      insights={true}
+    >
+      {/* <SearchBox onInput={handleSearchChange}/> */}
+      <Form inline className='bg-dark'>
+        <InputGroup>
+          <InputGroup.Text id="basic-addon1">@/#</InputGroup.Text>
+          <Form.Control
+            placeholder="Search"
+            aria-label="Search"
+            aria-describedby="basic-addon1"
+            onInput={handleSearchChange}
+          />
+        </InputGroup>
+      </Form>
+      {currentSearch && <Hits hitComponent={Hit} />}
+      <Configure clickAnalytics={true} queryType="prefixLast" />
+    </InstantSearch>
   );
 };
 export default Search;

@@ -2,7 +2,9 @@ import WaveSurfer from 'wavesurfer.js';
 import RecordPlugin from 'wavesurfer.js/dist/plugins/record';
 import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.js';
 import React, { useEffect, useState } from 'react';
+import Delete from './Delete';
 import axios from 'axios';
+import { Modal } from'./Modal';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Post from './Post';
@@ -20,6 +22,7 @@ interface WaveSurferProps {
   onUserProfile: boolean;
   setOnProfile: any;
   audioContext: any;
+  feed: string;
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
@@ -33,13 +36,69 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   onUserProfile,
   setOnProfile,
   audioContext,
+  feed,
 }) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [decodedData, setDecodedData] = useState<any>();
+  const [following, setFollowing] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<boolean>(false)
   // const { audioUrl, postId } = props;
   const containerId = `waveform-${postId || ''}`;
+  const containerId = `waveform-${postId || ""}`;
+
+  // const handleDelete: () => void = async () => {
+  //   try {
+  //     const deletePost = await axios.delete(`/deletePost/${userId}/${postId}`);
+  //     console.log(deletePost.status);
+  //   } catch (error: any) {
+  //     console.error(error);
+  //   }
+  // };
+
+
+  const isFollowing = async () => {
+    try {
+      const findFollowing = await axios.get(
+        `/post/isFollowing/${userId}/${postObj.user.id}`
+      );
+      if (findFollowing.status === 200) {
+        setFollowing(true);
+      }
+    } catch (error: any) {
+      if (error.response.status === 404) {
+        setFollowing(false);
+      }
+      console.log("following error", error);
+    }
+  };
+  const startFollowing = async () => {
+    try {
+      const createFollowing = await axios.post("/post/startFollowing", {
+        userId,
+        followingId: postObj.user.id,
+      });
+      if (createFollowing.data === "Created") {
+        setFollowing(true);
+      }
+    } catch (error) {
+      console.error("could not follow user", error);
+    }
+  };
+
+  const stopFollowing = async () => {
+    try {
+      const createFollowing = await axios.delete(
+        `/post/stopFollowing/${userId}/${postObj.user.id}`
+      );
+      if (createFollowing.data === "Created") {
+        setFollowing(false);
+      }
+    } catch (error) {
+      console.error("could not follow user", error);
+    }
+  };
   const createSoundWaves = () => {
     let regions: RegionsPlugin;
     let hover: HoverPlugin;
@@ -55,8 +114,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       // barGap: 2,
       interact: true,
       container: `#${containerId}`,
-      waveColor: 'rgb(0, 255, 0)',
-      progressColor: 'rgb(0, 0, 255)',
+      waveColor: "rgb(166, 197, 255)",
+      progressColor: "rgb(60, 53, 86)",
       url: audioUrl,
       width: 'auto',
       height: onUserProfile ? 200 : 500, //TODO: maybe change this back to auto
@@ -131,6 +190,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
 
   useEffect(() => {
     createSoundWaves();
+    isFollowing();
   }, [audioUrl]);
   return (
     <div
@@ -139,7 +199,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       style={{ width: '100%', height: '100%' }}
     >
       <div className="row" id="feed-row">
-        <div className="col-sm" id="feed-col-sm" >
+        <div className="col-sm" id="feed-col-sm">
           <div
             className="card"
             id="feed-card"
@@ -150,47 +210,71 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
               {onProfile ? (
                 <a></a>
               ) : (
-                <div className="card-header d-flex flex-row align-items-center justify-content-start">
+                <div
+                  className="d-flex flex-row align-items-center justify-content-start"
+                  id="header"
+                  style={{
+                    padding: "10px",
+                  
+                  }}
+                >
                   <img
                     src={postObj.user.profileImgUrl}
                     className="rounded-circle"
                     style={{
-                      width: 'auto',
-                      height: '70px',
-                      margin: '20px',
-                      objectFit: 'scale-down',
-                      borderStyle: 'solid',
-                      borderWidth: 'medium',
+                      width: "auto",
+                      height: "70px",
+                      margin: "20px",
+                      objectFit: "scale-down",
+                      borderStyle: "solid",
+                      borderWidth: "medium",
+                      borderColor: "#3c3556",
                     }}
                   />
                   <a
                     href={`profile/${postObj.user.id}`}
-                    className="p-2 card-link"
-                    style={{ fontSize: 'xx-large' }}
+                    style={{ fontSize: "xx-large", color: "#0f0c0c" }}
                     id="feed-username"
                   >
                     {postObj.user.username}
                   </a>
-                  <button
-                    className="p-2 btn btn-primary"
-                    style={{ marginLeft: 'auto', marginRight: '2%' }}
-                  >
-                    Follow
-                  </button>
+                  {feed === "explore" ? (
+                    following ? (
+                      <button
+                        className="p-2 btn btn-danger"
+                        style={{ marginLeft: "auto", marginRight: "2%" }}
+                        onClick={() => stopFollowing()}
+                      >
+                        Unfollow
+                      </button>
+                    ) : (
+                      <button
+                        className="p-2 btn btn-primary"
+                        style={{ marginLeft: "auto", marginRight: "2%" }}
+                        onClick={() => startFollowing()}
+                      >
+                        Follow
+                      </button>
+                    )
+                  ) : (
+                    <div></div>
+                  )}
                 </div>
               )}
+              
               <div
                 className="d-flex flex-row align-items-end justify-content-start"
                 style={{ marginTop: '3%' }}
               >
-                <div style={{ fontSize: 'xxx-large', marginLeft: '20px' }}>
+                <div style={{ fontSize: "xxx-large", marginLeft: "20px", color:'#e1e1e5' }}>
                   {postObj.title}
                 </div>
                 <div
                   style={{
-                    marginLeft: 'auto',
-                    marginRight: '2%',
-                    fontSize: 'large',
+                    marginLeft: "auto",
+                    marginRight: "2%",
+                    fontSize: "large",
+                    color:'#e1e1e5'
                   }}
                 >
                   {dayjs(postObj.createdAt).fromNow()}
@@ -205,7 +289,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     <button
                       className="btn btn-link"
                       style={{
-                        color: '#424242',
+                        color: '#e1e1e5',
                         fontSize: 'x-large',
                         marginBottom: '3%',
                         textOverflow: 'ellipsis',
@@ -267,17 +351,19 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     <img
                       src={require('../style/listenIcon.png')}
                       style={{
-                        width: 'auto',
-                        height: '35px',
-                        objectFit: 'scale-down',
+                        width: "auto",
+                        height: "35px",
+                        objectFit: "scale-down",
+                        color:'#e1e1e5'
                       }}
                     />
                   </div>
                   <div
                     style={{
-                      marginLeft: '2px',
-                      marginRight: '2%',
-                      fontSize: 'x-large',
+                      marginLeft: "2px",
+                      marginRight: "2%",
+                      fontSize: "x-large",
+                      color:'#e1e1e5'
                     }}
                   >
                     {postObj.listenCount}
@@ -286,17 +372,19 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     <img
                       src={require('../style/commentIcon.png')}
                       style={{
-                        width: 'auto',
-                        height: '40px',
-                        objectFit: 'scale-down',
+                        width: "auto",
+                        height: "40px",
+                        objectFit: "scale-down",
+                        color:'#e1e1e5'
                       }}
                     />
                   </div>
                   <div
                     style={{
-                      marginLeft: '2px',
-                      marginRight: '2%',
-                      fontSize: 'x-large',
+                      marginLeft: "2px",
+                      marginRight: "2%",
+                      fontSize: "x-large",
+                      color:'#e1e1e5'
                     }}
                   >
                     {postObj.commentCount}
@@ -314,12 +402,38 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   </div>
                   <div
                     style={{
-                      marginLeft: '3px',
-                      marginRight: '2%',
-                      fontSize: 'x-large',
+                      marginLeft: "3px",
+                      marginRight: "2%",
+                      fontSize: "x-large",
+                      color:'#e1e1e5'
                     }}
                   >
                     {postObj.likeCount}
+                  </div>
+                    <div>
+                      <img
+                        src={require("../style/bin.png")}
+                        style={{
+                          width: "auto",
+                          height: "40px",
+                          objectFit: "scale-down",
+                          color:'#e1e1e5'
+                        }}
+                        onClick={() => {
+                          if (deleting === false) {
+                            setDeleting(true);
+                          } else {
+                            setDeleting(false)
+                          }
+                        }}
+                      />
+                    </div>
+                    <div>
+                      {deleting === true && <Modal
+                        isOpen={deleting}
+                        onClose={() => setDeleting(false)}
+                        children={<Delete userId={userId} id={postId} />} />}
+                    </div>
                   </div>
                 </div>
               </div>

@@ -1,29 +1,36 @@
-import React, { useState } from 'react';
+import React from 'react';
 import SynthDaw from './synthComponents/SynthDaw';
-import { useLoaderData } from 'react-router-dom';
+import { Container } from 'react-bootstrap'
+
 
 interface Props {
   audioContext: AudioContext
 }
 
+/**
+ * TODO:
+ *
+ * 2) Expand the synth if you have issues combining voice and synth => let users experiment with wave manipulation so they can post their experiments
+ * 7) Redirect back to Home after posting
+ */
+
 const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
-  // setting up basic audioContext workflow => w/ oscillatorNode
-  const user: any = useLoaderData();
-  const userId = user.id;
   const oscillator: OscillatorNode = audioContext.createOscillator();
-  const filter: BiquadFilterNode = audioContext.createBiquadFilter();
+  const finalFilter: BiquadFilterNode = audioContext.createBiquadFilter();
   const mediaDest: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
   const finalDest: AudioDestinationNode = audioContext.destination;
 
   // connect the workflow of audioNodes
-  oscillator.connect(filter);
-  filter.connect(finalDest);
-  filter.connect(mediaDest);
+  oscillator.connect(finalFilter);
+  finalFilter.connect(finalDest);
+  finalFilter.connect(mediaDest);
 
   return (
-    <div>
-      <SynthDaw audioContext={audioContext} oscillator={oscillator} filter={filter} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />
-    </div>
+    <Container className="p-3 rounded w-75" id="synthesize">
+      <div>
+        <SynthDaw audioContext={audioContext} oscillator={oscillator} mediaDest={mediaDest} />
+      </div>
+    </Container>
   );
 };
 

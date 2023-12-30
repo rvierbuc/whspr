@@ -1,26 +1,43 @@
-import React, { SetStateAction } from 'react';
+import React, { useState } from 'react';
 import Tuna from 'tunajs';
-import SynthVoice from './SynthVoice';
-import * as Tone from 'tone';
+import { Stack, Button, Container } from 'react-bootstrap';
 
 interface Props {
   audioContext: AudioContext
-  title: string
-  setAudioChunks: any
-  setIsRecording: any
-  isRecording: boolean
+  setFilter: any
 }
 
-const Filters = ({ isRecording, setIsRecording, setAudioChunks, audioContext }: Props) => {
+const Filters = ({ setFilter, audioContext }: Props) => {
+  const [bgColor1, setBgColor1] = useState<string>('')
+  const [bgColor2, setBgColor2] = useState<string>('')
+  const [bgColor3, setBgColor3] = useState<string>('')
   const tuna = new Tuna(audioContext);
-  Tone.setContext(audioContext);
+
+  const handleFilterChange = (filter: any) => {
+    setFilter(filter);
+    filter === alien ? setBgColor1('danger') : setBgColor1('secondary');
+    if (filter === alien && bgColor1 === 'danger') {
+      setBgColor1('secondary');
+      setFilter(defaultSettings)
+    }
+    filter === wobbly ? setBgColor2('danger') : setBgColor2('secondary');
+    if (filter === wobbly && bgColor2 === 'danger') {
+      setBgColor2('secondary');
+      setFilter(defaultSettings)
+    }
+    filter === robot ? setBgColor3('danger') : setBgColor3('secondary');
+    if (filter === robot && bgColor3 === 'danger') {
+      setBgColor3('secondary');
+      setFilter(defaultSettings)
+    }
+  };
 
   const defaultSettings = {
     lowPassFrequency: 350,
     highPassFrequency: 350,
     highPassType: 'highpass',
     lowPassType: 'lowpass',
-  };
+  }
 
   const robot = {
     lowPassType: 'lowpass',
@@ -66,8 +83,8 @@ const Filters = ({ isRecording, setIsRecording, setAudioChunks, audioContext }: 
       delayTimeLeft: 60,
       delayTimeRight: 100,
     }),
-    gain: new tuna.Gain({ gain: 250 }),
-  };
+    gain: new tuna.Gain({ gain: 250})
+  }
 
   const alien = {
     lowPassType: 'lowpass',
@@ -93,23 +110,17 @@ const Filters = ({ isRecording, setIsRecording, setAudioChunks, audioContext }: 
       baseModulationFrequency: 1000,
       bypass: false,
     }),
-  };
-
-  const notes1: string[] = ['G#4', 'E4', 'G#4', 'A#4', 'B4', 'A#4', 'G#4', 'E4', 'D#4'];
-  const sampleSynth = new Tone.MonoSynth();
+  }
 
   return (
-    <div>
-      <SynthVoice
-        isRecording={isRecording}
-        setIsRecording={setIsRecording}
-        setRootAudioChunks={setAudioChunks}
-        audioContext={audioContext}
-        robot={robot}
-        wobbly={wobbly}
-        alien={alien}
-        defaultSettings={defaultSettings} />
-    </div>
+    <Container className="text-center my-3 pb-1 rounded">
+    <h5>Try out our new voice filters!</h5>
+    <Stack direction="horizontal" className="mx-5 mb-3 typeCard">
+      <Button className="mx-2 btn synthRecorder text-white" variant={bgColor1} onClick={() => handleFilterChange(alien)}>Alien</Button>
+      <Button className="mx-2 btn synthRecorder text-white" variant={bgColor2} onClick={() => handleFilterChange(wobbly)}>Wobbly</Button>
+      <Button className="mx-2 btn synthRecorder text-white" variant={bgColor3} onClick={() => handleFilterChange(robot)}>Robot</Button>
+    </Stack>
+  </Container>
   );
 };
 
