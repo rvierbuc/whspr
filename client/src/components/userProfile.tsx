@@ -80,8 +80,9 @@ const UserProfile = ({ audioContext }) => {
   // console.log('hey', selectedUserPosts)
   useEffect(() => {
     getSelectedUserInfo();
-    console.log('onProfile in user profile', onProfile);
-    console.log('onUserProfile in user profile', onUserProfile);
+    // console.log('onProfile in user profile', onProfile);
+    // console.log('onUserProfile in user profile', onUserProfile);
+    // console.log('currentUser in user profile', currentUser);
   }, []);
   const numberOfPostsPerRow = 3;
   const rows: PostAttributes[][] = [];
@@ -100,13 +101,14 @@ const UserProfile = ({ audioContext }) => {
             <h2 style={{ color: 'white' }}>{currentUser.username}</h2>
           </div>
         </div>
-        <div className="grid-post-container">
+        <div className="grid-post-container" style={{ height: '200px' }}>
           {rows.map((row, index) => (
             <Row key={index}>
               {row.map((post) => (
                 <Col key={post.id}>
                   <div className="grid-post-item">
                     <WaveSurferComponent
+                      audioContext={audioContext}
                       postObj={post}
                       audioUrl={post.soundUrl}
                       postId={post.id}
@@ -129,34 +131,3 @@ const UserProfile = ({ audioContext }) => {
 };
 
 export default UserProfile;
-
-// {selectedUserPosts.length > 0 ? (
-//   <Row>
-//     {selectedUserPosts.map((post) => (
-//       // console.log('post in map', post);
-//       <Col key={post.id}>
-        // <div className="grid-post-item">
-        //   <WaveSurferComponent
-        //     postObj={post}
-        //     audioUrl={post.soundUrl}
-        //     postId={post.id}
-        //     userId={currentUser.id}
-        //     updatePost={updatePost}
-        //     getPosts={getSelectedUserInfo}
-        //     onProfile={onProfile}
-        //     setOnProfile={setOnProfile}
-        //   />
-        //   <Post
-        //     key={post.id}
-        //     postObj={post}
-        //     audioContext={audioContext}
-        //     user={currentUser}
-        //     updatePost={updatePost}
-        //   />
-        // </div>;
-//       </Col>
-//     ))}
-//   </Row>
-// ) : (
-//   <p> No Posts Yet!</p>
-// )}

@@ -6,6 +6,8 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Post from './Post';
+import HoverPlugin from 'wavesurfer.js/plugins/hover';
+
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
   audioUrl: string;
@@ -40,6 +42,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const containerId = `waveform-${postId || ''}`;
   const createSoundWaves = () => {
     let regions: RegionsPlugin;
+    let hover: HoverPlugin;
     //if there is a wavesurfer already, destroy it
     if (wave) {
       wave.destroy();
@@ -56,8 +59,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       progressColor: 'rgb(0, 0, 255)',
       url: audioUrl,
       width: 'auto',
-      height: onUserProfile ? 200 : 500,
-      normalize: true,
+      height: onUserProfile ? 200 : 500, //TODO: maybe change this back to auto
+      normalize: false,
       renderFunction: (channels, ctx) => {
         const { width, height } = ctx.canvas;
         const scale = channels[0].length / width;
@@ -91,6 +94,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
         ctx.closePath();
       },
     });
+    hover = wavesurfer.registerPlugin(HoverPlugin.create());
 
     regions = wavesurfer.registerPlugin(RegionsPlugin.create());
 
@@ -119,14 +123,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
         console.error('on audio finish error', error);
       }
     });
-    // wavesurfer.on('decode', () => { THIS CODE WORKS AND IS LEFT COMMENTED OUT UNTIL SOMEONE NEEDS TO USE IT,
-    //     regions.addRegion({          IT ADDS A REGIONE TO THE WAVE FORM THAT THE USER CAN DRAG TO HIGHLIGHT SPECIFIC PARTS OF THE WAVE
-    //         start: 0.25,         THIS WILL BE TINKERED WITH A LOT FOR USER CREATED SOUNDS
-    //         end: 0.5,
-    //         drag: true,
-    //         color: 'hsla(250, 100%, 30%, 0.5)',
-    //     })
-    // })
     wavesurfer.getDecodedData();
     setWave(wavesurfer);
     setDisplay(true);
@@ -135,12 +131,10 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
 
   useEffect(() => {
     createSoundWaves();
-    console.log('wavesurfer, on profile', onProfile);
-    console.log('wavesurfer, on user profile', onUserProfile);
   }, [audioUrl]);
   return (
     <div
-      className="container-fluid"
+      className="container"
       id="feed-container"
       style={{ width: '100%', height: '100%' }}
     >
@@ -149,7 +143,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
           <div
             className="card"
             id="feed-card"
-            // style={{ width: "100%", height: "100%" }}
+            // style={{ width: '400px',  }}
           >
             {/* <br/> */}
             <div className="card-body">
@@ -203,21 +197,29 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 </div>
               </div>
 
+              <div className="category btn"
+              style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '80%' }}
+              >
               {postObj.categories ? (
-                postObj.categories.map((cat) => (
-                  <button
-                    className="btn btn-link"
-                    style={{
-                      color: '#424242',
-                      fontSize: 'x-large',
-                      marginBottom: '3%',
-                    }}
-                    onClick={() => getPosts('explore', cat)}
-                  >{`#${cat}`}</button>
+                postObj.categories.map((cat, index) => (
+                    <button
+                      className="btn btn-link"
+                      style={{
+                        color: '#424242',
+                        fontSize: 'x-large',
+                        marginBottom: '3%',
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                      }}
+                      onClick={() => getPosts('explore', cat)}
+                      key={(index + 1).toString()}
+                      >{`#${cat}`}</button>
                 ))
               ) : (
-                <div></div>
+                        <div></div>
               )}
+                        </div>
               <div id={containerId}></div>
               <div
                 className="d-flex flex-row align-items-center justify-content-start"
