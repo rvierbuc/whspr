@@ -1,20 +1,24 @@
 import React, { useRef } from 'react';
 import { Container, Button, Stack } from 'react-bootstrap';
+import * as Tone from 'tone';
 
 interface Props {
-  mediaDest: MediaStreamAudioDestinationNode;
   start: () => void;
   stop: () => void;
   setSynthAudioChunks: any
-  setIsRecording: any
+  instrument: Tone.Oscillator | Tone.FatOscillator | Tone.FMOscillator | Tone.AMOscillator
 }
 
-
-const RecordSynth = ({ setIsRecording, setSynthAudioChunks, mediaDest, start, stop }: Props) => {
+const RecordSynth = ({ instrument, setSynthAudioChunks, start, stop }: Props) => {
+  const context = Tone.context;
+  const dest = context.createMediaStreamDestination();
   const recorder = useRef<MediaRecorder | null>(null);
+
   const startRecording = async () => {
     try {
-      recorder.current = new MediaRecorder(mediaDest.stream);
+      setSynthAudioChunks([]);
+      instrument.connect(dest);
+      recorder.current = new MediaRecorder(dest.stream);
       recorder.current.ondataavailable = event => {
         if (event.data.size > 0) {
           setSynthAudioChunks((prevChunks: Blob[]) => [...prevChunks, event.data])
@@ -22,7 +26,7 @@ const RecordSynth = ({ setIsRecording, setSynthAudioChunks, mediaDest, start, st
       };
       recorder.current.start();
       start();
-      setIsRecording(true);
+      // setIsRecording(true);
     } catch(error) {
       console.error('Could not start recording', error)
     }
@@ -32,7 +36,7 @@ const RecordSynth = ({ setIsRecording, setSynthAudioChunks, mediaDest, start, st
       if (recorder.current?.state === 'recording') {
         stop();
         recorder.current.stop();
-        setIsRecording(false);
+        // setIsRecording(false);
       }
     } catch (error) {
       console.error('Could not stop recording', error);
@@ -43,10 +47,10 @@ const RecordSynth = ({ setIsRecording, setSynthAudioChunks, mediaDest, start, st
     <Container className="text-center p-3 rounded recordSynth">
       <h3 className="mb-2">Record the synth</h3>
       <Stack direction="horizontal" gap={4} className="mx-5 typeCard">
-        <Button className="btn synthRecorder" onClick={start}>▶️</Button>
-        <Button className="btn synthRecorder" onClick={stop}>⏸️</Button>
-        <Button className="btn synthRecorder" onClick={startRecording}>🔴</Button>
-        <Button className="btn synthRecorder" onClick={stopRecording}>🟥</Button>
+        <Button className="btn synthRecorder" style={{borderColor: 'rgb(60, 53, 86)'}} onClick={start}>▶️</Button>
+        <Button className="btn synthRecorder" style={{borderColor: 'rgb(60, 53, 86)'}} onClick={stop}>⏸️</Button>
+        <Button className="btn synthRecorder" style={{borderColor: 'rgb(60, 53, 86)'}} onClick={startRecording}>🔴</Button>
+        <Button className="btn synthRecorder" style={{borderColor: 'rgb(60, 53, 86)'}} onClick={stopRecording}>🟥</Button>
       </Stack>
     </Container>
   );

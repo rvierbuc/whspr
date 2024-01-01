@@ -11,7 +11,7 @@ interface Options {
 
 interface Props {
   oscSettings: {
-    frequency: number,
+    frequency: Tone.Unit.Frequency,
     detune: number,
     type: string
   };
@@ -23,12 +23,11 @@ interface Props {
 
 const Oscillator = ({ oscSettings, changeType, changeValue, setInstrument, oscillatorOptions }: Props): React.JSX.Element => {
   const oscillatorKeys = Object.keys(oscillatorOptions).map(option => option = option[0].toUpperCase() + option.substring(1));
+
   const { oscillator, fatOscillator, fmOscillator, amOscillator } = oscillatorOptions
   const { type, frequency, detune } = oscSettings;
   const [selectedWave, setSelectedWave] = useState('Select Wave');
   const [selectedOscillator, setSelectedOscillator] = useState<string>(oscillatorKeys[0]);
-
-  console.log(oscillatorKeys)
 
   useEffect(() => {
     setSelectedWave(type[0].toUpperCase() + type.substring(1))
@@ -41,10 +40,17 @@ const Oscillator = ({ oscSettings, changeType, changeValue, setInstrument, oscil
     changeType(event)
   };
 
-  const handleOscillatorChange: (oscOption: any) => void = (oscOption) => {
-    const index = oscillatorKeys.indexOf(oscOption)
+  const handleOscillatorChange: (oscOption: Tone.Oscillator | Tone.FatOscillator | Tone.FMOscillator | Tone.AMOscillator) => void = (oscOption) => {
     setInstrument(oscOption);
-    setSelectedOscillator(oscillatorKeys[index]);
+    if (oscOption === oscillator) {
+      setSelectedOscillator(oscillatorKeys[0]);
+    } else if (oscOption === fatOscillator) {
+      setSelectedOscillator(oscillatorKeys[1]);
+    } else if (oscOption === fmOscillator) {
+      setSelectedOscillator(oscillatorKeys[2]);
+    } else if (oscOption === amOscillator) {
+      setSelectedOscillator(oscillatorKeys[3]);
+    }
   };
 
   return (
@@ -53,7 +59,7 @@ const Oscillator = ({ oscSettings, changeType, changeValue, setInstrument, oscil
           <div className="mr-2">
             <h5 className="text-center">Oscillator</h5>
             <Dropdown>
-              <Dropdown.Toggle style={{backgroundColor: 'rgb(60, 53, 86)', borderColor: 'rgb(60, 53, 86)'}}>
+              <Dropdown.Toggle style={{backgroundColor: 'rgb(60, 53, 86)', borderColor: 'rgb(60, 53, 86)', minWidth: '25px'}}>
                 {selectedOscillator}
               </Dropdown.Toggle>
               <Dropdown.Menu>

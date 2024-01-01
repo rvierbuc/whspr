@@ -16,7 +16,6 @@ interface Options {
 interface Props {
   audioContext: AudioContext,
   oscillatorOptions: Options
-  mediaDest: MediaStreamAudioDestinationNode
 }
 
 const defaultSettings = {
@@ -26,17 +25,12 @@ const defaultSettings = {
   lowPassType: 'lowpass',
 }
 
-const SynthDaw = ({audioContext, oscillatorOptions, mediaDest}: Props): React.JSX.Element => {
-  const {oscillator, fatOscillator, fmOscillator, amOscillator} = oscillatorOptions;
-  const [contextState, setContextState] = useState('');
+const SynthDaw = ({ audioContext, oscillatorOptions }: Props): React.JSX.Element => {
   const [addFilter, setAddFilter ] = useState(false);
   const [addSynth, setAddSynth ] = useState(false);
   const [synthAudioChunks, setSynthAudioChunks] = useState<Blob[]>([]);
-  const [isRecording, setIsRecording] = useState<boolean>(false);
   const [filter, setFilter] = useState(defaultSettings);
   const [instrument, setInstrument] = useState(oscillatorOptions.oscillator);
-
-  console.log(synthAudioChunks);
 
   useEffect(() => {
     setAddFilter(false);
@@ -56,8 +50,7 @@ const SynthDaw = ({audioContext, oscillatorOptions, mediaDest}: Props): React.JS
 
   const start: () => void = () => {
     instrument.start();
-    if (contextState === '') {
-    } else if (audioContext.state === 'suspended') {
+    if (audioContext.state === 'suspended') {
       audioContext.resume();
     }
   };
@@ -99,7 +92,7 @@ const SynthDaw = ({audioContext, oscillatorOptions, mediaDest}: Props): React.JS
         {addFilter === true && <Filters setFilter={setFilter} audioContext={audioContext} />}
         <Container className="syntheSize rounded mt-3" style={{border: '1px solid rgba(236, 210, 210, 0.36)'}}>
           {addSynth === true && <Oscillator oscillatorOptions={oscillatorOptions} setInstrument={setInstrument} oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />}
-          {addSynth === true && <RecordSynth setIsRecording={setIsRecording} setSynthAudioChunks={setSynthAudioChunks} stop={stop} start={start} mediaDest={mediaDest} />}
+          {addSynth === true && <RecordSynth instrument={instrument} setSynthAudioChunks={setSynthAudioChunks} stop={stop} start={start} />}
         </Container>
       </Stack>
     </Container>
