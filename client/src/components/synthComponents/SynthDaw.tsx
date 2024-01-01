@@ -4,6 +4,7 @@ import Oscillator from './Oscillator';
 import RecordSynth from './RecordSynth';
 import Filters from './Filters';
 import PostSynth from './PostSynth';
+import * as Tone from 'tone';
 
 interface Props {
   audioContext: AudioContext,
@@ -25,6 +26,10 @@ const SynthDaw = ({audioContext, oscillator, mediaDest}: Props): React.JSX.Eleme
   const [synthAudioChunks, setSynthAudioChunks] = useState<Blob[]>([]);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [filter, setFilter] = useState(defaultSettings);
+  const [instrument, setInstrument] = useState<Tone.Synth | null>(null);
+
+  const inst = new Tone.FatOscillator(330, 'sine').toDestination();
+  // console.log('INSTRUMENT', inst.frequency.value);
 
   useEffect(() => {
     setAddFilter(false);
@@ -36,21 +41,21 @@ const SynthDaw = ({audioContext, oscillator, mediaDest}: Props): React.JSX.Eleme
   const toggleSynth: () => void = () => addSynth === false ? setAddSynth(true) : setAddSynth(false);
 
   const [oscSettings, setOscSettings] = useState({
-    frequency: oscillator.frequency.value,
-    detune: oscillator.detune.value,
-    type: oscillator.type,
+    frequency: inst.frequency.value,
+    detune: inst.detune.value,
+    type: inst.type,
   });
 
   const start: () => void = () => {
     if (contextState === '') {
-      oscillator.start();
-      setContextState('started');
+      inst.start();
     } else if (audioContext.state === 'suspended') {
       audioContext.resume();
     }
   };
 
   const stop: () => void = () => {
+    inst.stop()
     if (audioContext.state === 'running') {
       audioContext.suspend();
     }
@@ -59,7 +64,7 @@ const SynthDaw = ({audioContext, oscillator, mediaDest}: Props): React.JSX.Eleme
   const changeType: (e: BaseSyntheticEvent) => void = (e) => {
     const { id } = e.target;
     setOscSettings({ ...oscSettings, type: id });
-    oscillator.type = id;
+    inst.type = id;
   };
 
   const changeValue: (e: BaseSyntheticEvent) => void = (e) => {
@@ -67,9 +72,9 @@ const SynthDaw = ({audioContext, oscillator, mediaDest}: Props): React.JSX.Eleme
     const id: string = e.target.id;
     setOscSettings({ ...oscSettings, [id]: Number(value) });
     if (id === 'frequency') {
-      oscillator.frequency.value = Number(value);
+      inst.frequency.value = Number(value);
     } else if (id === 'detune') {
-      oscillator.detune.value = Number(value);
+      inst.detune.value = Number(value);
     }
   };
 

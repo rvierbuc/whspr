@@ -1,12 +1,12 @@
-import React, { useState, useRef } from 'react';
-import { Container, Button, Stack, Card } from 'react-bootstrap';
+import React, { useRef } from 'react';
+import { Container, Button, Stack } from 'react-bootstrap';
 
 interface Props {
   mediaDest: MediaStreamAudioDestinationNode;
   start: () => void;
   stop: () => void;
   setSynthAudioChunks: any
-  setIsRecording: any
+  setIsRecording: ((prevState: boolean) => boolean)
 }
 
 const RecordSynth = ({ setIsRecording, setSynthAudioChunks, mediaDest, start, stop }: Props) => {

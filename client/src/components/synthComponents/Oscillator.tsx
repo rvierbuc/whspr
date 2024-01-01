@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, EventHandler, MouseEventHandler, useState } from 'react';
+import React, { BaseSyntheticEvent } from 'react';
 import { Container, Button, Stack } from 'react-bootstrap';
 
 interface Props {
@@ -7,8 +7,8 @@ interface Props {
     detune: number,
     type: string
   };
-  changeType: (e: any) => void;
-  changeValue: (e: any) => void;
+  changeType: (e: BaseSyntheticEvent) => void;
+  changeValue: (e: BaseSyntheticEvent) => void;
 }
 
 const Oscillator = ({ oscSettings, changeType, changeValue }: Props): React.JSX.Element => {
