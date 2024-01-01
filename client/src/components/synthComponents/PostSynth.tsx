@@ -10,6 +10,7 @@ interface Props {
 
 const PostSynth = ({ filter, audioContext, synthAudioChunks }: Props) => {
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+  console.log(synthAudioChunks);
 
   // setting the new blob to save to the db and cloud
   let audioBlob: Blob;

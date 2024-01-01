@@ -6,8 +6,9 @@ interface Props {
   start: () => void;
   stop: () => void;
   setSynthAudioChunks: any
-  setIsRecording: ((prevState: boolean) => boolean)
+  setIsRecording: any
 }
+
 
 const RecordSynth = ({ setIsRecording, setSynthAudioChunks, mediaDest, start, stop }: Props) => {
   const recorder = useRef<MediaRecorder | null>(null);
