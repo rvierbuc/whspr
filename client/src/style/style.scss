@@ -36,6 +36,11 @@ body {
   @include blur(4.2px);
   border: 1px solid rgba(236, 210, 210, 0.36);
 }
+.card.user-profile-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 #header {
   background: rgba(233, 236, 243, 0.449);
   //opacity: 60%;

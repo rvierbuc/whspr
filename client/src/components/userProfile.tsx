@@ -45,10 +45,18 @@ interface PostAttributes {
   }
   isLiked: boolean;
 }
+interface followerAttributes {
+  id: number;
+  username: string;
+  profileImgUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 const UserProfile = ({ audioContext }) => {
   const [selectedUserPosts, setSelectedUserPosts] = useState<PostAttributes[]>([]);
   const [onProfile, setOnProfile] = useState<boolean>(true);
   const [onUserProfile, setOnUserProfile] = useState<boolean>(true);
+  const [selectedUserFollowers, setSelectedUserFollowers] = useState<followerAttributes[]>([]);
   const currentUser: any = useLoaderData();
   
 
@@ -77,12 +85,18 @@ const UserProfile = ({ audioContext }) => {
       console.log('could not update post', error);
     }
   };
-  // console.log('hey', selectedUserPosts)
+  const getSelectedUserFollowers = async () => {
+    try {
+      const followers = await axios.get(`/post/user/${currentUser.id}/followers`);
+      console.log('followers', followers);
+    } catch (error) {
+      console.log('error fetching current user followers', error);
+    }
+  };
   useEffect(() => {
     getSelectedUserInfo();
-    // console.log('onProfile in user profile', onProfile);
-    // console.log('onUserProfile in user profile', onUserProfile);
-    // console.log('currentUser in user profile', currentUser);
+    console.log('currentUser in user profile', currentUser);
+    getSelectedUserFollowers();
   }, []);
   const numberOfPostsPerRow = 3;
   const rows: PostAttributes[][] = [];
@@ -93,9 +107,13 @@ const UserProfile = ({ audioContext }) => {
   return (
     <Container>
       <div className="user-main">
-        <div className="user-profile-card">
+        <div className="card user-profile-card" style={{ justifyContent: 'center' }}>
           <div className="user-profile-image">
-            <img src={currentUser.profileImgUrl} alt="user profile image" />
+            <img 
+            src={currentUser.profileImgUrl} 
+            alt="user profile image" 
+            style={{ borderRadius: '50%', width: '100px', height: '100px' }}
+            />
           </div>
           <div className="user-profile-info">
             <h2 style={{ color: 'white' }}>{currentUser.username}</h2>
