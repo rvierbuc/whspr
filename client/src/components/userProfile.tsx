@@ -101,7 +101,7 @@ const UserProfile = ({ audioContext }) => {
             <h2 style={{ color: 'white' }}>{currentUser.username}</h2>
           </div>
         </div>
-        <div className="grid-post-container" style={{ height: '200px' }}>
+        <div className="grid-post-container">
           {rows.map((row, index) => (
             <Row key={index}>
               {row.map((post) => (
