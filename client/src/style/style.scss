@@ -40,6 +40,15 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  width:65%;
+
+}
+.card.user-profile-followers-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 6%;
+  width: 130%;
 }
 #header {
   background: rgba(233, 236, 243, 0.449);

@@ -9,6 +9,7 @@ import Post from './Post';
 import Container from 'react-bootstrap/Container';
 import WaveSurferComponent from './WaveSurfer';
 import WaveSurferSimple from './WaveSurferSimple';
+import { Link } from 'react-router-dom';
 interface PostAttributes {
   id: number;
   userId: number;
@@ -88,16 +89,17 @@ const UserProfile = ({ audioContext }) => {
   const getSelectedUserFollowers = async () => {
     try {
       const followers = await axios.get(`/post/user/${currentUser.id}/followers`);
-      console.log('followers', followers);
+      setSelectedUserFollowers(followers.data);
     } catch (error) {
       console.log('error fetching current user followers', error);
     }
   };
+  // use effect to load user posts on page load and the followers
   useEffect(() => {
     getSelectedUserInfo();
-    console.log('currentUser in user profile', currentUser);
     getSelectedUserFollowers();
   }, []);
+  // code to separate the posts on the user profile into a grid
   const numberOfPostsPerRow = 3;
   const rows: PostAttributes[][] = [];
   for (let i = 0; i < selectedUserPosts.length; i += numberOfPostsPerRow) {
@@ -106,19 +108,49 @@ const UserProfile = ({ audioContext }) => {
   }
   return (
     <Container>
-      <div className="user-main">
-        <div className="card user-profile-card" style={{ justifyContent: 'center' }}>
-          <div className="user-profile-image">
-            <img 
-            src={currentUser.profileImgUrl} 
-            alt="user profile image" 
-            style={{ borderRadius: '50%', width: '100px', height: '100px' }}
-            />
-          </div>
-          <div className="user-profile-info">
-            <h2 style={{ color: 'white' }}>{currentUser.username}</h2>
+      <div className="user-main" style={{ display: 'flex' }}>
+        <Col xs={12} lg={5}>
+          <Row>
+            <div className="card user-profile-card" style={{ justifyContent: 'center' }}>
+              <div className="user-profile-image">
+                <img 
+                src={currentUser.profileImgUrl} 
+                alt="user profile image" 
+                style={{ borderRadius: '50%', width: '100px', height: '100px' }}
+                />
+              </div>
+              <div className="user-profile-info">
+                <h2 style={{ color: 'white' }}>{currentUser.username}</h2>
+              </div>
+            </div>
+          </Row>
+        <Row>
+          <Col xs={12} lg={6}>
+        <div className="card user-profile-followers-card">
+          <h2 style={{ color: 'white' }}>Followers</h2>
+          <div className="user-profile-followers">
+            {selectedUserFollowers.map((follower, index) => (
+              <div className="user-profile-follower" key={index}>
+                <Link to={`/protected/profile/${follower.id}`}>
+                <img
+                  src={follower.profileImgUrl}
+                  alt="user profile image"
+                  style={{ borderRadius: '50%', width: '50px', height: '50px' }}
+                />
+                <h5 style={{ 
+                  color: 'white', 
+                  textOverflow: 'ellipsis', 
+                  overflow: 'hidden', 
+                  whiteSpace: 'nowrap',
+                }}>{follower.username}</h5>
+                  </Link>
+              </div>
+            ))}
           </div>
         </div>
+            </Col>
+          </Row>
+        </Col>
         <div className="grid-post-container">
           {rows.map((row, index) => (
             <Row key={index}>
