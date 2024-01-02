@@ -72,6 +72,27 @@ body {
   height: 100%;
   width: 100%;
 }
+.wavesurfer-container {
+  position:relative;
+}
+
+.title-text-overlay {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  color: #e1e1e1;
+  font-size: 16px;
+  z-index: 200;
+}
+
+.categories-text-overlay {
+  position: absolute;
+  top: 55px;
+  left: 6px;
+  color: #e1e1e1;
+  font-size: 16px;
+  z-index: 200;
+}
 
 .navbar-collapse {
   height: 0;

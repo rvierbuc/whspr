@@ -196,7 +196,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       className="container"
       id="feed-container"
       style={{ width: '100%', height: '100%' }}
-     >
+    >
       <div className="row" id="feed-row">
         <div className="col-sm" id="feed-col-sm">
           <div
@@ -214,7 +214,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   id="header"
                   style={{
                     padding: '10px',
-                  
                   }}
                 >
                   <img
@@ -260,12 +259,18 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   )}
                 </div>
               )}
-              
+
               <div
                 className="d-flex flex-row align-items-end justify-content-start"
                 style={{ marginTop: '3%' }}
               >
-                <div style={{ fontSize: 'xxx-large', marginLeft: '20px', color: '#e1e1e5' }}>
+                <div
+                  style={{
+                    fontSize: 'xxx-large',
+                    marginLeft: '20px',
+                    color: '#e1e1e5',
+                  }}
+                >
                   {postObj.title}
                 </div>
                 <div
@@ -280,11 +285,17 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 </div>
               </div>
 
-              <div className="category btn"
-              style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '80%' }}
+              <div
+                className="category btn"
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  maxWidth: '80%',
+                }}
               >
-              {postObj.categories ? (
-                postObj.categories.map((cat, index) => (
+                {postObj.categories ? (
+                  postObj.categories.map((cat, index) => (
                     <button
                       className="btn btn-link"
                       style={{
@@ -294,16 +305,62 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                         textOverflow: 'ellipsis',
                         overflow: 'hidden',
                         whiteSpace: 'nowrap',
+                        outline: 'coral',
                       }}
                       onClick={() => getPosts('explore', cat)}
                       key={(index + 1).toString()}
-                      >{`#${cat}`}</button>
-                ))
-              ) : (
-                        <div></div>
-              )}
-                        </div>
-              <div id={containerId}></div>
+                    >{`#${cat}`}</button>
+                  ))
+                ) : (
+                  <div></div>
+                )}
+              </div>
+              <div className="wavesurfer-container">
+                <div id={containerId}></div>
+                {/* this controls the title text location on the wavesurfer if we want it */}
+                {/* <div className="title-text-overlay"> 
+                  <div
+                    style={{
+                      fontSize: 'xxx-large',
+                      marginLeft: '20px',
+                      color: '#e1e1e5',
+                    }}
+                  >
+                    {postObj.title}
+                  </div>
+                </div>
+                <div className="categories-text-overlay">
+                  <div
+                    className="category btn"
+                    style={{
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      maxWidth: '80%',
+                    }}
+                  >
+                    {postObj.categories ? (
+                      postObj.categories.map((cat, index) => (
+                        <button
+                          className="btn btn-link"
+                          style={{
+                            color: '#e1e1e5',
+                            fontSize: 'x-large',
+                            marginBottom: '3%',
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            whiteSpace: 'nowrap',
+                          }}
+                          onClick={() => getPosts('explore', cat)}
+                          key={(index + 1).toString()}
+                        >{`#${cat}`}</button>
+                      ))
+                    ) : (
+                      <div></div>
+                    )}
+                  </div>
+                </div> */}
+              </div>
               <div
                 className="d-flex flex-row align-items-center justify-content-start"
                 style={{ margin: '2%' }}
@@ -409,50 +466,53 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   >
                     {postObj.likeCount}
                   </div>
-                    <div>
-                      <img
-                        src={require('../style/bin.png')}
-                        style={{
-                          width: 'auto',
-                          height: '40px',
-                          objectFit: 'scale-down',
-                          color: '#e1e1e5',
-                        }}
-                        onClick={() => {
-                          if (deleting === false) {
-                            setDeleting(true);
-                          } else {
-                            setDeleting(false);
-                          }
-                        }}
-                      />
-                    </div>
-                    <div>
-                      {deleting === true && <Modal
+                  <div>
+                    <img
+                      src={require('../style/bin.png')}
+                      style={{
+                        width: 'auto',
+                        height: '40px',
+                        objectFit: 'scale-down',
+                        color: '#e1e1e5',
+                      }}
+                      onClick={() => {
+                        if (deleting === false) {
+                          setDeleting(true);
+                        } else {
+                          setDeleting(false);
+                        }
+                      }}
+                    />
+                  </div>
+                  <div>
+                    {deleting === true && (
+                      <Modal
                         isOpen={deleting}
                         onClose={() => setDeleting(false)}
-                        children={<Delete userId={userId} id={postId} />} />}
-                    </div>
+                        children={<Delete userId={userId} id={postId} />}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
-              {onUserProfile ? (
-                <a></a> 
-              ) : (
-                <div>
-                  <Post
-                    key={postId}
-                    postObj={postObj}
-                    updatePost={updatePost}
-                    userId={userId}
-                    audioContext={audioContext}
-                  />
-                  </div>
-              )}
             </div>
+            {onUserProfile ? (
+              <a></a>
+            ) : (
+              <div>
+                <Post
+                  key={postId}
+                  postObj={postObj}
+                  updatePost={updatePost}
+                  userId={userId}
+                  audioContext={audioContext}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
+    </div>
   );
 };
 
