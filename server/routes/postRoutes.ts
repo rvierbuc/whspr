@@ -16,7 +16,18 @@ const addIsLikedPair =  (postArr, likedPostIdArr) => {
   }
 }
 
+const rankPostsByPopularity = (postArr) => {
 
+  return postArr.map((post) => {
+    const score = (post.likeCount * .1) + (post.commentCount * .05) + (post.listenCount * .0025)
+    const today = new Date().getTime()
+    const timeSinceCreation = (today - post.createdAt.getTime()) / 14400000
+    const decay = .05 * (timeSinceCreation ** 2)
+    const rank = score / decay
+    post.rank = rank
+    return post
+  })
+}
 // ************* GET ROUTES **************
 //gets posts and adds personalized ranking and isLiked field to each postObj before sending to client (for explore page)
 router.get('/explore/:userId/:tag', async (req:Request, res: Response) => {
@@ -260,7 +271,8 @@ router.get('/home', async (req: Request, res: Response) => {
   }catch (error){
     console.error('server error getting home feed:', error)
   }
-})router.get('/use/:id', async (req: Request, res: Response) => {
+})
+router.get('/use/:id', async (req: Request, res: Response) => {
   const {id} = req.params
   console.log('hi')
   try{
