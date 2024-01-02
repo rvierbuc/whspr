@@ -72,7 +72,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 const server = http.createServer(app)
-// const io = new Server(server)
+const io = new Server(server)
 // const peerServer = ExpressPeerServer(server, { path: '/peerjs'})
 
 app.use(cors(corsOptions))

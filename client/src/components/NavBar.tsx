@@ -60,7 +60,7 @@ const NavBar = () => {
                  <Nav.Link onClick={() => handleNavigation('/protected/conch')}>Magic Conch</Nav.Link>
                  <Nav.Link onClick={() => handleNavigation('/protected/feed/explore')}>Explore</Nav.Link>
                  <Nav.Link onClick={() => handleNavigation('/protected/profile')}>My Profile</Nav.Link>
-                 <Nav.Link onClick={() => handleNavigation('/protected/room')}>Room</Nav.Link>
+                 <Nav.Link onClick={() => handleNavigation('/protected/radio')}>Radio</Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/WhsprAI')}>Whspr AI</Nav.Link>
                  </Nav>
                    <Search />
@@ -70,69 +70,7 @@ const NavBar = () => {
         </Navbar>
     </>
   );
-  // return (
-  //   <div>
-  //     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-  //       <Container>
-  //         <Navbar.Brand>
-  //           <img 
-  //           src={require('../style/whspr-logo.png')}
-  //           width={100}
-  //           height={100}
-  //           className="d-inline-block align-top"
-  //           alt="whspr logo"
-  //           onClick={() => toggleMenu()}
-  //           style={{ cursor: 'pointer' }}
-  //           />
-  //           {' '}
-  //           </Navbar.Brand>
-  //           <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={() => setShowMenu(!showMenu)}>
-  //             </Navbar.Toggle>
-  //           <Navbar.Collapse id="responsive-navbar-nav" className={showMenu ? 'show' : ''}>
-  //             <Nav className="ml-auto">
-  //               <Nav.Link onClick={() => handleNavigation('/protected/feed')} >Home</Nav.Link>
-  //               {/* <Nav.Link onClick={() => handleNavigation('/protected/post')}>Post</Nav.Link> */}
-  //               <Nav.Link onClick={() => handleNavigation('/protected/conch')}>Magic Conch</Nav.Link>
-  //               <Nav.Link onClick={() => handleNavigation('/protected/feed')}>Feed</Nav.Link>
-  //               <Nav.Link onClick={() => handleNavigation('/protected/profile')}>Profile</Nav.Link>
-  //               <Nav.Link onClick={() => handleNavigation('/protected/synthesize')}>Synthesize</Nav.Link>
-  //               <Nav.Link onClick={() => handleNavigation('/protected/room')}>Room</Nav.Link>
-  //               <Nav.Link onClick={() => handleNavigation('/protected/WhsprAI')}>Whspr AI</Nav.Link>
-  //               </Nav>
-  //                 <Search />
-  //             </Navbar.Collapse>
-  //         </Container>
-  //     </Navbar>
-  //     {/* <div className="outlet">
-  //       <Outlet />
-  //     </div> */}
-  //   </div>
-  // );
+ 
 };
-{ /* <Nav className="justify-content-end flex-grow-1 pe-3">
-<Nav.Link href="#action1">Home</Nav.Link>
-<Nav.Link href="#action2">Link</Nav.Link>
-<NavDropdown
-  title="Dropdown"
-  id={`offcanvasNavbarDropdown-expand-${expand}`}
->
-  <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
-  <NavDropdown.Item href="#action4">
-    Another action
-  </NavDropdown.Item>
-  <NavDropdown.Divider />
-  <NavDropdown.Item href="#action5">
-    Something else here
-  </NavDropdown.Item>
-</NavDropdown>
-</Nav>
-<Form className="d-flex">
-<Form.Control
-  type="search"
-  placeholder="Search"
-  className="me-2"
-  aria-label="Search"
-/>
-<Button variant="outline-success">Search</Button>
-</Form> */ }
+
 export default NavBar;

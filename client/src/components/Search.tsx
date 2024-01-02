@@ -42,7 +42,7 @@ const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251
 //       <img src={hit.profileImgUrl || ''} alt={hit.name} style={{ width: 'auto', height: '100px', objectFit: 'scale-down' }} />
 //       <Link to={`/protected/profile/${hit.objectID}`}>{hit.username}</Link>
 
-      <p>{hit.title || ''}</p>
+     // <p>{hit.title || ''}</p>
 
 //     </article>
 //   );
