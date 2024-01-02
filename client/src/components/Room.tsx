@@ -4,6 +4,7 @@ import AgoraRTC from 'agora-rtc-sdk';
 // import agoraConfig from '../agoraConfig'
 import { joinChannel, leaveChannel, startAudio, stopAudio, createChannel, subscribeRemoteUser } from './AgoraClient';
 import { useLoaderData, useNavigate } from 'react-router-dom';
+import axios from 'axios'
 
 
 
@@ -14,8 +15,10 @@ const Room = ({ channel, host, id }) => {
   const [stream, setStream] = useState<MediaStream>();
   const [remoteAudioTracks, setRemoteAudioTracks] = useState<string[]>([]);
   const remoteAudioRef = useRef<HTMLAudioElement | null>(null)
+  const [mute, setMute] = useState<boolean>(false)
   const navigate = useNavigate()
   const user: any = useLoaderData();
+
 
     useEffect(() => {
       console.log('stream', user)
@@ -43,10 +46,22 @@ const Room = ({ channel, host, id }) => {
     startAudio();
   };
 
+  const muted = () => {
+    setMute(!mute)
+    stopAudio();
+
+  }
+
   const handleLeaveChannel = (stream) => {
     leaveChannel();
     console.log('stream', stream);
     stopAudio();
+    axios.delete(`/post/radio/${channelName}`)
+    .then(() => {
+      console.log('done')
+    }).catch(() => {
+      console.log('uhh')
+    })
     navigate('/protected/radio')
   };
 
@@ -57,10 +72,15 @@ const Room = ({ channel, host, id }) => {
 
 
           <img src="https://lh3.googleusercontent.com/a/ACg8ocI6UOrLKNPeKzMpAobwFfMo2jVBc2SccK66hzTPMkEk=s96-c" alt="user profile image" />
-        <button
+       {mute ?  <button
         type="button"
         className='btn btn-dark'
-        >Mute</button>
+        onClick={() => {muted()}}
+        >Mute</button> : <button
+        type="button"
+        className='btn btn-light'
+        onClick={() => {muted()}}
+        >Mute</button>}
       
       <br />
       <button

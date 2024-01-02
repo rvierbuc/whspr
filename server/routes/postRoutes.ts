@@ -552,6 +552,22 @@ let updateResult;
   }
  })
 
+ router.delete('/radio/:name', async (req: Request, res: Response) => {
+  const {name} = req.params
+
+  console.log('hete', name)
+  try {
+    const destroyRadio = Radio.destroy({
+      where: {
+        title: name
+      }
+    })
+    res.sendStatus(201)
+  }catch{
+    console.log('no')
+  }
+ })
+
 //allows user to unfollow another user
 router.delete('/stopFollowing/:userId/:followingId', async (req: Request, res: Response) => {
   const { userId, followingId } = req.params

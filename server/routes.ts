@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 import { Router, Request, Response } from 'express'
-import { saveAudio, getAudioUrl, saveAudioComment, saveAudioConch } from './google-cloud-storage'
-import { MagicConch, Radio } from './dbmodels';
+import { saveAudio, getAudioUrl, saveAudioComment, saveAudioConch, deleteAudioPost } from './google-cloud-storage'
+import { MagicConch, Radio, Post, Sound } from './dbmodels';
 
 const router = Router()
 
@@ -116,6 +116,16 @@ router.post('/conch', async (req: Request, res: Response) => {
       res.sendStatus(500)
     }
   })
-  
+
+  router.delete('/deletePost/:userId/:id', async (req: Request, res: Response) => {
+    const { userId, id } = req.params;
+    try {
+      const data = await Post.findAll({ where: {userId: userId}});
+      deleteAudioPost(userId, id);
+      res.status(200).send(data)
+    } catch {
+      res.sendStatus(500);
+    }
+  })
 
 export default router

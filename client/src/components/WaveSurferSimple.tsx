@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Col } from "react-bootstrap";
-//import Post from "./Post"
+// import Post from "./Post"
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
   audioUrl: string;
@@ -40,6 +40,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       container: `#${containerId}`,
       waveColor: "rgb(166, 197, 255)",
       progressColor: "rgb(60, 53, 86)",
+      url: audioUrl,
       width: "auto",
       height: 80,
       normalize: true,

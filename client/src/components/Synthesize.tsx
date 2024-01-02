@@ -1,29 +1,35 @@
-import React, { useState } from 'react';
+import React from 'react';
 import SynthDaw from './synthComponents/SynthDaw';
-import { useLoaderData } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
+import * as Tone from 'tone';
+
 
 interface Props {
   audioContext: AudioContext
 }
 
-const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
-  // setting up basic audioContext workflow => w/ oscillatorNode
-  const user: any = useLoaderData();
-  const userId = user.id;
-  const oscillator: OscillatorNode = audioContext.createOscillator();
-  const filter: BiquadFilterNode = audioContext.createBiquadFilter();
-  const mediaDest: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
-  const finalDest: AudioDestinationNode = audioContext.destination;
+interface Options {
+  oscillator: Tone.Oscillator
+  fatOscillator: Tone.FatOscillator
+  fmOscillator: Tone.FMOscillator
+  amOscillator: Tone.AMOscillator
+}
 
-  // connect the workflow of audioNodes
-  oscillator.connect(filter);
-  filter.connect(finalDest);
-  filter.connect(mediaDest);
+const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
+
+  const oscillatorOptions: Options = {
+    oscillator: new Tone.Oscillator().toDestination(),
+    fatOscillator: new Tone.FatOscillator().toDestination(),
+    fmOscillator: new Tone.FMOscillator().toDestination(),
+    amOscillator: new Tone.AMOscillator().toDestination()
+  }
 
   return (
-    <div>
-      <SynthDaw audioContext={audioContext} oscillator={oscillator} filter={filter} mediaDest={mediaDest} finalDest={finalDest} userId={userId} />
-    </div>
+    <Container className="p-3 rounded w-75" id="synthesize">
+      <div>
+        <SynthDaw audioContext={audioContext} oscillatorOptions={oscillatorOptions} />
+      </div>
+    </Container>
   );
 };
 

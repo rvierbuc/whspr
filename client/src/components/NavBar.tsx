@@ -25,33 +25,33 @@ const NavBar = () => {
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
         <Container>
           <Navbar.Brand>
-            <img 
-            src={require('../style/whspr-logo.png')}
-            width={100}
-            height={100}
-            className="d-inline-block align-top"
-            alt="whspr logo"
-            onClick={() => toggleMenu()}
-            style={{ cursor: 'pointer' }}
+            <img
+              src={require('../style/whspr-logo.png')}
+              width={100}
+              height={100}
+              className="d-inline-block align-top"
+              alt="whspr logo"
+              onClick={() => toggleMenu()}
+              style={{ cursor: 'pointer' }}
             />
             {' '}
-            </Navbar.Brand>
-            <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={() => setShowMenu(!showMenu)}>
-              </Navbar.Toggle>
-            <Navbar.Collapse id="responsive-navbar-nav" className={showMenu ? 'show' : ''}>
-              <Nav className="ml-auto">
-                <Nav.Link onClick={() => handleNavigation('/protected/feed')} >Home</Nav.Link>
-                {/* <Nav.Link onClick={() => handleNavigation('/protected/post')}>Post</Nav.Link> */}
-                <Nav.Link onClick={() => handleNavigation('/protected/conch')}>Magic Conch</Nav.Link>
-                <Nav.Link onClick={() => handleNavigation('/protected/feed')}>Feed</Nav.Link>
-                <Nav.Link onClick={() => handleNavigation('/protected/profile')}>Profile</Nav.Link>
-                <Nav.Link onClick={() => handleNavigation('/protected/synthesize')}>Synthesize</Nav.Link>
-                <Nav.Link onClick={() => handleNavigation('/protected/radio')}>Radio</Nav.Link>
-                <Nav.Link onClick={() => handleNavigation('/protected/WhsprAI')}>Whspr AI</Nav.Link>
-                </Nav>
-                  <Search />
-              </Navbar.Collapse>
-          </Container>
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={() => setShowMenu(!showMenu)}>
+          </Navbar.Toggle>
+          <Navbar.Collapse id="responsive-navbar-nav" className={showMenu ? 'show' : ''}>
+            <Nav className="ml-auto">
+              <Nav.Link onClick={() => handleNavigation('/protected/feed')} >Home</Nav.Link>
+              {/* <Nav.Link onClick={() => handleNavigation('/protected/post')}>Post</Nav.Link> */}
+              <Nav.Link onClick={() => handleNavigation('/protected/conch')}>Magic Conch</Nav.Link>
+              <Nav.Link onClick={() => handleNavigation('/protected/feed')}>Feed</Nav.Link>
+              <Nav.Link onClick={() => handleNavigation('/protected/profile')}>Profile</Nav.Link>
+              <Nav.Link onClick={() => handleNavigation('/protected/synthesize')}>Post</Nav.Link>
+              <Nav.Link onClick={() => handleNavigation('/protected/radio')}>Radio</Nav.Link>
+              <Nav.Link onClick={() => handleNavigation('/protected/WhsprAI')}>Whspr AI</Nav.Link>
+            </Nav>
+            <Search />
+          </Navbar.Collapse>
+        </Container>
       </Navbar>
       {/* <div className="outlet">
         <Outlet />

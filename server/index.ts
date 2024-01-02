@@ -9,5 +9,5 @@ export const HOST = process.env.HOST || 'localhost'
 
 
 app.listen(PORT, () => {
-  console.log(`Server is listening on http://localhost:${PORT}`)
+  console.log(`Server is listening on http://${HOST}:${PORT}`)
 })

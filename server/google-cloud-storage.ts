@@ -100,6 +100,19 @@ const saveAudioComment = async (audio: any, userId, postId): Promise<void | stri
   }
 }
 
+const deleteAudioPost = async (userId: any, id: any) => {
+  userId = Number(userId);
+  // const id = postId;
+  try {
+    await Promise.all([
+      Post.destroy({ where: {userId: userId, id: id}}),
+      Sound.destroy({ where: { postId: id }})
+    ])
+  } catch(error) {
+    console.error('Error deleting Post', error);
+  }
+};
+
 const saveAudioConch = async (audio: any, sendingUserId, receivingUserId, title: string): Promise<void | string> => {
   const file = bucket.file(`audio/${Date.now()}.wav`)
   const downloadURL = `https://storage.googleapis.com/${bucket.name}/${file.name}`
@@ -123,7 +136,7 @@ const saveAudioConch = async (audio: any, sendingUserId, receivingUserId, title:
         writeStream.end(audio);
       }),
       Sound.create({
-        userId: sendingUserId,  
+        userId: sendingUserId,
         soundUrl: downloadURL,
       }).catch((soundError) => {
         console.error('Error creating Sound record:', soundError);
@@ -163,4 +176,4 @@ const getAudioUrl = async (postId: number): Promise<string | null> => {
   }
 };
 
-export { saveAudio, getAudioUrl, saveAudioComment, saveAudioConch }
+export { saveAudio, getAudioUrl, saveAudioComment, saveAudioConch, deleteAudioPost }

@@ -59,18 +59,18 @@ const RadioConfig = ({setRoomProps}) => {
                 <input className='whaa' onChange={(e) => {channelChange(e)}}></input>
             </span>
 
-            <span>
+            {/* <span>
                 <h3>Speaking Guests (up to 5)</h3>
-            </span>
+            </span> */}
 
-                <div className="selectable-box">
+                {/* <div className="selectable-box">
                     {options.map((option) => (
                         <div
                         className={`option ${select === option.username ? 'selected' : ''}`}
                         onClick={() => optionClick(option)}
                         >{option.username}</div>
                     ))}
-                </div>
+                </div> */}
                         <button 
                         onClick={() => createChannel()}
                         type="button"
