@@ -132,17 +132,18 @@ export const seedDatabase = async () => {
     await Follower.bulkCreate([
       {
         userId: 1,
-        followingId: 2,
+        followingId: 4,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
-        userId: 1,
-        followingId: 3,
+        userId: 2,
+        followingId: 4,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
     ]);
+    
   //   await Comment.bulkCreate([
   //     {
   //       userId: 1,

@@ -1,15 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import RoomCard from './RoomCard';
 import Room from './Room';
-import axios from 'axios';
+import axios from 'axios'
 
-const Radio = ({ setRoomProps }) => {
-  const [radios, setRadios] = useState<any>([]);
 
-  useEffect(() => {
-    getRadios();
-  }, []);
+const Radio = ({setRoomProps}) => {
+    const [radios, setRadios] = useState<any>([])
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        getRadios()
+    }, [])
+
+    const navigateTo = () => {
+        navigate('/protected/radio-config')
+    }
 
     
 
@@ -25,13 +31,13 @@ const Radio = ({ setRoomProps }) => {
 
   return (
         <div>
-            <button type='button' onClick={()=> {}}>
+            <button type='button' onClick={()=> {navigateTo()}}>
                 Create Channel
             </button>
 
             {radios.map(radio => (<RoomCard 
-            name={radio.host}
-            title={radio.title}
+            name={radio.title}
+            host={radio.host}
             listeners={radio.listenerCount}
             setRoomProps={setRoomProps}
             id={radio.id}

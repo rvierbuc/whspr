@@ -2,7 +2,7 @@ const express = require('express')
 import { Request, Response } from 'express'
 const router = express.Router()
 import sequelize, { Op } from 'sequelize'
-import { User, Follower, Post, Like, Comment, Listen} from '../dbmodels' 
+import { User, Follower, Post, Like, Comment, Listen, Radio} from '../dbmodels' 
 import { getTagsByEngagement } from '../algorithmHelpers'
 // ****HELPER FUNCTIONS***********
 const addIsLikedPair =  (postArr, likedPostIdArr) => {
@@ -249,6 +249,24 @@ try{
 
 })
 
+router.get('/use/:id', async (req: Request, res: Response) => {
+  const {id} = req.params
+  console.log('hi')
+  try{
+    const users = await User.findOne({
+      where: {
+        id
+      }
+    })
+    console.log("usee" ,users)
+    res.status(200).send(users)
+  
+  }catch(error){
+    res.sendStatus(500)
+    console.log('could not get following posts', error)
+  }
+  
+  })
 
 
 router.get('/users', async (req: Request, res: Response) => {
@@ -315,6 +333,18 @@ router.get('/explore/:userId', async (req: Request, res: Response) => {
     }catch(error){
       console.error('could not follow', error)
       res.sendStatus(500)
+    }
+   })
+
+   router.post('/radio', async(req: Request, res: Response) => {
+    const {host, listenerCount, category, soundUrl, title} = req.body
+
+    try {
+      const radio = await Radio.create({host, listenerCount: 0, title})
+      console.log('radio', radio)
+      res.status(201).send(radio)
+    }catch {
+
     }
    })
 //allows user to like a post and add a record to the like table
@@ -428,6 +458,28 @@ try{
     console.error('error checking following relationship', error)
   }
  })
+
+ router.get('/followers/:userId', async (req:Request, res:Response) => {
+  const { userId} = req.params
+  //console.log('iddd', userId)
+  try {
+    const followers = await Follower.findAll({
+      where: {
+        followingId: 4
+      }
+    })
+    //console.log('fol', followers[0])
+
+    res.status(200).send(followers)
+
+  }catch(error){
+    console.error('error checking following relationship', error)
+  }
+ })
+
+ 
+
+
 // *************POST REQUESTS***********************
 //creates comment
   router.post('/createCommentRecord', async (req: Request, res: Response) => {
@@ -527,6 +579,22 @@ let updateResult;
   } catch(error){
     console.error('could not remove like', error)
     res.sendStatus(500)
+  }
+ })
+
+ router.delete('/radio/:name', async (req: Request, res: Response) => {
+  const {name} = req.params
+
+  console.log('hete', name)
+  try {
+    const destroyRadio = Radio.destroy({
+      where: {
+        title: name
+      }
+    })
+    res.sendStatus(201)
+  }catch{
+    console.log('no')
   }
  })
 

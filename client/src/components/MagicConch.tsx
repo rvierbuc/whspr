@@ -20,31 +20,31 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   }, []);
 
 
-  const getMessage = async () => {
-    try {
-      const response: AxiosResponse = await axios.get(`/conch/${user.id}`);
-      console.log('message', response);
-      const message = response.data[1];
-      message.user = user;
-      message.userId = user.id;
-      setMessage(message);
-    } catch (error) {
-      console.log('couldnt get message', error);
-    }
-  };
+    const getMessage = async() => {
+        try{
+          const response: AxiosResponse = await axios.get(`/conch/${user.id}`)
+          console.log('message', response)
+            const message = response.data[0]
+            message.user = user
+            message.userId = user.id
+          setMessage(message)
+        } catch(error) {
+          console.log('couldnt get message', error)
+        }
+      }
 
-  const getOutbox = async () => {
-    try {
-      const response: AxiosResponse = await axios.get(`/conch/sent/${user.id}`);
-      console.log('message', response);
-      const message = response.data[0];
-      message.user = user;
-      message.userId = user.id;
-      setMessage(message);
-    } catch (error) {
-      console.log('couldnt get message', error);
-    }
-  };
+      const getOutbox = async() => {
+        try{
+          const response: AxiosResponse = await axios.get(`/conch/sent/${user.id}`)
+          console.log('message', response)
+            const message = response.data[0]
+            message.user = user
+            message.userId = user.id
+          setMessage(message)
+        } catch(error) {
+          console.log('couldnt get message', error)
+        }
+      }
 
 
 

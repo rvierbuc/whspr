@@ -3,6 +3,8 @@ import Peer from 'peerjs';
 import AgoraRTC from 'agora-rtc-sdk';
 // import agoraConfig from '../agoraConfig'
 import { joinChannel, leaveChannel, startAudio, stopAudio, createChannel, subscribeRemoteUser } from './AgoraClient';
+import { useLoaderData, useNavigate } from 'react-router-dom';
+import axios from 'axios'
 
 
 
@@ -12,13 +14,17 @@ const Room = ({ channel, host, id }) => {
   const [uid, setUid] = useState<number>(id);
   const [stream, setStream] = useState<MediaStream>();
   const [remoteAudioTracks, setRemoteAudioTracks] = useState<string[]>([]);
+  const remoteAudioRef = useRef<HTMLAudioElement | null>(null)
+  const [mute, setMute] = useState<boolean>(false)
+  const navigate = useNavigate()
+  const user: any = useLoaderData();
 
-  const remoteAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  useEffect(() => {
-    navigator.mediaDevices.getUserMedia({ video: false, audio: true })
-      .then((stream) => {
-        // console.log('stream', stream)
+    useEffect(() => {
+      console.log('stream', user)
+        navigator.mediaDevices.getUserMedia({video: false, audio: true})
+        .then((stream) => {
+             console.log('stream', user)
 
         createChannel(channelName, uid, '007eJxTYPBdOLtmftV7Yz+P1GfSx08pdH/dXbfQbEfv229pB0S8KjYpMCQaJyUbmJgmWphZWphYmJtbGKUYpJoZJhmbmllYWpoaHTlcktoQyMggWH2RlZEBAkF8RoZEBgYAV0cfRw==', stream);
         setStream(stream);
@@ -40,10 +46,23 @@ const Room = ({ channel, host, id }) => {
     startAudio();
   };
 
+  const muted = () => {
+    setMute(!mute)
+    stopAudio();
+
+  }
+
   const handleLeaveChannel = (stream) => {
     leaveChannel();
     console.log('stream', stream);
     stopAudio();
+    axios.delete(`/post/radio/${channelName}`)
+    .then(() => {
+      console.log('done')
+    }).catch(() => {
+      console.log('uhh')
+    })
+    navigate('/protected/radio')
   };
 
   return (
@@ -52,14 +71,22 @@ const Room = ({ channel, host, id }) => {
       <audio ref={remoteAudioRef} autoPlay />
 
 
-      <div>
-      {/* {remoteAudioTracks.map((track, index) => (
-          <audio key={index} ref={remoteAudioRef} srcObject={new MediaStream(track)} autoPlay />
-        ))} */}
-      </div>
+          <img src="https://lh3.googleusercontent.com/a/ACg8ocI6UOrLKNPeKzMpAobwFfMo2jVBc2SccK66hzTPMkEk=s96-c" alt="user profile image" />
+       {mute ?  <button
+        type="button"
+        className='btn btn-dark'
+        onClick={() => {muted()}}
+        >Mute</button> : <button
+        type="button"
+        className='btn btn-light'
+        onClick={() => {muted()}}
+        >Mute</button>}
       
       <br />
-      <button onClick={handleLeaveChannel}>Leave Channel</button>
+      <button
+      type="button"
+      className='btn btn-dark'
+       onClick={handleLeaveChannel}>Leave Channel</button>
     </div>
   );
 };

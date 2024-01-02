@@ -89,17 +89,18 @@ export const RecordConch = ({ user, audioContext, title, category, openPost }: {
   const saveAudioToGoogleCloud = async () => {
     const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
     try {
-      const users = await axios.get('/post/users');
-      console.log('users', users);
-      const index = Math.floor(Math.random() * (users.data.length - 1));
-      const receivingUserId = users.data[index].id;
-      const formData = new FormData();
-      formData.append('audio', audioBlob);
-      formData.append('sendingUserId', sendingUserId);
-      formData.append('title', title);
-      formData.append('category', category);
-      formData.append('recievingUserId', receivingUserId);
-      const response = await axios.post('/conch', formData);
+      const users = await axios.get('/post/users')
+      const index = Math.floor(Math.random() * (users.data.length - 1))
+      const receivingUserId = users.data[index].id
+      console.log('users', users.data, index, receivingUserId)
+      
+      const formData = new FormData()
+      formData.append('audio', audioBlob)
+      formData.append('sendingUserId', sendingUserId)
+      formData.append('title', title)
+      formData.append('category', category)
+      formData.append('receivingUserId', receivingUserId)
+      const response = await axios.post(`/conch`, formData)
       if (response.status === 200) {
         console.info('Audio save successfully');
       } else {
