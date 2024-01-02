@@ -352,8 +352,11 @@ router.post('/like', async (req: Request, res: Response) => {
   }
  })
 //gets all comments for one post
-router.get('/comment/:postId', async (req: Request, res: Response) => {
-  const { postId } = req.params;
+router.get('/comment/:postId/:limitStr', async (req: Request, res: Response) => {
+  const { postId, limitStr } = req.params;
+  type limit = number;
+  const limit = parseInt(limitStr)
+  //console.log(limit)
 try{
   const postComments = await Comment.findAll({
     where: {
@@ -363,6 +366,7 @@ try{
     order: [
       ['createdAt', 'DESC']
     ],
+    limit
   })
 
   res.status(200).send(postComments)

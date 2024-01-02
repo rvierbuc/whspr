@@ -14,7 +14,44 @@
 }
 
 body {
-    background-color: #424242;
+    background-image: url('./background.png');
+    background-color: #606060;
+    background-repeat:initial, repeat-y
+    // background-size: 300px 100px;
+
+}
+@mixin blur($radius) {
+	-webkit-backdrop-filter: blur($radius); /* Chrome, Safari */
+	// -ms-filter: blur($radius); /* IE12? */
+	// filter: url("data:image/svg+xml;utf8,<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"><filter id=\"blur\"><feGaussianBlur stdDeviation=\"#{$radius}\" /></filter></svg>#blur"); /* Firefox, Safari, Chrome*/
+	// filter: progid:DXImageTransform.Microsoft.Blur(Strength=$radius); /* IE9 */
+	backdrop-filter: blur($radius);
+}
+.card {
+  background: rgba(233, 236, 243, 0.075);
+  //opacity: 60%;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  @include blur(4.2px);
+  border: 1px solid rgba(236, 210, 210, 0.36);
+}
+#header {
+  background: rgba(233, 236, 243, 0.449);
+  //opacity: 60%;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  @include blur(4.2px);
+  border: 1px solid rgba(236, 210, 210, 0.36);
+}
+#post-section-wave {
+  //background: rgba(166, 197, 255, 0.449);
+  background: rgba(60, 53, 86, 0.449);
+
+  //opacity: 60%;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  @include blur(4.2px);
+  border: 1px solid rgba(236, 210, 210, 0.36);
 }
 #waveform  {
     height: 100%;
@@ -272,20 +309,65 @@ body {
   color: rgb(255, 255, 255);
 }
 
-.selectable-box {
-  max-height: 150px;
-  max-width: 200px;
-  overflow-y: auto;
-  .option {
-    cursor: pointer;
-    padding: 10px;
-    margin: 5px;
-    border: 1px solid #000000;
-    width: 200px;
+    .custom-checkbox {
+      width: 260px;
+      height: 60px;
+    
+      input#status {
+        display: none;
+        + label {
+          height: 100%;
+          width: 100%;
+          > .status-switch {
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: grey;
+            color: white;
+            transition: all 0.5s ease;
+            padding: 3px;
+            border-radius: 3px;
 
-    &.selected {
-      background-color: #1e1a2a;
-      color: #fff;
+            &:before,
+            &:after {
+              border-radius: 2px;
+              height: calc(100% - 6px);
+              width: calc(50% - 3px);
+              display: flex;
+              align-items: center;
+              position: absolute;
+              justify-content: center;
+              transition: all 0.3s ease;
+            }
+            &:before {
+              background-color: white;
+              color: black;
+              box-shadow: 0 0 4px 4px rgba(#000, 0.2);
+              left: 3px;
+              z-index: 10;
+              content: attr(data-unchecked);
+            }
+    
+            &:after {
+              right: 0;
+              content: attr(data-checked);
+            }
+            &:checked + label > .status-switch {
+              background-color: green;
+        
+              &:after {
+                left: 0;
+                content: attr(data-unchecked);
+              }
+        
+              &:before {
+                color: green;
+                left: 50%;
+                content: attr(data-checked);
+              }
+            }
+          }
+        }
+      }
     }
-  }
-}

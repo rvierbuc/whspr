@@ -57,10 +57,16 @@ const Room = ({ channel, host, id }) => {
 
 
           <img src="https://lh3.googleusercontent.com/a/ACg8ocI6UOrLKNPeKzMpAobwFfMo2jVBc2SccK66hzTPMkEk=s96-c" alt="user profile image" />
-        
+        <button
+        type="button"
+        className='btn btn-dark'
+        >Mute</button>
       
       <br />
-      <button onClick={handleLeaveChannel}>Leave Channel</button>
+      <button
+      type="button"
+      className='btn btn-dark'
+       onClick={handleLeaveChannel}>Leave Channel</button>
     </div>
   );
 };
