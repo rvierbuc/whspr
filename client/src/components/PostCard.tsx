@@ -118,7 +118,7 @@ const PostCard = ({ audioContext, filter, synthAudioChunks }: { audioContext: Au
           <div className="d-flex justify-content-center">
             <input type="text"
               maxLength={22}
-              placeholder="What's on your mind?"
+              placeholder="Name your track"
               value={title}
               onChange={(e) => { setTitle(e.target.value); }}
               className='input-control text-white'
