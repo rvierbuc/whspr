@@ -3,8 +3,6 @@ import { useLoaderData } from 'react-router-dom';
 import axios from 'axios';
 
 export const RecordComment = (props, { audioContext }: { audioContext: BaseAudioContext }) => {
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
