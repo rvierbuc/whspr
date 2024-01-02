@@ -68,12 +68,12 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
 
             <PostConch audioContext={audioContext} />
 
-            <input
+            {/* <input
             type="checkbox"
-            />
+            /> */}
             
             <div className="custom-checkbox">
-  <input id="status" 
+  {/* <input id="status" 
          type="checkbox" 
          name="status"/>
   <label htmlFor="status">
@@ -81,7 +81,7 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
          data-unchecked="Off"
          data-checked="On">
     </div>
-  </label>
+  </label> */}
 </div>
   
 
