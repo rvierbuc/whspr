@@ -54,7 +54,7 @@ const Oscillator = ({ oscSettings, changeType, changeValue, setInstrument, oscil
   };
 
   return (
-    <Container className="">
+    <Container className="oscillator">
         <Stack direction="horizontal" gap={4} className="mx-5 mb-3 typeCard">
           <div className="mr-2">
             <h5 className="text-center">Oscillator</h5>
