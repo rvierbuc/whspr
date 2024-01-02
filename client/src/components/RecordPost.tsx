@@ -131,9 +131,11 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
     }
     let audioBlob: Blob;
     // either voice or synth audio is played back
-    synthAudioChunks.length > 0
-      ?
-      audioBlob = new Blob(synthAudioChunks, { type: 'audio/wav' }) : audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    if (synthAudioChunks.length > 0) {
+      audioBlob = new Blob(synthAudioChunks, { type: 'audio/wav' })
+    } else {
+      audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
+    }
     const arrayBuffer = await audioBlob.arrayBuffer();
     audioContext.decodeAudioData(
       arrayBuffer,
