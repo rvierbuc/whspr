@@ -4,11 +4,18 @@ import Oscillator from './Oscillator';
 import RecordSynth from './RecordSynth';
 import Filters from './Filters';
 import PostSynth from './PostSynth';
+import * as Tone from 'tone';
+
+interface Options {
+  oscillator: Tone.Oscillator
+  fatOscillator: Tone.FatOscillator
+  fmOscillator: Tone.FMOscillator
+  amOscillator: Tone.AMOscillator
+}
 
 interface Props {
   audioContext: AudioContext,
-  oscillator: OscillatorNode,
-  mediaDest: MediaStreamAudioDestinationNode
+  oscillatorOptions: Options
 }
 
 const defaultSettings = {
@@ -18,17 +25,17 @@ const defaultSettings = {
   lowPassType: 'lowpass',
 }
 
-const SynthDaw = ({audioContext, oscillator, mediaDest}: Props): React.JSX.Element => {
-  const [contextState, setContextState] = useState('');
+const SynthDaw = ({ audioContext, oscillatorOptions }: Props): React.JSX.Element => {
   const [addFilter, setAddFilter ] = useState(false);
   const [addSynth, setAddSynth ] = useState(false);
   const [synthAudioChunks, setSynthAudioChunks] = useState<Blob[]>([]);
-  const [isRecording, setIsRecording] = useState<boolean>(false);
   const [filter, setFilter] = useState(defaultSettings);
+  const [instrument, setInstrument] = useState(oscillatorOptions.oscillator);
 
   useEffect(() => {
     setAddFilter(false);
     setAddSynth(false);
+    setInstrument(oscillatorOptions.oscillator)
   }, []);
 
   // conditional rendering of filters and synth
@@ -36,21 +43,20 @@ const SynthDaw = ({audioContext, oscillator, mediaDest}: Props): React.JSX.Eleme
   const toggleSynth: () => void = () => addSynth === false ? setAddSynth(true) : setAddSynth(false);
 
   const [oscSettings, setOscSettings] = useState({
-    frequency: oscillator.frequency.value,
-    detune: oscillator.detune.value,
-    type: oscillator.type,
+    frequency: instrument.frequency.value,
+    detune: instrument.detune.value,
+    type: instrument.type,
   });
 
   const start: () => void = () => {
-    if (contextState === '') {
-      oscillator.start();
-      setContextState('started');
-    } else if (audioContext.state === 'suspended') {
+    instrument.start();
+    if (audioContext.state === 'suspended') {
       audioContext.resume();
     }
   };
 
   const stop: () => void = () => {
+    instrument.stop()
     if (audioContext.state === 'running') {
       audioContext.suspend();
     }
@@ -59,7 +65,7 @@ const SynthDaw = ({audioContext, oscillator, mediaDest}: Props): React.JSX.Eleme
   const changeType: (e: BaseSyntheticEvent) => void = (e) => {
     const { id } = e.target;
     setOscSettings({ ...oscSettings, type: id });
-    oscillator.type = id;
+    instrument.type = id;
   };
 
   const changeValue: (e: BaseSyntheticEvent) => void = (e) => {
@@ -67,9 +73,9 @@ const SynthDaw = ({audioContext, oscillator, mediaDest}: Props): React.JSX.Eleme
     const id: string = e.target.id;
     setOscSettings({ ...oscSettings, [id]: Number(value) });
     if (id === 'frequency') {
-      oscillator.frequency.value = Number(value);
+      instrument.frequency.value = Number(value);
     } else if (id === 'detune') {
-      oscillator.detune.value = Number(value);
+      instrument.detune.value = Number(value);
     }
   };
 
@@ -85,8 +91,8 @@ const SynthDaw = ({audioContext, oscillator, mediaDest}: Props): React.JSX.Eleme
       <Stack direction="vertical">
         {addFilter === true && <Filters setFilter={setFilter} audioContext={audioContext} />}
         <Container className="syntheSize rounded mt-3" style={{border: '1px solid rgba(236, 210, 210, 0.36)'}}>
-          {addSynth === true && <Oscillator oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />}
-          {addSynth === true && <RecordSynth setIsRecording={setIsRecording} setSynthAudioChunks={setSynthAudioChunks} stop={stop} start={start} mediaDest={mediaDest} />}
+          {addSynth === true && <Oscillator oscillatorOptions={oscillatorOptions} setInstrument={setInstrument} oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />}
+          {addSynth === true && <RecordSynth instrument={instrument} setSynthAudioChunks={setSynthAudioChunks} stop={stop} start={start} />}
         </Container>
       </Stack>
     </Container>
