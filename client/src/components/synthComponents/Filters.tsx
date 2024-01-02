@@ -116,9 +116,9 @@ const Filters = ({ setFilter, audioContext }: Props) => {
     <Container className="text-center my-3 pb-1 rounded">
     <h5>Try out our new voice filters!</h5>
     <Stack direction="horizontal" className="mx-5 mb-3 typeCard">
-      <Button className="mx-2 btn synthRecorder text-white" variant={bgColor1} onClick={() => handleFilterChange(alien)}>Alien</Button>
-      <Button className="mx-2 btn synthRecorder text-white" variant={bgColor2} onClick={() => handleFilterChange(wobbly)}>Wobbly</Button>
-      <Button className="mx-2 btn synthRecorder text-white" variant={bgColor3} onClick={() => handleFilterChange(robot)}>Robot</Button>
+      <Button className="mx-2 btn btn-dark text-white" variant={bgColor1} onClick={() => handleFilterChange(alien)}>Alien</Button>
+      <Button className="mx-2 btn btn-dark text-white" variant={bgColor2} onClick={() => handleFilterChange(wobbly)}>Wobbly</Button>
+      <Button className="mx-2 btn btn-dark text-white" variant={bgColor3} onClick={() => handleFilterChange(robot)}>Robot</Button>
     </Stack>
   </Container>
   );

@@ -84,8 +84,8 @@ const SynthDaw = ({ audioContext, oscillatorOptions }: Props): React.JSX.Element
       <PostSynth filter={filter} audioContext={audioContext} synthAudioChunks={synthAudioChunks} />
       <Stack className="w-50 mx-auto rounded" style={ { display: 'd-flex', justifyContent: 'center' } }>
         <div>
-          <button type="button" className="btn synthRecorder text-white" style={ { margin: '15px', width: '25%' } } onClick={toggleFilter}>Filters</button>
-          <button type="button" className="btn synthRecorder text-white" style={ { margin: '15px', width: '25%' } } onClick={toggleSynth}>Synth</button>
+          <button type="button" className="btn btn-dark text-white" style={ { margin: '15px', width: '25%' } } onClick={toggleFilter}>Filters</button>
+          <button type="button" className="btn btn-dark text-white" style={ { margin: '15px', width: '25%' } } onClick={toggleSynth}>Synth</button>
         </div>
       </Stack>
       <Stack direction="vertical">

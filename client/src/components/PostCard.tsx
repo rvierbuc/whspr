@@ -106,8 +106,8 @@ const PostCard = ({ audioContext, filter, synthAudioChunks }: { audioContext: Au
       <div className="d-flex justify-content-center">
         <button
           type="button"
-          className="btn text-white"
-          style={{ margin: '15px', backgroundColor: 'rgb(60, 53, 86)' }}
+          className="btn btn-dark text-white"
+          style={{ margin: '15px' }}
           onClick={openPost}
         >
           {(!postCreated) ? 'Say something' : 'Nevermind'}
