@@ -31,35 +31,66 @@ const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251
 });
 
 
-function Hit({ hit }) {
-  const { hits } = useHits(); // the array of hits
-  console.log('hits', hits);//the individual hit obj
-  const { refine } = useSearchBox();
-  console.log('refine', refine);
+// function Hit({ hit }) {
+//   const { hits } = useHits(); // the array of hits
+//   console.log('hits', hits);//the individual hit obj
+//   const { refine } = useSearchBox();
+//   console.log('refine', refine);
 
-  return (
-    <article>
-      <img src={hit.profileImgUrl || ''} alt={hit.name} style={{ width: 'auto', height: '100px', objectFit: 'scale-down' }} />
-      <Link to={`/protected/profile/${hit.objectID}`}>{hit.username}</Link>
+//   return (
+//     <article>
+//       <img src={hit.profileImgUrl || ''} alt={hit.name} style={{ width: 'auto', height: '100px', objectFit: 'scale-down' }} />
+//       <Link to={`/protected/profile/${hit.objectID}`}>{hit.username}</Link>
 
-      <p>{hit.title || ''}</p>
+//       <p>{hit.title || ''}</p>
 
-    </article>
-  );
-}
-//creating a custom search box to stuff into the navbar
+//     </article>
+//   );
+// }
+
 
 const Search: React.FC = () => {
   const [currentSearch, setCurrentSearch] = useState<string>('');
-  // const { refine } = useSearchBox();
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentSearch(event.target.value);
+  };
+  // moved hit comp into search comp to access current search
+  interface HitProps {
+    hit: {
+      username: string;
+      profileImgUrl: string;
+      name: string;
+      objectID: string;
+      title: string;
+    };
+  }
+
+  const Hit: React.FC<HitProps> = ({ hit }) => {
+    const { hits } = useHits(); // the array of hits
+    const { refine } = useSearchBox();
+    
+    console.log('hits', hits); // the individual hit obj
+    console.log('currentSearch inside of hits component', currentSearch);
+
+    return (
+      <article>
+        <img
+          src={hit.profileImgUrl || ''}
+          alt={hit.name}
+          style={{ width: 'auto', height: '100px', objectFit: 'scale-down' }}
+        />
+        <Link to={`/protected/profile/${hit.objectID}`}>{hit.username}</Link>
+
+        <p>{hit.title || ''}</p>
+      </article>
+    );
   };
   return (
     <InstantSearch
       searchClient={searchClient}
       indexName="search_index"
-      initialUiState={{ searchBox: { query: currentSearch } }}
+      // initialUiState={{ searchBox: { query: currentSearch } }}
+      searchState={{ query: currentSearch }}
       insights={true}
     >
       {/* <SearchBox onInput={handleSearchChange}/> */}
@@ -70,7 +101,8 @@ const Search: React.FC = () => {
             placeholder="Search"
             aria-label="Search"
             aria-describedby="basic-addon1"
-            onInput={handleSearchChange}
+            onChange={handleSearchChange}
+            value={currentSearch}
           />
         </InputGroup>
       </Form>

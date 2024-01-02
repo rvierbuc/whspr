@@ -8,12 +8,14 @@ const ReadOnlyProfile = ({ audioContext }) => {
   const [selectedUserInfo, setSelectedUserInfo] = useState<any>();
   const [following, setFollowing] = useState<boolean>(false);
   const [onProfile, setOnProfile] = useState<boolean>(true);
+  const [onUserProfile, setOnUserProfile] = useState<boolean>(false);
 
   //const [userPosts, setUserPosts]  = useState<any>()
   const { id } = useParams();
   const user:any = useLoaderData();
   console.log('user in read', user);
   console.log('id in read', id);
+  console.log('onProfile in read', onProfile);
   const getSelectedUserInfo = async () => {
     try {
       const selectedUserObj = await axios.get(`/post/selected/${id}`);
@@ -76,6 +78,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
     }
   };
   useEffect(() => {
+    console.log('use effect in read only profile', onUserProfile);
     getSelectedUserInfo();
     isFollowing();
   }, []);
@@ -112,6 +115,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
                 userId={user.id}
                 getPosts={getSelectedUserInfo}
                 onProfile={onProfile}
+                onUserProfile={onUserProfile}
                 updatePost={updatePost}
                 setOnProfile={setOnProfile}
                 />

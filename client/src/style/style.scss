@@ -36,6 +36,20 @@ body {
   @include blur(4.2px);
   border: 1px solid rgba(236, 210, 210, 0.36);
 }
+.card.user-profile-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width:65%;
+
+}
+.card.user-profile-followers-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 6%;
+  width: 130%;
+}
 #header {
   background: rgba(233, 236, 243, 0.449);
   //opacity: 60%;
@@ -57,6 +71,27 @@ body {
 #waveform {
   height: 100%;
   width: 100%;
+}
+.wavesurfer-container {
+  position:relative;
+}
+
+.title-text-overlay {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  color: #e1e1e1;
+  font-size: 16px;
+  z-index: 200;
+}
+
+.categories-text-overlay {
+  position: absolute;
+  top: 55px;
+  left: 6px;
+  color: #e1e1e1;
+  font-size: 16px;
+  z-index: 200;
 }
 
 .navbar-collapse {
@@ -287,7 +322,7 @@ body {
   display: flex;
   justify-content: left;
   top: 65%;
-  left: 38.6%;
+  left: 47.6%;
   width: 200px;
   z-index: 100;
   // background: rgba(255, 0, 0, 0.9);
