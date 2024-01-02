@@ -40,8 +40,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  width:65%;
-
+  width: 65%;
 }
 .card.user-profile-followers-card {
   display: flex;
@@ -73,7 +72,7 @@ body {
   width: 100%;
 }
 .wavesurfer-container {
-  position:relative;
+  position: relative;
 }
 
 .title-text-overlay {
@@ -210,7 +209,7 @@ body {
   position: fixed;
   top: 175px;
   left: 60px;
-  width: auto;
+  width: 400px;
   height: auto;
   color: rgba(209, 209, 209, 0.6);
   background-color: rgba(128, 128, 128, 0.2);
@@ -219,6 +218,14 @@ body {
   z-index: 1000;
   padding: 10px;
   box-shadow: -3px 0px 3px (128, 128, 128, 0.4);
+}
+
+.chatHistoryName {
+  color: rgba(4, 217, 255, 0.6);
+}
+
+.chatHistoryText {
+  color: rgba(209, 209, 209, 0.6);
 }
 
 .press-to-talk-container {
