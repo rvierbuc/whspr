@@ -64,19 +64,20 @@ body {
 .feed-nav:hover {
   color: #3c3556;
 }
-// .nav-link:active {
-//   color: #0f0c0c;
-//  // background: rgba(233, 236, 243, 0.649);
-//  background: rgba(5, 73, 233, 0.649);
-//   //opacity: 60%;
-//   //border-radius: 16px;
-//   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-//   @include blur(4.2px);
-//   border: 1px solid rgba(236, 210, 210, 0.36);
- 
-// }
+
 .nav-tabs {
   border-color:rgba(233, 236, 243, 0.124);
+}
+#comment-btn {
+  margin-left: 15px;
+  color:rgb(166, 197, 255);
+  cursor: pointer;
+  
+}
+.login:hover {
+  color: rgb(166, 197, 255);
+  //opacity: 60%;
+  cursor: pointer;
 }
 
 .card.user-profile-card {
@@ -93,6 +94,7 @@ body {
   width: 130%;
 }
 #header {
+ 
   background: rgba(233, 236, 243, 0.261);
   //opacity: 60%;
   border-radius: 16px;
@@ -100,13 +102,34 @@ body {
   @include blur(4.2px);
   border: 1px solid rgba(233, 236, 243, 0.449);
 }
-#tag {
+
+
+#home-header {
+  background-color: #1e1a2a79;
+
+  //opacity: 60%;
+  height: auto;
+  width: 100vw;
+  
+  margin-bottom: 15px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  @include blur(4.2px);
+ // border: 1px solid rgba(233, 236, 243, 0.449);
+
+}
+
+
+
+
+
+#tag, #comment-btn:hover {
   background: rgba(233, 236, 243, 0.241);
   //opacity: 60%;
   border-radius: 6px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   @include blur(4.2px);
   border: 1px solid rgba(236, 210, 210, 0.36);
+  padding: 6px
 }
 #post-section-wave {
   //background: rgba(166, 197, 255, 0.449);

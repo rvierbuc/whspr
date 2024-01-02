@@ -6,7 +6,7 @@ import RecordPlugin from "wavesurfer.js/dist/plugins/record";
 import RegionsPlugin from "wavesurfer.js/dist/plugins/regions.js";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-
+import Comment from "./Comment";
 dayjs.extend(relativeTime);
 
 const HomePost = (props) => {
@@ -14,9 +14,34 @@ const HomePost = (props) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-
-  // const { audioUrl, postId } = props;
+  const [hearLess, setHearLess] = useState<boolean>(false);
+  const [comments, setComments] = useState<any>([]);
   const containerId = `waveform-${postId}-home`;
+
+  const getComments = async (limit: number, type: string) => {
+    try {
+      const commentsArr = await axios.get(
+        `/post/comment/${postObj.id}/${limit}`
+      );
+      if (commentsArr.data.length > 0 && type === "more") {
+        setComments(commentsArr.data);
+        setHearLess(true);
+        console.log("got new comments", commentsArr.data);
+      } else if (commentsArr.data.length > 0 && type === "first") {
+        setComments(commentsArr.data);
+        console.log("got comments", commentsArr.data);
+      }
+    } catch (error) {
+      console.error("could not get comments", error);
+    }
+  };
+
+  const handleHearLess = () => {
+    // const lessComments = comments.slice(0, 2);
+    setComments([]);
+    setHearLess(false);
+  };
+  // const { audioUrl, postId } = props;
 
   const createSoundWaves = () => {
     let regions: RegionsPlugin;
@@ -36,14 +61,18 @@ const HomePost = (props) => {
       waveColor: "rgb(166, 197, 255)",
       progressColor: "rgb(60, 53, 86)",
       url: audioUrl,
-      width: "auto",
-      height: 400,
+      width: 900,
+      height: 200,
       normalize: true,
     });
 
-    regions = wavesurfer.registerPlugin(RegionsPlugin.create());
+    // regions = wavesurfer.registerPlugin(RegionsPlugin.create());
 
     wavesurfer.on("click", () => {
+      // if (wave) {
+      //   wave.playPause();
+      //   setIsPlaying(() => !isPlaying);
+      // }
       regions.addRegion({
         start: wavesurfer.getCurrentTime(),
         end: wavesurfer.getCurrentTime() + 0.25,
@@ -68,23 +97,23 @@ const HomePost = (props) => {
     <div
       className="container-fluid"
       id="feed-container"
-      style={{ width: "100%", height: "100%" }}
-      >
+      style={{ width:'auto', margin:'auto'}}
+    >
       <div className="row" id="feed-row">
         <div className="col-sm" id="feed-col-sm">
           <div
             className="card"
             id="feed-card"
             // style={{ width: "100%", height: "100%" }}
-            >
-
+          >
             <div className="card-body">
-            <div  className="d-flex flex-row align-items-center justify-content-start"
+              <div
+                className="d-flex flex-row align-items-center justify-content-start"
                 id="header"
                 style={{
                   padding: "10px",
-                }}>
-
+                }}
+              >
                 <img
                   src={postObj.user.profileImgUrl}
                   className="rounded-circle"
@@ -109,133 +138,213 @@ const HomePost = (props) => {
                 >
                   {postObj.user.username}
                 </a>
-                <div
-                  className="d-flex flex-row align-items-end justify-content-start"
-                  style={{ marginTop: "3%" }}
-                >
-                  <div
-                    style={{
-                      fontSize: "xxx-large",
-                      marginLeft: "20px",
-                      color: "#e1e1e5",
-                    }}
-                  >
-                    {postObj.title}
-                  </div>
-                  <div
-                    style={{
-                      marginLeft: "auto",
-                      marginRight: "2%",
-                      fontSize: "large",
-                      color: "#e1e1e5",
-                    }}
-                  >
-                    {dayjs(postObj.createdAt).fromNow()}
-                  </div>
-                  
-
-                  </div>
-                </div>
-                <div id={containerId}></div>
+              </div>
+              <div
+                className="d-flex flex-row align-items-end justify-content-start"
+                style={{ marginTop: "3%" }}
+              >
                 <div
                   style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
+                    fontSize: "xxx-large",
+                    marginLeft: "20px",
+                    color: "#e1e1e5",
                   }}
                 >
-                  {postObj.categories ? (
-                    postObj.categories.map((cat) => (
-                      <button
-                        id="tag"
-                        //className="btn btn-link"
-                        style={{
-                          color: "#e1e1e5",
-                          fontSize: "x-large",
-                          marginLeft: "16px",
-                          marginTop: "10px",
-                        }}
-                      >{`#${cat}`}</button>
-                    ))
-                  ) : (
-                    <div></div>
-                  )}
+                  {postObj.title}
+                </div>
+                <div
+                  style={{
+                    marginLeft: "auto",
+                    marginRight: "2%",
+                    fontSize: "large",
+                    color: "#e1e1e5",
+                  }}
+                >
+                  {dayjs(postObj.createdAt).fromNow()}
+                </div>
+              </div>
+              <div  
+                // onClick={() => {
+                //       if (wave) {
+                //         wave.playPause();
+                //         setIsPlaying(() => !isPlaying);
+                //       }}}
+                id={containerId}></div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  flexWrap:"wrap"
+                }}
+              >
+                {postObj.categories ? (
+                  postObj.categories.map((cat) => (
+                    <button
+                      id="tag"
+                      //className="btn btn-link"
+                      style={{
+                        color: "#e1e1e5",
+                        fontSize: "x-large",
+                        marginLeft: "16px",
+                        marginTop: "10px",
+                      }}
+                    >{`#${cat}`}</button>
+                  ))
+                ) : (
+                  <div></div>
+                )}
 
+                <div
+                  style={{
+                    padding: "2px",
+                    marginLeft: "auto",
+                    display: "flex",
+                    justifyContent: "space-evenly",
+                    alignContent: "center",
+                    marginTop: "10px",
+                  }}
+                >
+                  <div>
+                    <img
+                      src={require("../style/listenIcon.png")}
+                      style={{
+                        width: "auto",
+                        height: "35px",
+                        objectFit: "scale-down",
+                        color: "#e1e1e5",
+                      }}
+                    />
+                  </div>
                   <div
                     style={{
-                      padding: "2px",
-                      marginLeft: "auto",
-                      display: "flex",
-                      justifyContent: "space-evenly",
-                      alignContent: "center",
-                      marginTop: "10px",
+                      marginLeft: "2px",
+                      marginRight: "2%",
+                      fontSize: "x-large",
+                      color: "#e1e1e5",
                     }}
                   >
-                    <div>
-                      <img
-                        src={require("../style/listenIcon.png")}
-                        style={{
-                          width: "auto",
-                          height: "35px",
-                          objectFit: "scale-down",
-                          color: "#e1e1e5",
-                        }}
-                      />
-                    </div>
-                    <div
+                    {postObj.listenCount}
+                  </div>
+                  <div style={{ marginLeft: "3%" }}>
+                    <img
+                      src={require("../style/commentIcon.png")}
                       style={{
-                        marginLeft: "2px",
-                        marginRight: "2%",
-                        fontSize: "x-large",
+                        width: "auto",
+                        height: "40px",
+                        objectFit: "scale-down",
                         color: "#e1e1e5",
                       }}
-                      >
-                      {postObj.listenCount}
-                    </div>
-                    <div style={{ marginLeft: "3%" }}>
-                      <img
-                        src={require("../style/commentIcon.png")}
-                        style={{
-                          width: "auto",
-                          height: "40px",
-                          objectFit: "scale-down",
-                          color: "#e1e1e5",
-                        }}
-                      />
-                    </div>
-                    <div
-                      style={{
-                        marginLeft: "2px",
-                        marginRight: "2%",
-                        fontSize: "x-large",
-                        color: "#e1e1e5",
-                      }}
-                      >
-                      {postObj.commentCount}
-                    </div>
-                    <div style={{ marginLeft: "5px" }}>
-                      <svg
-                        width="32"
-                        height="32"
-                        fill="black"
-                        className="bi bi-heart"
-                        viewBox="0 0 16 16"
-                        >
-                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"></path>
-                      </svg>
-                    </div>
-                    <div
-                      style={{
-                        marginLeft: "3px",
-                        marginRight: "2%",
-                        fontSize: "x-large",
-                        color: "#e1e1e5",
-                      }}
-                      >
-                      {postObj.likeCount}
-                    </div>
+                    />
+                  </div>
+                  <div
+                    style={{
+                      marginLeft: "2px",
+                      marginRight: "2%",
+                      fontSize: "x-large",
+                      color: "#e1e1e5",
+                    }}
+                  >
+                    {postObj.commentCount}
+                  </div>
+                  <div style={{ marginLeft: "5px" }}>
+                    <svg
+                      width="32"
+                      height="32"
+                      fill="black"
+                      className="bi bi-heart"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"></path>
+                    </svg>
+                  </div>
+                  <div
+                    style={{
+                      marginLeft: "3px",
+                      marginRight: "2%",
+                      fontSize: "x-large",
+                      color: "#e1e1e5",
+                    }}
+                  >
+                    {postObj.likeCount}
                   </div>
                 </div>
+              </div>
+              <div
+                className="d-flex flex-row align-items-center justify-content-center"
+                style={{ margin: '2%' }}
+                >
+                {isPlaying ? (
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-lg"
+                    id="play-btn"
+                    onClick={() => {
+                      if (wave) {
+                        wave.playPause();
+                        setIsPlaying(() => !isPlaying);
+                      }
+                    }}
+                  >
+                    Stop
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn-light btn-lg"
+                    id="play-btn"
+                    onClick={() => {
+                      if (wave) {
+                        wave.playPause();
+                        setIsPlaying(() => !isPlaying);
+                      }
+                    }}
+                  >
+                    Play
+                  </button>
+                )}
+                </div>
+              {comments ? (
+                comments.map((commentObj: any) => (
+                  <Comment
+                    key={commentObj.id}
+                    comment={commentObj}
+                    audioContext={audioContext}
+                  />
+                ))
+              ) : (
+                <div></div>
+              )}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                }}
+              >
+                {comments && postObj.commentCount > comments.length ? (
+                  <div
+                    id="comment-btn"
+                    onClick={() => {
+                      getComments(comments.length + 5, "more");
+                    }}
+                  >
+                    Show Comments
+                  </div>
+                ) : (
+                  <div></div>
+                )}
+                {hearLess ? (
+                  <div
+                    id="comment-btn"
+                    onClick={() => handleHearLess()}
+                  >
+                    Hide Comments
+                  </div>
+                ) : (
+                  <div></div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -244,3 +353,7 @@ const HomePost = (props) => {
   );
 };
 export default HomePost;
+/**
+ *    <div id={containerId}></div>
+                
+ */

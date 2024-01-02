@@ -409,7 +409,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
               <div
                 className="d-flex flex-row align-items-center justify-content-start"
                 style={{ margin: '2%' }}
-              >
+                >
                 {isPlaying ? (
                   <button
                     type="button"

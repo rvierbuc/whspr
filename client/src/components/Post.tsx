@@ -6,31 +6,9 @@ import { RecordComment } from "./RecordComment";
 
  const Post = (props) => {
   const { postObj, userId, updatePost, audioContext } = props
-  // const [commentInputOpen, setCommentInputOpen] = useState<boolean>(false)
   const [hearLess, setHearLess] = useState<boolean>(false)
   const [comments, setComments] = useState<any>([])
   
-//   const handleLike = async()=> {
-//     try{
-//        await axios.post('/post/like', {userId, postId: postObj.id})
-//        await axios.put('/post/updateCount', {type: 'increment', column: 'likeCount', id: postObj.id})
-//        await updatePost(postObj.id, userId)
-//     } catch(error){
-//       console.log('client could not like', error)
-//     }
-//   };
-//   const handleUnlike = async () => {
-//     try {
-//     //const likeObj = postObj.Likes.filter((likeObj) => likeObj.userId == user.id)
-//     //console.log(likeObj)
-//     await axios.delete(`/post/unlike/${userId}/${postObj.id}`)
-//     await axios.put('/post/updateCount', {type: 'decrement', column: 'likeCount', id: postObj.id})
-//     await updatePost(postObj.id, userId)
-//   } catch(error){
-//     console.log('client could not unlike', error)
-//   }
-// }
-
 const getComments = async(limit: number, type: string) => {
 try{
 const commentsArr = await axios.get(`/post/comment/${postObj.id}/${limit}`)
@@ -60,7 +38,7 @@ useEffect(() => {
   return(
     <div  >
       <div id="header" style={{margin: '16px', display: 'flex', flexDirection: 'column', alignContent:'center'}}>
-      <h3 style={{marginLeft: '55px', marginTop:'20px'}}>Record Your Comment</h3>
+        <h3 style={{marginLeft: '55px', marginTop:'20px'}}>Record Your Comment</h3>
          <RecordComment
          audioContext={audioContext}
          postObj={postObj}
