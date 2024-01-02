@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { Modal } from './Modal'
-import axios from 'axios'
+import React, { useState, useEffect, useRef } from 'react';
+import { Modal } from './Modal';
+import axios from 'axios';
 import { useLoaderData } from 'react-router-dom';
 // import {audioContext} from './App'
 
 export const WhsprAI = ({ audioContext }) => {
   const [isPhone, setIsPhone] = useState(false);
-  const [isRecording, setIsRecording] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [text, setText] = useState<string[]>([])
+  const [isRecording, setIsRecording] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [text, setText] = useState<string[]>([]);
   const [showText, setShowText] = useState(false);
-  const [AIResponse, setAIResponse] = useState<string[]>([])
-  const [lengthTracker, setLengthTracker] = useState(0)
+  const [AIResponse, setAIResponse] = useState<string[]>([]);
+  const [lengthTracker, setLengthTracker] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [animationInitialized, setAnimationInitialized] = useState(false);
   const canvasRef = useRef(null);
@@ -19,19 +19,19 @@ export const WhsprAI = ({ audioContext }) => {
   const frameRef = useRef<number | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
-  const cardRef = useRef(null)
-  const user = useLoaderData()
+  const cardRef = useRef(null);
+  const user = useLoaderData();
   const userId = parseFloat(user.id);
 
 
   //this sets the number of messages that will be retrieved from the database and sent in the conversation to the ai
-  const nMessages = 5
+  const nMessages = 5;
 
   //checks if the user's device is a phone
   useEffect(() => {
     if ('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0) {
       setIsPhone(true);
-      console.info('is phone')
+      console.info('is phone');
     }
   }, []);
 
@@ -39,19 +39,19 @@ export const WhsprAI = ({ audioContext }) => {
   useEffect(() => {
     const getPastMessages = async () => {
       try {
-        const response = await axios.get('/retrieveRecordsAIMessages', { params: { userId: userId, nMessages: nMessages } })
+        const response = await axios.get('/retrieveRecordsAIMessages', { params: { userId: userId, nMessages: nMessages } });
         const { latestUserMessages, latestAIMessages } = response.data;
-        const userMessages = latestUserMessages.map((record) => record.message).reverse()
-        const AIMessages = latestAIMessages.map((record) => record.message).reverse()
-        setText(userMessages)
-        setAIResponse(AIMessages)
-        setLengthTracker(userMessages.length)
+        const userMessages = latestUserMessages.map((record) => record.message).reverse();
+        const AIMessages = latestAIMessages.map((record) => record.message).reverse();
+        setText(userMessages);
+        setAIResponse(AIMessages);
+        setLengthTracker(userMessages.length);
       } catch (error) {
-        console.error('error getting past messages: ', error)
+        console.error('error getting past messages: ', error);
       }
-    }
+    };
     getPastMessages();
-  }, [])
+  }, []);
 
   //sets up an analyser for the computer's speaker audio (when AI is talking)
   const setupAnalyser = (audio) => {
@@ -69,7 +69,7 @@ export const WhsprAI = ({ audioContext }) => {
       analyser.fftSize = 2048;
       analyserRef.current = analyser;
     } catch (error) {
-      console.error('error setting up analyser:', error)
+      console.error('error setting up analyser:', error);
     }
   };
 
@@ -94,17 +94,17 @@ export const WhsprAI = ({ audioContext }) => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaStreamRef.current = stream;
-        const recorder = new MediaRecorder(stream)
-        audioChunks = []
+        const recorder = new MediaRecorder(stream);
+        audioChunks = [];
 
         recorder.ondataavailable = e => {
-          audioChunks.push(e.data)
-        }
+          audioChunks.push(e.data);
+        };
 
         recorder.onstop = async () => {
-          const blob = new Blob(audioChunks)
-          getTextFromSpeech(blob)
-        }
+          const blob = new Blob(audioChunks);
+          getTextFromSpeech(blob);
+        };
 
         recorder.start();
 
@@ -121,14 +121,14 @@ export const WhsprAI = ({ audioContext }) => {
       formData.append('audio', blob);
       try {
         const response = await axios.post('/speechToTextOpenAI', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        })
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
         const currentText = response.data;
         setText(prevText => [...prevText, currentText]);
       } catch (error) {
-        console.error('error sending audio to server in getTextFromSpeech', error)
+        console.error('error sending audio to server in getTextFromSpeech', error);
       }
-    }
+    };
 
     //fires start recording and speech recognition when is recording is true
     if (isRecording) {
@@ -182,7 +182,7 @@ export const WhsprAI = ({ audioContext }) => {
       context.shadowColor = 'white';
 
 
-      const sliceWidth = canvas.width * 1 / bufferLength
+      const sliceWidth = canvas.width * 1 / bufferLength;
       let x = 0;
 
       context.beginPath();
@@ -248,37 +248,37 @@ export const WhsprAI = ({ audioContext }) => {
 
   //this voice variable controls which endpoint is used for the tts
   //supported choices are openai, google, browser, elevenlabs
-  const VOICE = 'openai'
+  const VOICE = 'openai';
   //sends user messages as text and gets text message back from open AI
   const getAIResponse = async () => {
-    if (text.length === lengthTracker) return
-    const messages = [{ role: "system", content: "You are an my helpful friend Whisper." }]
-    const lastNMessages = arr => arr.length > nMessages ? arr.slice(-nMessages) : arr
+    if (text.length === lengthTracker) { return; }
+    const messages = [{ role: 'system', content: 'You are an my helpful friend Whisper.' }];
+    const lastNMessages = arr => arr.length > nMessages ? arr.slice(-nMessages) : arr;
     const userMessages = lastNMessages(text);
     const aiMessages = lastNMessages(AIResponse);
     for (let i = 0; i < userMessages.length; i++) {
-      messages.push({ "role": "user", "content": `Respond using 100 completion_tokens or less: ${userMessages[i]}` })
+      messages.push({ 'role': 'user', 'content': `Respond using 100 completion_tokens or less: ${userMessages[i]}` });
       if (aiMessages[i]) {
-        messages.push({ "role": "assistant", "content": aiMessages[i] })
+        messages.push({ 'role': 'assistant', 'content': aiMessages[i] });
       }
     }
     //converts AI message to audio (TTS)
     try {
-      const resp = await axios.post('/openAIGetResponse', { messages: messages })
-      setAIResponse(prevResponses => [...prevResponses, resp.data.response])
+      const resp = await axios.post('/openAIGetResponse', { messages: messages });
+      setAIResponse(prevResponses => [...prevResponses, resp.data.response]);
       if (VOICE === 'browser') {
         //you can change the browser voice selected here, it searches by the name property on the object
-        browserTextToSpeech(resp.data.response, "Microsoft Zira - English (United States)")
+        browserTextToSpeech(resp.data.response, 'Microsoft Zira - English (United States)');
       } else {
-        const spokenResponse = await axios.post(`/text-to-speech-${VOICE}`, { text: resp.data.response }, { responseType: 'arraybuffer' })
-        playAudio(spokenResponse.data)
+        const spokenResponse = await axios.post(`/text-to-speech-${VOICE}`, { text: resp.data.response }, { responseType: 'arraybuffer' });
+        playAudio(spokenResponse.data);
       }
       try {
-        const recordsCreated = await axios.post('/createRecordsAIMessages', { newUserMessage: text[text.length - 1], newAIMessage: resp.data.response, userId: userId })
-        setIsLoading(false)
-      } catch (error) { console.error("Error creating records: ", error) }
+        const recordsCreated = await axios.post('/createRecordsAIMessages', { newUserMessage: text[text.length - 1], newAIMessage: resp.data.response, userId: userId });
+        setIsLoading(false);
+      } catch (error) { console.error('Error creating records: ', error); }
     } catch (error) {
-      console.error("Error getting response from AI in getAIResponse: ", error)
+      console.error('Error getting response from AI in getAIResponse: ', error);
     }
   };
 
@@ -302,15 +302,15 @@ export const WhsprAI = ({ audioContext }) => {
   //starts the audio context
   function startUserMedia() {
     if (!audioContext) {
-      console.error("new audio for some reason")
+      console.error('new audio for some reason');
       audioContext = new AudioContext;
     }
-    audioContext.resume()
+    audioContext.resume();
   }
 
   //displays the text of the conversation
   function handleSetShowText() {
-    setShowText(!showText)
+    setShowText(!showText);
   }
 
   //sets canvas width to the whole screen
@@ -347,32 +347,34 @@ export const WhsprAI = ({ audioContext }) => {
 
   const handlePressToTalkPress = () => {
     setIsRecording(true);
-  }
+  };
   const handlePressToTalkRelease = () => {
-    setIsRecording(false)
+    setIsRecording(false);
     vibratePhone();
-  }
+  };
 
   const vibratePhone = () => {
-    if ("vibrate" in navigator) {
-      navigator.vibrate(200)
+    if ('vibrate' in navigator) {
+      navigator.vibrate(200);
     }
-  }
+  };
 
   return (
     <div className='container-whsprAI'>
-      <div className='card' ref={cardRef} style={{ height: "calc(100vh - 150px)" }}>
-
-
-        <img
-          src={require('../style/help.png')}
-          className='help-btn'
-          onClick={() => setModalOpen(!modalOpen)}
-          style={{ opacity: modalOpen ? .25 : 1 }}
-        />
-        <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
-          <p>Press and hold the button to talk to Whisper, our AI chatbot.</p>
-        </Modal>
+      <div className='card' ref={cardRef} style={{ height: 'calc(100vh - 150px)' }}>
+        <div style={{ position: 'relative' }}>
+          <img
+            src={require('../style/help.png')}
+            className='help-btn'
+            onClick={() => setModalOpen(!modalOpen)}
+            style={{ opacity: modalOpen ? .25 : 1 }}
+          />
+          <div style={{ position: 'absolute', top: '140px', left: '9%' }}>
+            <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+              <p>Press and hold the button to talk to Whisper, our AI chatbot.</p>
+            </Modal>
+          </div>
+        </div>
         <div>
           <div className="centered-whsprAI">
             <div className="canvas-container-whsprAI">
@@ -384,10 +386,10 @@ export const WhsprAI = ({ audioContext }) => {
               ? (<img src={require('../style/loading.gif')}
                 className="loading-img"></img>)
               : (<button
-                onMouseDown={!isPhone ? () => { startUserMedia(); handlePressToTalkPress() } : undefined}
+                onMouseDown={!isPhone ? () => { startUserMedia(); handlePressToTalkPress(); } : undefined}
                 onMouseUp={!isPhone ? handlePressToTalkRelease : undefined}
                 onMouseLeave={!isPhone ? handlePressToTalkRelease : undefined}
-                onTouchStart={isPhone ? () => { startUserMedia(); handlePressToTalkPress() } : undefined}
+                onTouchStart={isPhone ? () => { startUserMedia(); handlePressToTalkPress(); } : undefined}
                 onTouchEnd={isPhone ? handlePressToTalkRelease : undefined}
                 onContextMenu={(e) => e.preventDefault()}
                 className="btn"
@@ -404,8 +406,8 @@ export const WhsprAI = ({ audioContext }) => {
           {showText && <div className='floating-text-whsprAI'>
             {text.map((item, index) => (
               <div key={index} >
-                <div><span className="text-warning">You: </span><span className="text-success">{item}</span></div>
-                {AIResponse[index] && <div><span className="text-warning">Whisper: </span><span className="text-success">{AIResponse[index]}</span></div>}
+                <div><span className="chatHistoryName">You: </span><span className="chatHistoryText">{item}</span></div>
+                {AIResponse[index] && <div><span className="chatHistoryName">Whisper: </span><span className="chatHistoryText">{AIResponse[index]}</span></div>}
               </div>
             ))}
           </div>}

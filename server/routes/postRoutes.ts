@@ -169,6 +169,36 @@ router.get('/users', async (req: Request, res: Response) => {
   }
 })
 
+//gets all the selected Users Followers
+router.get('/user/:userId/followers', async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    // fetch the followers and extract the user Id's to cross reference with the users table to get the user info
+    const followers = await Follower.findAll({
+      where: {
+        followingId: userId
+      }
+    })
+    const followerDisplayInformation = await User.findAll({
+      where: {
+        id: followers.map((follower: any) => follower.userId)
+      }
+    })
+    
+    const extractedFollowerInfo = followerDisplayInformation.map((follower: any) => {
+      return {
+        id: follower.id,
+        username: follower.username,
+        profileImgUrl: follower.profileImgUrl,
+      }
+    });
+    res.send(extractedFollowerInfo);
+  } catch (error) {
+    console.error('could not get followers', error)
+    res.sendStatus(500)
+  }
+})
+
 //Gets all posts from people user is following (for following feed)
 router.get('/following/:userId/:tag', async (req: Request, res: Response) => {
 const { userId, tag } = req.params;
@@ -466,7 +496,7 @@ try{
 //creates following relationship
   router.post('/startFollowing', async(req: Request, res: Response) =>{
     const {userId, followingId} = req.body
-    ////console.log(userId, followingId)
+    console.log('in start following', userId, followingId)
     try{
       const startFollowing = await Follower.create({userId, followingId})
       res.sendStatus(201)

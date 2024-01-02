@@ -3,9 +3,6 @@ import { Link, Navigate, useNavigate, Outlet } from 'react-router-dom';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import InputGroup from 'react-bootstrap/InputGroup';
 // import '../style/style.scss'
 import Search from './Search';
 
@@ -26,13 +23,13 @@ const NavBar = () => {
         <Container>
           <Navbar.Brand>
             <img
-              src={require('../style/whspr-logo.png')}
-              width={100}
-              height={100}
-              className="d-inline-block align-top"
-              alt="whspr logo"
-              onClick={() => toggleMenu()}
-              style={{ cursor: 'pointer' }}
+            src={require('../style/whspr-logo.png')}
+            width={100}
+            height={100}
+            className="d-inline-block align-top"
+            alt="whspr logo"
+            onClick={() => toggleMenu()}
+            style={{ cursor: 'pointer' }}
             />
             {' '}
           </Navbar.Brand>
