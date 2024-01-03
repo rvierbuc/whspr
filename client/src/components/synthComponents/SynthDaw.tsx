@@ -90,10 +90,10 @@ const SynthDaw = ({ audioContext, oscillatorOptions }: Props): React.JSX.Element
       </Stack>
       <Stack direction="vertical">
         {addFilter === true && <Filters setFilter={setFilter} audioContext={audioContext} />}
-        <Container className="syntheSize rounded mt-3" style={{border: '1px solid rgba(236, 210, 210, 0.36)'}}>
-          {addSynth === true && <Oscillator oscillatorOptions={oscillatorOptions} setInstrument={setInstrument} oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />}
-          {addSynth === true && <RecordSynth instrument={instrument} setSynthAudioChunks={setSynthAudioChunks} stop={stop} start={start} />}
-        </Container>
+        {addSynth === true &&
+          <Container className="syntheSize rounded mt-3" style={{border: '1px solid rgba(236, 210, 210, 0.36)'}}>
+            <Oscillator setSynthAudioChunks={setSynthAudioChunks} stop={stop} start={start} instrument={instrument} oscillatorOptions={oscillatorOptions} setInstrument={setInstrument} oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
+          </Container>}
       </Stack>
     </Container>
   );

@@ -1,6 +1,7 @@
 import React, { BaseSyntheticEvent, useState, useEffect } from 'react';
-import { Container, Stack, Dropdown } from 'react-bootstrap';
+import { Container, Stack, Button } from 'react-bootstrap';
 import * as Tone from 'tone';
+import RecordSynth from './RecordSynth';
 
 interface Options {
   oscillator: Tone.Oscillator
@@ -19,9 +20,13 @@ interface Props {
   changeValue: (e: BaseSyntheticEvent) => void;
   setInstrument: any
   oscillatorOptions: Options
+  start: () => void;
+  stop: () => void;
+  setSynthAudioChunks: any
+  instrument: Tone.Oscillator | Tone.FatOscillator | Tone.FMOscillator | Tone.AMOscillator
 }
 
-const Oscillator = ({ oscSettings, changeType, changeValue, setInstrument, oscillatorOptions }: Props): React.JSX.Element => {
+const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings, changeType, changeValue, setInstrument, oscillatorOptions }: Props): React.JSX.Element => {
   const oscillatorKeys = Object.keys(oscillatorOptions).map(option => option = option[0].toUpperCase() + option.substring(1));
 
   const { oscillator, fatOscillator, fmOscillator, amOscillator } = oscillatorOptions
@@ -56,43 +61,38 @@ const Oscillator = ({ oscSettings, changeType, changeValue, setInstrument, oscil
   return (
     <Container className="oscillator">
         <Stack direction="horizontal" gap={4} className="mx-5 mb-3 typeCard">
-          <div className="mr-2">
-            <h5 className="text-center">Oscillator</h5>
-            <Dropdown>
-              <Dropdown.Toggle style={{backgroundColor: 'rgb(60, 53, 86)', borderColor: 'rgb(60, 53, 86)', minWidth: '25px'}}>
-                {selectedOscillator}
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item id="sine" onClick={() => handleOscillatorChange(oscillator)}>{oscillatorKeys[0]}</Dropdown.Item>
-                <Dropdown.Item id="triangle" onClick={() => handleOscillatorChange(fatOscillator)} >{oscillatorKeys[1]}</Dropdown.Item>
-                <Dropdown.Item id="square" onClick={() => handleOscillatorChange(fmOscillator)} >{oscillatorKeys[2]}</Dropdown.Item>
-                <Dropdown.Item id="sawtooth" onClick={() => handleOscillatorChange(amOscillator)} >{oscillatorKeys[3]}</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+          <div className="mr-3">
+            <h5 className="text-center mb-3">Oscillator Type</h5>
+            <Stack direction="vertical" gap={3}>
+              <Button className="btn btn-dark" id="sine" onClick={() => handleOscillatorChange(oscillator)}>{oscillatorKeys[0]}</Button>
+              <Button className="btn btn-dark" id="triangle" onClick={() => handleOscillatorChange(fatOscillator)} >{oscillatorKeys[1]}</Button>
+              <Button className="btn btn-dark" id="square" onClick={() => handleOscillatorChange(fmOscillator)} >{oscillatorKeys[2]}</Button>
+              <Button className="btn btn-dark" id="sawtooth" onClick={() => handleOscillatorChange(amOscillator)} >{oscillatorKeys[3]}</Button>
+            </Stack>
+          </div>
+          <div>
+            <Stack direction="vertical" gap={5}>
+              <Stack direction="horizontal" className="typeCard mb-2">
+                <div className="text-center">
+                  <h6>Frequency</h6>
+                  <input value={frequency} max="880" onChange={changeValue} id="frequency" type="range" />
+                </div>
+                <div className="text-center">
+                  <h6>Detune</h6>
+                  <input value={detune} max="150" min="-150" onChange={changeValue} id="detune" type="range" />
+                </div>
+              </Stack>
+              <RecordSynth instrument={instrument} setSynthAudioChunks={setSynthAudioChunks} stop={stop} start={start} />
+            </Stack>
           </div>
           <div className="ml-2">
-            <h5 className="text-center">Wave Type</h5>
-            <Dropdown>
-              <Dropdown.Toggle style={{backgroundColor: 'rgb(60, 53, 86)', borderColor: 'rgb(60, 53, 86)'}}>
-                {selectedWave}
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item id="sine" onClick={(e) => handleTypeChange(e)}>Sine</Dropdown.Item>
-                <Dropdown.Item id="triangle" onClick={(e) => handleTypeChange(e)} >Triangle</Dropdown.Item>
-                <Dropdown.Item id="square" onClick={(e) => handleTypeChange(e)} >Square</Dropdown.Item>
-                <Dropdown.Item id="sawtooth" onClick={(e) => handleTypeChange(e)} >Sawtooth</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
-        </Stack>
-        <Stack direction="horizontal" className="typeCard mb-2">
-          <div className="text-center">
-            <h6>Frequency</h6>
-            <input value={frequency} max="880" onChange={changeValue} id="frequency" type="range" />
-          </div>
-          <div className="text-center">
-            <h6>Detune</h6>
-            <input value={detune} max="150" min="-150" onChange={changeValue} id="detune" type="range" />
+            <h5 className="text-center mb-3">Wave Type</h5>
+            <Stack direction="vertical" gap={3}>
+              <Button className="btn btn-dark" id="sine" onClick={(e) => handleTypeChange(e)}>Sine</Button>
+              <Button className="btn btn-dark" id="triangle" onClick={(e) => handleTypeChange(e)} >Triangle</Button>
+              <Button className="btn btn-dark" id="square" onClick={(e) => handleTypeChange(e)} >Square</Button>
+              <Button className="btn btn-dark" id="sawtooth" onClick={(e) => handleTypeChange(e)} >Sawtooth</Button>
+            </Stack>
           </div>
         </Stack>
     </Container>
