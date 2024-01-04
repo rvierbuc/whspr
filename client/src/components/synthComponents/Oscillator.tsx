@@ -33,7 +33,6 @@ const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings,
   const { type, frequency, detune } = oscSettings;
   const [selectedWave, setSelectedWave] = useState('Select Wave');
   const [selectedOscillator, setSelectedOscillator] = useState<string>(oscillatorKeys[0]);
-  console.log(type);
 
   useEffect(() => {
     setSelectedWave(type[0].toUpperCase() + type.substring(1))
