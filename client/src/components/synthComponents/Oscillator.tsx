@@ -33,6 +33,7 @@ const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings,
   const { type, frequency, detune } = oscSettings;
   const [selectedWave, setSelectedWave] = useState('Select Wave');
   const [selectedOscillator, setSelectedOscillator] = useState<string>(oscillatorKeys[0]);
+  console.log(type);
 
   useEffect(() => {
     setSelectedWave(type[0].toUpperCase() + type.substring(1))
@@ -64,10 +65,10 @@ const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings,
           <div className="mr-3">
             <h5 className="text-center mb-3">Oscillator Type</h5>
             <Stack direction="vertical" gap={3}>
-              <Button className="btn btn-dark" id="sine" onClick={() => handleOscillatorChange(oscillator)}>{oscillatorKeys[0]}</Button>
-              <Button className="btn btn-dark" id="triangle" onClick={() => handleOscillatorChange(fatOscillator)} >{oscillatorKeys[1]}</Button>
-              <Button className="btn btn-dark" id="square" onClick={() => handleOscillatorChange(fmOscillator)} >{oscillatorKeys[2]}</Button>
-              <Button className="btn btn-dark" id="sawtooth" onClick={() => handleOscillatorChange(amOscillator)} >{oscillatorKeys[3]}</Button>
+              <Button className="btn" id="sine" variant={selectedOscillator === oscillatorKeys[0] ? 'danger' : 'dark'} onClick={() => handleOscillatorChange(oscillator)}>{oscillatorKeys[0]}</Button>
+              <Button className="btn" id="triangle" variant={selectedOscillator === oscillatorKeys[1] ? 'danger' : 'dark'} onClick={() => handleOscillatorChange(fatOscillator)} >{oscillatorKeys[1]}</Button>
+              <Button className="btn" id="square" variant={selectedOscillator === oscillatorKeys[2] ? 'danger' : 'dark'} onClick={() => handleOscillatorChange(fmOscillator)} >{oscillatorKeys[2]}</Button>
+              <Button className="btn" id="sawtooth" variant={selectedOscillator === oscillatorKeys[3] ? 'danger' : 'dark'} onClick={() => handleOscillatorChange(amOscillator)} >{oscillatorKeys[3]}</Button>
             </Stack>
           </div>
           <div>
@@ -88,10 +89,10 @@ const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings,
           <div className="ml-2">
             <h5 className="text-center mb-3">Wave Type</h5>
             <Stack direction="vertical" gap={3}>
-              <Button className="btn btn-dark" id="sine" onClick={(e) => handleTypeChange(e)}>Sine</Button>
-              <Button className="btn btn-dark" id="triangle" onClick={(e) => handleTypeChange(e)} >Triangle</Button>
-              <Button className="btn btn-dark" id="square" onClick={(e) => handleTypeChange(e)} >Square</Button>
-              <Button className="btn btn-dark" id="sawtooth" onClick={(e) => handleTypeChange(e)} >Sawtooth</Button>
+              <Button className="btn" variant={type === 'sine' ? 'danger' : 'dark'} id="sine" onClick={(e) => handleTypeChange(e)}>Sine</Button>
+              <Button className="btn" variant={type === 'triangle' ? 'danger' : 'dark'} id="triangle" onClick={(e) => handleTypeChange(e)} >Triangle</Button>
+              <Button className="btn" variant={type === 'square' ? 'danger' : 'dark'} id="square" onClick={(e) => handleTypeChange(e)} >Square</Button>
+              <Button className="btn" variant={type === 'sawtooth' ? 'danger' : 'dark'} id="sawtooth" onClick={(e) => handleTypeChange(e)} >Sawtooth</Button>
             </Stack>
           </div>
         </Stack>
