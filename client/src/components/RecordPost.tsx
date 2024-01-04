@@ -174,7 +174,7 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
   };
 
   const saveAudioToGoogleCloud = async (): Promise<void> => {
-    handleNavigation('/protected/home');
+    handleNavigation('/protected/feed/following');
     let audioBlob: Blob;
     // either synth or voice audio is saved
     if (synthAudioChunks.length > 0) {
