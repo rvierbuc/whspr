@@ -37,6 +37,15 @@ body {
   @include blur(4.2px);
   border: 1px solid rgba(236, 210, 210, 0.36);
 }
+.overlay-container {
+  background: rgba(233, 236, 243, 0.075);
+  //opacity: 60%;
+  //width: calc(200vw / 3);
+  //max-width: 1000px;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  @include blur(4.2px);
+}
 .feed-nav {
   color: #e1e1e5;
   background: rgba(233, 236, 243, 0.124);
@@ -118,7 +127,16 @@ body {
 
 }
 
-
+#tag-container {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  justify-content: space-between;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
 
 
 
@@ -129,7 +147,7 @@ body {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   @include blur(4.2px);
   border: 1px solid rgba(236, 210, 210, 0.36);
-  padding: 6px
+  
 }
 #post-section-wave {
   //background: rgba(166, 197, 255, 0.449);
@@ -153,6 +171,7 @@ body {
   position: absolute;
   top: 0px;
   left: 0px;
+  //margin-left: 2rem;
   color: #e1e1e1;
   font-size: 16px;
   z-index: 200;
@@ -165,6 +184,7 @@ body {
   color: #e1e1e1;
   font-size: 16px;
   z-index: 200;
+  max-width: 300px;
 }
 
 .navbar-collapse {
