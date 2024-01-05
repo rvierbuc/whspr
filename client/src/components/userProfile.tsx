@@ -6,6 +6,7 @@ import CardTitle from 'react-bootstrap/esm/CardTitle';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Post from './Post';
+import RadioConfig from './RadioConfig';
 import Container from 'react-bootstrap/Container';
 import WaveSurferComponent from './WaveSurfer';
 import WaveSurferSimple from './WaveSurferSimple';
@@ -53,7 +54,7 @@ interface followerAttributes {
   createdAt: Date;
   updatedAt: Date;
 }
-const UserProfile = ({ audioContext }) => {
+const UserProfile = ({ audioContext, setRoomProps }) => {
   const [selectedUserPosts, setSelectedUserPosts] = useState<PostAttributes[]>([]);
   const [onProfile, setOnProfile] = useState<boolean>(true);
   const [onUserProfile, setOnUserProfile] = useState<boolean>(true);
@@ -107,6 +108,7 @@ const UserProfile = ({ audioContext }) => {
     rows.push(row);
   }
   return (
+    
     <Container>
       <div className="user-main" style={{ display: 'flex' }}>
         <Col xs={12} lg={5}>
@@ -122,6 +124,8 @@ const UserProfile = ({ audioContext }) => {
               <div className="user-profile-info">
                 <h2 style={{ color: 'white' }}>{currentUser.username}</h2>
               </div>
+                <RadioConfig setRoomProps={setRoomProps}/>
+
             </div>
           </Row>
         <Row>
@@ -175,8 +179,10 @@ const UserProfile = ({ audioContext }) => {
             </Row>
           ))}
         </div>
+      
       </div>
     </Container>
+
   );
 };
 
