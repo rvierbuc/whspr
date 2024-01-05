@@ -1,14 +1,14 @@
-import WaveSurfer from "wavesurfer.js";
-import RecordPlugin from "wavesurfer.js/dist/plugins/record";
-import RegionsPlugin from "wavesurfer.js/dist/plugins/regions.js";
-import React, { useEffect, useState } from "react";
-import Delete from "./Delete";
-import axios from "axios";
-import { Modal } from "./Modal";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import Post from "./Post";
-import HoverPlugin from "wavesurfer.js/plugins/hover";
+import WaveSurfer from 'wavesurfer.js';
+import RecordPlugin from 'wavesurfer.js/dist/plugins/record';
+import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.js';
+import React, { useEffect, useState } from 'react';
+import Delete from './Delete';
+import axios from 'axios';
+import { Modal } from './Modal';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import Post from './Post';
+import HoverPlugin from 'wavesurfer.js/plugins/hover';
 
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
@@ -45,7 +45,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [following, setFollowing] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
   // const { audioUrl, postId } = props;
-  const containerId = `waveform-${postId || ""}`;
+  const containerId = `waveform-${postId || ''}`;
 
   // const handleDelete: () => void = async () => {
   //   try {
@@ -59,7 +59,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const isFollowing = async () => {
     try {
       const findFollowing = await axios.get(
-        `/post/isFollowing/${userId}/${postObj.user.id}`
+        `/post/isFollowing/${userId}/${postObj.user.id}`,
       );
       if (findFollowing.status === 200) {
         setFollowing(true);
@@ -68,35 +68,36 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       if (error.response.status === 404) {
         setFollowing(false);
       }
-      console.log("following error", error);
+      console.log('following error', error);
     }
   };
   const startFollowing = async () => {
     try {
-      const createFollowing = await axios.post("/post/startFollowing", {
+      const createFollowing = await axios.post('/post/startFollowing', {
         userId,
         followingId: postObj.user.id,
       });
-      if (createFollowing.data === "Created") {
+      if (createFollowing.data === 'Created') {
         setFollowing(true);
       }
     } catch (error) {
-      console.error("could not follow user", error);
+      console.error('could not follow user', error);
     }
   };
 
   const stopFollowing = async () => {
     try {
       const createFollowing = await axios.delete(
-        `/post/stopFollowing/${userId}/${postObj.user.id}`
+        `/post/stopFollowing/${userId}/${postObj.user.id}`,
       );
-      if (createFollowing.data === "Created") {
+      if (createFollowing.data === 'Created') {
         setFollowing(false);
       }
     } catch (error) {
-      console.error("could not follow user", error);
+      console.error('could not follow user', error);
     }
   };
+  console.log('on user profile:', onUserProfile)
   const createSoundWaves = () => {
     let regions: RegionsPlugin;
     let hover: HoverPlugin;
@@ -105,18 +106,18 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       wave.destroy();
     }
     //create the new wave
-    console.log("creating new wave");
+    console.log('creating new wave');
     const wavesurfer = WaveSurfer.create({
       // barWidth: 15,
       // barRadius: 5,
       // barGap: 2,
       interact: true,
       container: `#${containerId}`,
-      waveColor: "rgb(166, 197, 255)",
-      progressColor: "rgb(60, 53, 86)",
+      waveColor: 'rgb(166, 197, 255)',
+      progressColor: 'rgb(60, 53, 86)',
       url: audioUrl,
-      width: "auto",
-      height: onUserProfile ? 200 : 500, //TODO: maybe change this back to auto
+      width: 'auto',
+      height: 200, //onUserProfile ? 200 : 'auto', //TODO: maybe change this back to auto
       normalize: true,
       renderFunction: (channels, ctx) => {
         const { width, height } = ctx.canvas;
@@ -155,35 +156,35 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
 
     regions = wavesurfer.registerPlugin(RegionsPlugin.create());
 
-    wavesurfer.on("click", () => {
+    wavesurfer.on('click', () => {
       regions.addRegion({
         start: wavesurfer.getCurrentTime(),
         end: wavesurfer.getCurrentTime() + 0.25,
         drag: true,
-        color: "hsla(250, 100%, 30%, 0.5)",
-        id: "test",
+        color: 'hsla(250, 100%, 30%, 0.5)',
+        id: 'test',
       });
     });
-    wavesurfer.on("finish", async () => {
+    wavesurfer.on('finish', async () => {
       setIsPlaying(false);
       //console.log(userId)
       try {
-        const addListen = await axios.post("/post/listen", { userId, postId });
-        const updateListenCount = await axios.put("/post/updateCount", {
-          column: "listenCount",
-          type: "increment",
+        const addListen = await axios.post('/post/listen', { userId, postId });
+        const updateListenCount = await axios.put('/post/updateCount', {
+          column: 'listenCount',
+          type: 'increment',
           id: postId,
         });
         await updatePost(postId, userId);
-        console.log("complete", updateListenCount, addListen);
+        console.log('complete', updateListenCount, addListen);
       } catch (error) {
-        console.error("on audio finish error", error);
+        console.error('on audio finish error', error);
       }
     });
     wavesurfer.getDecodedData();
     setWave(wavesurfer);
     setDisplay(true);
-    console.log("wave created!");
+    console.log('wave created!');
   };
 
   useEffect(() => {
@@ -194,7 +195,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
     <div
       className="container"
       id="feed-container"
-      style={{ width: "100%", height: "100%" }}
+      style={{ width: '100%', height: '100%' }}
     >
       <div className="row" id="feed-row">
         <div className="col-sm" id="feed-col-sm">
@@ -208,34 +209,34 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   className="d-flex flex-row align-items-center justify-content-start"
                   id="header"
                   style={{
-                    padding: "10px",
+                    padding: '10px',
                   }}
                 >
                   <img
                     src={postObj.user.profileImgUrl}
                     className="rounded-circle"
                     style={{
-                      width: "auto",
-                      height: "70px",
-                      margin: "20px",
-                      objectFit: "scale-down",
-                      borderStyle: "solid",
-                      borderWidth: "medium",
-                      borderColor: "#3c3556",
+                      width: 'auto',
+                      height: '70px',
+                      margin: '20px',
+                      objectFit: 'scale-down',
+                      borderStyle: 'solid',
+                      borderWidth: 'medium',
+                      borderColor: '#3c3556',
                     }}
                   />
                   <a
                     href={`profile/${postObj.user.id}`}
-                    style={{ fontSize: "xx-large", color: "#0f0c0c" }}
+                    style={{ fontSize: 'xx-large', color: '#0f0c0c' }}
                     id="feed-username"
                   >
                     {postObj.user.username}
                   </a>
-                  {feed === "explore" ? (
+                  {feed === 'explore' ? (
                     following ? (
                       <button
                         className="p-2 btn btn-danger"
-                        style={{ marginLeft: "auto", marginRight: "2%" }}
+                        style={{ marginLeft: 'auto', marginRight: '2%' }}
                         onClick={() => stopFollowing()}
                       >
                         Unfollow
@@ -243,7 +244,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     ) : (
                       <button
                         className="p-2 btn btn-primary"
-                        style={{ marginLeft: "auto", marginRight: "2%" }}
+                        style={{ marginLeft: 'auto', marginRight: '2%' }}
                         onClick={() => startFollowing()}
                       >
                         Follow
@@ -257,98 +258,100 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
 
               <div
                 className="wavesurfer-container"
-                style={{ marginTop: "1rem" }}
-              >
+                style={{ marginTop: '1rem', maxHeight: '500px' }}
+                >
                 <div id={containerId}></div>
                 {/* this controls the title text location on the wavesurfer if we want it */}
                 {/* <div className='overlay-container'> */}
-                <div className="title-text-overlay">
-                  {/* <div
-                    className="d-flex flex-column justify-content-start"
-                    style={{ marginTop: '3%' }}
-                    > */}
+                {/* <div className="title-text-overlay"> */}
+                  <div
+                    //className="d-flex flex-row justify-content-start "
+                    style={{ 
+                      marginTop: '1rem', 
+                      position: 'absolute',
+                      top: '0px',
+                      left: '0px',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'start',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                    }}
+                    >
                   <div
                     style={{
-                      fontSize: "xxx-large",
-                      color: "#e1e1e5",
-                      marginLeft: "1rem",
+                      fontSize: 'xxx-large',
+                      color: '#e1e1e5',
+                      marginLeft: '1rem',
                     }}
                   >
-                    {postObj.title}
+                    {`${postObj.title} |`}
                   </div>
+                {/* </div>
+                <div className="categories-text-overlay"> */}
+                <div
+                  style={{
+                    
+                    marginLeft: '1rem',
+                    //marginRight: '2%',
+                    fontSize: 'large',
+                    color: '#e1e1e5',
+                    //alignSelf: 'end',
+                  }}
+                >
+                  {dayjs(postObj.createdAt).fromNow()}
                 </div>
-                <div className="categories-text-overlay">
-             
                 </div>
-              </div>
-              {/* <div id='tag-container'>
-              {postObj.categories ? (
-                postObj.categories.map((cat, index) => (
-                    <button
-                      className="btn"
-                      id="tag"
-                      style={{
-                        color: '#e1e1e5',
-                        fontSize: 'x-large',
-                        marginBottom: '3%',
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap',
-                        outline: 'coral',
-                      }}
-                      onClick={() => getPosts('explore', cat)}
-                      key={(index + 1).toString()}
-                    >{`#${cat}`}</button>
-                ))
-              ) : (
-                  <div></div>
-              )}
-              </div> */}
                    <div
                     style={{
                       //whiteSpace: 'normal',
                       //maxWidth: '80%',
-                      display: "flex",
-                      flexDirection: "row",
-                      textOverflow: "ellipsis",
+                      display: 'flex',
+                      flexDirection: 'row',
+                      textOverflow: 'ellipsis',
                       //justifyContent: 'start',
                       //maxWidth: '300px',
-                      flexWrap: "wrap",
-                      flex: '2',
-                      justifyContent: "start",
-                      overflowWrap: "break-word",
+                      marginTop: '2rem',
+                      flexWrap: 'wrap',
+                      justifyContent: 'start',
+                      overflowWrap: 'break-word',
+                      position: 'absolute',
+                      top: '55px',
+                      left: '6px',
                     }}
-                  >
+                    >
                     {/* <div
                     className="category btn"
-                   
-                    > */}
+                    
+                  > */}
                     {postObj.categories ? (
                       postObj.categories.map((cat, index) => (
                         <button
-                          className="btn btn-link"
-                          style={{
-                            color: "#e1e1e5",
-                            fontSize: "x-large",
-                            //marginBottom: "3%",
-                            //textOverflow: 'ellipsis',
-                            //overflow: 'hidden',
-                            //whiteSpace: 'nowrap',
-                            textDecoration: "none",
-                          }}
-                          onClick={() => getPosts("explore", cat)}
-                          key={(index + 1).toString()}
+                        className="btn btn-link"
+                        style={{
+                          color: '#e1e1e5',
+                          fontSize: 'x-large',
+                          //position: 'absolute',
+                          //marginBottom: "3%",
+                          //textOverflow: 'ellipsis',
+                          //overflow: 'hidden',
+                          //whiteSpace: 'nowrap',
+                          textDecoration: 'none',
+                        }}
+                        onClick={() => getPosts('explore', cat)}
+                        key={(index + 1).toString()}
                         >{`#${cat}`}</button>
                       ))
                     ) : (
-                      <div></div>
+                          <div></div>
                     )}
                     {/* </div> */}
                     {/* </div> */}
                   </div>
+                </div>
               <div
                 className="d-flex flex-row align-items-center justify-content-start"
-                style={{ margin: "2%" }}
+                style={{ margin: '2%' }}
               >
                 {isPlaying ? (
                   <button
@@ -381,45 +384,45 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 )}
                 <div
                   style={{
-                    padding: "2px",
-                    marginLeft: "auto",
-                    display: "flex",
-                    justifyContent: "space-evenly",
-                    alignContent: "center",
+                    padding: '2px',
+                    marginLeft: 'auto',
+                    display: 'flex',
+                    justifyContent: 'space-evenly',
+                    alignContent: 'center',
                   }}
                 >
                   <div>
                     <img
-                      src={require("../style/listenIcon.png")}
+                      src={require('../style/listenIcon.png')}
                       style={{
-                        width: "auto",
-                        height: "35px",
-                        objectFit: "scale-down",
-                        color: "#e1e1e5",
+                        width: 'auto',
+                        height: '35px',
+                        objectFit: 'scale-down',
+                        color: '#e1e1e5',
                       }}
                     />
                   </div>
                   <div
                     style={{
-                      marginLeft: "2px",
-                      marginRight: "2%",
-                      fontSize: "x-large",
-                      color: "#e1e1e5",
+                      marginLeft: '2px',
+                      marginRight: '2%',
+                      fontSize: 'x-large',
+                      color: '#e1e1e5',
                     }}
                   >
                     {postObj.listenCount}
                   </div>
                   {onUserProfile ? (
                     <div>
-                      {" "}
+                      {' '}
                       <div>
                         <img
-                          src={require("../style/bin.png")}
+                          src={require('../style/bin.png')}
                           style={{
-                            width: "auto",
-                            height: "40px",
-                            objectFit: "scale-down",
-                            color: "#e1e1e5",
+                            width: 'auto',
+                            height: '40px',
+                            objectFit: 'scale-down',
+                            color: '#e1e1e5',
                           }}
                           onClick={() => {
                             if (deleting === false) {
@@ -438,7 +441,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                             children={<Delete userId={userId} id={postId} />}
                           />
                         )}
-                      </div>{" "}
+                      </div>{' '}
                     </div>
                   ) : (
                     <div></div>
@@ -448,15 +451,15 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
             </div>
             {postObj.isLiked ? (
               <div>
-                {" "}
+                {' '}
                 <button
                   type="button"
                   className="btn"
                   onClick={() => handleUnlike()}
                   style={{
-                    backgroundColor: "rgba(233, 236, 243, 0.00)",
-                    borderColor: "rgba(233, 236, 243, 0.00)",
-                    marginLeft: "3%",
+                    backgroundColor: 'rgba(233, 236, 243, 0.00)',
+                    borderColor: 'rgba(233, 236, 243, 0.00)',
+                    marginLeft: '3%',
                   }}
                 >
                   <svg
@@ -481,12 +484,12 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   className="btn btn-light"
                   onClick={() => handleLike()}
                   style={{
-                    backgroundColor: "rgba(233, 236, 243, 0.00)",
-                    borderColor: "rgba(233, 236, 243, 0.00)",
-                    marginLeft: "3%",
+                    backgroundColor: 'rgba(233, 236, 243, 0.00)',
+                    borderColor: 'rgba(233, 236, 243, 0.00)',
+                    marginLeft: '3%',
                   }}
                 >
-                  {" "}
+                  {' '}
                   <svg
                     width="50"
                     height="50"
