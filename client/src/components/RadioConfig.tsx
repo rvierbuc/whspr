@@ -47,13 +47,13 @@ const RadioConfig = ({setRoomProps}) => {
 
     const navigateTo = (room) => {
         if(name === ''){
-            setError("Please name your cahnnel")
+            setError("Please name your channel")
         }else{
             console.log('name', name)
             setRoomProps(name, user.username, room.data.id)
             
+            navigate(`/protected/room/${name}`)
         }
-        navigate(`/protected/room/${name}`)
     }
 
 
@@ -93,6 +93,9 @@ const RadioConfig = ({setRoomProps}) => {
                             onChange={channelChange}
                             ></Form.Control>
                             <br/>
+                            <div>
+                            {error === null ? "" : error}
+                            </div>
                             <button 
                         onClick={createChannel}
                         type="button"
@@ -100,7 +103,7 @@ const RadioConfig = ({setRoomProps}) => {
                         >
                             Create Channel
                         </button>
-                        {error === null ? "" : error}
+                        
                         </Modal.Body>
                         <Modal.Footer>
                             <button className='btn btn-dark' onClick={close}>Close</button>

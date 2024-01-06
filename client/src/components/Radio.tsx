@@ -12,11 +12,6 @@ const Radio = ({setRoomProps}) => {
     useEffect(() => {
         getRadios()
     }, [])
-
-    const navigateTo = () => {
-        navigate('/protected/radio-config')
-    }
-
     
 
   const getRadios = async () => {
@@ -31,9 +26,7 @@ const Radio = ({setRoomProps}) => {
 
   return (
         <div>
-            <button type='button' onClick={()=> {navigateTo()}}>
-                Create Channel
-            </button>
+           
 
             {radios.map(radio => (<RoomCard 
             name={radio.title}

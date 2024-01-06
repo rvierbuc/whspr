@@ -36,6 +36,27 @@ body {
   @include blur(4.2px);
   border: 1px solid rgba(236, 210, 210, 0.36);
 }
+
+.room-info {
+  //background: rgba(233, 236, 243, 0.075);
+  //opacity: 60%;
+  display: flex;
+  justify-content: space-between;
+ 
+}
+
+.room-users {
+  background: rgba(233, 236, 243, 0.075);
+  //opacity: 60%;
+  display: flex;
+  justify-content: space-between;
+  margin: 10px;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  @include blur(4.2px);
+  border: 1px solid rgba(236, 210, 210, 0.36);
+}
+
 .card.user-profile-card {
   display: flex;
   justify-content: center;
