@@ -387,13 +387,14 @@ router.post('/like', async (req: Request, res: Response) => {
  })
 
  //allows user to unlike a post and removes like record from db
- router.delete('/unlike/:id', async (req: Request, res: Response) => {
-  const { id } = req.params;
+ router.delete('/unlike/:postId/:userId', async (req: Request, res: Response) => {
+  const { postId, userId } = req.params;
 
   try {
     const destroyLike = await Like.destroy({
       where: {
-        id
+        postId,
+        userId
       }
     })
     //console.log(destroyLike)

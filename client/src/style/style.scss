@@ -73,7 +73,10 @@ body {
  
 }
 .navbar {
-  background-color: #1e1a2a;
+  background-color: #1e1a2ad0;
+  border:#e1e1e5;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  margin-bottom: 3rem;
 }
 // .nav-toggle{
 //   color:#e1e1e5;
@@ -128,8 +131,19 @@ body {
   border: 1px solid rgba(233, 236, 243, 0.449);
 }
 
+// .navbar {
+//   background-color: #1e1a2a79;
 
-#home-header {
+//   //opacity: 60%;
+//   //height: auto;
+//   //width: 100vw;
+  
+//   margin-bottom: 15px;
+//   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+//   @include blur(4.2px);
+//   //border-bottom: 1px solid rgba(233, 236, 243, 0.449);
+// }
+#home-header{
   background-color: #1e1a2a79;
 
   //opacity: 60%;
@@ -139,7 +153,7 @@ body {
   margin-bottom: 15px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   @include blur(4.2px);
- // border: 1px solid rgba(233, 236, 243, 0.449);
+  //border-bottom: 1px solid rgba(233, 236, 243, 0.449);
 
 }
 

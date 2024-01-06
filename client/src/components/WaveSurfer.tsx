@@ -10,10 +10,10 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import Post from './Post';
 import HoverPlugin from 'wavesurfer.js/plugins/hover';
 import { use } from 'passport';
-import { MdOutlineAddComment } from "react-icons/md";
-import { MdOutlineFavoriteBorder } from "react-icons/md";
-import { MdOutlineFavorite } from "react-icons/md";
-import { IoMdShareAlt } from "react-icons/io";
+import { MdOutlineAddComment } from 'react-icons/md';
+import { MdOutlineFavoriteBorder } from 'react-icons/md';
+import { MdOutlineFavorite } from 'react-icons/md';
+import { MdArrowOutward } from 'react-icons/md';
 
 
 dayjs.extend(relativeTime);
@@ -52,6 +52,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [deleting, setDeleting] = useState<boolean>(false);
   const [duration, setDuration] = useState<string>();
   const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [addComment, setAddComment] = useState<boolean>(false);
   // const { audioUrl, postId } = props;
   const containerId = `waveform-${postId || ''}`;
 
@@ -63,7 +64,33 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   //     console.error(error);
   //   }
   // };
-
+  const handleLike = async ()=> {
+    try {
+      await axios.post('/post/like', { userId, postId: postObj.id });
+      await axios.put('/post/updateCount', {
+        column: 'likeCount',
+        type: 'increment',
+        id: postId,
+      });
+      await updatePost(postId, userId);
+    } catch (error) {
+      console.log('client could not like', error);
+    }
+  };
+  const handleUnlike = async () => {
+    try {
+      // const likeObj = postObj.Likes.filter((likeObj) => likeObj.userId === userId);
+      await axios.delete(`/post/unlike/${postId}/${userId}`);
+      await axios.put('/post/updateCount', {
+        column: 'likeCount',
+        type: 'decrement',
+        id: postId,
+      });
+      await updatePost(postId, userId );
+    } catch (error) {
+      console.log('client could not unlike', error);
+    }
+  };
   const isFollowing = async () => {
     try {
       const findFollowing = await axios.get(
@@ -391,6 +418,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                       </svg>
                     </button>
                       : <button
+                      
                       style={{
                         background: 'none',
                         border: 'none',
@@ -434,9 +462,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 </div>
               </div>
               <div
-                className="d-flex flex-row align-items-center justify-content-end"
+                className="d-flex flex-row align-items-center justify-content-start"
                 style={{ marginTop: '.5rem' }}
-              >
+                >
                 {/* {isPlaying ? (
                   <button
                     type="button"
@@ -478,7 +506,12 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     alignContent: 'center',
                   }}
                   > */}
-                  <div style={{ color: '#e1e1e5' }}>{duration ? duration : ''}</div>
+                    <div style={{ color:'#e1e1e5'}}>
+              {postObj.isLiked 
+                ? `Liked by you and ${postObj.likeCount - 1} other listeners` 
+                : `Liked by ${postObj.likeCount} listeners`}
+            </div>
+                  <div style={{ color: '#e1e1e5', marginLeft: 'auto' }}>{duration ? duration : ''}</div>
                   
                   {onUserProfile ? (
                     <div>
@@ -517,19 +550,25 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 {/* </div> */}
               </div>
             </div>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginBottom:'8px' 
+          }}>
             {postObj.isLiked ? (
               <div>
                 {' '}
                 <MdOutlineFavorite
+                data-toggle="tooltip" data-placement="top"
+                title={`Liked by you & ${postObj.likeCount - 1} listeners`}
                   type="button"
                   //className="btn"
                   onClick={() => handleUnlike()}
                   style={{
                     // backgroundColor: 'rgba(233, 236, 243, 0.00)',
                     // borderColor: 'rgba(233, 236, 243, 0.00)',
-                    height:'4rem',
-                    width:'4rem',
-                    marginLeft: '3%',
+                    height: '3rem',
+                    width: '3rem',
+                    marginRight: '1rem',
+                    marginLeft: '1rem',
+                    color: '#e1e1e5',
                   }}
                 >
                 </MdOutlineFavorite>
@@ -539,20 +578,48 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
               <div>
                 <MdOutlineFavoriteBorder
                   type="button"
+                  data-toggle="tooltip" data-placement="top"
+                  title={`Liked by ${postObj.likeCount} listeners`}
                   //className="btn btn-light"
                   onClick={() => handleLike()}
                   style={{
                     //backgroundColor: 'rgba(233, 236, 243, 0.00)',
                     //borderColor: 'rgba(233, 236, 243, 0.00)',
-                    height:'4rem',
-                    width:'4rem',
-                    marginLeft: '3%',
+                    height: '3rem',
+                    width: '3rem',
+                    marginLeft: '1rem',
+                    marginRight: '1rem',
+                    color: '#e1e1e5',
                   }}
                 >
                 </MdOutlineFavoriteBorder>
                 {/* {postObj.likeCount ? <p style={{marginLeft: '3%', fontSize:'x-large'}}>{`${postObj.likeCount} likes`}</p> : <p></p>} */}
+              
               </div>
             )}
+            <MdOutlineAddComment 
+              type='button'
+              onClick={() => { setAddComment(() => !addComment); }}
+              style={{
+                //backgroundColor: 'rgba(233, 236, 243, 0.00)',
+                //borderColor: 'rgba(233, 236, 243, 0.00)',
+                color: '#e1e1e5',
+                height: '3rem',
+                width: '3rem',
+                marginRight: '1rem',
+              }}
+              >
+              </MdOutlineAddComment>
+              <MdArrowOutward style={{
+                //backgroundColor: 'rgba(233, 236, 243, 0.00)',
+                //borderColor: 'rgba(233, 236, 243, 0.00)',
+                color: '#e1e1e5',
+                height: '3rem',
+                width: '3rem',
+                marginRight: '1rem',
+              }}></MdArrowOutward>
+            </div>
+          
             {onUserProfile ? (
               <a></a>
             ) : (
@@ -563,8 +630,11 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   updatePost={updatePost}
                   userId={userId}
                   audioContext={audioContext}
+                  addComment={addComment}
+                  setAddComment={setAddComment}
                 />
               </div>
+              
             )}
           </div>
         </div>
