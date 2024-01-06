@@ -9,6 +9,12 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Post from './Post';
 import HoverPlugin from 'wavesurfer.js/plugins/hover';
+import { use } from 'passport';
+import { MdOutlineAddComment } from "react-icons/md";
+import { MdOutlineFavoriteBorder } from "react-icons/md";
+import { MdOutlineFavorite } from "react-icons/md";
+import { IoMdShareAlt } from "react-icons/io";
+
 
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
@@ -44,6 +50,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [decodedData, setDecodedData] = useState<any>();
   const [following, setFollowing] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
+  const [duration, setDuration] = useState<string>();
+  const [isPaused, setIsPaused] = useState<boolean>(false);
   // const { audioUrl, postId } = props;
   const containerId = `waveform-${postId || ''}`;
 
@@ -97,7 +105,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       console.error('could not follow user', error);
     }
   };
-  console.log('on user profile:', onUserProfile)
+  console.log('on user profile:', onUserProfile);
   const createSoundWaves = () => {
     let regions: RegionsPlugin;
     let hover: HoverPlugin;
@@ -111,14 +119,16 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       // barWidth: 15,
       // barRadius: 5,
       // barGap: 2,
+      //autoplay: true,
       interact: true,
       container: `#${containerId}`,
       waveColor: 'rgb(166, 197, 255)',
       progressColor: 'rgb(60, 53, 86)',
       url: audioUrl,
       width: 'auto',
-      height: 200, //onUserProfile ? 200 : 'auto', //TODO: maybe change this back to auto
+      height: onUserProfile ? 200 : 500, //TODO: maybe change this back to auto
       normalize: true,
+     
       renderFunction: (channels, ctx) => {
         const { width, height } = ctx.canvas;
         const scale = channels[0].length / width;
@@ -156,18 +166,35 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
 
     regions = wavesurfer.registerPlugin(RegionsPlugin.create());
 
-    wavesurfer.on('click', () => {
-      regions.addRegion({
-        start: wavesurfer.getCurrentTime(),
-        end: wavesurfer.getCurrentTime() + 0.25,
-        drag: true,
-        color: 'hsla(250, 100%, 30%, 0.5)',
-        id: 'test',
-      });
+    // wavesurfer.on("click", () => {
+    //   regions.addRegion({
+    //     start: wavesurfer.getCurrentTime(),
+    //     end: wavesurfer.getCurrentTime() + 0.25,
+    //     drag: true,
+    //     color: "hsla(250, 100%, 30%, 0.5)",
+    //     id: "test",
+    //   });
+    // });
+    // wavesurfer.on('scroll', (visibleStartTime, visibleEndTime) => {
+    //   console.log('Scroll', visibleStartTime + 's', visibleEndTime + 's')
+    // })
+    wavesurfer.on('ready', (waveDuration) => {
+      if (waveDuration > 60) {
+        const seconds = waveDuration % 60;
+        const minutes = Math.floor(waveDuration / 60);
+        setDuration(`${minutes}:${seconds}`);
+      } else {
+        const seconds = Math.ceil(waveDuration);
+        if (seconds < 10) {
+          setDuration(`00:0${seconds}`);
+        } else {
+          setDuration(`00:${seconds}`);
+        }
+      }
+
     });
     wavesurfer.on('finish', async () => {
       setIsPlaying(false);
-      //console.log(userId)
       try {
         const addListen = await axios.post('/post/listen', { userId, postId });
         const updateListenCount = await axios.put('/post/updateCount', {
@@ -181,10 +208,10 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
         console.error('on audio finish error', error);
       }
     });
-    wavesurfer.getDecodedData();
+
     setWave(wavesurfer);
-    setDisplay(true);
     console.log('wave created!');
+
   };
 
   useEffect(() => {
@@ -258,102 +285,159 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
 
               <div
                 className="wavesurfer-container"
-                style={{ marginTop: '1rem', maxHeight: '500px' }}
-                >
+                style={{
+                  marginTop: '1rem',
+                  height: '100%',
+                  borderRadius: '6px',
+                }}
+              >
                 <div id={containerId}></div>
-                {/* this controls the title text location on the wavesurfer if we want it */}
-                {/* <div className='overlay-container'> */}
-                {/* <div className="title-text-overlay"> */}
+                <div
+                  className="overlay-container"
+                  style={{
+                    position: 'absolute',
+                    zIndex: '999',
+                    top: '0px',
+                    left: '0px',
+                    right: '0px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '2rem',
+                    justifyContent: 'start',
+                    width: '100%',
+                    height: '500px',
+                  }}
+                >
                   <div
-                    //className="d-flex flex-row justify-content-start "
-                    style={{ 
-                      marginTop: '1rem', 
-                      position: 'absolute',
-                      top: '0px',
-                      left: '0px',
+                    style={{
                       display: 'flex',
                       flexDirection: 'row',
                       justifyContent: 'start',
                       alignItems: 'center',
                       flexWrap: 'wrap',
-                    }}
-                    >
-                  <div
-                    style={{
-                      fontSize: 'xxx-large',
-                      color: '#e1e1e5',
-                      marginLeft: '1rem',
+                      marginTop: '-2rem',
+                      marginLeft: '-1rem',
                     }}
                   >
-                    {`${postObj.title} |`}
+                    <div
+                      style={{
+                        fontSize: 'xxx-large',
+                        color: '#e1e1e5',
+                      }}
+                    >
+                      {`${postObj.title} |`}
+                    </div>
+                    <div
+                      style={{
+                        marginLeft: '1rem',
+                        fontSize: 'large',
+                        color: '#e1e1e5',
+                      }}
+                    >
+                      {dayjs(postObj.createdAt).fromNow()}
+                    </div>
                   </div>
-                {/* </div>
-                <div className="categories-text-overlay"> */}
-                <div
-                  style={{
-                    
-                    marginLeft: '1rem',
-                    //marginRight: '2%',
-                    fontSize: 'large',
-                    color: '#e1e1e5',
-                    //alignSelf: 'end',
-                  }}
-                >
-                  {dayjs(postObj.createdAt).fromNow()}
-                </div>
-                </div>
-                   <div
+                  <div
                     style={{
-                      //whiteSpace: 'normal',
-                      //maxWidth: '80%',
                       display: 'flex',
                       flexDirection: 'row',
                       textOverflow: 'ellipsis',
-                      //justifyContent: 'start',
-                      //maxWidth: '300px',
-                      marginTop: '2rem',
+                      marginTop: '-1rem',
                       flexWrap: 'wrap',
                       justifyContent: 'start',
-                      overflowWrap: 'break-word',
-                      position: 'absolute',
-                      top: '55px',
-                      left: '6px',
+                      marginLeft: '-1.5rem',
                     }}
-                    >
-                    {/* <div
-                    className="category btn"
-                    
-                  > */}
+                  >
                     {postObj.categories ? (
                       postObj.categories.map((cat, index) => (
                         <button
-                        className="btn btn-link"
-                        style={{
-                          color: '#e1e1e5',
-                          fontSize: 'x-large',
-                          //position: 'absolute',
-                          //marginBottom: "3%",
-                          //textOverflow: 'ellipsis',
-                          //overflow: 'hidden',
-                          //whiteSpace: 'nowrap',
-                          textDecoration: 'none',
-                        }}
-                        onClick={() => getPosts('explore', cat)}
-                        key={(index + 1).toString()}
+                          className="btn btn-link"
+                          style={{
+                            color: '#e1e1e5',
+                            textDecoration: 'none',
+                          }}
+                          onClick={() => getPosts('explore', cat)}
+                          key={(index + 1).toString()}
                         >{`#${cat}`}</button>
                       ))
                     ) : (
-                          <div></div>
+                      <div></div>
                     )}
-                    {/* </div> */}
-                    {/* </div> */}
                   </div>
+                  {isPlaying ? (
+                    isPaused ? 
+                    <button
+                      type="button"
+                      style={{
+                        marginTop: '15%',
+                        alignSelf: 'center',
+                      }}
+                      className="simple-btn"
+                      id="play-btn"
+                      onClick={() => {
+                        if (wave) {
+                          wave.playPause();
+                          setIsPaused(() => !isPaused);
+                        }
+                      }}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" 
+                        width="10rem" height="10rem"
+                        fill="#e9ecf343"
+                        className="bi bi-pause"
+                        viewBox="0 0 16 16"
+                        >
+                          <path d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5m4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5"/>
+                      </svg>
+                    </button>
+                      : <button
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: '10rem',
+                        margin: 'auto',
+                      }}
+                      onClick={() => {
+                        if (wave) {
+                          wave.playPause();
+                          setIsPaused(() => !isPaused);
+                        }
+                      }}></button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="simple-btn"
+                      style={{
+                        marginTop: '15%',
+                        alignSelf: 'center',
+                      }}
+                      id="play-btn"
+                      onClick={() => {
+                        if (wave) {
+                          wave.playPause();
+                          setIsPlaying(() => !isPlaying);
+                        }
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="10rem"
+                        height="10rem"
+                        fill="#e9ecf343"
+                        className="bi bi-play-fill"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z" />
+                      </svg>
+                    </button>
+                  )}
                 </div>
+              </div>
               <div
-                className="d-flex flex-row align-items-center justify-content-start"
-                style={{ margin: '2%' }}
+                className="d-flex flex-row align-items-center justify-content-end"
+                style={{ marginTop: '.5rem' }}
               >
-                {isPlaying ? (
+                {/* {isPlaying ? (
                   <button
                     type="button"
                     className="btn btn-danger btn-lg"
@@ -381,37 +465,21 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   >
                     Play
                   </button>
-                )}
-                <div
+                )} */}
+                
+                {/* <div
                   style={{
-                    padding: '2px',
+                    marginTop: '2px',
+                    marginRight:'0px',
+                    //padding: '2px',
                     marginLeft: 'auto',
                     display: 'flex',
                     justifyContent: 'space-evenly',
                     alignContent: 'center',
                   }}
-                >
-                  <div>
-                    <img
-                      src={require('../style/listenIcon.png')}
-                      style={{
-                        width: 'auto',
-                        height: '35px',
-                        objectFit: 'scale-down',
-                        color: '#e1e1e5',
-                      }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      marginLeft: '2px',
-                      marginRight: '2%',
-                      fontSize: 'x-large',
-                      color: '#e1e1e5',
-                    }}
-                  >
-                    {postObj.listenCount}
-                  </div>
+                  > */}
+                  <div style={{ color: '#e1e1e5' }}>{duration ? duration : ''}</div>
+                  
                   {onUserProfile ? (
                     <div>
                       {' '}
@@ -446,60 +514,42 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   ) : (
                     <div></div>
                   )}
-                </div>
+                {/* </div> */}
               </div>
             </div>
             {postObj.isLiked ? (
               <div>
                 {' '}
-                <button
+                <MdOutlineFavorite
                   type="button"
-                  className="btn"
+                  //className="btn"
                   onClick={() => handleUnlike()}
                   style={{
-                    backgroundColor: 'rgba(233, 236, 243, 0.00)',
-                    borderColor: 'rgba(233, 236, 243, 0.00)',
+                    // backgroundColor: 'rgba(233, 236, 243, 0.00)',
+                    // borderColor: 'rgba(233, 236, 243, 0.00)',
+                    height:'4rem',
+                    width:'4rem',
                     marginLeft: '3%',
                   }}
                 >
-                  <svg
-                    width="50"
-                    height="50"
-                    fill="black"
-                    className="bi bi-heart-fill"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
-                    ></path>
-                  </svg>
-                </button>
+                </MdOutlineFavorite>
                 {/* {postObj.likeCount ? <p style={{marginLeft: '3%', fontSize:'x-large'}}>{`${postObj.likeCount} likes`}</p> : <p></p>}  */}
               </div>
             ) : (
               <div>
-                <button
+                <MdOutlineFavoriteBorder
                   type="button"
-                  className="btn btn-light"
+                  //className="btn btn-light"
                   onClick={() => handleLike()}
                   style={{
-                    backgroundColor: 'rgba(233, 236, 243, 0.00)',
-                    borderColor: 'rgba(233, 236, 243, 0.00)',
+                    //backgroundColor: 'rgba(233, 236, 243, 0.00)',
+                    //borderColor: 'rgba(233, 236, 243, 0.00)',
+                    height:'4rem',
+                    width:'4rem',
                     marginLeft: '3%',
                   }}
                 >
-                  {' '}
-                  <svg
-                    width="50"
-                    height="50"
-                    fill="black"
-                    className="bi bi-heart"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"></path>
-                  </svg>
-                </button>
+                </MdOutlineFavoriteBorder>
                 {/* {postObj.likeCount ? <p style={{marginLeft: '3%', fontSize:'x-large'}}>{`${postObj.likeCount} likes`}</p> : <p></p>} */}
               </div>
             )}
@@ -524,3 +574,27 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
 };
 
 export default WaveSurferComponent;
+/**
+ * listen stat
+ * <div>
+                    <img
+                      src={require('../style/listenIcon.png')}
+                      style={{
+                        width: 'auto',
+                        height: '35px',
+                        objectFit: 'scale-down',
+                        color: '#e1e1e5',
+                      }}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      marginLeft: '2px',
+                      marginRight: '2%',
+                      fontSize: 'x-large',
+                      color: '#e1e1e5',
+                    }}
+                  >
+                    {postObj.listenCount}
+                  </div>
+ */
