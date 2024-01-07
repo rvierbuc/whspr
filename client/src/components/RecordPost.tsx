@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import { Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 interface Constraints {
@@ -12,10 +13,10 @@ interface Constraints {
 const constraints: Constraints = {
   audio: {
     noiseSuppression: true,
-    echoCancellation: true
+    echoCancellation: true,
   },
-  video: false
-}
+  video: false,
+};
 
 export const RecordPost = ({ user, audioContext, title, categories, openPost, filter, synthAudioChunks }: { user: any; audioContext:AudioContext; title: string; categories: string[]; openPost: () => void, filter: any, synthAudioChunks: Blob[], handleNavigation: (path: string) => void }) => {
   const [isRecording, setIsRecording] = useState(false);
@@ -29,7 +30,7 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
   // navigate functionality
   const navigate = useNavigate();
   const handleNavigation: (path: string) => void = (path: string) => navigate(path);
-  
+
   // functionality for recording/filtering the audio
   const lowpass = audioContext.createBiquadFilter();
   if (filter.lowPassFrequency) {
@@ -40,33 +41,33 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
   lowpass.type = 'lowpass';
   const highpass = audioContext.createBiquadFilter();
   if (filter.highPassFrequency) {
-    highpass.frequency.value = filter.highPassFrequency
+    highpass.frequency.value = filter.highPassFrequency;
   } else {
-    highpass.frequency.value = 350
+    highpass.frequency.value = 350;
   }
   highpass.type = 'highpass';
 
 
-  const initializeStream = async () => {
+  const initializeStream = async (): Promise<MediaStream> => {
     if (!audioStream) {
       audioContext.resume();
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       setAudioStream(stream);
-      return stream
+      return stream;
     }
     audioContext.resume();
-    return audioStream
-  }
-  const resumeAudioContext = async () => {
+    return audioStream;
+  };
+  const resumeAudioContext: () => void = async () => {
     if (audioContext.state === 'suspended') {
       try {
-        audioContext.resume()
+        audioContext.resume();
       } catch (error) {
-        console.error("error resuming audiocontext")
+        console.error('error resuming audiocontext');
       }
     }
-  }
-  const startRecording = async () => {
+  };
+  const startRecording = async (): Promise<void> => {
     // const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
     try {
       resumeAudioContext();
@@ -82,12 +83,12 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
         source.connect(destination);
         // if the filter is one of my self-made filters
       } else if (Object.values(filter).length > 4) {
-        const options: any = Object.values(filter).slice(4)
-        source.connect(lowpass)
-        lowpass.connect(highpass)
-        highpass.connect(options[0])
-        options[0].connect(options[1])
-        options[1].connect(options[2])
+        const options: any[] = Object.values(filter).slice(4);
+        source.connect(lowpass);
+        lowpass.connect(highpass);
+        highpass.connect(options[0]);
+        options[0].connect(options[1]);
+        options[1].connect(options[2]);
         options[2].connect(destination);
       } else {
         source.connect(destination);
@@ -97,30 +98,30 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
 
       mediaRecorder.current.ondataavailable = (event) => {
         if (event.data.size > 0) {
-          setAudioChunks((prevChunks) => [...prevChunks, event.data])
+          setAudioChunks((prevChunks) => [...prevChunks, event.data]);
         }
-      }
+      };
       mediaRecorder.current.start();
       setIsRecording(true);
 
-    } catch (error) { console.error(error) }
+    } catch (error) { console.error(error); }
   };
 
-  const stopRecording = async () => {
+  const stopRecording = async (): Promise<void> => {
     if (mediaRecorder?.current?.state === 'recording') {
       mediaRecorder.current.stop();
       setIsRecording(false);
     }
-    audioContext.suspend()
+    audioContext.suspend();
     stopStream();
   };
 
-  const stopStream = async () => {
+  const stopStream = async (): Promise<void> => {
     audioStream?.getTracks().forEach((track) => {
       track.stop();
     });
-    setAudioStream(null)
-  }
+    setAudioStream(null);
+  };
 
   const playAudio = async (): Promise<void> => {
     resumeAudioContext();
@@ -130,9 +131,11 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
     }
     let audioBlob: Blob;
     // either voice or synth audio is played back
-    synthAudioChunks.length > 0
-      ?
-      audioBlob = new Blob(synthAudioChunks, { type: 'audio/wav' }) : audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    if (synthAudioChunks.length > 0) {
+      audioBlob = new Blob(synthAudioChunks, { type: 'audio/wav' });
+    } else {
+      audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    }
     const arrayBuffer = await audioBlob.arrayBuffer();
     audioContext.decodeAudioData(
       arrayBuffer,
@@ -145,7 +148,7 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
         audioSource.current.buffer = buffer;
         audioSource.current.connect(audioContext.destination);
 
-        audioSource.current.onended = () => {
+        audioSource.current.onended = (): void => {
           setIsPlaying(false);
         };
         audioSource.current.start();
@@ -159,31 +162,31 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
     });
   };
 
-  const stopPlaying = () => {
+  const stopPlaying: () => void = () => {
     if (audioSource.current) {
       audioSource.current.stop();
       setIsPlaying(false);
     }
   };
 
-  const emptyRecording = () => {
+  const emptyRecording: () => void = () => {
     setAudioChunks([]);
   };
 
-  const saveAudioToGoogleCloud = async () => {
-    handleNavigation('/protected/feed')
+  const saveAudioToGoogleCloud = async (): Promise<void> => {
+    handleNavigation('/protected/feed/following');
     let audioBlob: Blob;
     // either synth or voice audio is saved
     if (synthAudioChunks.length > 0) {
-      audioBlob = new Blob(synthAudioChunks, { type: 'audio/wav' })
+      audioBlob = new Blob(synthAudioChunks, { type: 'audio/wav' });
     } else {
       audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
     }
     try {
-      const formData = new FormData()
-      formData.append('audio', audioBlob)
-      formData.append('userId', userId)
-      formData.append('title', title)
+      const formData = new FormData();
+      formData.append('audio', audioBlob);
+      formData.append('userId', userId);
+      formData.append('title', title);
       categories.forEach((category, index) => {
         console.log('foreach', category, index);
         formData.append(`category[${index}]`, category);
@@ -201,43 +204,45 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
 
   return (
     <div className="d-flex justify-content-center" style={{ margin: '15px' }}>
-      <button
-        className="record-button"
-        onClick={startRecording}
-        disabled={isRecording}
-      ><img src={require('../style/recordbutton.png')} /></button>
-      <button
-        className="play-button"
-        onClick={playAudio}
-        // if either of the chunks has a valid length => either one can be played back
-        disabled={isPlaying || (audioChunks.length === 0 && synthAudioChunks.length === 0)}
-      ><img src={require('../style/playbutton.png')} /></button>
-      <button
-        className="stop-button"
-        onClick={isRecording ? stopRecording : stopPlaying}
-        disabled={!isRecording && !isPlaying}
-      ><img src={require('../style/stopbutton.png')} /></button>
-      <button
-        className="delete-button"
-        onClick={() => {
-          emptyRecording()
-          stopStream()
-        }
-        }
+      <Stack direction="horizontal" gap={2}>
+        <button
+          className="record-button"
+          onClick={startRecording}
+          disabled={isRecording}
+        ><img src={require('../style/recordbutton.png')} /></button>
+        <button
+          className="play-button"
+          onClick={playAudio}
+          // if either of the chunks has a valid length => either one can be played back
+          disabled={isPlaying || (audioChunks.length === 0 && synthAudioChunks.length === 0)}
+        ><img src={require('../style/playbutton.png')} /></button>
+        <button
+          className="stop-button"
+          onClick={isRecording ? stopRecording : stopPlaying}
+          disabled={!isRecording && !isPlaying}
+        ><img src={require('../style/stopbutton.png')} /></button>
+        <button
+          className="delete-button"
+          onClick={() => {
+            emptyRecording()
+            stopStream()
+          }
+          }
 
-        disabled={audioChunks.length === 0 || isRecording}
-      ><img src={require('../style/deletebutton.png')} /></button>
-      <button
-        className="post-button"
-        onClick={() => {
-          openPost();
-          saveAudioToGoogleCloud();
-          stopStream();
-        }
-        }
-        // if either set of chunks is valid then that version of audio can be saved
-        disabled={(audioChunks.length === 0 && synthAudioChunks.length === 0) || isRecording}
-      ><img src={require('../style/postbutton.png')} /></button>
+          disabled={audioChunks.length === 0 || isRecording}
+        ><img src={require('../style/deletebutton.png')} /></button>
+        <button
+          className="post-button"
+          onClick={() => {
+            openPost();
+            saveAudioToGoogleCloud();
+            stopStream();
+          }
+          }
+          // if either set of chunks is valid then that version of audio can be saved
+          disabled={(audioChunks.length === 0 && synthAudioChunks.length === 0) || isRecording}
+        ><img src={require('../style/postbutton.png')} /></button>
+      </Stack>
     </div >
   );
 };

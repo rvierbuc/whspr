@@ -76,13 +76,10 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
   const updatePost = async (postId, updateType) => {
     try {
       const updatedPost = await axios.get(`/post/updatedPost/${postId}/${currentUser.id}`);
-      console.log('updated post obj', updatedPost);
       const postIndex = selectedUserPosts.findIndex((post) => post.id === updatedPost.data.id);
       updatedPost.data.rank = selectedUserPosts[postIndex].rank;
-      // console.log('post index', updatePostIndex)
       const postsWUpdatedPost = selectedUserPosts.splice(postIndex, 1, updatedPost.data);
-      console.log(postsWUpdatedPost);
-      setSelectedUserPosts(postsWUpdatedPost);
+     
     } catch (error) {
       console.log('could not update post', error);
     }

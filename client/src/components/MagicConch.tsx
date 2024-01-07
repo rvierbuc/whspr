@@ -59,21 +59,19 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
     }
   };
 
-  const openPost = () => {
 
-  };
 
   return (
-        <div>
+        <div >
 
             <PostConch audioContext={audioContext} />
 
-            <input
+            {/* <input
             type="checkbox"
-            />
+            /> */}
             
             <div className="custom-checkbox">
-  <input id="status" 
+  {/* <input id="status" 
          type="checkbox" 
          name="status"/>
   <label htmlFor="status">
@@ -81,7 +79,7 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
          data-unchecked="Off"
          data-checked="On">
     </div>
-  </label>
+  </label> */}
 </div>
   
 
@@ -96,8 +94,10 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
                 onClick={() => getMessages('outbox')}
             >Outbox</button> */}
 
+          <div style={{justifyContent: 'center', flexDirection: 'column', display: 'flex', alignItems: 'center'}}>
+
 {type === 'inbox' ?
-    <div>
+    <div s>
         <button
         type="button"
         className="btn btn-dark"
@@ -121,6 +121,8 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
         onClick={() => getMessages('outbox')}
         >Outbox</button>
       </div>}
+            </div>
+
 
             <div>
                 {message ? 

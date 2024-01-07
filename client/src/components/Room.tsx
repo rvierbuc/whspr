@@ -71,12 +71,13 @@ const Room = ({ channel, host, id }) => {
       <div style={{justifyContent: 'right', flexDirection: 'row', display: 'flex', alignItems: 'right'}}>
 
       <img
+            onClick={handleLeaveChannel}
             src={require('../style/icons8-leave-32.png')}
             style={{width: '50px', margin: '20px', justifyContent: 'right'}}
           />
       </div>
 
-    <div style={{justifyContent: 'center', flexDirection: 'column', display: 'flex', alignItems: 'center'}} className='container'>
+    <div style={{ alignItems: 'center'}} className='container'>
    
       <h1>{channelName}</h1>
 
@@ -94,10 +95,12 @@ const Room = ({ channel, host, id }) => {
             <h1>hi</h1>
           </div> */}
        {mute ?  <button
+       style={{margin: '15px'}}
         type="button"
         className='btn btn-dark'
         onClick={() => {muted()}}
         >Unmute</button> : <button
+        style={{margin: '15px'}}
         type="button"
         className='btn btn-light'
         onClick={() => {muted()}}
@@ -112,7 +115,7 @@ const Room = ({ channel, host, id }) => {
       onClick={handleLeaveChannel}>Leave Channel</button> */}
       </div>
 
-      <div style={{ marginTop: '20px',  flexDirection: 'column', display: 'flex', alignItems: 'center'}} className='container'>
+      <div style={{ marginTop: '20px',  alignItems: 'center'}} className='container'>
 
         <div className='card'>
           <div className='room-users'>

@@ -14,7 +14,6 @@ import Login from './Login';
 import Room from './Room';
 import Radio from './Radio';
 import PrivateRoutes from './PrivateRoutes';
-import RadioConfig from './RadioConfig';
 import Synthesize from './Synthesize';
 import WaveSurferComponent from './WaveSurfer';
 import Feed from './Feed';
@@ -48,10 +47,9 @@ aa('setUserToken', userToken);
 
 
 const App = () => {
-    const [channelName, setChannelName] = useState<string>();
-    const [host, setHost] = useState<string>()
-    const [uid, setUid] = useState<number>();
-    const [img, setImg] = useState<string>()
+  const [channelName, setChannelName] = useState<string>();
+  const [host, setHost] = useState<string>();
+  const [uid, setUid] = useState<number>();
 
   const setRoomProps = (channelName, host, uid) => {
     setChannelName(channelName);
@@ -80,14 +78,13 @@ const App = () => {
                     <Route path="WhsprAI" element={<WhsprAI audioContext={audioContext} />} loader={() => getUserLoader()}/>
                     {/* <Route path="search" element={<Search />} /> */}
                     <Route path="profile" element={<UserProfile setRoomProps={setRoomProps} audioContext={audioContext} />} loader={() => getUserLoader()}/>
-                    <Route path="radio-config" element={<RadioConfig setRoomProps={setRoomProps} />} loader={() => getUserLoader()}/>
-                    <Route path="feed" element={<Feed audioContext={audioContext} />} loader={() => getUserLoader()}/>
+                    <Route path="feed/:type" element={<Feed audioContext={audioContext} />} loader={() => getUserLoader()}/>
                     <Route path="post" element={<PostCard audioContext={audioContext} />} loader={() => getUserLoader()}/>
                     <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
                     <Route path="radio" element={<Radio setRoomProps={setRoomProps} />} />
                     <Route path="room/:name" element={<Room channel={channelName} host={host} id={uid}/>} />
                     <Route path="conch" element={<MagicConch audioContext={audioContext}/>} loader={() => getUserLoader()}/>
-                    <Route path="profile/:id" element={<ReadOnlyProfile  audioContext={audioContext}/> } loader={() => getUserLoader()} />
+                    <Route path="feed/profile/:id" element={<ReadOnlyProfile audioContext={audioContext}/> } loader={() => getUserLoader()} />
                 </Route>
              
             </Route>,

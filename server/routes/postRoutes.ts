@@ -16,7 +16,18 @@ const addIsLikedPair =  (postArr, likedPostIdArr) => {
   }
 }
 
+const rankPostsByPopularity = (postArr) => {
 
+  return postArr.map((post) => {
+    const score = (post.likeCount * .1) + (post.commentCount * .05) + (post.listenCount * .0025)
+    const today = new Date().getTime()
+    const timeSinceCreation = (today - post.createdAt.getTime()) / 14400000
+    const decay = .05 * (timeSinceCreation ** 2)
+    const rank = score / decay
+    post.rank = rank
+    return post
+  })
+}
 // ************* GET ROUTES **************
 //gets posts and adds personalized ranking and isLiked field to each postObj before sending to client (for explore page)
 router.get('/explore/:userId/:tag', async (req:Request, res: Response) => {
@@ -62,29 +73,17 @@ try{
     const likedPostIdArr = await likedPosts.map((post:any) => post.postId)
     await addIsLikedPair(allPosts, likedPostIdArr)
   }
-      //clean query response to only include dataValues
+
+  //clean query response to only include dataValues
   const postDataValues = await allPosts.map((post) => post.dataValues)
 
   //add popularity ranking based on overall likes, comments, and listen counts
-  const postsWRanks = postDataValues.map((post) => {
-    let score = (post.likeCount * .1) + (post.commentCount * .05) + (post.listenCount * .0025)
-    let today = new Date().getTime()
-    let timeSinceCreation = (today - post.createdAt.getTime()) / 14400000
-    let decay = .05 * (timeSinceCreation ** 2)
-    let rank = score / decay
-    post.rank = rank
-    return post
-  })
-  // const ranksb4Tags = postsWRanks.map((post:any) => {
-  //   return {id: post.id, rank: post.rank}
-  // })
-  // console.log(ranksb4Tags.sort((a, b) => (a.rank > b.rank ? -1 : 1)))
+  const postsWRanks = rankPostsByPopularity(postDataValues)
 
    //find all listens from this user
   const listenedPosts = await Listen.findAll({
     where: {userId}
   })
- // console.log(likedPosts, listenedPosts)
    //function that adds isLiked property to post obj with boolean and removes previously listened or liked posts
    const decayRankWhenPrevListened =  (postArr, listenIdArr) => {
     for(let i = 0; i < postArr.length; i++){
@@ -108,7 +107,7 @@ try{
   //function to add user specific tag ranking to current rank field
   const getFinalRanking = (postRanks, tagRanks) => {
     for(let i = 0; i < postRanks.length; i++){
-    for(let key in tagRanks){
+    for(const key in tagRanks){
       if(postRanks[i].categories){
         if(postRanks[i].categories.includes(key)){
             postRanks[i].rank += tagRanks[key]
@@ -209,7 +208,7 @@ try{
     }
   })
   const followingArr = following.map((follow: any) => {
-    let obj: any = {}
+    const obj: any = {}
     obj.userId = follow.followingId
     return obj
   })
@@ -249,6 +248,30 @@ try{
 
 })
 
+//gets posts ranked by popularity for home pages before user signs in
+router.get('/home', async (req: Request, res: Response) => {
+  try{
+    const allPosts = await Post.findAll({
+      include: [
+        Like,
+        Comment,
+        { model: User,
+          as: 'user'}
+        ]
+      })
+      
+      //clean query response to only include dataValues
+      const postDataValues = await allPosts.map((post) => post.dataValues)
+      //console.log('home', postDataValues)
+
+  //add popularity ranking based on overall likes, comments, and listen counts
+  const postsWRanks = rankPostsByPopularity(postDataValues)
+
+  res.status(200).send(postsWRanks.sort((a, b) => (a.rank > b.rank ? -1 : 1)))
+  }catch (error){
+    console.error('server error getting home feed:', error)
+  }
+})
 router.get('/use/:id', async (req: Request, res: Response) => {
   const {id} = req.params
   console.log('hi')

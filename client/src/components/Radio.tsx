@@ -25,7 +25,7 @@ const Radio = ({setRoomProps}) => {
   };
 
   return (
-        <div style={{justifyContent: 'center', flexDirection: 'column', display: 'flex', alignItems: 'center', marginTop: '50px'}}>
+        <div style={{ alignItems: 'center', marginTop: '50px'}}>
            
 
             {radios.map(radio => (<RoomCard 
