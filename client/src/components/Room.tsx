@@ -66,6 +66,16 @@ const Room = ({ channel, host, id }) => {
   };
 
   return (
+
+    <div>
+      <div style={{justifyContent: 'right', flexDirection: 'row', display: 'flex', alignItems: 'right'}}>
+
+      <img
+            src={require('../style/icons8-leave-32.png')}
+            style={{width: '50px', margin: '20px', justifyContent: 'right'}}
+          />
+      </div>
+
     <div style={{justifyContent: 'center', flexDirection: 'column', display: 'flex', alignItems: 'center'}} className='container'>
    
       <h1>{channelName}</h1>
@@ -129,6 +139,7 @@ const Room = ({ channel, host, id }) => {
       </div>
 
       
+    </div>
     </div>
   );
 };
