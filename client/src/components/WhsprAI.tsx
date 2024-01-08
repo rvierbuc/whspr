@@ -361,7 +361,7 @@ export const WhsprAI = ({ audioContext }) => {
 
   return (
     <div className='container-whsprAI'>
-      <div className='card' ref={cardRef} style={{ height: 'calc(100vh - 150px)' }}>
+      <div className='card-whsprAI' ref={cardRef} style={{ height: 'calc(100vh - 150px)' }}>
         <div style={{ position: 'relative' }}>
           <img
             src={require('../style/help.png')}

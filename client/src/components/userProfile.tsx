@@ -59,7 +59,7 @@ const UserProfile = ({ audioContext }) => {
   const [onUserProfile, setOnUserProfile] = useState<boolean>(true);
   const [selectedUserFollowers, setSelectedUserFollowers] = useState<followerAttributes[]>([]);
   const currentUser: any = useLoaderData();
-  
+
 
 
   const getSelectedUserInfo = async () => {
@@ -81,7 +81,7 @@ const UserProfile = ({ audioContext }) => {
       // console.log('post index', updatePostIndex)
       const postsWUpdatedPost = selectedUserPosts.splice(postIndex, 1, updatedPost.data);
       console.log(postsWUpdatedPost);
-      setSelectedUserPosts(postsWUpdatedPost);
+      // setSelectedUserPosts(postsWUpdatedPost);
     } catch (error) {
       console.log('could not update post', error);
     }
@@ -113,10 +113,10 @@ const UserProfile = ({ audioContext }) => {
           <Row>
             <div className="card user-profile-card" style={{ justifyContent: 'center' }}>
               <div className="user-profile-image">
-                <img 
-                src={currentUser.profileImgUrl} 
-                alt="user profile image" 
-                style={{ borderRadius: '50%', width: '100px', height: '100px' }}
+                <img
+                  src={currentUser.profileImgUrl}
+                  alt="user profile image"
+                  style={{ borderRadius: '50%', width: '100px', height: '100px' }}
                 />
               </div>
               <div className="user-profile-info">
@@ -124,30 +124,30 @@ const UserProfile = ({ audioContext }) => {
               </div>
             </div>
           </Row>
-        <Row>
-          <Col xs={12} lg={6}>
-        <div className="card user-profile-followers-card">
-          <h2 style={{ color: 'white' }}>Followers</h2>
-          <div className="user-profile-followers">
-            {selectedUserFollowers.map((follower, index) => (
-              <div className="user-profile-follower" key={index}>
-                <Link to={`/protected/profile/${follower.id}`}>
-                <img
-                  src={follower.profileImgUrl}
-                  alt="user profile image"
-                  style={{ borderRadius: '50%', width: '50px', height: '50px' }}
-                />
-                <h5 style={{ 
-                  color: 'white', 
-                  textOverflow: 'ellipsis', 
-                  overflow: 'hidden', 
-                  whiteSpace: 'nowrap',
-                }}>{follower.username}</h5>
-                  </Link>
+          <Row>
+            <Col xs={12} lg={6}>
+              <div className="card user-profile-followers-card">
+                <h2 style={{ color: 'white' }}>Followers</h2>
+                <div className="user-profile-followers">
+                  {selectedUserFollowers.map((follower, index) => (
+                    <div className="user-profile-follower" key={index}>
+                      <Link to={`/protected/profile/${follower.id}`}>
+                        <img
+                          src={follower.profileImgUrl}
+                          alt="user profile image"
+                          style={{ borderRadius: '50%', width: '50px', height: '50px' }}
+                        />
+                        <h5 style={{
+                          color: 'white',
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                        }}>{follower.username}</h5>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
             </Col>
           </Row>
         </Col>

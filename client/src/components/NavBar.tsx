@@ -23,13 +23,13 @@ const NavBar = () => {
         <Container>
           <Navbar.Brand>
             <img
-            src={require('../style/whspr-logo.png')}
-            width={100}
-            height={100}
-            className="d-inline-block align-top"
-            alt="whspr logo"
-            onClick={() => toggleMenu()}
-            style={{ cursor: 'pointer' }}
+              src={require('../style/whspr-logo.png')}
+              width={100}
+              height={100}
+              className="d-inline-block align-top"
+              alt="whspr logo"
+              onClick={() => toggleMenu()}
+              style={{ cursor: 'pointer' }}
             />
             {' '}
           </Navbar.Brand>
