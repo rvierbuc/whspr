@@ -9,6 +9,12 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Post from './Post';
 import HoverPlugin from 'wavesurfer.js/plugins/hover';
+import { use } from 'passport';
+import { MdOutlineAddComment } from 'react-icons/md';
+import { MdOutlineFavoriteBorder } from 'react-icons/md';
+import { MdOutlineFavorite } from 'react-icons/md';
+import { MdArrowOutward } from 'react-icons/md';
+
 
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
@@ -44,6 +50,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [decodedData, setDecodedData] = useState<any>();
   const [following, setFollowing] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
+  const [duration, setDuration] = useState<string>();
+  const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [addComment, setAddComment] = useState<boolean>(false);
   // const { audioUrl, postId } = props;
   const containerId = `waveform-${postId || ''}`;
 
@@ -55,8 +64,33 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   //     console.error(error);
   //   }
   // };
-
-
+  const handleLike = async ()=> {
+    try {
+      await axios.post('/post/like', { userId, postId: postObj.id });
+      await axios.put('/post/updateCount', {
+        column: 'likeCount',
+        type: 'increment',
+        id: postId,
+      });
+      await updatePost(postId, userId);
+    } catch (error) {
+      console.log('client could not like', error);
+    }
+  };
+  const handleUnlike = async () => {
+    try {
+      // const likeObj = postObj.Likes.filter((likeObj) => likeObj.userId === userId);
+      await axios.delete(`/post/unlike/${postId}/${userId}`);
+      await axios.put('/post/updateCount', {
+        column: 'likeCount',
+        type: 'decrement',
+        id: postId,
+      });
+      await updatePost(postId, userId );
+    } catch (error) {
+      console.log('client could not unlike', error);
+    }
+  };
   const isFollowing = async () => {
     try {
       const findFollowing = await axios.get(
@@ -98,6 +132,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       console.error('could not follow user', error);
     }
   };
+  console.log('on user profile:', onUserProfile);
   const createSoundWaves = () => {
     let regions: RegionsPlugin;
     let hover: HoverPlugin;
@@ -111,6 +146,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       // barWidth: 15,
       // barRadius: 5,
       // barGap: 2,
+      //autoplay: true,
       interact: true,
       container: `#${containerId}`,
       waveColor: 'rgb(166, 197, 255)',
@@ -119,35 +155,36 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       width: 'auto',
       height: onUserProfile ? 200 : 500, //TODO: maybe change this back to auto
       normalize: true,
+     
       renderFunction: (channels, ctx) => {
         const { width, height } = ctx.canvas;
         const scale = channels[0].length / width;
         const step = 10;
-  
+
         ctx.translate(0, height / 2);
         ctx.strokeStyle = ctx.fillStyle;
         ctx.beginPath();
-  
+
         for (let i = 0; i < width; i += step * 2) {
           const index = Math.floor(i * scale);
           const value = Math.abs(channels[0][index]);
           let x = i;
           let y = value * height;
-  
+
           ctx.moveTo(x, 0);
           ctx.lineTo(x, y);
           ctx.arc(x + step / 2, y, step / 2, Math.PI, 0, true);
           ctx.lineTo(x + step, 0);
-  
+
           x = x + step;
           y = -y;
-  
+
           ctx.moveTo(x, 0);
           ctx.lineTo(x, y);
           ctx.arc(x + step / 2, y, step / 2, Math.PI, 0, false);
           ctx.lineTo(x + step, 0);
         }
-  
+
         ctx.stroke();
         ctx.closePath();
       },
@@ -156,18 +193,35 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
 
     regions = wavesurfer.registerPlugin(RegionsPlugin.create());
 
-    wavesurfer.on('click', () => {
-      regions.addRegion({
-        start: wavesurfer.getCurrentTime(),
-        end: wavesurfer.getCurrentTime() + 0.25,
-        drag: true,
-        color: 'hsla(250, 100%, 30%, 0.5)',
-        id: 'test',
-      });
+    // wavesurfer.on("click", () => {
+    //   regions.addRegion({
+    //     start: wavesurfer.getCurrentTime(),
+    //     end: wavesurfer.getCurrentTime() + 0.25,
+    //     drag: true,
+    //     color: "hsla(250, 100%, 30%, 0.5)",
+    //     id: "test",
+    //   });
+    // });
+    // wavesurfer.on('scroll', (visibleStartTime, visibleEndTime) => {
+    //   console.log('Scroll', visibleStartTime + 's', visibleEndTime + 's')
+    // })
+    wavesurfer.on('ready', (waveDuration) => {
+      if (waveDuration > 60) {
+        const seconds = waveDuration % 60;
+        const minutes = Math.floor(waveDuration / 60);
+        setDuration(`${minutes}:${seconds}`);
+      } else {
+        const seconds = Math.ceil(waveDuration);
+        if (seconds < 10) {
+          setDuration(`00:0${seconds}`);
+        } else {
+          setDuration(`00:${seconds}`);
+        }
+      }
+
     });
     wavesurfer.on('finish', async () => {
       setIsPlaying(false);
-      //console.log(userId)
       try {
         const addListen = await axios.post('/post/listen', { userId, postId });
         const updateListenCount = await axios.put('/post/updateCount', {
@@ -181,10 +235,10 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
         console.error('on audio finish error', error);
       }
     });
-    wavesurfer.getDecodedData();
+
     setWave(wavesurfer);
-    setDisplay(true);
     console.log('wave created!');
+
   };
 
   useEffect(() => {
@@ -199,11 +253,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
     >
       <div className="row" id="feed-row">
         <div className="col-sm" id="feed-col-sm">
-          <div
-            className="card"
-            id="feed-card"
-            // style={{ width: '400px',  }}
-          >
+          <div className="card" id="feed-card">
             {/* <br/> */}
             <div className="card-body">
               {onProfile ? (
@@ -261,82 +311,68 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
               )}
 
               <div
-                className="d-flex flex-row align-items-end justify-content-start"
-                style={{ marginTop: '3%' }}
-              >
-                <div
-                  style={{
-                    fontSize: 'xxx-large',
-                    marginLeft: '20px',
-                    color: '#e1e1e5',
-                  }}
-                >
-                  {postObj.title}
-                </div>
-                <div
-                  style={{
-                    marginLeft: 'auto',
-                    marginRight: '2%',
-                    fontSize: 'large',
-                    color: '#e1e1e5',
-                  }}
-                >
-                  {dayjs(postObj.createdAt).fromNow()}
-                </div>
-              </div>
-
-              <div
-                className="category btn"
+                className="wavesurfer-container"
                 style={{
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  maxWidth: '80%',
+                  marginTop: '1rem',
+                  height: '100%',
+                  borderRadius: '6px',
                 }}
               >
-                {postObj.categories ? (
-                  postObj.categories.map((cat, index) => (
-                    <button
-                      className="btn btn-link"
-                      style={{
-                        color: '#e1e1e5',
-                        fontSize: 'x-large',
-                        marginBottom: '3%',
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap',
-                        outline: 'coral',
-                      }}
-                      onClick={() => getPosts('explore', cat)}
-                      key={(index + 1).toString()}
-                    >{`#${cat}`}</button>
-                  ))
-                ) : (
-                  <div></div>
-                )}
-              </div>
-              <div className="wavesurfer-container">
                 <div id={containerId}></div>
-                {/* this controls the title text location on the wavesurfer if we want it */}
-                {/* <div className="title-text-overlay"> 
+                <div
+                  className="overlay-container"
+                  style={{
+                    position: 'absolute',
+                    zIndex: '999',
+                    top: '0px',
+                    left: '0px',
+                    right: '0px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '2rem',
+                    justifyContent: 'start',
+                    width: '100%',
+                    height: '500px',
+                  }}
+                >
                   <div
                     style={{
-                      fontSize: 'xxx-large',
-                      marginLeft: '20px',
-                      color: '#e1e1e5',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'start',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      marginTop: '-2rem',
+                      marginLeft: '-1rem',
                     }}
                   >
-                    {postObj.title}
+                    <div
+                      style={{
+                        fontSize: 'xxx-large',
+                        color: '#e1e1e5',
+                      }}
+                    >
+                      {`${postObj.title} |`}
+                    </div>
+                    <div
+                      style={{
+                        marginLeft: '1rem',
+                        fontSize: 'large',
+                        color: '#e1e1e5',
+                      }}
+                    >
+                      {dayjs(postObj.createdAt).fromNow()}
+                    </div>
                   </div>
-                </div>
-                <div className="categories-text-overlay">
                   <div
-                    className="category btn"
                     style={{
-                      overflow: 'hidden',
+                      display: 'flex',
+                      flexDirection: 'row',
                       textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      maxWidth: '80%',
+                      marginTop: '-1rem',
+                      flexWrap: 'wrap',
+                      justifyContent: 'start',
+                      marginLeft: '-1.5rem',
                     }}
                   >
                     {postObj.categories ? (
@@ -345,11 +381,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                           className="btn btn-link"
                           style={{
                             color: '#e1e1e5',
-                            fontSize: 'x-large',
-                            marginBottom: '3%',
-                            textOverflow: 'ellipsis',
-                            overflow: 'hidden',
-                            whiteSpace: 'nowrap',
+                            textDecoration: 'none',
                           }}
                           onClick={() => getPosts('explore', cat)}
                           key={(index + 1).toString()}
@@ -359,13 +391,81 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                       <div></div>
                     )}
                   </div>
-                </div> */}
+                  {isPlaying ? (
+                    isPaused ? 
+                    <button
+                      type="button"
+                      style={{
+                        marginTop: '15%',
+                        alignSelf: 'center',
+                      }}
+                      className="simple-btn"
+                      id="play-btn"
+                      onClick={() => {
+                        if (wave) {
+                          wave.playPause();
+                          setIsPaused(() => !isPaused);
+                        }
+                      }}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" 
+                        width="10rem" height="10rem"
+                        fill="#e9ecf343"
+                        className="bi bi-pause"
+                        viewBox="0 0 16 16"
+                        >
+                          <path d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5m4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5"/>
+                      </svg>
+                    </button>
+                      : <button
+                      
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: '10rem',
+                        margin: 'auto',
+                      }}
+                      onClick={() => {
+                        if (wave) {
+                          wave.playPause();
+                          setIsPaused(() => !isPaused);
+                        }
+                      }}></button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="simple-btn"
+                      style={{
+                        marginTop: '15%',
+                        alignSelf: 'center',
+                      }}
+                      id="play-btn"
+                      onClick={() => {
+                        if (wave) {
+                          wave.playPause();
+                          setIsPlaying(() => !isPlaying);
+                        }
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="10rem"
+                        height="10rem"
+                        fill="#e9ecf343"
+                        className="bi bi-play-fill"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
               </div>
               <div
                 className="d-flex flex-row align-items-center justify-content-start"
-                style={{ margin: '2%' }}
-              >
-                {isPlaying ? (
+                style={{ marginTop: '.5rem' }}
+                >
+                {/* {isPlaying ? (
                   <button
                     type="button"
                     className="btn btn-danger btn-lg"
@@ -393,17 +493,160 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   >
                     Play
                   </button>
-                )}
-                <div
+                )} */}
+                
+                {/* <div
                   style={{
-                    padding: '2px',
+                    marginTop: '2px',
+                    marginRight:'0px',
+                    //padding: '2px',
                     marginLeft: 'auto',
                     display: 'flex',
                     justifyContent: 'space-evenly',
                     alignContent: 'center',
                   }}
+                  > */}
+                    <div style={{ color:'#e1e1e5'}}>
+              {postObj.isLiked 
+                ? `Liked by you and ${postObj.likeCount - 1} other listeners` 
+                : `Liked by ${postObj.likeCount} listeners`}
+            </div>
+                  <div style={{ color: '#e1e1e5', marginLeft: 'auto' }}>{duration ? duration : ''}</div>
+                  
+                  {onUserProfile ? (
+                    <div>
+                      {' '}
+                      <div>
+                        <img
+                          src={require('../style/bin.png')}
+                          style={{
+                            width: 'auto',
+                            height: '40px',
+                            objectFit: 'scale-down',
+                            color: '#e1e1e5',
+                          }}
+                          onClick={() => {
+                            if (deleting === false) {
+                              setDeleting(true);
+                            } else {
+                              setDeleting(false);
+                            }
+                          }}
+                        />
+                      </div>
+                      <div>
+                        {deleting === true && (
+                          <Modal
+                            isOpen={deleting}
+                            onClose={() => setDeleting(false)}
+                            children={<Delete userId={userId} id={postId} />}
+                          />
+                        )}
+                      </div>{' '}
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                {/* </div> */}
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginBottom:'8px' 
+          }}>
+            {postObj.isLiked ? (
+              <div>
+                {' '}
+                <MdOutlineFavorite
+                data-toggle="tooltip" data-placement="top"
+                title={`Liked by you & ${postObj.likeCount - 1} listeners`}
+                  type="button"
+                  //className="btn"
+                  onClick={() => handleUnlike()}
+                  style={{
+                    // backgroundColor: 'rgba(233, 236, 243, 0.00)',
+                    // borderColor: 'rgba(233, 236, 243, 0.00)',
+                    height: '3rem',
+                    width: '3rem',
+                    marginRight: '1rem',
+                    marginLeft: '1rem',
+                    color: '#e1e1e5',
+                  }}
                 >
-                  <div>
+                </MdOutlineFavorite>
+                {/* {postObj.likeCount ? <p style={{marginLeft: '3%', fontSize:'x-large'}}>{`${postObj.likeCount} likes`}</p> : <p></p>}  */}
+              </div>
+            ) : (
+              <div>
+                <MdOutlineFavoriteBorder
+                  type="button"
+                  data-toggle="tooltip" data-placement="top"
+                  title={`Liked by ${postObj.likeCount} listeners`}
+                  //className="btn btn-light"
+                  onClick={() => handleLike()}
+                  style={{
+                    //backgroundColor: 'rgba(233, 236, 243, 0.00)',
+                    //borderColor: 'rgba(233, 236, 243, 0.00)',
+                    height: '3rem',
+                    width: '3rem',
+                    marginLeft: '1rem',
+                    marginRight: '1rem',
+                    color: '#e1e1e5',
+                  }}
+                >
+                </MdOutlineFavoriteBorder>
+                {/* {postObj.likeCount ? <p style={{marginLeft: '3%', fontSize:'x-large'}}>{`${postObj.likeCount} likes`}</p> : <p></p>} */}
+              
+              </div>
+            )}
+            <MdOutlineAddComment 
+              type='button'
+              onClick={() => { setAddComment(() => !addComment); }}
+              style={{
+                //backgroundColor: 'rgba(233, 236, 243, 0.00)',
+                //borderColor: 'rgba(233, 236, 243, 0.00)',
+                color: '#e1e1e5',
+                height: '3rem',
+                width: '3rem',
+                marginRight: '1rem',
+              }}
+              >
+              </MdOutlineAddComment>
+              <MdArrowOutward style={{
+                //backgroundColor: 'rgba(233, 236, 243, 0.00)',
+                //borderColor: 'rgba(233, 236, 243, 0.00)',
+                color: '#e1e1e5',
+                height: '3rem',
+                width: '3rem',
+                marginRight: '1rem',
+              }}></MdArrowOutward>
+            </div>
+          
+            {onUserProfile ? (
+              <a></a>
+            ) : (
+              <div>
+                <Post
+                  key={postId}
+                  postObj={postObj}
+                  updatePost={updatePost}
+                  userId={userId}
+                  audioContext={audioContext}
+                  addComment={addComment}
+                  setAddComment={setAddComment}
+                />
+              </div>
+              
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default WaveSurferComponent;
+/**
+ * listen stat
+ * <div>
                     <img
                       src={require('../style/listenIcon.png')}
                       style={{
@@ -424,150 +667,4 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   >
                     {postObj.listenCount}
                   </div>
-                  <div style={{ marginLeft: '3%' }}>
-                    <img
-                      src={require('../style/commentIcon.png')}
-                      style={{
-                        width: 'auto',
-                        height: '40px',
-                        objectFit: 'scale-down',
-                        color: '#e1e1e5',
-                      }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      marginLeft: '2px',
-                      marginRight: '2%',
-                      fontSize: 'x-large',
-                      color: '#e1e1e5',
-                    }}
-                  >
-                    {postObj.commentCount}
-                  </div>
-                  <div style={{ marginLeft: '5px' }}>
-                    <svg
-                      width="32"
-                      height="32"
-                      fill="black"
-                      className="bi bi-heart"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"></path>
-                    </svg>
-                  </div>
-                  <div
-                    style={{
-                      marginLeft: '3px',
-                      marginRight: '2%',
-                      fontSize: 'x-large',
-                      color: '#e1e1e5',
-                    }}
-                  >
-                    {postObj.likeCount}
-                  </div>
-                  {onUserProfile ? <div> <div>
-                    <img
-                      src={require('../style/bin.png')}
-                      style={{
-                        width: 'auto',
-                        height: '40px',
-                        objectFit: 'scale-down',
-                        color: '#e1e1e5',
-                      }}
-                      onClick={() => {
-                        if (deleting === false) {
-                          setDeleting(true);
-                        } else {
-                          setDeleting(false);
-                        }
-                      }}
-                    />
-                  </div>
-                  <div>
-                    {deleting === true && (
-                      <Modal
-                        isOpen={deleting}
-                        onClose={() => setDeleting(false)}
-                        children={<Delete userId={userId} id={postId} />}
-                      />
-                    )}
-                  </div> </div> : <div></div>}
-                </div>
-              </div>
-            </div>
-            {postObj.isLiked ? (
-                    <div>
-                      {' '}
-                      <button
-                        type="button"
-                        className="btn"
-                        onClick={() => handleUnlike()}
-                        style={{
-                          backgroundColor: 'rgba(233, 236, 243, 0.00)',
-                          borderColor: 'rgba(233, 236, 243, 0.00)',
-                          marginLeft: '3%',
-                        }}
-                      >
-                        <svg
-                          width="50"
-                          height="50"
-                          fill="black"
-                          className="bi bi-heart-fill"
-                          viewBox="0 0 16 16"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
-                          ></path>
-                        </svg>
-                      </button>
-                      {/* {postObj.likeCount ? <p style={{marginLeft: '3%', fontSize:'x-large'}}>{`${postObj.likeCount} likes`}</p> : <p></p>}  */}
-                    </div>
-                  ) : (
-                    <div>
-                      <button
-                        type="button"
-                        className="btn btn-light"
-                        onClick={() => handleLike()}
-                        style={{
-                          backgroundColor: 'rgba(233, 236, 243, 0.00)',
-                          borderColor: 'rgba(233, 236, 243, 0.00)',
-                          marginLeft: '3%',
-                        }}
-                      >
-                        {' '}
-                        <svg
-                          width="50"
-                          height="50"
-                          fill="black"
-                          className="bi bi-heart"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"></path>
-                        </svg>
-                      </button>
-                      {/* {postObj.likeCount ? <p style={{marginLeft: '3%', fontSize:'x-large'}}>{`${postObj.likeCount} likes`}</p> : <p></p>} */}
-                    </div>
-                  )}
-            {onUserProfile ? (
-              <a></a>
-            ) : (
-              <div>
-                <Post
-                  key={postId}
-                  postObj={postObj}
-                  updatePost={updatePost}
-                  userId={userId}
-                  audioContext={audioContext}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default WaveSurferComponent;
+ */
