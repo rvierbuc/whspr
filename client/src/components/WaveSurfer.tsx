@@ -31,6 +31,8 @@ interface WaveSurferProps {
   feed: string;
   setIsDeleting: any
   setCorrectPostId: any
+  setSelectedUserPosts: any
+  isDeleting: boolean
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
@@ -46,7 +48,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   audioContext,
   feed,
   setIsDeleting,
-  setCorrectPostId
+  setCorrectPostId,
+  setSelectedUserPosts,
+  isDeleting
 }) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
@@ -255,7 +259,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       id="feed-container"
       style={{ width: '100%', height: '100%' }}
     >
-      {!deleting
+      {!isDeleting
         ?
         <div className="row" id="feed-row">
           <div className="col-sm" id="feed-col-sm">
@@ -623,29 +627,30 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   width: '3rem',
                   marginRight: '1rem',
                 }}></MdArrowOutward>
+                {onUserProfile ? (
+                    <div onClick={() => setIsDeleting(true)}>
+                      <MdDeleteOutline
+                        type="button"
+                        onClick={() => {
+                          if (!isDeleting) {
+                            setIsDeleting(true);
+                            setCorrectPostId(postId)
+                          } else {
+                            setIsDeleting(false);
+                            setCorrectPostId(null);
+                          }
+                        }}
+                        style={{
+                          color: '#e1e1e5',
+                          height: '3rem',
+                          width: '3rem',
+                          marginRight: '1rem'
+                        }}></MdDeleteOutline>
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
               </div>
-              {onUserProfile ? (
-                  <MdDeleteOutline
-                    style={{
-                      color: '#e1e1e5',
-                      height: '3rem',
-                      width: '3rem',
-                      marginRight: '1rem'
-                    }}
-                    onClick={() => {
-                      if (deleting === false) {
-                        setDeleting(true);
-                        setIsDeleting(true);
-                        setCorrectPostId(postId)
-                      } else {
-                        setDeleting(false);
-                        setIsDeleting(false);
-                        setCorrectPostId(null);
-                      }
-                    }}></MdDeleteOutline>
-                ) : (
-                  <div></div>
-                )}
               {onUserProfile ? (
                 <a></a>
               ) : (
@@ -660,7 +665,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     setAddComment={setAddComment}
                   />
                 </div>
-                
               )}
             </div>
           </div>
@@ -671,7 +675,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
           id="feed-container"
           style={{width: '100%', height: '100%'}}
         >
-          <Delete id={postId} userId={userId} />
+          <Delete id={postId} userId={userId} setIsDeleting={setIsDeleting} setSelectedUserPosts={setSelectedUserPosts} />
         </div>}
     </div>
   );

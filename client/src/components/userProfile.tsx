@@ -65,8 +65,6 @@ const UserProfile = ({ audioContext }) => {
   // then if they delete => set the state with the current posts
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [correctPostId, setCorrectPostId] = useState<number | null>(null);
-  console.log('correctPostId', correctPostId);
-
 
   const getSelectedUserInfo = async () => {
     try {
@@ -173,6 +171,8 @@ const UserProfile = ({ audioContext }) => {
                       setOnProfile={setOnProfile}
                       setIsDeleting={setIsDeleting}
                       setCorrectPostId={setCorrectPostId}
+                      setSelectedUserPosts={setSelectedUserPosts}
+                      isDeleting={isDeleting}
                     />
                   </div>
                 </Col>
