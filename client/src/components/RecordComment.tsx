@@ -10,7 +10,7 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
   const audioSource = useRef<AudioBufferSourceNode | null>(null);
   
 
-  const { postObj, getComments, userId, updatePost, commentStateLength } = props
+  const { postObj, getComments, userId, updatePost, commentStateLength, addComment, setAddComment } = props
 
   const startRecording = async () => {
     try {
@@ -115,7 +115,7 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
       const response = await axios.post('/uploadComment', formData);
       if (response.status === 200) {
         await axios.put('/post/updateCount', {type: 'increment', column: 'commentCount', id: postObj.id})
-        await getComments(commentStateLength + 1, 'more')
+        await getComments()
         await updatePost(postObj.id, userId)
         await console.log('all done')
       } else {
@@ -150,7 +150,7 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
       //className="record-button"
       id='record-btn-new'
       onClick={startRecording}
-      disabled={isRecording}
+      disabled={isRecording || audioChunks.length > 0}
       >
         {/* <img src={require('../style/recordbutton.png')} /> */}
         </button>
@@ -183,6 +183,7 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
       id='post-btn-new'
       onClick={() =>{
         saveAudioToGoogleCloud();
+        setAddComment(()=> !addComment);
         emptyRecording();
       }}
       disabled={audioChunks.length === 0 || isRecording}

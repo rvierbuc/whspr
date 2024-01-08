@@ -10,17 +10,12 @@ const Post = (props) => {
   const [hearLess, setHearLess] = useState<boolean>(false);
   const [comments, setComments] = useState<any>([]);
   
-  const getComments = async (limit: number, type: string) => {
+  const getComments = async () => {
     try {
-      const commentsArr = await axios.get(`/post/comment/${postObj.id}/${limit}`);
-      if (commentsArr.data.length > 0 && type === 'more') {
-        setComments(commentsArr.data);
-        setHearLess(true);
-        console.log('got new comments', commentsArr.data);
-      } else if (commentsArr.data.length > 0 && type === 'first') {
-        setComments(commentsArr.data);
-        console.log('got comments', commentsArr.data);
-      }
+      const commentsArr = await axios.get(`/post/comment/${postObj.id}`);
+      setComments(commentsArr.data);
+      setHearLess(true);
+      console.log('got new comments', commentsArr.data);
     } catch (error) {
       console.error('could not get comments', error);
     }
@@ -49,6 +44,8 @@ const Post = (props) => {
          getComments={getComments}
          userId={userId}
          updatePost={updatePost}
+         addComment={addComment}
+         setAddComment={setAddComment}
          />
       </div>
           : <div></div>
@@ -56,8 +53,8 @@ const Post = (props) => {
      
 
       { comments.length > 0
-        ? <div className='card' style={{ margin: '1rem' }} >
-          <div style={{margin:'auto', fontSize:'32px', color:'#e1e1e5'}}>Comments</div>
+        ? <div className='card' style={{ margin: '1rem', height:'25rem', overflow:'scroll' }} >
+          <div style={{ margin: 'auto', fontSize: '32px', color: '#e1e1e5' }}>Comments</div>
       { comments.map((commentObj: any) => (
           <Comment 
           key={commentObj.id}
@@ -69,18 +66,18 @@ const Post = (props) => {
         : <div></div>
         }
         
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', }}>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start' }}>
             { comments && postObj.commentCount > comments.length
               ? <button
-                    style={{marginLeft: '10px', marginBottom:'1rem', color: '#e1e1e5', background:'transparent', textDecoration:'underline', border:'none'}}
+                    style={{ marginLeft: '10px', marginBottom: '1rem', color: '#e1e1e5', background: 'transparent', textDecoration: 'underline', border: 'none' }}
                     //className='btn-link'
-                    onClick={() => { getComments(comments.length + 5, 'more'); }}
+                    onClick={() => { getComments(); }}
                     >{`Listen to all ${postObj.commentCount} comments`}</button>
               : <div></div>
               }
             {hearLess
               ? <button
-              style={{ margin: '10px', marginBottom:'1rem', color: '#e1e1e5', background:'transparent', textDecoration:'underline', border:'none'}}
+              style={{ margin: '10px', marginBottom: '1rem', color: '#e1e1e5', background: 'transparent', textDecoration: 'underline', border: 'none' }}
               //className= 'btn-link'
               onClick={() => handleHearLess()}>
               Done Listening
