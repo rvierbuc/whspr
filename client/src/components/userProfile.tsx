@@ -10,6 +10,7 @@ import Container from 'react-bootstrap/Container';
 import WaveSurferComponent from './WaveSurfer';
 import WaveSurferSimple from './WaveSurferSimple';
 import { Link } from 'react-router-dom';
+import Delete from './Delete';
 interface PostAttributes {
   id: number;
   userId: number;
@@ -60,6 +61,11 @@ const UserProfile = ({ audioContext }) => {
   const [selectedUserFollowers, setSelectedUserFollowers] = useState<followerAttributes[]>([]);
   const currentUser: any = useLoaderData();
   
+  // setting a delete state => if true => render a fade in asking if the user wants to delete the post
+  // then if they delete => set the state with the current posts
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [correctPostId, setCorrectPostId] = useState<number | null>(null);
+  console.log('correctPostId', correctPostId);
 
 
   const getSelectedUserInfo = async () => {
@@ -165,6 +171,8 @@ const UserProfile = ({ audioContext }) => {
                       onProfile={onProfile}
                       onUserProfile={onUserProfile}
                       setOnProfile={setOnProfile}
+                      setIsDeleting={setIsDeleting}
+                      setCorrectPostId={setCorrectPostId}
                     />
                   </div>
                 </Col>
