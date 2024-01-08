@@ -59,12 +59,10 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
     }
   };
 
-  const openPost = () => {
 
-  };
 
   return (
-        <div>
+        <div >
 
             <PostConch audioContext={audioContext} />
 
@@ -96,8 +94,10 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
                 onClick={() => getMessages('outbox')}
             >Outbox</button> */}
 
+          <div style={{justifyContent: 'center', flexDirection: 'column', display: 'flex', alignItems: 'center'}}>
+
 {type === 'inbox' ?
-    <div>
+    <div s>
         <button
         type="button"
         className="btn btn-dark"
@@ -121,6 +121,8 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
         onClick={() => getMessages('outbox')}
         >Outbox</button>
       </div>}
+            </div>
+
 
             <div>
                 {message ? 

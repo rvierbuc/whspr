@@ -14,7 +14,7 @@ const RoomCard = ({name, host, listeners, setRoomProps, id}) => {
     }
 
   return (
-        <div className='card'>
+        <div style={{margin: '10px'}} className='card'>
             <div className='card-body'>
                 <button onClick={() => navigateTo()}>
                 <h3>{name}</h3>

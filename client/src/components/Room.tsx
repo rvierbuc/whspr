@@ -66,27 +66,83 @@ const Room = ({ channel, host, id }) => {
   };
 
   return (
+
     <div>
+      <div style={{justifyContent: 'right', flexDirection: 'row', display: 'flex', alignItems: 'right'}}>
+
+      <img
+            onClick={handleLeaveChannel}
+            src={require('../style/icons8-leave-32.png')}
+            style={{width: '50px', margin: '20px', justifyContent: 'right'}}
+          />
+      </div>
+
+    <div style={{ alignItems: 'center'}} className='container'>
+   
       <h1>{channelName}</h1>
+
+      
+      <div className='card'>
+
       <audio ref={remoteAudioRef} autoPlay />
 
 
-          <img src="https://lh3.googleusercontent.com/a/ACg8ocI6UOrLKNPeKzMpAobwFfMo2jVBc2SccK66hzTPMkEk=s96-c" alt="user profile image" />
+       
+       <div className='room-info'>
+          <img style={{marginLeft: '15px', marginTop: '15px'}} width="100" src="https://lh3.googleusercontent.com/a/ACg8ocI6UOrLKNPeKzMpAobwFfMo2jVBc2SccK66hzTPMkEk=s96-c" alt="user profile image" />
+          {/* <div style={{justifyContent: 'center', flexDirection: 'column'}}>
+            <h1>hi</h1>
+            <h1>hi</h1>
+          </div> */}
        {mute ?  <button
+       style={{margin: '15px'}}
         type="button"
         className='btn btn-dark'
         onClick={() => {muted()}}
-        >Mute</button> : <button
+        >Unmute</button> : <button
+        style={{margin: '15px'}}
         type="button"
         className='btn btn-light'
         onClick={() => {muted()}}
         >Mute</button>}
+
+       </div>
       
       <br />
-      <button
+      {/* <button
       type="button"
       className='btn btn-dark'
-       onClick={handleLeaveChannel}>Leave Channel</button>
+      onClick={handleLeaveChannel}>Leave Channel</button> */}
+      </div>
+
+      <div style={{ marginTop: '20px',  alignItems: 'center'}} className='container'>
+
+        <div className='card'>
+          <div className='room-users'>
+          {/* <img style={{margin: '15px'}} width="100" src="https://lh3.googleusercontent.com/a/ACg8ocI6UOrLKNPeKzMpAobwFfMo2jVBc2SccK66hzTPMkEk=s96-c" alt="user profile image" />
+       {mute ?  <button
+        type="button"
+        style={{margin: '15px'}}
+        className='btn btn-dark'
+        onClick={() => {muted()}}
+        >Unmute</button> : <button
+        type="button"
+        style={{margin: '15px'}}
+        className='btn btn-light'
+        onClick={() => {muted()}}
+        >Mute</button>} */}
+
+        {}
+
+          </div>
+          
+        </div>
+
+        
+      </div>
+
+      
+    </div>
     </div>
   );
 };
