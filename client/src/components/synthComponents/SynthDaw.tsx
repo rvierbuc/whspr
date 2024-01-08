@@ -84,16 +84,16 @@ const SynthDaw = ({ audioContext, oscillatorOptions }: Props): React.JSX.Element
       <PostSynth filter={filter} audioContext={audioContext} synthAudioChunks={synthAudioChunks} />
       <Stack className="w-50 mx-auto rounded" style={ { display: 'd-flex', justifyContent: 'center' } }>
         <div>
-          <button type="button" className="btn synthRecorder text-white" style={ { margin: '15px', width: '25%' } } onClick={toggleFilter}>Filters</button>
-          <button type="button" className="btn synthRecorder text-white" style={ { margin: '15px', width: '25%' } } onClick={toggleSynth}>Synth</button>
+          <button type="button" className="btn btn-dark text-white" style={ { margin: '15px', width: '25%' } } onClick={toggleFilter}>Filters</button>
+          <button type="button" className="btn btn-dark text-white" style={ { margin: '15px', width: '25%' } } onClick={toggleSynth}>Synth</button>
         </div>
       </Stack>
       <Stack direction="vertical">
         {addFilter === true && <Filters setFilter={setFilter} audioContext={audioContext} />}
-        <Container className="syntheSize rounded mt-3" style={{border: '1px solid rgba(236, 210, 210, 0.36)'}}>
-          {addSynth === true && <Oscillator oscillatorOptions={oscillatorOptions} setInstrument={setInstrument} oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />}
-          {addSynth === true && <RecordSynth instrument={instrument} setSynthAudioChunks={setSynthAudioChunks} stop={stop} start={start} />}
-        </Container>
+        {addSynth === true &&
+          <Container className="syntheSize rounded mt-3" style={{border: '1px solid rgba(236, 210, 210, 0.36)'}}>
+            <Oscillator setSynthAudioChunks={setSynthAudioChunks} stop={stop} start={start} instrument={instrument} oscillatorOptions={oscillatorOptions} setInstrument={setInstrument} oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
+          </Container>}
       </Stack>
     </Container>
   );

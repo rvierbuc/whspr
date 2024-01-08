@@ -74,13 +74,13 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
             value={currentSearch}
             onInput={handleSearchChange}
             placeholder={'Add up to 5 categories!'}
-            className='input-control text-white'
+            className='input-control text-white mb-2'
             id='category-search'
           />
         </form>
         {/* create an input that holds the selected categories */}
         {currentSearch && <Hits className="cat-hits" hitComponent={(props) => <Hit {...props} onSelect={() => { handleCategorySelection(currentSearch); }} />} />}
-        <input type="text" value={selectedCategories} readOnly={true} className='input-control' id='category-read-only' />
+        <input type="text" value={selectedCategories} readOnly={true} className='input-control text-white' id='category-read-only' />
         <Configure userToken={userToken} />
       </InstantSearch>
     </div>
@@ -106,8 +106,8 @@ const PostCard = ({ audioContext, filter, synthAudioChunks }: { audioContext: Au
       <div className="d-flex justify-content-center">
         <button
           type="button"
-          className="btn text-white"
-          style={{ margin: '15px', backgroundColor: 'rgb(60, 53, 86)' }}
+          className="btn btn-dark text-white"
+          style={{ margin: '15px' }}
           onClick={openPost}
         >
           {(!postCreated) ? 'Say something' : 'Nevermind'}
@@ -118,10 +118,10 @@ const PostCard = ({ audioContext, filter, synthAudioChunks }: { audioContext: Au
           <div className="d-flex justify-content-center">
             <input type="text"
               maxLength={22}
-              placeholder="What's on your mind?"
+              placeholder="Name your track"
               value={title}
               onChange={(e) => { setTitle(e.target.value); }}
-              className='input-control text-white'
+              className='input-control text-white mx-2'
             />
             <CategorySearch onCategorySelect={handleCategorySelect} />
           </div>

@@ -8,26 +8,26 @@ interface Props {
 }
 
 const Filters = ({ setFilter, audioContext }: Props) => {
-  const [bgColor1, setBgColor1] = useState<string>('')
-  const [bgColor2, setBgColor2] = useState<string>('')
-  const [bgColor3, setBgColor3] = useState<string>('')
+  const [bgColor1, setBgColor1] = useState<string>('dark')
+  const [bgColor2, setBgColor2] = useState<string>('dark')
+  const [bgColor3, setBgColor3] = useState<string>('dark')
   const tuna = new Tuna(audioContext);
 
   const handleFilterChange = (filter: any) => {
     setFilter(filter);
-    filter === alien ? setBgColor1('danger') : setBgColor1('secondary');
+    filter === alien ? setBgColor1('danger') : setBgColor1('dark');
     if (filter === alien && bgColor1 === 'danger') {
-      setBgColor1('secondary');
+      setBgColor1('dark');
       setFilter(defaultSettings)
     }
-    filter === wobbly ? setBgColor2('danger') : setBgColor2('secondary');
+    filter === wobbly ? setBgColor2('danger') : setBgColor2('dark');
     if (filter === wobbly && bgColor2 === 'danger') {
-      setBgColor2('secondary');
+      setBgColor2('dark');
       setFilter(defaultSettings)
     }
-    filter === robot ? setBgColor3('danger') : setBgColor3('secondary');
+    filter === robot ? setBgColor3('danger') : setBgColor3('dark');
     if (filter === robot && bgColor3 === 'danger') {
-      setBgColor3('secondary');
+      setBgColor3('dark');
       setFilter(defaultSettings)
     }
   };
@@ -116,9 +116,9 @@ const Filters = ({ setFilter, audioContext }: Props) => {
     <Container className="text-center my-3 pb-1 rounded">
     <h5>Try out our new voice filters!</h5>
     <Stack direction="horizontal" className="mx-5 mb-3 typeCard">
-      <Button className="mx-2 btn synthRecorder text-white" variant={bgColor1} onClick={() => handleFilterChange(alien)}>Alien</Button>
-      <Button className="mx-2 btn synthRecorder text-white" variant={bgColor2} onClick={() => handleFilterChange(wobbly)}>Wobbly</Button>
-      <Button className="mx-2 btn synthRecorder text-white" variant={bgColor3} onClick={() => handleFilterChange(robot)}>Robot</Button>
+      <Button className="mx-2 btn text-white" variant={bgColor1} onClick={() => handleFilterChange(alien)}>Alien</Button>
+      <Button className="mx-2 btn text-white" variant={bgColor2} onClick={() => handleFilterChange(wobbly)}>Wobbly</Button>
+      <Button className="mx-2 btn text-white" variant={bgColor3} onClick={() => handleFilterChange(robot)}>Robot</Button>
     </Stack>
   </Container>
   );

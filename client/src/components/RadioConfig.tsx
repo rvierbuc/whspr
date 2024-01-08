@@ -1,17 +1,30 @@
 import React, {useState, useEffect} from 'react'
 import axios, { AxiosResponse } from 'axios'
 import { useLoaderData, useNavigate } from 'react-router-dom';
+import {Modal, Form} from 'react-bootstrap'
 
 const RadioConfig = ({setRoomProps}) => {
     const [select, setSelect] = useState([])
     const [options, setOptions] = useState<AxiosResponse[]>([])
     const [name, setName] = useState('')
+    const [error, setError] = useState('')
     const navigate = useNavigate()
     const user: any = useLoaderData();
+    const [show, setShow] = useState(false)
+
+
 
     useEffect(() => {
         getFollowers()
     }, [])
+
+    const close = () => {
+        setShow(false)
+    }
+
+    const open = () => {
+        setShow(true)
+    }
 
     const getFollowers = async () => {
         try{
@@ -32,6 +45,18 @@ const RadioConfig = ({setRoomProps}) => {
         setName(e.target.value)
     }
 
+    const navigateTo = (room) => {
+        if(name === ''){
+            setError("Please name your channel")
+        }else{
+            console.log('name', name)
+            setRoomProps(name, user.username, room.data.id)
+            
+            navigate(`/protected/room/${name}`)
+        }
+    }
+
+
     const createChannel = async () => {
 
         try {
@@ -39,9 +64,7 @@ const RadioConfig = ({setRoomProps}) => {
             const room = await axios.post('/post/radio', {host: user.username, title: name, })
 
             console.log('room', room)
-            
-            setRoomProps(name, user.username, room.data.id)
-            navigate(`/protected/room/${name}`)
+            navigateTo(room)
         }catch {
 
         }
@@ -51,36 +74,45 @@ const RadioConfig = ({setRoomProps}) => {
         setSelect(option.username === select ? null : option.username)
     }
     return (
-        <div>
-            <h1>Configure Your Channel</h1>
-            <span>
-                <h3>Channel Name</h3>
-                
-                <input className='whaa' onChange={(e) => {channelChange(e)}}></input>
-            </span>
-
-            {/* <span>
-                <h3>Speaking Guests (up to 5)</h3>
-            </span> */}
-
-                {/* <div className="selectable-box">
-                    {options.map((option) => (
-                        <div
-                        className={`option ${select === option.username ? 'selected' : ''}`}
-                        onClick={() => optionClick(option)}
-                        >{option.username}</div>
-                    ))}
-                </div> */}
-                        <button 
-                        onClick={() => createChannel()}
+         <div>
+        
+            
+                <button className='btn btn-dark' onClick={open}>Go Live</button>
+                <Modal
+                show={show}
+                onHide={close}
+                >
+                    <Modal.Header closeButton>
+                        <Modal.Title>Choose Your Channel Type</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Form.Control
+                            type="text"
+                            placeholder="Enter Your Channel Name"
+                            value={name}
+                            onChange={channelChange}
+                            ></Form.Control>
+                            <br/>
+                            <div>
+                            {error === null ? "" : error}
+                            </div>
+                            <button 
+                        onClick={createChannel}
                         type="button"
-                        className='btn btn-dark'
+                        className='btn btn-danger'
                         >
                             Create Channel
                         </button>
-                <div>
+                        
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <button className='btn btn-dark' onClick={close}>Close</button>
+                        </Modal.Footer>
                     
-                </div>
+
+
+                </Modal>
+                
 
         </div>
     )
