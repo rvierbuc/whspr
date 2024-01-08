@@ -320,180 +320,135 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   </div>
                 )}
 
+              <div
+                className="wavesurfer-container"
+                style={{
+                  marginTop: '1rem',
+                  height: '100%',
+                  borderRadius: '6px',
+                }}
+              >
+                <div id={containerId}></div>
                 <div
-                  className="wavesurfer-container"
+                  className="overlay-container"
                   style={{
-                    marginTop: '1rem',
-                    height: '100%',
-                    borderRadius: '6px',
+                    position: 'absolute',
+                    zIndex: '999',
+                    top: '0px',
+                    left: '0px',
+                    right: '0px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: '2rem',
+                    justifyContent: 'start',
+                    width: '100%',
+                    height: '500px',
                   }}
                 >
-                  <div id={containerId}></div>
                   <div
-                    className="overlay-container"
                     style={{
-                      position: 'absolute',
-                      zIndex: '999',
-                      top: '0px',
-                      left: '0px',
-                      right: '0px',
                       display: 'flex',
-                      flexDirection: 'column',
-                      padding: '2rem',
+                      flexDirection: 'row',
                       justifyContent: 'start',
-                      width: '100%',
-                      height: '500px',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      marginTop: '-2rem',
+                      marginLeft: '-1rem',
                     }}
                   >
                     <div
                       style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'start',
-                        alignItems: 'center',
-                        flexWrap: 'wrap',
-                        marginTop: '-2rem',
-                        marginLeft: '-1rem',
+                        fontSize: 'xxx-large',
+                        color: '#e1e1e5',
                       }}
                     >
-                      <div
-                        style={{
-                          fontSize: 'xxx-large',
-                          color: '#e1e1e5',
-                        }}
-                      >
-                        {`${postObj.title} |`}
-                      </div>
-                      <div
-                        style={{
-                          marginLeft: '1rem',
-                          fontSize: 'large',
-                          color: '#e1e1e5',
-                        }}
-                      >
-                        {dayjs(postObj.createdAt).fromNow()}
-                      </div>
+                      {`${postObj.title} |`}
                     </div>
                     <div
                       style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        textOverflow: 'ellipsis',
-                        marginTop: '-1rem',
-                        flexWrap: 'wrap',
-                        justifyContent: 'start',
-                        marginLeft: '-1.5rem',
+                        marginLeft: '1rem',
+                        fontSize: 'large',
+                        color: '#e1e1e5',
                       }}
                     >
-                      {postObj.categories ? (
-                        postObj.categories.map((cat, index) => (
-                          <button
-                            className="btn btn-link"
-                            style={{
-                              color: '#e1e1e5',
-                              textDecoration: 'none',
-                            }}
-                            onClick={() => getPosts('explore', cat)}
-                            key={(index + 1).toString()}
-                          >{`#${cat}`}</button>
-                        ))
-                      ) : (
-                        <div></div>
-                      )}
+                      {dayjs(postObj.createdAt).fromNow()}
                     </div>
-                    {isPlaying ? (
-                      isPaused ? 
-                      <button
-                        type="button"
-                        style={{
-                          marginTop: '15%',
-                          alignSelf: 'center',
-                        }}
-                        className="simple-btn"
-                        id="play-btn"
-                        onClick={() => {
-                          if (wave) {
-                            wave.playPause();
-                            setIsPaused(() => !isPaused);
-                          }
-                        }}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" 
-                          width="10rem" height="10rem"
-                          fill="#e9ecf343"
-                          className="bi bi-pause"
-                          viewBox="0 0 16 16"
-                          >
-                            <path d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5m4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5"/>
-                        </svg>
-                      </button>
-                        : <button
-                        
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          padding: '10rem',
-                          margin: 'auto',
-                        }}
-                        onClick={() => {
-                          if (wave) {
-                            wave.playPause();
-                            setIsPaused(() => !isPaused);
-                          }
-                        }}></button>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      textOverflow: 'ellipsis',
+                      marginTop: '-1rem',
+                      flexWrap: 'wrap',
+                      justifyContent: 'start',
+                      marginLeft: '-1.5rem',
+                    }}
+                  >
+                    {postObj.categories ? (
+                      postObj.categories.map((cat, index) => (
+                        <button
+                          className="btn btn-link"
+                          style={{
+                            color: '#e1e1e5',
+                            textDecoration: 'none',
+                          }}
+                          onClick={() => getPosts('explore', cat)}
+                          key={(index + 1).toString()}
+                        >{`#${cat}`}</button>
+                      ))
                     ) : (
-                      <button
-                        type="button"
-                        className="simple-btn"
-                        style={{
-                          marginTop: '15%',
-                          alignSelf: 'center',
-                        }}
-                        id="play-btn"
-                        onClick={() => {
-                          if (wave) {
-                            wave.playPause();
-                            setIsPlaying(() => !isPlaying);
-                          }
-                        }}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="10rem"
-                          height="10rem"
-                          fill="#e9ecf343"
-                          className="bi bi-play-fill"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z" />
-                        </svg>
-                      </button>
+                      <div></div>
                     )}
                   </div>
-                </div>
-                <div
-                  className="d-flex flex-row align-items-center justify-content-start"
-                  style={{ marginTop: '.5rem' }}
-                  >
-                  {/* {isPlaying ? (
+                  {isPlaying ? (
+                    isPaused ? 
                     <button
                       type="button"
-                      className="btn btn-danger btn-lg"
+                      style={{
+                        marginTop: '15%',
+                        alignSelf: 'center',
+                      }}
+                      className="simple-btn"
                       id="play-btn"
                       onClick={() => {
                         if (wave) {
                           wave.playPause();
-                          setIsPlaying(() => !isPlaying);
+                          setIsPaused(() => !isPaused);
                         }
                       }}
                     >
-                      Stop
+                      <svg xmlns="http://www.w3.org/2000/svg" 
+                        width="10rem" height="10rem"
+                        fill="#e9ecf343"
+                        className="bi bi-pause"
+                        viewBox="0 0 16 16"
+                        >
+                          <path d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5m4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5"/>
+                      </svg>
                     </button>
+                      : <button
+                      
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: '10rem',
+                        margin: 'auto',
+                      }}
+                      onClick={() => {
+                        if (wave) {
+                          wave.playPause();
+                          setIsPaused(() => !isPaused);
+                        }
+                      }}></button>
                   ) : (
                     <button
                       type="button"
-                      className="btn btn-light btn-lg"
-                      id="play-btn"
+                      className="simple-btn"
+                      style={{
+                        marginTop: '15%',
+                        alignSelf: 'center',
+                      }}
                       onClick={() => {
                         if (wave) {
                           wave.playPause();
@@ -501,28 +456,72 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                         }
                       }}
                     >
-                      Play
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="10rem"
+                        height="10rem"
+                        fill="#e9ecf343"
+                        className="bi bi-play-fill"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z" />
+                      </svg>
                     </button>
-                  )} */}
-                  
-                  {/* <div
-                    style={{
-                      marginTop: '2px',
-                      marginRight:'0px',
-                      //padding: '2px',
-                      marginLeft: 'auto',
-                      display: 'flex',
-                      justifyContent: 'space-evenly',
-                      alignContent: 'center',
-                    }}
-                    > */}
-                      <div style={{ color:'#e1e1e5'}}>
-                {postObj.isLiked 
-                  ? `Liked by you and ${postObj.likeCount - 1} other listeners` 
-                  : `Liked by ${postObj.likeCount} listeners`}
+                  )}
+                </div>
               </div>
-                <div style={{ color: '#e1e1e5', marginLeft: 'auto' }}>{duration ? duration : ''}</div>
-                  {/* {onUserProfile ? (
+              <div
+                className="d-flex flex-row align-items-center justify-content-start"
+                style={{ marginTop: '.5rem' }}
+                >
+                {/* {isPlaying ? (
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-lg"
+                    id="play-btn"
+                    onClick={() => {
+                      if (wave) {
+                        wave.playPause();
+                        setIsPlaying(() => !isPlaying);
+                      }
+                    }}
+                  >
+                    Stop
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn-light btn-lg"
+                    id="play-btn"
+                    onClick={() => {
+                      if (wave) {
+                        wave.playPause();
+                        setIsPlaying(() => !isPlaying);
+                      }
+                    }}
+                  >
+                    Play
+                  </button>
+                )} */}
+                
+                {/* <div
+                  style={{
+                    marginTop: '2px',
+                    marginRight:'0px',
+                    //padding: '2px',
+                    marginLeft: 'auto',
+                    display: 'flex',
+                    justifyContent: 'space-evenly',
+                    alignContent: 'center',
+                  }}
+                  > */}
+                    <div style={{ color:'#e1e1e5'}}>
+              {postObj.isLiked 
+                ? `Liked by you and ${postObj.likeCount - 1} other listeners` 
+                : `Liked by ${postObj.likeCount} listeners`}
+            </div>
+                  <div style={{ color: '#e1e1e5', marginLeft: 'auto' }}>{duration ? duration : ''}</div>
+                  {onUserProfile ? (
                     <div>
                       {' '}
                       <div>

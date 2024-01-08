@@ -40,8 +40,8 @@ const Post = (props) => {
     <div >
       {
         addComment ?
-        <div id="header" style={{ margin: '16px', display: 'flex', flexDirection: 'column', alignContent: 'center' }}>
-        <h3 style={{ marginLeft: '55px', marginTop: '20px' }}>Record Your Comment</h3>
+        <div id="header" style={{ margin: '8px', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'start' }}>
+        <h3 style={{ margin: '1rem' }}>Record Your Comment</h3>
          <RecordComment
          audioContext={audioContext}
          postObj={postObj}

@@ -132,7 +132,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
         <button
           type="button"
           className="btn btn-light btn-lg"
-          style={{ marginRight: '6px' }}
+          style={{ marginRight: '16px' }}
           id="play-btn"
           onClick={() => {
             if (wave) {

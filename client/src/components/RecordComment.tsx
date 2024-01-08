@@ -145,35 +145,50 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
   // }
   
   return (
-    <div style={{ display:'flex', flexDirection: 'row', justifyContent:'space-around', marginBottom:'20px'}}>
+    <div style={{ display:'flex', flexDirection: 'row', alignContent:'space-between'}}>
     <button
-      className="record-button"
+      //className="record-button"
+      id='record-btn-new'
       onClick={startRecording}
       disabled={isRecording}
-      ><img src={require('../style/recordbutton.png')} /></button>
+      >
+        {/* <img src={require('../style/recordbutton.png')} /> */}
+        </button>
       <button
-      className="play-button"
+      //className="play-button"
+      id='play-btn-new'
       onClick={playAudio}
       disabled={isPlaying || audioChunks.length === 0 }
-      ><img src={require('../style/playbutton.png')} /></button>
+      >
+        {/* <img src={require('../style/playbutton.png')} /> */}
+        </button>
       <button
-      className="stop-button"
+      //className="stop-button"
+      id='stop-btn-new'
       onClick={isRecording ? stopRecording : stopPlaying}
       disabled={!isRecording && !isPlaying}
-      ><img src={require('../style/stopbutton.png')} /></button>
+      >
+        {/* <img src={require('../style/stopbutton.png')} /> */}
+        </button>
       <button
-      className="delete-button"
+      //className="delete-button"
+      id='remove-btn-new'
       onClick={emptyRecording}
       disabled={audioChunks.length === 0 || isRecording}
-      ><img src={require('../style/deletebutton.png')} /></button>
+      >
+        {/* <img src={require('../style/deletebutton.png')} /> */}
+        </button>
       <button
-      className="post-button"
+      //className="post-button"
+      id='post-btn-new'
       onClick={() =>{
         saveAudioToGoogleCloud();
         emptyRecording();
       }}
       disabled={audioChunks.length === 0 || isRecording}
-      ><img src={require('../style/postbutton.png')} /></button>
+      >
+        {/* <img src={require('../style/postbutton.png')} /> */}
+        </button>
   </div>
   );
 };
