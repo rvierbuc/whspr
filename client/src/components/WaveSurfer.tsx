@@ -52,7 +52,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   setIsDeleting,
   setCorrectPostId,
   setSelectedUserPosts,
-  isDeleting
+  isDeleting,
   onGridView,
   setOnGridView,
 }) => {
