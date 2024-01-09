@@ -2,8 +2,10 @@ import React, { useState, useEffect, BaseSyntheticEvent } from 'react';
 import { Container, Stack } from 'react-bootstrap';
 import Oscillator from './Oscillator';
 import RecordSynth from './RecordSynth';
+import { RecordPost }from '../RecordPost';
 import Filters from './Filters';
 import PostSynth from './PostSynth';
+import PostCard from '../PostCard';
 import * as Tone from 'tone';
 
 interface Options {
@@ -16,6 +18,8 @@ interface Options {
 interface Props {
   audioContext: AudioContext,
   oscillatorOptions: Options
+  phaseFilter: Tone.Phaser
+  user: any
 }
 
 const defaultSettings = {
@@ -25,21 +29,19 @@ const defaultSettings = {
   lowPassType: 'lowpass',
 }
 
-const SynthDaw = ({ audioContext, oscillatorOptions }: Props): React.JSX.Element => {
-  const [addFilter, setAddFilter ] = useState(false);
+const SynthDaw = ({ audioContext, oscillatorOptions, user }: Props): React.JSX.Element => {
   const [addSynth, setAddSynth ] = useState(false);
   const [synthAudioChunks, setSynthAudioChunks] = useState<Blob[]>([]);
   const [filter, setFilter] = useState(defaultSettings);
   const [instrument, setInstrument] = useState(oscillatorOptions.oscillator);
+  const [postCategories, setPostCategories] = useState<string[]>([]);
+  const [postTitle, setPostTitle] = useState<string>('');
 
   useEffect(() => {
-    setAddFilter(false);
     setAddSynth(false);
     setInstrument(oscillatorOptions.oscillator)
   }, []);
 
-  // conditional rendering of filters and synth
-  const toggleFilter: () => void = () => addFilter === false ? setAddFilter(true) : setAddFilter(false);
   const toggleSynth: () => void = () => addSynth === false ? setAddSynth(true) : setAddSynth(false);
 
   const [oscSettings, setOscSettings] = useState({
@@ -79,22 +81,37 @@ const SynthDaw = ({ audioContext, oscillatorOptions }: Props): React.JSX.Element
     }
   };
 
+  // top to bottom layout
+  /**
+   * inputs => check
+   * filters => check
+   * synth => check
+   * recordpost => in progress
+   */
   return (
     <Container className="w-75 rounded text-white text-center">
-      <PostSynth filter={filter} audioContext={audioContext} synthAudioChunks={synthAudioChunks} />
+      <PostCard setPostCategories={setPostCategories} setPostTitle={setPostTitle} />
+      {/* <PostSynth filter={filter} audioContext={audioContext} synthAudioChunks={synthAudioChunks} /> */}
+      <Filters setFilter={setFilter} audioContext={audioContext} />
       <Stack className="w-50 mx-auto rounded" style={ { display: 'd-flex', justifyContent: 'center' } }>
         <div>
-          <button type="button" className="btn btn-dark text-white" style={ { margin: '15px', width: '25%' } } onClick={toggleFilter}>Filters</button>
           <button type="button" className="btn btn-dark text-white" style={ { margin: '15px', width: '25%' } } onClick={toggleSynth}>Synth</button>
         </div>
       </Stack>
       <Stack direction="vertical">
-        {addFilter === true && <Filters setFilter={setFilter} audioContext={audioContext} />}
         {addSynth === true &&
-          <Container className="syntheSize rounded mt-3" style={{border: '1px solid rgba(236, 210, 210, 0.36)'}}>
+          <Container className="syntheSize rounded mt-3">
             <Oscillator setSynthAudioChunks={setSynthAudioChunks} stop={stop} start={start} instrument={instrument} oscillatorOptions={oscillatorOptions} setInstrument={setInstrument} oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
           </Container>}
       </Stack>
+      <RecordPost
+        user={user}
+        filter={filter}
+        audioContext={audioContext}
+        title={postTitle}
+        categories={postCategories}
+        synthAudioChunks={synthAudioChunks}
+      />
     </Container>
   );
 };

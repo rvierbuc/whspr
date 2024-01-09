@@ -18,7 +18,7 @@ const constraints: Constraints = {
   video: false,
 };
 
-export const RecordPost = ({ user, audioContext, title, categories, openPost, filter, synthAudioChunks }: { user: any; audioContext:AudioContext; title: string; categories: string[]; openPost: () => void, filter: any, synthAudioChunks: Blob[], handleNavigation: (path: string) => void }) => {
+export const RecordPost = ({ user, audioContext, title, categories, filter, synthAudioChunks }: { user: any; audioContext:AudioContext; title: string; categories: string[], filter: any, synthAudioChunks: Blob[]}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
@@ -234,7 +234,6 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
         <button
           className="post-button"
           onClick={() => {
-            openPost();
             saveAudioToGoogleCloud();
             stopStream();
           }

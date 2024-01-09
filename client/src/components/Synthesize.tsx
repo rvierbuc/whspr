@@ -2,6 +2,7 @@ import React from 'react';
 import SynthDaw from './synthComponents/SynthDaw';
 import { Container } from 'react-bootstrap';
 import * as Tone from 'tone';
+import { useLoaderData } from 'react-router-dom';
 
 
 interface Props {
@@ -16,6 +17,7 @@ interface Options {
 }
 
 const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
+  const user: any = useLoaderData();
 
   const oscillatorOptions: Options = {
     oscillator: new Tone.Oscillator().toDestination(),
@@ -24,10 +26,13 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
     amOscillator: new Tone.AMOscillator().toDestination()
   }
 
+  const phaseFilter: Tone.Phaser = new Tone.Phaser();
+  console.log(phaseFilter)
+
   return (
     <Container className="p-3 rounded w-75" id="synthesize">
       <div>
-        <SynthDaw audioContext={audioContext} oscillatorOptions={oscillatorOptions} />
+        <SynthDaw user={user} audioContext={audioContext} oscillatorOptions={oscillatorOptions} />
       </div>
     </Container>
   );
