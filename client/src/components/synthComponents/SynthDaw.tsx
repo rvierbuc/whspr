@@ -1,10 +1,8 @@
 import React, { useState, useEffect, BaseSyntheticEvent } from 'react';
 import { Container, Stack } from 'react-bootstrap';
 import Oscillator from './Oscillator';
-import RecordSynth from './RecordSynth';
 import { RecordPost }from '../RecordPost';
 import Filters from './Filters';
-import PostSynth from './PostSynth';
 import PostCard from '../PostCard';
 import * as Tone from 'tone';
 
@@ -86,12 +84,11 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user }: Props): React.JSX.E
    * inputs => check
    * filters => check
    * synth => check
-   * recordpost => in progress
+   * recordpost => check
    */
   return (
     <Container className="w-75 rounded text-white text-center">
       <PostCard setPostCategories={setPostCategories} setPostTitle={setPostTitle} />
-      {/* <PostSynth filter={filter} audioContext={audioContext} synthAudioChunks={synthAudioChunks} /> */}
       <Filters setFilter={setFilter} audioContext={audioContext} />
       <Stack className="w-50 mx-auto rounded" style={ { display: 'd-flex', justifyContent: 'center' } }>
         <div>
