@@ -102,7 +102,6 @@ const PostCard = ({ setPostCategories, setPostTitle }) => {
     const array = Array.isArray(selectedCategory) ? selectedCategory : [selectedCategory];
     setCategories(array);
     setPostCategories(array);
-    // setCategories(selectedCategory);
   };
   return (
     <div>
@@ -120,15 +119,6 @@ const PostCard = ({ setPostCategories, setPostTitle }) => {
           />
           <CategorySearch onCategorySelect={handleCategorySelect} />
         </div>
-        {/* <RecordPost
-          synthAudioChunks={synthAudioChunks}
-          filter={filter}
-          user={user}
-          audioContext={audioContext}
-          title={title}
-          categories={categories}
-          openPost={openPost}
-        /> */}
       </div>
     </div>
   );
