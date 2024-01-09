@@ -556,42 +556,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 : `Liked by ${postObj.likeCount} listeners`}
             </div>
                   <div style={{ color: '#e1e1e5', marginLeft: 'auto' }}>{duration ? duration : ''}</div>
-                  {onUserProfile ? (
-                    <div>
-                      {' '}
-                      <div>
-                        <img
-                          src={require('../style/bin.png')}
-                          style={{
-                            width: 'auto',
-                            height: '40px',
-                            objectFit: 'scale-down',
-                            color: '#e1e1e5',
-                          }}
-                          onClick={() => {
-                            if (deleting === false) {
-                              setDeleting(true);
-                              setIsDeleting(true);
-                            } else {
-                              setDeleting(false);
-                              setIsDeleting(false);
-                            }
-                          }}
-                        />
-                      </div>
-                      <div>
-                        {deleting === true && (
-                          <Modal
-                            isOpen={deleting}
-                            onClose={() => setDeleting(false)}
-                            children={<Delete userId={userId} id={postId} />}
-                          />
-                        )}
-                      </div>{' '}
-                    </div>
-                  ) : (
-                    <div></div>
-                  )} */}
                 </div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginBottom:'8px' 
@@ -685,9 +649,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     <div></div>
                   )}
               </div>
-              {onUserProfile ? (
+              {/* {onUserProfile ? (
                 <a></a>
-              ) : (
+              ) : ( */}
                 <div>
                   <Post
                     key={postId}
@@ -699,7 +663,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     setAddComment={setAddComment}
                   />
                 </div>
-              )}
+               {/* )} */}
             </div>
           </div>
         </div>
@@ -740,3 +704,42 @@ export default WaveSurferComponent;
                     {postObj.listenCount}
                   </div>
  */
+/**
+ * old delete
+ *  {/* {onUserProfile ? (
+                    <div>
+                      {' '}
+                      <div>
+                        <img
+                          src={require('../style/bin.png')}
+                          style={{
+                            width: 'auto',
+                            height: '40px',
+                            objectFit: 'scale-down',
+                            color: '#e1e1e5',
+                          }}
+                          onClick={() => {
+                            if (deleting === false) {
+                              setDeleting(true);
+                              setIsDeleting(true);
+                            } else {
+                              setDeleting(false);
+                              setIsDeleting(false);
+                            }
+                          }}
+                        />
+                      </div>
+                      <div>
+                        {deleting === true && (
+                          <Modal
+                            isOpen={deleting}
+                            onClose={() => setDeleting(false)}
+                            children={<Delete userId={userId} id={postId} />}
+                          />
+                        )}
+                      </div>{' '}
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}  */
+ 

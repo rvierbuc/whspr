@@ -164,6 +164,24 @@ body {
   top: 6%;
   width: 130%;
 }
+.row-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  //padding: 1rem;
+  //margin: 1rem
+}
+
+.profile-image { //add height depending on how big you want it
+  width:auto;
+  margin: 1rem;
+  object-fit: scale-down;
+  border-style: solid;
+  border-width: medium;
+  border-color: #3c3556;
+  border-radius: round($number: 3rem);
+}
 #header {
   background: #e9ecf343;
   //opacity: 60%;
