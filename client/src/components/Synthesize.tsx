@@ -27,12 +27,11 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
   }
 
   const phaseFilter: Tone.Phaser = new Tone.Phaser();
-  console.log(phaseFilter)
 
   return (
-    <Container className="p-3 rounded w-75" id="synthesize">
+    <Container className="p-3 rounded w-75">
       <div>
-        <SynthDaw user={user} audioContext={audioContext} oscillatorOptions={oscillatorOptions} />
+        <SynthDaw phaseFilter={phaseFilter} user={user} audioContext={audioContext} oscillatorOptions={oscillatorOptions} />
       </div>
     </Container>
   );

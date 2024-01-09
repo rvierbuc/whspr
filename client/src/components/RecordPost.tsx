@@ -2,6 +2,19 @@ import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import * as Tone from 'tone';
+
+interface Props {
+  instrument: Tone.Oscillator | Tone.FatOscillator | Tone.FMOscillator | Tone.AMOscillator
+  user: any
+  audioContext:AudioContext
+  title: string
+  categories: string[]
+  filter: any
+  addSynth: boolean
+  start: () => void
+  stop: () => void
+}
 
 interface Constraints {
   audio: {
@@ -18,10 +31,11 @@ const constraints: Constraints = {
   video: false,
 };
 
-export const RecordPost = ({ user, audioContext, title, categories, filter, synthAudioChunks }: { user: any; audioContext:AudioContext; title: string; categories: string[], filter: any, synthAudioChunks: Blob[]}) => {
+export const RecordPost = ({ user, audioContext, title, categories, filter, addSynth, instrument, start, stop }: Props) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+  const [synthAudioChunks, setSynthAudioChunks] = useState<Blob[]>([]);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null)
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioSource = useRef<AudioBufferSourceNode | null>(null);
@@ -68,16 +82,13 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, synt
     }
   };
   const startRecording = async (): Promise<void> => {
-    // const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
     try {
       resumeAudioContext();
-      const stream = await initializeStream();
       setAudioChunks([]);
-
-      const source: MediaStreamAudioSourceNode = audioContext.createMediaStreamSource(stream);
-
+      const stream = await initializeStream();
       const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
 
+      const source: MediaStreamAudioSourceNode = audioContext.createMediaStreamSource(stream);
       // if the filter is the default setting
       if (Object.values(filter).length === 4) {
         source.connect(destination);
@@ -109,6 +120,9 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, synt
 
   const stopRecording = async (): Promise<void> => {
     if (mediaRecorder?.current?.state === 'recording') {
+      if (addSynth) {
+        stop();
+      }
       mediaRecorder.current.stop();
       setIsRecording(false);
     }
@@ -121,6 +135,27 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, synt
       track.stop();
     });
     setAudioStream(null);
+  };
+
+  const startSynthRecording = async () => {
+    try {
+      const context = Tone.context;
+      resumeAudioContext();
+      setSynthAudioChunks([]);
+      const destination = context.createMediaStreamDestination();
+      instrument.connect(destination);
+      mediaRecorder.current = new MediaRecorder(destination.stream);
+      mediaRecorder.current.ondataavailable = event => {
+        if (event.data.size > 0) {
+          setSynthAudioChunks((prevChunks: Blob[]) => [...prevChunks, event.data])
+        }
+      };
+      mediaRecorder.current.start();
+      start();
+      setIsRecording(true);
+    } catch(error) {
+      console.error('Could not start recording', error)
+    }
   };
 
   const playAudio = async (): Promise<void> => {
@@ -203,11 +238,17 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, synt
   };
 
   return (
-    <div className="d-flex justify-content-center" style={{ margin: '15px' }}>
-      <Stack direction="horizontal" gap={2}>
+    <div className="d-flex justify-content-center mt-3">
+      <Stack direction="horizontal" gap={3}>
         <button
           className="record-button"
-          onClick={startRecording}
+          onClick={() => {
+            if (addSynth) {
+              startSynthRecording();
+            } else {
+              startRecording();
+            }
+          }}
           disabled={isRecording}
         ><img src={require('../style/recordbutton.png')} /></button>
         <button

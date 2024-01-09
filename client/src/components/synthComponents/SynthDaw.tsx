@@ -27,7 +27,7 @@ const defaultSettings = {
   lowPassType: 'lowpass',
 }
 
-const SynthDaw = ({ audioContext, oscillatorOptions, user }: Props): React.JSX.Element => {
+const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter }: Props): React.JSX.Element => {
   const [addSynth, setAddSynth ] = useState(false);
   const [synthAudioChunks, setSynthAudioChunks] = useState<Blob[]>([]);
   const [filter, setFilter] = useState(defaultSettings);
@@ -79,36 +79,32 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user }: Props): React.JSX.E
     }
   };
 
-  // top to bottom layout
-  /**
-   * inputs => check
-   * filters => check
-   * synth => check
-   * recordpost => check
-   */
   return (
     <Container className="w-75 rounded text-white text-center">
-      <PostCard setPostCategories={setPostCategories} setPostTitle={setPostTitle} />
-      <Filters setFilter={setFilter} audioContext={audioContext} />
-      <Stack className="w-50 mx-auto rounded" style={ { display: 'd-flex', justifyContent: 'center' } }>
-        <div>
-          <button type="button" className="btn btn-dark text-white" style={ { margin: '15px', width: '25%' } } onClick={toggleSynth}>Synth</button>
+      <div className="card p-3">
+        <div className="p-3 mb-3">
+          <PostCard setPostCategories={setPostCategories} setPostTitle={setPostTitle} />
+          <Filters setFilter={setFilter} audioContext={audioContext} />
         </div>
-      </Stack>
-      <Stack direction="vertical">
-        {addSynth === true &&
+          <div className="synthOption">
+            <button type="button" className="text-white btn btn-dark btn-rounded" style={ { margin: '0.5rem', width: '50%' } } onClick={toggleSynth}>Synthesize your own sound!</button>
+          </div>
+          {addSynth === true &&
           <Container className="syntheSize rounded mt-3">
             <Oscillator setSynthAudioChunks={setSynthAudioChunks} stop={stop} start={start} instrument={instrument} oscillatorOptions={oscillatorOptions} setInstrument={setInstrument} oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
           </Container>}
-      </Stack>
-      <RecordPost
-        user={user}
-        filter={filter}
-        audioContext={audioContext}
-        title={postTitle}
-        categories={postCategories}
-        synthAudioChunks={synthAudioChunks}
-      />
+        <RecordPost
+          addSynth={addSynth}
+          user={user}
+          filter={filter}
+          audioContext={audioContext}
+          title={postTitle}
+          categories={postCategories}
+          instrument={instrument}
+          start={start}
+          stop={stop}
+        />
+      </div>
     </Container>
   );
 };
