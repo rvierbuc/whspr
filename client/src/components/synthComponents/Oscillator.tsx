@@ -61,7 +61,7 @@ const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings,
     <div className="oscillator card">
         <Stack direction="vertical" gap={4} className="mx-auto mb-1">
           {/* oscillator types */}
-          <div className="text-center oscillatorOptions">
+          <div className="text-center text-white oscillatorOptions">
             <h5 className="text-center mb-2">Oscillator Type</h5>
             <Button className="btn mx-1" id="sine" variant={selectedOscillator === oscillatorKeys[0] ? 'danger' : 'dark'} onClick={() => handleOscillatorChange(oscillator)}>Default</Button>
             <Button className="btn mx-1" id="triangle" variant={selectedOscillator === oscillatorKeys[1] ? 'danger' : 'dark'} onClick={() => handleOscillatorChange(fatOscillator)} >Fat</Button>
@@ -79,11 +79,11 @@ const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings,
           {/* frequency/detune and synth filters below */}
           <div className="mx-auto">
             <Stack direction="horizontal" gap={5}>
-              <div className="text-center">
+              <div className="text-center text-white">
                 <h6>Frequency</h6>
                 <input value={frequency} max="880" onChange={changeValue} id="frequency" type="range" />
               </div>
-              <div className="text-center">
+              <div className="text-center text-white">
                 <h6>Detune</h6>
                 <input value={detune} max="150" min="-150" onChange={changeValue} id="detune" type="range" />
               </div>
