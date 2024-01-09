@@ -87,56 +87,39 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
   );
 };
 
-const PostCard = ({ audioContext, filter, synthAudioChunks }: { audioContext: AudioContext, filter: any, synthAudioChunks: Blob[] }) => {
+interface Props {
+  setPostCategories: any
+  setPostTitle: any
+}
+
+const PostCard = ({ setPostCategories, setPostTitle }) => {
   const [postCreated, setPostCreated] = useState(false);
   const [title, setTitle] = useState('');
   const [categories, setCategories] = useState<string[]>([]);
   const user = useLoaderData();
 
-  const openPost = () => {
-    setPostCreated(!postCreated);
-  };
   const handleCategorySelect = (selectedCategory: string | string[]) => {
     const array = Array.isArray(selectedCategory) ? selectedCategory : [selectedCategory];
     setCategories(array);
-    // setCategories(selectedCategory);
+    setPostCategories(array);
   };
   return (
     <div>
-      <div className="d-flex justify-content-center">
-        <button
-          type="button"
-          className="btn btn-dark text-white"
-          style={{ margin: '15px' }}
-          onClick={openPost}
-        >
-          {(!postCreated) ? 'Say something' : 'Nevermind'}
-        </button>
-      </div>
-      {postCreated && (
-        <div id="responsive-navbar-nav" className={postCreated ? 'show' : ''}>
-          <div className="d-flex justify-content-center">
-            <input type="text"
-              maxLength={22}
-              placeholder="Name your track"
-              value={title}
-              onChange={(e) => { setTitle(e.target.value); }}
-              className='input-control text-white mx-2'
-            />
-            <CategorySearch onCategorySelect={handleCategorySelect} />
-          </div>
-          <RecordPost
-            synthAudioChunks={synthAudioChunks}
-            filter={filter}
-            user={user}
-            audioContext={audioContext}
-            title={title}
-            categories={categories}
-            openPost={openPost}
+      <div id="responsive-navbar-nav" className={postCreated ? 'show' : ''}>
+        <div className="d-flex justify-content-center">
+          <input type="text"
+            maxLength={22}
+            placeholder="Name your track"
+            value={title}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              setPostTitle(e.target.value);
+            }}
+            className='input-control text-white mx-2'
           />
+          <CategorySearch onCategorySelect={handleCategorySelect} />
         </div>
-      )}
-
+      </div>
     </div>
   );
 };
