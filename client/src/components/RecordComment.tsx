@@ -2,16 +2,24 @@ import React, { useState, useRef } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import axios from 'axios';
 
-export const RecordComment = (props, { audioContext }: { audioContext: BaseAudioContext }) => {
+interface RecordCommentProps {
+  postObj: any,
+  userId: number,
+  updatePost: any,
+  audioContext: AudioContext,
+  addComment: boolean,
+  setAddComment: any,
+  getComments: any,
+  commentStateLength: number
+}
+export const RecordComment = ({ postObj, getComments, userId, updatePost, commentStateLength, addComment, setAddComment, audioContext }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioSource = useRef<AudioBufferSourceNode | null>(null);
   
-
-  const { postObj, getComments, userId, updatePost, commentStateLength } = props
-
+  console.log('record comment AC', audioContext)
   const startRecording = async () => {
     try {
       setAudioChunks([]);
@@ -115,7 +123,7 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
       const response = await axios.post('/uploadComment', formData);
       if (response.status === 200) {
         await axios.put('/post/updateCount', {type: 'increment', column: 'commentCount', id: postObj.id})
-        await getComments(commentStateLength + 1, 'more')
+        await getComments()
         await updatePost(postObj.id, userId)
         await console.log('all done')
       } else {
@@ -145,35 +153,51 @@ export const RecordComment = (props, { audioContext }: { audioContext: BaseAudio
   // }
   
   return (
-    <div style={{ display:'flex', flexDirection: 'row', justifyContent:'space-around', marginBottom:'20px'}}>
+    <div style={{ display:'flex', flexDirection: 'row', alignContent:'space-between'}}>
     <button
-      className="record-button"
+      //className="record-button"
+      id='record-btn-new'
       onClick={startRecording}
-      disabled={isRecording}
-      ><img src={require('../style/recordbutton.png')} /></button>
+      disabled={isRecording || audioChunks.length > 0}
+      >
+        {/* <img src={require('../style/recordbutton.png')} /> */}
+        </button>
       <button
-      className="play-button"
+      //className="play-button"
+      id='play-btn-new'
       onClick={playAudio}
       disabled={isPlaying || audioChunks.length === 0 }
-      ><img src={require('../style/playbutton.png')} /></button>
+      >
+        {/* <img src={require('../style/playbutton.png')} /> */}
+        </button>
       <button
-      className="stop-button"
+      //className="stop-button"
+      id='stop-btn-new'
       onClick={isRecording ? stopRecording : stopPlaying}
       disabled={!isRecording && !isPlaying}
-      ><img src={require('../style/stopbutton.png')} /></button>
+      >
+        {/* <img src={require('../style/stopbutton.png')} /> */}
+        </button>
       <button
-      className="delete-button"
+      //className="delete-button"
+      id='remove-btn-new'
       onClick={emptyRecording}
       disabled={audioChunks.length === 0 || isRecording}
-      ><img src={require('../style/deletebutton.png')} /></button>
+      >
+        {/* <img src={require('../style/deletebutton.png')} /> */}
+        </button>
       <button
-      className="post-button"
+      //className="post-button"
+      id='post-btn-new'
       onClick={() =>{
         saveAudioToGoogleCloud();
+        setAddComment(()=> !addComment);
         emptyRecording();
       }}
       disabled={audioChunks.length === 0 || isRecording}
-      ><img src={require('../style/postbutton.png')} /></button>
+      >
+        {/* <img src={require('../style/postbutton.png')} /> */}
+        </button>
   </div>
   );
 };
