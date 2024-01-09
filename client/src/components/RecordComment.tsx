@@ -2,16 +2,24 @@ import React, { useState, useRef } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import axios from 'axios';
 
-export const RecordComment = (props, { audioContext }: { audioContext: BaseAudioContext }) => {
+interface RecordCommentProps {
+  postObj: any,
+  userId: number,
+  updatePost: any,
+  audioContext: AudioContext,
+  addComment: boolean,
+  setAddComment: any,
+  getComments: any,
+  commentStateLength: number
+}
+export const RecordComment = ({ postObj, getComments, userId, updatePost, commentStateLength, addComment, setAddComment, audioContext }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioSource = useRef<AudioBufferSourceNode | null>(null);
   
-
-  const { postObj, getComments, userId, updatePost, commentStateLength, addComment, setAddComment } = props
-
+  console.log('record comment AC', audioContext)
   const startRecording = async () => {
     try {
       setAudioChunks([]);

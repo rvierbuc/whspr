@@ -17,7 +17,7 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   //const [isFollowFeed, setIsFollowFeed] = useState<boolean>(false);
   const user: any = useLoaderData();
   const { type }:Readonly<Params<string>> = useParams();
-   console.log(type)
+   console.log('feed AC', audioContext)
   const getPosts = async (feedType, tag) => {
     setFeed(feedType);
     // if (feedType === 'explore') {
