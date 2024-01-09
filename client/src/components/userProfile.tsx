@@ -61,7 +61,7 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
   const [onUserProfile, setOnUserProfile] = useState<boolean>(true);
   const [selectedUserFollowers, setSelectedUserFollowers] = useState<followerAttributes[]>([]);
   const currentUser: any = useLoaderData();
-  
+
   // setting a delete state => if true => render a fade in asking if the user wants to delete the post
   // then if they delete => set the state with the current posts
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -83,7 +83,7 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
       const postIndex = selectedUserPosts.findIndex((post) => post.id === updatedPost.data.id);
       updatedPost.data.rank = selectedUserPosts[postIndex].rank;
       const postsWUpdatedPost = selectedUserPosts.splice(postIndex, 1, updatedPost.data);
-     
+
     } catch (error) {
       console.log('could not update post', error);
     }
@@ -109,50 +109,50 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
     rows.push(row);
   }
   return (
-    
+
     <Container>
       <div className="user-main" style={{ display: 'flex' }}>
         <Col xs={12} lg={5}>
           <Row>
             <div className="card user-profile-card" style={{ justifyContent: 'center' }}>
               <div className="user-profile-image">
-                <img 
-                src={currentUser.profileImgUrl} 
-                alt="user profile image" 
-                style={{ borderRadius: '50%', width: '100px', height: '100px' }}
+                <img
+                  src={currentUser.profileImgUrl}
+                  alt="user profile image"
+                  style={{ borderRadius: '50%', width: '100px', height: '100px' }}
                 />
               </div>
               <div className="user-profile-info">
                 <h2 style={{ color: 'white' }}>{currentUser.username}</h2>
               </div>
-                <RadioConfig setRoomProps={setRoomProps}/>
+              <RadioConfig setRoomProps={setRoomProps} />
 
             </div>
           </Row>
-        <Row>
-          <Col xs={12} lg={6}>
-        <div className="card user-profile-followers-card">
-          <h2 style={{ color: 'white' }}>Followers</h2>
-          <div className="user-profile-followers">
-            {selectedUserFollowers.map((follower, index) => (
-              <div className="user-profile-follower" key={index}>
-                <Link to={`/protected/profile/${follower.id}`}>
-                <img
-                  src={follower.profileImgUrl}
-                  alt="user profile image"
-                  style={{ borderRadius: '50%', width: '50px', height: '50px' }}
-                />
-                <h5 style={{ 
-                  color: 'white', 
-                  textOverflow: 'ellipsis', 
-                  overflow: 'hidden', 
-                  whiteSpace: 'nowrap',
-                }}>{follower.username}</h5>
-                  </Link>
+          <Row>
+            <Col xs={12} lg={6}>
+              <div className="card user-profile-followers-card">
+                <h2 style={{ color: 'white' }}>Followers</h2>
+                <div className="user-profile-followers">
+                  {selectedUserFollowers.map((follower, index) => (
+                    <div className="user-profile-follower" key={index}>
+                      <Link to={`/protected/profile/${follower.id}`}>
+                        <img
+                          src={follower.profileImgUrl}
+                          alt="user profile image"
+                          style={{ borderRadius: '50%', width: '50px', height: '50px' }}
+                        />
+                        <h5 style={{
+                          color: 'white',
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                        }}>{follower.username}</h5>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
             </Col>
           </Row>
         </Col>
@@ -184,7 +184,7 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
             </Row>
           ))}
         </div>
-      
+
       </div>
     </Container>
 
