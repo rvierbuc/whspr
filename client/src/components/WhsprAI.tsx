@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Modal } from './Modal';
 import axios from 'axios';
 import { useLoaderData } from 'react-router-dom';
-// import {audioContext} from './App'
 
 export const WhsprAI = ({ audioContext }) => {
   const [isPhone, setIsPhone] = useState(false);
@@ -14,15 +13,16 @@ export const WhsprAI = ({ audioContext }) => {
   const [lengthTracker, setLengthTracker] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [animationInitialized, setAnimationInitialized] = useState(false);
+  const [newMessageCount, setNewMessageCount] = useState(0)
   const canvasRef = useRef(null);
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const frameRef = useRef<number | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const cardRef = useRef(null);
+  const transcript = useRef(null);
   const user = useLoaderData();
   const userId = parseFloat(user.id);
-
 
   //this sets the number of messages that will be retrieved from the database and sent in the conversation to the ai
   const nMessages = 5;
@@ -125,6 +125,7 @@ export const WhsprAI = ({ audioContext }) => {
         });
         const currentText = response.data;
         setText(prevText => [...prevText, currentText]);
+        if (!showText) { setNewMessageCount(prevCount => prevCount + 1) }
       } catch (error) {
         console.error('error sending audio to server in getTextFromSpeech', error);
       }
@@ -154,12 +155,6 @@ export const WhsprAI = ({ audioContext }) => {
     };
   }, [isRecording]);
 
-  //creates an analyser
-  useEffect(() => {
-    const analyser = audioContext.createAnalyser();
-    analyser.fftSize = 2048;
-    analyserRef.current = analyser;
-  }, [audioContext]);
 
   //animation draws the audio
   const drawAudio = () => {
@@ -310,7 +305,14 @@ export const WhsprAI = ({ audioContext }) => {
 
   //displays the text of the conversation
   function handleSetShowText() {
+    //flips whether text is shown
     setShowText(!showText);
+    //resets unread message count
+    setNewMessageCount(0)
+    //ensures text in transcript is scrolled to bottom
+    setTimeout(() => {
+      transcript.current.scrollTop = transcript.current.scrollHeight;
+    }, 0)
   }
 
   //sets canvas width to the whole screen
@@ -328,6 +330,14 @@ export const WhsprAI = ({ audioContext }) => {
       initializeAnimation();
     }
   };
+
+  //creates an analyser
+  useEffect(() => {
+    const analyser = audioContext.createAnalyser();
+    analyser.fftSize = 2048;
+    analyserRef.current = analyser;
+  }, [audioContext]);
+
   //starts and stops the animation so that a line appears on the screen
   const initializeAnimation = () => {
     if (!animationInitialized) {
@@ -348,6 +358,7 @@ export const WhsprAI = ({ audioContext }) => {
   const handlePressToTalkPress = () => {
     setIsRecording(true);
   };
+
   const handlePressToTalkRelease = () => {
     setIsRecording(false);
     vibratePhone();
@@ -359,17 +370,18 @@ export const WhsprAI = ({ audioContext }) => {
     }
   };
 
+
   return (
     <div className='container-whsprAI'>
       <div className='card-whsprAI' ref={cardRef} style={{ height: 'calc(100vh - 150px)' }}>
-        <div style={{ position: 'relative' }}>
+        <div className="help-btn-container">
           <img
             src={require('../style/help.png')}
             className='help-btn'
             onClick={() => setModalOpen(!modalOpen)}
             style={{ opacity: modalOpen ? .25 : 1 }}
           />
-          <div style={{ position: 'absolute', top: '140px', left: '9%' }}>
+          <div className="help-modal-whsprAI">
             <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
               <p>Press and hold the button to talk to Whisper, our AI chatbot.</p>
             </Modal>
@@ -403,7 +415,7 @@ export const WhsprAI = ({ audioContext }) => {
               </button>
               )}
           </div>
-          {showText && <div className='floating-text-whsprAI'>
+          {showText && <div className='floating-text-whsprAI' ref={transcript}>
             {text.map((item, index) => (
               <div key={index} >
                 <div><span className="chatHistoryName">You: </span><span className="chatHistoryText">{item}</span></div>
@@ -412,13 +424,19 @@ export const WhsprAI = ({ audioContext }) => {
             ))}
           </div>}
         </div>
-        <img
-          src={require('../style/posticon.png')}
-          className='text-btn'
-          onClick={handleSetShowText}
-          style={{ opacity: showText ? .25 : 1 }}
-        />
-
+        <div className='text-btn-container'>
+          <img
+            src={require('../style/posticon.png')}
+            className='text-btn'
+            onClick={handleSetShowText}
+            style={{ opacity: showText ? .25 : 1 }}
+          />
+          {newMessageCount > 0 && (
+            <div className='message-count-whsprAI'>
+              {newMessageCount}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
