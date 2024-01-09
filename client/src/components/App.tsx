@@ -60,7 +60,6 @@ const App = () => {
   const getUserLoader = async () => {
     try {
       const response = await axios.get('/current-user');
-      // console.log('responseloader', response);
       return response.data;
     } catch (err) {
       console.error('user loader error', err);
@@ -79,7 +78,7 @@ const App = () => {
                     {/* <Route path="search" element={<Search />} /> */}
                     <Route path="profile" element={<UserProfile setRoomProps={setRoomProps} audioContext={audioContext} />} loader={() => getUserLoader()}/>
                     <Route path="feed/:type" element={<Feed audioContext={audioContext} />} loader={() => getUserLoader()}/>
-                    <Route path="post" element={<PostCard audioContext={audioContext} />} loader={() => getUserLoader()}/>
+                    <Route path="post" element={<PostCard />} loader={() => getUserLoader()}/>
                     <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
                     <Route path="radio" element={<Radio setRoomProps={setRoomProps} />} />
                     <Route path="room/:name" element={<Room channel={channelName} host={host} id={uid}/>} />
