@@ -183,7 +183,6 @@ router.get('/user/:userId/followers', async (req: Request, res: Response) => {
         id: followers.map((follower: any) => follower.userId)
       }
     })
-    
     const extractedFollowerInfo = followerDisplayInformation.map((follower: any) => {
       return {
         id: follower.id,
@@ -194,6 +193,34 @@ router.get('/user/:userId/followers', async (req: Request, res: Response) => {
     res.send(extractedFollowerInfo);
   } catch (error) {
     console.error('could not get followers', error)
+    res.sendStatus(500)
+  }
+})
+// Gets all the users that the selected user is following
+router.get('/user/:userId/following', async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    // fetch the following and get the user id's to cross ref
+    const following = await Follower.findAll({
+      where: {
+        userId
+      }
+    })
+    const followingDisplayInformation = await User.findAll({
+      where: {
+        id: following.map((follower: any) => follower.followingId),
+      }
+    })
+    const extractedFollowingInfo = followingDisplayInformation.map((following: any) => {
+      return {
+        id: following.id,
+        username: following.username,
+        profileImgUrl: following.profileImgUrl,
+      }
+    });
+    res.send(extractedFollowingInfo);
+  } catch (error) {
+    console.error('could not get following', error)
     res.sendStatus(500)
   }
 })
@@ -406,10 +433,10 @@ router.post('/like', async (req: Request, res: Response) => {
   }
  })
 //gets all comments for one post
-router.get('/comment/:postId/:limitStr', async (req: Request, res: Response) => {
-  const { postId, limitStr } = req.params;
-  type limit = number;
-  const limit = parseInt(limitStr)
+router.get('/comment/:postId', async (req: Request, res: Response) => {
+  const { postId } = req.params;
+  //type limit = number;
+  //const limit = parseInt(limitStr)
   //console.log(limit)
 try{
   const postComments = await Comment.findAll({
@@ -420,7 +447,6 @@ try{
     order: [
       ['createdAt', 'DESC']
     ],
-    limit
   })
 
   res.status(200).send(postComments)

@@ -1,21 +1,21 @@
 import React from 'react';
 import axios from 'axios';
-import { Button, Container } from 'react-bootstrap'
+import { Button, Container, Stack } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom';
 
 interface Props {
   userId: number
   id: number
+  setSelectedUserPosts: any
+  setIsDeleting: any
 }
 
-const Delete = ({ userId, id }: Props) => {
-  const navigate = useNavigate();
+const Delete = ({ userId, id, setSelectedUserPosts, setIsDeleting }: Props) => {
   const handleDelete: () => void = async () => {
     try {
-      const profileNavigate: (path: string) => void = (path) => navigate(path);
       const deletePost = await axios.delete(`/deletePost/${userId}/${id}`);
-      profileNavigate('/protected/profile')
-      console.log(deletePost.status);
+      const getPosts = await axios.get(`/post/selected/${userId}`);
+      setSelectedUserPosts(getPosts.data)
     } catch (error) {
       console.error(error);
     }
@@ -25,7 +25,10 @@ const Delete = ({ userId, id }: Props) => {
       <p>
         Delete this post?
       </p>
-      <Button type="button" className="btn-rounded" variant="danger" onClick={handleDelete}>Delete</Button>
+      <Stack direction="horizontal" gap={2} className="text-center">
+        <Button type="button" className="btn-rounded btn-dark" onClick={handleDelete}>Yes</Button>
+        <Button type="button" className="btn-rounded btn-dark" onClick={() => setIsDeleting(false)}>No</Button>
+      </Stack>
     </Container>
   );
 };

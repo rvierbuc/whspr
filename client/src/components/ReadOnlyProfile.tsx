@@ -4,12 +4,28 @@ import axios from 'axios';
 import { useLoaderData } from 'react-router-dom';
 import Post from './Post';
 import WaveSurferComponent from './WaveSurfer';
+interface FollowerAttributes {
+  id: number;
+  username: string;
+  profileImgUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+interface FollowingAttributes {
+  id: number;
+  username: string;
+  profileImgUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 const ReadOnlyProfile = ({ audioContext }) => {
   const [selectedUserInfo, setSelectedUserInfo] = useState<any>();
   const [following, setFollowing] = useState<boolean>(false);
-  const [onProfile, setOnProfile] = useState<boolean>(true);
+  const [onGridView, setOnGridView] = useState<boolean>(true);
   const [onUserProfile, setOnUserProfile] = useState<boolean>(false);
-
+  const [onProfile, setOnProfile] = useState<boolean>(true);
+  const [selectedUserFollowing, setSelectedUserFollowing] = useState<FollowingAttributes[]>([]);
+  const [selectedUserFollowers, setSelectedUserFollowers] = useState<FollowerAttributes[]>([]);
   //const [userPosts, setUserPosts]  = useState<any>()
   const { id } = useParams();
   const user:any = useLoaderData();
@@ -77,47 +93,86 @@ const ReadOnlyProfile = ({ audioContext }) => {
       console.log('following error', error);
     }
   };
+  const getSelectedUserFollowers = async () => {
+    try {
+      const followers = await axios.get(
+        `/post/user/${currentUser.id}/followers`,
+      );
+      setSelectedUserFollowers(followers.data);
+    } catch (error) {
+      console.log('error fetching current user followers', error);
+    }
+  };
+  const getSelectedUserFollowing = async () => {
+    try {
+      const following = await axios.get(
+        `/post/user/${currentUser.id}/following`,
+      );
+      setSelectedUserFollowing(following.data);
+      console.log('set following', following.data);
+    } catch (error) {
+      console.log('error fetching current user following', error);
+    }
+  };
   useEffect(() => {
     console.log('use effect in read only profile', onUserProfile);
     getSelectedUserInfo();
     isFollowing();
+    getSelectedUserFollowers();
+    getSelectedUserFollowing();
   }, []);
   return (
-        <div className="user-main">
+        <div >
            {selectedUserInfo ? 
-          <div>
-            <div className="user-profile-card">
-                <div className="user-profile-image">
-                    <img 
-                    style={{ width: 'auto', height: '100px', objectFit: 'scale-down' }}
+          <div className='card' style={{margin:'1rem', height:'100%'}}>
+            <div id='header' style={{margin:'1rem'}}>
+            <div className="row-container" >
+                <div >
+                    <img className="profile-image"
+                    style={{ height: '100px' }}
                     src={selectedUserInfo[0].user.profileImgUrl} alt="user profile image" />
                 </div>
                 <div className="user-profile-info">
-                  <h2 style={{ color: 'white' }}>{selectedUserInfo[0].user.username}</h2>
+                  <h2 style={{ color: '#0f0c0c', fontSize: '2rem' }}>{selectedUserInfo[0].user.username}</h2>
                 </div>
                 {following ? 
                 <button
                 className='btn btn-light'
+                style={{ marginLeft: 'auto', marginRight: '1rem' }}
                 onClick={() => stopFollowing()}
                 >Unfollow</button>
                   : <button
                 className='btn btn-light'
+                style={{ marginLeft: 'auto', marginRight: '1rem' }}
                 onClick={() => startFollowing()}
                 >Follow</button>}
             </div>
-            <div style={{ marginBottom: '10px', maxWidth: '950px', marginLeft: 'auto', marginRight: 'auto' }}>
-              {selectedUserInfo.map((post) => (
+            <div className='row-container' style={{justifyContent:'center'}}>
+              <div style ={{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', margin:'.5rem'}}>
+                  <div>{selectedUserFollowing.length}</div>
+                  <div>Following</div>
+              </div>
+              <div style ={{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', margin:'.5rem'}}>
+                  <div>{selectedUserFollowers.length}</div>
+                  <div>Following</div>
+              </div>
+            </div>
+            </div>
+            <div style={{maxWidth: '100vw', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'start', gap:'1rem', marginLeft:'.5rem'}}>
+              {selectedUserInfo.map((post, index) => (
                 <div>
                 <WaveSurferComponent
+                key={index}
                 postObj={post}
                 audioUrl={post.soundUrl}
                 postId={post.id}
                 userId={user.id}
                 getPosts={getSelectedUserInfo}
-                onProfile={onProfile}
-                onUserProfile={onUserProfile}
+                onGridView={onGridView}
                 updatePost={updatePost}
-                setOnProfile={setOnProfile}
+                setOnGridView={setOnGridView}
+                onProfile={onProfile}
+                postWidth={100 / selectedUserInfo.length}
                 />
                 {/* each post should have its own instance of a waveSurfer comp */}
               </div>

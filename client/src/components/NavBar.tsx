@@ -38,19 +38,19 @@ const NavBar = () => {
   return (
     <>
 
-        <Navbar key={expand} expand={expand} className="navbar">
-          <Container fluid>
-            <Navbar.Brand href="/protected/feed/following"><img 
+      <Navbar key={expand} expand={expand} className="navbar">
+        <Container fluid>
+          <Navbar.Brand href="/protected/feed/following"><img
             src={require('../style/whspr-logo.png')}
             width={100}
             height={100}
             className="d-inline-block align-top"
             alt="whspr logo"
             style={{ cursor: 'pointer', margin: '10px' }}
-            /></Navbar.Brand>
-            <Navbar.Toggle onClick={() => { setIsOpen(() => !isOpen); }} aria-controls={`offcanvasNavbar-expand-${expand}`} style={{ color: '#e1e1e5', borderColor: '#e1e1e5', borderWidth: 'medium' }}>
+          /></Navbar.Brand>
+          <Navbar.Toggle onClick={() => { setIsOpen(() => !isOpen); }} aria-controls={`offcanvasNavbar-expand-${expand}`} style={{ color: '#e1e1e5', borderColor: '#e1e1e5', borderWidth: 'medium' }}>
             <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" className="bi bi-list" viewBox="0 0 16 16">
-              <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+              <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
             </svg>
             </Navbar.Toggle>
             <Navbar.Offcanvas
@@ -68,13 +68,13 @@ const NavBar = () => {
               </Offcanvas.Header>
               <Offcanvas.Body>
               <Nav className="ml-auto" style={{ color: '#e1e1e5' }}>
-                 {/* <Nav.Link onClick={() => handleNavigation('/protected/feed')} >Home</Nav.Link> */}
-                 {/* <Nav.Link onClick={() => handleNavigation('/protected/post')}>Post</Nav.Link> */}
-                 <Nav.Link onClick={() => handleNavigation('/protected/synthesize')}>Say Something</Nav.Link>
-                 <Nav.Link onClick={() => handleNavigation('/protected/conch')}>Magic Conch</Nav.Link>
-                 <Nav.Link onClick={() => handleNavigation('/protected/feed/explore')}>Explore</Nav.Link>
-                 <Nav.Link onClick={() => handleNavigation('/protected/profile')}>My Profile</Nav.Link>
-                 <Nav.Link onClick={() => handleNavigation('/protected/radio')}>Radio</Nav.Link>
+                {/* <Nav.Link onClick={() => handleNavigation('/protected/feed')} >Home</Nav.Link> */}
+                {/* <Nav.Link onClick={() => handleNavigation('/protected/post')}>Post</Nav.Link> */}
+                <Nav.Link onClick={() => handleNavigation('/protected/synthesize')}>Say Something</Nav.Link>
+                <Nav.Link onClick={() => handleNavigation('/protected/conch')}>Magic Conch</Nav.Link>
+                <Nav.Link onClick={() => handleNavigation('/protected/feed/explore')}>Explore</Nav.Link>
+                <Nav.Link onClick={() => handleNavigation('/protected/profile')}>My Profile</Nav.Link>
+                <Nav.Link onClick={() => handleNavigation('/protected/radio')}>Radio</Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/WhsprAI')}>Whspr AI</Nav.Link>
                  <Nav.Link onClick={() => showModal()}>Logout</Nav.Link>
                  </Nav>
@@ -106,7 +106,7 @@ const NavBar = () => {
         </Navbar>
     </>
   );
- 
+
 };
 
 export default NavBar;

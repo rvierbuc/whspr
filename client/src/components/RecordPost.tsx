@@ -2,6 +2,19 @@ import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import * as Tone from 'tone';
+
+interface Props {
+  instrument: Tone.Oscillator | Tone.FatOscillator | Tone.FMOscillator | Tone.AMOscillator
+  user: any
+  audioContext:AudioContext
+  title: string
+  categories: string[]
+  filter: any
+  addSynth: boolean
+  start: () => void
+  stop: () => void
+}
 
 interface Constraints {
   audio: {
@@ -18,10 +31,11 @@ const constraints: Constraints = {
   video: false,
 };
 
-export const RecordPost = ({ user, audioContext, title, categories, openPost, filter, synthAudioChunks }: { user: any; audioContext:AudioContext; title: string; categories: string[]; openPost: () => void, filter: any, synthAudioChunks: Blob[], handleNavigation: (path: string) => void }) => {
+export const RecordPost = ({ user, audioContext, title, categories, filter, addSynth, instrument, start, stop }: Props) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+  const [synthAudioChunks, setSynthAudioChunks] = useState<Blob[]>([]);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null)
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioSource = useRef<AudioBufferSourceNode | null>(null);
@@ -68,16 +82,13 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
     }
   };
   const startRecording = async (): Promise<void> => {
-    // const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
     try {
       resumeAudioContext();
-      const stream = await initializeStream();
       setAudioChunks([]);
-
-      const source: MediaStreamAudioSourceNode = audioContext.createMediaStreamSource(stream);
-
+      const stream = await initializeStream();
       const destination: MediaStreamAudioDestinationNode = audioContext.createMediaStreamDestination();
 
+      const source: MediaStreamAudioSourceNode = audioContext.createMediaStreamSource(stream);
       // if the filter is the default setting
       if (Object.values(filter).length === 4) {
         source.connect(destination);
@@ -109,6 +120,9 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
 
   const stopRecording = async (): Promise<void> => {
     if (mediaRecorder?.current?.state === 'recording') {
+      if (addSynth) {
+        stop();
+      }
       mediaRecorder.current.stop();
       setIsRecording(false);
     }
@@ -121,6 +135,27 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
       track.stop();
     });
     setAudioStream(null);
+  };
+
+  const startSynthRecording = async () => {
+    try {
+      const context = Tone.context;
+      resumeAudioContext();
+      setSynthAudioChunks([]);
+      const destination = context.createMediaStreamDestination();
+      instrument.connect(destination);
+      mediaRecorder.current = new MediaRecorder(destination.stream);
+      mediaRecorder.current.ondataavailable = event => {
+        if (event.data.size > 0) {
+          setSynthAudioChunks((prevChunks: Blob[]) => [...prevChunks, event.data])
+        }
+      };
+      mediaRecorder.current.start();
+      start();
+      setIsRecording(true);
+    } catch(error) {
+      console.error('Could not start recording', error)
+    }
   };
 
   const playAudio = async (): Promise<void> => {
@@ -174,7 +209,12 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
   };
 
   const saveAudioToGoogleCloud = async (): Promise<void> => {
-    handleNavigation('/protected/feed/following');
+    if (title) {
+      handleNavigation('/protected/feed/following');
+    } else {
+      handleNavigation('/protected/synthesize');
+    }
+
     let audioBlob: Blob;
     // either synth or voice audio is saved
     if (synthAudioChunks.length > 0) {
@@ -183,19 +223,23 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
       audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
     }
     try {
-      const formData = new FormData();
-      formData.append('audio', audioBlob);
-      formData.append('userId', userId);
-      formData.append('title', title);
-      categories.forEach((category, index) => {
-        console.log('foreach', category, index);
-        formData.append(`category[${index}]`, category);
-      });
-      const response = await axios.post('/upload', formData);
-      if (response.status === 200) {
-        console.info('Audio save successfully');
+      if (title) {
+        const formData = new FormData();
+        formData.append('audio', audioBlob);
+        formData.append('userId', userId);
+        formData.append('title', title);
+        categories.forEach((category, index) => {
+          console.log('foreach', category, index);
+          formData.append(`category[${index}]`, category);
+        });
+        const response = await axios.post('/upload', formData);
+        if (response.status === 200) {
+          console.info('Audio save successfully');
+        } else {
+          console.error('Error saving audio:', response.statusText);
+        }
       } else {
-        console.error('Error saving audio:', response.statusText);
+        alert('Please input a title for your track!');
       }
     } catch (error) {
       console.error('Error saving audio:', error);
@@ -203,25 +247,43 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
   };
 
   return (
-    <div className="d-flex justify-content-center" style={{ margin: '15px' }}>
-      <Stack direction="horizontal" gap={2}>
+    <div className="d-flex justify-content-center mt-3">
+      <Stack direction="horizontal" gap={3}>
         <button
-          className="record-button"
-          onClick={startRecording}
-          disabled={isRecording}
-        ><img src={require('../style/recordbutton.png')} /></button>
+          //className="record-button"
+          //style={{height:'5rem', width:'5rem'}}
+          id='record-btn-new'
+          onClick={() => {
+            if (addSynth) {
+              startSynthRecording();
+            } else {
+              startRecording();
+            }
+          }}
+          disabled={isRecording || audioChunks.length > 0}
+        >
+          {/* <img src={require('../style/recordbutton.png')} /> */}
+          </button>
         <button
-          className="play-button"
+          id='play-btn-new'
+          //className="play-button"
           onClick={playAudio}
           // if either of the chunks has a valid length => either one can be played back
           disabled={isPlaying || (audioChunks.length === 0 && synthAudioChunks.length === 0)}
-        ><img src={require('../style/playbutton.png')} /></button>
+        >
+          {/* <img src={require('../style/playbutton.png')} /> */}
+          </button>
         <button
-          className="stop-button"
+          id='stop-btn-new'
+          //style={{height:'4rem', width:'4rem'}}
+          //className="stop-button"
           onClick={isRecording ? stopRecording : stopPlaying}
           disabled={!isRecording && !isPlaying}
-        ><img src={require('../style/stopbutton.png')} /></button>
+        >
+          {/* <img src={require('../style/stopbutton.png')} /> */}
+          </button>
         <button
+          id='remove-btn-new'
           className="delete-button"
           onClick={() => {
             emptyRecording()
@@ -230,18 +292,22 @@ export const RecordPost = ({ user, audioContext, title, categories, openPost, fi
           }
 
           disabled={audioChunks.length === 0 || isRecording}
-        ><img src={require('../style/deletebutton.png')} /></button>
+        >
+          {/* <img src={require('../style/deletebutton.png')} /> */}
+          </button>
         <button
-          className="post-button"
+          id='post-btn-new'
+          //className="post-button"
           onClick={() => {
-            openPost();
             saveAudioToGoogleCloud();
             stopStream();
           }
           }
           // if either set of chunks is valid then that version of audio can be saved
           disabled={(audioChunks.length === 0 && synthAudioChunks.length === 0) || isRecording}
-        ><img src={require('../style/postbutton.png')} /></button>
+        >
+          {/* <img src={require('../style/postbutton.png')} /> */}
+          </button>
       </Stack>
     </div >
   );

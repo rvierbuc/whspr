@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
+import React, { useEffect, useState } from 'react';
+import axios, { AxiosResponse } from 'axios';
 // import WaveSurferComponent from './WaveSurfer'
-import WaveSurfer from "wavesurfer.js";
-import RecordPlugin from "wavesurfer.js/dist/plugins/record";
-import RegionsPlugin from "wavesurfer.js/dist/plugins/regions.js";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import Comment from "./Comment";
+import WaveSurfer from 'wavesurfer.js';
+import RecordPlugin from 'wavesurfer.js/dist/plugins/record';
+import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.js';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import Comment from './Comment';
 dayjs.extend(relativeTime);
 
 const HomePost = (props) => {
@@ -18,21 +18,16 @@ const HomePost = (props) => {
   const [comments, setComments] = useState<any>([]);
   const containerId = `waveform-${postId}-home`;
 
-  const getComments = async (limit: number, type: string) => {
+  const getComments = async () => {
     try {
       const commentsArr = await axios.get(
-        `/post/comment/${postObj.id}/${limit}`
+        `/post/comment/${postObj.id}`,
       );
-      if (commentsArr.data.length > 0 && type === "more") {
-        setComments(commentsArr.data);
-        setHearLess(true);
-        console.log("got new comments", commentsArr.data);
-      } else if (commentsArr.data.length > 0 && type === "first") {
-        setComments(commentsArr.data);
-        console.log("got comments", commentsArr.data);
-      }
+      setComments(commentsArr.data);
+      setHearLess(true);
+      console.log('got new comments', commentsArr.data);
     } catch (error) {
-      console.error("could not get comments", error);
+      console.error('could not get comments', error);
     }
   };
 
@@ -50,7 +45,7 @@ const HomePost = (props) => {
       wave.destroy();
     }
     //create the new wave
-    console.log("creating new wave");
+    console.log('creating new wave');
 
     const wavesurfer = WaveSurfer.create({
       // barWidth: 15,
@@ -58,8 +53,8 @@ const HomePost = (props) => {
       // barGap: 2,
       interact: true,
       container: `#${containerId}`,
-      waveColor: "rgb(166, 197, 255)",
-      progressColor: "rgb(60, 53, 86)",
+      waveColor: 'rgb(166, 197, 255)',
+      progressColor: 'rgb(60, 53, 86)',
       url: audioUrl,
       width: 900,
       height: 200,
@@ -68,7 +63,7 @@ const HomePost = (props) => {
 
     // regions = wavesurfer.registerPlugin(RegionsPlugin.create());
 
-    wavesurfer.on("click", () => {
+    wavesurfer.on('click', () => {
       // if (wave) {
       //   wave.playPause();
       //   setIsPlaying(() => !isPlaying);
@@ -77,17 +72,17 @@ const HomePost = (props) => {
         start: wavesurfer.getCurrentTime(),
         end: wavesurfer.getCurrentTime() + 0.25,
         drag: true,
-        color: "hsla(250, 100%, 30%, 0.5)",
-        id: "test",
+        color: 'hsla(250, 100%, 30%, 0.5)',
+        id: 'test',
       });
     });
-    wavesurfer.on("finish", async () => {
+    wavesurfer.on('finish', async () => {
       setIsPlaying(false);
     });
 
     setWave(wavesurfer);
     setDisplay(true);
-    console.log("wave created!");
+    console.log('wave created!');
   };
 
   useEffect(() => {
@@ -97,7 +92,7 @@ const HomePost = (props) => {
     <div
       className="container-fluid"
       id="feed-container"
-      style={{ width:'auto', margin:'auto'}}
+      style={{ width: 'auto', margin: 'auto' }}
     >
       <div className="row" id="feed-row">
         <div className="col-sm" id="feed-col-sm">
@@ -111,28 +106,28 @@ const HomePost = (props) => {
                 className="d-flex flex-row align-items-center justify-content-start"
                 id="header"
                 style={{
-                  padding: "10px",
+                  padding: '10px',
                 }}
               >
                 <img
                   src={postObj.user.profileImgUrl}
                   className="rounded-circle"
                   style={{
-                    width: "auto",
-                    height: "70px",
-                    margin: "20px",
-                    objectFit: "scale-down",
-                    borderStyle: "solid",
-                    borderWidth: "medium",
-                    borderColor: "#3c3556",
+                    width: 'auto',
+                    height: '70px',
+                    margin: '20px',
+                    objectFit: 'scale-down',
+                    borderStyle: 'solid',
+                    borderWidth: 'medium',
+                    borderColor: '#3c3556',
                   }}
                 />
                 <a
                   href={`profile/${postObj.user.id}`}
                   style={{
-                    fontSize: "xx-large",
-                    color: "#0f0c0c",
-                    textDecoration: "none",
+                    fontSize: 'xx-large',
+                    color: '#0f0c0c',
+                    textDecoration: 'none',
                   }}
                   id="feed-username"
                 >
@@ -141,23 +136,23 @@ const HomePost = (props) => {
               </div>
               <div
                 className="d-flex flex-row align-items-end justify-content-start"
-                style={{ marginTop: "3%" }}
+                style={{ marginTop: '3%' }}
               >
                 <div
                   style={{
-                    fontSize: "xxx-large",
-                    marginLeft: "20px",
-                    color: "#e1e1e5",
+                    fontSize: 'xxx-large',
+                    marginLeft: '20px',
+                    color: '#e1e1e5',
                   }}
                 >
                   {postObj.title}
                 </div>
                 <div
                   style={{
-                    marginLeft: "auto",
-                    marginRight: "2%",
-                    fontSize: "large",
-                    color: "#e1e1e5",
+                    marginLeft: 'auto',
+                    marginRight: '2%',
+                    fontSize: 'large',
+                    color: '#e1e1e5',
                   }}
                 >
                   {dayjs(postObj.createdAt).fromNow()}
@@ -172,10 +167,10 @@ const HomePost = (props) => {
                 id={containerId}></div>
               <div
                 style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  flexWrap:"wrap"
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
                 }}
               >
                 {postObj.categories ? (
@@ -184,10 +179,10 @@ const HomePost = (props) => {
                       id="tag"
                       //className="btn btn-link"
                       style={{
-                        color: "#e1e1e5",
-                        fontSize: "x-large",
-                        marginLeft: "16px",
-                        marginTop: "10px",
+                        color: '#e1e1e5',
+                        fontSize: 'x-large',
+                        marginLeft: '16px',
+                        marginTop: '10px',
                       }}
                     >{`#${cat}`}</button>
                   ))
@@ -197,57 +192,57 @@ const HomePost = (props) => {
 
                 <div
                   style={{
-                    padding: "2px",
-                    marginLeft: "auto",
-                    display: "flex",
-                    justifyContent: "space-evenly",
-                    alignContent: "center",
-                    marginTop: "10px",
+                    padding: '2px',
+                    marginLeft: 'auto',
+                    display: 'flex',
+                    justifyContent: 'space-evenly',
+                    alignContent: 'center',
+                    marginTop: '10px',
                   }}
                 >
                   <div>
                     <img
-                      src={require("../style/listenIcon.png")}
+                      src={require('../style/listenIcon.png')}
                       style={{
-                        width: "auto",
-                        height: "35px",
-                        objectFit: "scale-down",
-                        color: "#e1e1e5",
+                        width: 'auto',
+                        height: '35px',
+                        objectFit: 'scale-down',
+                        color: '#e1e1e5',
                       }}
                     />
                   </div>
                   <div
                     style={{
-                      marginLeft: "2px",
-                      marginRight: "2%",
-                      fontSize: "x-large",
-                      color: "#e1e1e5",
+                      marginLeft: '2px',
+                      marginRight: '2%',
+                      fontSize: 'x-large',
+                      color: '#e1e1e5',
                     }}
                   >
                     {postObj.listenCount}
                   </div>
-                  <div style={{ marginLeft: "3%" }}>
+                  <div style={{ marginLeft: '3%' }}>
                     <img
-                      src={require("../style/commentIcon.png")}
+                      src={require('../style/commentIcon.png')}
                       style={{
-                        width: "auto",
-                        height: "40px",
-                        objectFit: "scale-down",
-                        color: "#e1e1e5",
+                        width: 'auto',
+                        height: '40px',
+                        objectFit: 'scale-down',
+                        color: '#e1e1e5',
                       }}
                     />
                   </div>
                   <div
                     style={{
-                      marginLeft: "2px",
-                      marginRight: "2%",
-                      fontSize: "x-large",
-                      color: "#e1e1e5",
+                      marginLeft: '2px',
+                      marginRight: '2%',
+                      fontSize: 'x-large',
+                      color: '#e1e1e5',
                     }}
                   >
                     {postObj.commentCount}
                   </div>
-                  <div style={{ marginLeft: "5px" }}>
+                  <div style={{ marginLeft: '5px' }}>
                     <svg
                       width="32"
                       height="32"
@@ -260,10 +255,10 @@ const HomePost = (props) => {
                   </div>
                   <div
                     style={{
-                      marginLeft: "3px",
-                      marginRight: "2%",
-                      fontSize: "x-large",
-                      color: "#e1e1e5",
+                      marginLeft: '3px',
+                      marginRight: '2%',
+                      fontSize: 'x-large',
+                      color: '#e1e1e5',
                     }}
                   >
                     {postObj.likeCount}
@@ -317,16 +312,16 @@ const HomePost = (props) => {
               )}
               <div
                 style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
                 }}
               >
                 {comments && postObj.commentCount > comments.length ? (
                   <div
                     id="comment-btn"
                     onClick={() => {
-                      getComments(comments.length + 5, "more");
+                      getComments();
                     }}
                   >
                     Show Comments
