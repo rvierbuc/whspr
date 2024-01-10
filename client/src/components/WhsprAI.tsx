@@ -19,6 +19,7 @@ export const WhsprAI = ({ audioContext }) => {
   const frameRef = useRef<number | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
+  const pressTime = useRef(null);
   const cardRef = useRef(null);
   const transcript = useRef(null);
   const user = useLoaderData();
@@ -356,12 +357,18 @@ export const WhsprAI = ({ audioContext }) => {
   }, [animationInitialized]);
 
   const handlePressToTalkPress = () => {
-    setIsRecording(true);
+    pressTime.current = setTimeout(() => {
+      setIsRecording(true);
+      vibratePhone();
+    }, 300)
   };
 
   const handlePressToTalkRelease = () => {
-    setIsRecording(false);
-    vibratePhone();
+    clearTimeout(pressTime.current);
+    if (pressTime.current) {
+      setIsRecording(false);
+    }
+    pressTime.current = null;
   };
 
   const vibratePhone = () => {
@@ -404,14 +411,15 @@ export const WhsprAI = ({ audioContext }) => {
                 onTouchStart={isPhone ? () => { startUserMedia(); handlePressToTalkPress(); } : undefined}
                 onTouchEnd={isPhone ? handlePressToTalkRelease : undefined}
                 onContextMenu={(e) => e.preventDefault()}
-                className="btn"
+                className="push--skeuo"
                 style={{ border: 'none' }}>
-                {!isRecording
+                {/* {!isRecording
                   ? (<img src={require('../style/presstotalk.png')}
                     className="presstotalk-img" />)
                   : <img src={require('../style/pressedtotalk.png')}
                     draggable="false"
-                    className="presstotalk-img" />}
+                    className="presstotalk-img" />} */}
+                press and<br />hold to talk
               </button>
               )}
           </div>
