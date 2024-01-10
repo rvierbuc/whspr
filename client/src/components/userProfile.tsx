@@ -53,6 +53,7 @@ interface FollowerAttributes {
   id: number;
   username: string;
   profileImgUrl: string;
+  followerCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -61,6 +62,7 @@ interface FollowingAttributes {
   id: number;
   username: string;
   profileImgUrl: string;
+  followingCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -72,6 +74,8 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
   const [currentDeletePostId, setCurrentDeletePostId] = useState<number>(0);
   const [selectedUserFollowing, setSelectedUserFollowing] = useState<FollowingAttributes[]>([]);
   const [displayFollowers, setDisplayFollowers] = useState<boolean>(true);
+  const [followerCount, setFollowerCount] = useState<number>(0);
+  const [followingCount, setFollowingCount] = useState<number>(0);
   const currentUser: any = useLoaderData();
 
   // setting a delete state => if true => render a fade in asking if the user wants to delete the post
@@ -85,8 +89,6 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
         `/post/selected/${currentUser.id}`,
       );
       setSelectedUserPosts(selectedUserObj.data);
-      // setUserPosts(selectedUserObj.data[0].Posts)
-      console.log('heyx2', selectedUserObj);
     } catch (error) {
       console.error('could not get selected user info', error);
     }
@@ -96,7 +98,7 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
       const updatedPost = await axios.get(`/post/updatedPost/${postId}/${currentUser.id}`);
       const postIndex = await selectedUserPosts.findIndex((post) => post.id === updatedPost.data.id);
       //updatedPost.data.rank = selectedUserPosts[postIndex].rank;
-      const postsWUpdatedPost = await selectedUserPosts.toSpliced(postIndex, 1, updatedPost.data);
+      const postsWUpdatedPost = await selectedUserPosts.splice(postIndex, 1, updatedPost.data);
     } catch (error) {
       console.log('could not update post', error);
     }
@@ -107,6 +109,7 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
         `/post/user/${currentUser.id}/followers`,
       );
       setSelectedUserFollowers(followers.data);
+      setFollowerCount(followers[0].data.followerCount);
     } catch (error) {
       console.log('error fetching current user followers', error);
     }
@@ -117,6 +120,7 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
         `/post/user/${currentUser.id}/following`,
       );
       setSelectedUserFollowing(following.data);
+      setFollowingCount(following[0].data.followingCount);
       console.log('set following', following.data);
     } catch (error) {
       console.log('error fetching current user following', error);
@@ -167,48 +171,7 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
         </Modal.Dialog>
       </Modal>
       <div className="user-main" style={{ display: 'flex' }}>
-        <Col xs={12} lg={5}>
-          <Row>
-            <div
-              className="card user-profile-card"
-              style={{ justifyContent: 'center' }}
-            >
-              <div className="user-profile-image">
-                <img
-                  src={currentUser.profileImgUrl}
-                  alt="user profile image"
-                  style={{
-                    borderRadius: '50%',
-                    width: '100px',
-                    height: '100px',
-                    marginTop: '10px',
-                    marginBottom: '10px',
-                  }}
-                />
-              </div>
-              <div className="user-profile-info">
-                <h2 style={{ color: 'white' }}>{currentUser.username}</h2>
-              </div>
-              <RadioConfig setRoomProps={setRoomProps} />
-
-              <div className="display-followers-btn">
-                <button 
-                type="button" 
-                onClick={() => setDisplayFollowers(true)}
-                className='btn btn-light btn-lg'
-                >
-                  Followers
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setDisplayFollowers(false)}
-                  className='btn btn-light btn-lg'
-                >
-                  Following
-                </button>
-              </div>
-            </div>
-          </Row>
+        {/* <Col xs={12} lg={5}>
           {displayFollowers ? (
             <Row>
               <Col xs={12} lg={6}>
@@ -296,12 +259,53 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
               </Col>
             </Row>
           )}
-        </Col>
+        </Col> */}
         <div className="grid-post-container">
+          <Row>
+          <div
+              className="card user-profile-card"
+              style={{ justifyContent: 'center' }}
+             >
+              <div className="user-profile-image">
+                <img
+                  src={currentUser.profileImgUrl}
+                  alt="user profile image"
+                  style={{
+                    borderRadius: '50%',
+                    width: '100px',
+                    height: '100px',
+                    marginTop: '10px',
+                    marginBottom: '10px',
+                  }}
+                />
+              </div>
+              <div className="user-profile-info">
+                <h2 style={{ color: 'white' }}>{currentUser.username}</h2>
+              </div>
+              <RadioConfig setRoomProps={setRoomProps} />
+
+              <div className="display-followers-btn">
+                <button 
+                type="button" 
+                onClick={() => setDisplayFollowers(true)}
+                className='btn btn-light btn-lg'
+                >
+                  {followerCount} Followers 
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDisplayFollowers(false)}
+                  className='btn btn-light btn-lg'
+                >
+                  {followingCount} Following
+                </button>
+              </div>
+            </div>
+          </Row>
           {rows.map((row, index) => (
-            <Row key={index}>
+            <Col key={index}>
               {row.map((post) => (
-                <Col key={post.id}>
+                <Row key={post.id}>
                   <div className="grid-post-item">
                     <WaveSurferComponent
                       audioContext={audioContext}
@@ -320,9 +324,9 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
                       setCurrentDeletePostId={setCurrentDeletePostId}
                     />
                   </div>
-                </Col>
+                </Row>
               ))}
-            </Row>
+            </Col>
           ))}
         </div>
 

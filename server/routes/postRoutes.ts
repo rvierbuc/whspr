@@ -188,6 +188,7 @@ router.get('/user/:userId/followers', async (req: Request, res: Response) => {
         id: follower.id,
         username: follower.username,
         profileImgUrl: follower.profileImgUrl,
+        followerCount: followerDisplayInformation.length
       }
     });
     res.send(extractedFollowerInfo);
@@ -216,6 +217,7 @@ router.get('/user/:userId/following', async (req: Request, res: Response) => {
         id: following.id,
         username: following.username,
         profileImgUrl: following.profileImgUrl,
+        followingCount: followingDisplayInformation.length
       }
     });
     res.send(extractedFollowingInfo);

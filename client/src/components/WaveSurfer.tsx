@@ -68,7 +68,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [addComment, setAddComment] = useState<boolean>(false);
   // const { audioUrl, postId } = props;
   const containerId = `waveform-${postId || ''}`;
-  console.log('wavesurfer AC', audioContext);
   // const handleDelete: () => void = async () => {
   //   try {
   //     const deletePost = await axios.delete(`/deletePost/${userId}/${postId}`);

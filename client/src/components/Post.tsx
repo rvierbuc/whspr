@@ -17,7 +17,6 @@ const Post = (props) => {
   const { postObj, userId, updatePost, audioContext, addComment, setAddComment } = props;
   const [hearLess, setHearLess] = useState<boolean>(false);
   const [comments, setComments] = useState<any>([]);
-  console.log('post AC', audioContext)
   const getComments = async () => {
     try {
       const commentsArr = await axios.get(`/post/comment/${postObj.id}`);

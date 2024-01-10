@@ -153,9 +153,10 @@ body {
 
 .card.user-profile-card {
   display: flex;
+  position: relative;
   justify-content: center;
   align-items: center;
-  width: 65%;
+  width: 100%;
 }
 .card.user-profile-followers-card {
   display: flex;
