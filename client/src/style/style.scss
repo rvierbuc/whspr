@@ -33,6 +33,7 @@ body {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   @include blur(4.2px);
   border: 1px solid rgba(236, 210, 210, 0.36);
+  //height:100%
 }
 
 .room-info {
@@ -71,6 +72,7 @@ body {
 .simple-btn {
   background: transparent;
   border: none;
+  margin-top: 1rem;
 }
 #comment-btn {
   margin-left: 15px;
@@ -298,7 +300,44 @@ body {
   z-index: 200;
   max-width: 300px;
 }
+// .on-profile-tag:-webkit-scrollbar {
+//    background: 'pink';
+//    //border:'blue'
+// }
+/* width */
+.on-profile-tags::-webkit-scrollbar{
+  background-color: transparent;
+  //width: 8px;
+}
 
+.on-profile-tags::-webkit-scrollbar-corner {
+  background: transparent;
+  border: none;
+}
+/* Track */
+.on-profile-tags::-webkit-scrollbar-track:hover {
+  box-shadow: inset 0 0 5px rgb(65, 65, 65);
+  background: transparent;
+  border-radius: 10px;
+}
+
+/* Handle */
+.on-profile-tags::-webkit-scrollbar-thumb:vertical {
+  width: 8px;
+  background: #e9ecf313;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  @include blur(4.2px);
+  border: 1px solid rgba(236, 210, 210, 0.36);
+}
+.on-profile-tags::-webkit-scrollbar-thumb:horizontal:hover {
+  width: 8px;
+  background: #e9ecf313;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  @include blur(4.2px);
+  border: 1px solid rgba(236, 210, 210, 0.36);
+}
 
 .navbar-collapse.show {
   animation: navbarflyout 0.3s ease-in-out;

@@ -209,7 +209,12 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
   };
 
   const saveAudioToGoogleCloud = async (): Promise<void> => {
-    handleNavigation('/protected/feed/following');
+    if (title) {
+      handleNavigation('/protected/feed/following');
+    } else {
+      handleNavigation('/protected/synthesize');
+    }
+
     let audioBlob: Blob;
     // either synth or voice audio is saved
     if (synthAudioChunks.length > 0) {
@@ -218,19 +223,23 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
       audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
     }
     try {
-      const formData = new FormData();
-      formData.append('audio', audioBlob);
-      formData.append('userId', userId);
-      formData.append('title', title);
-      categories.forEach((category, index) => {
-        console.log('foreach', category, index);
-        formData.append(`category[${index}]`, category);
-      });
-      const response = await axios.post('/upload', formData);
-      if (response.status === 200) {
-        console.info('Audio save successfully');
+      if (title) {
+        const formData = new FormData();
+        formData.append('audio', audioBlob);
+        formData.append('userId', userId);
+        formData.append('title', title);
+        categories.forEach((category, index) => {
+          console.log('foreach', category, index);
+          formData.append(`category[${index}]`, category);
+        });
+        const response = await axios.post('/upload', formData);
+        if (response.status === 200) {
+          console.info('Audio save successfully');
+        } else {
+          console.error('Error saving audio:', response.statusText);
+        }
       } else {
-        console.error('Error saving audio:', response.statusText);
+        alert('Please input a title for your track!');
       }
     } catch (error) {
       console.error('Error saving audio:', error);

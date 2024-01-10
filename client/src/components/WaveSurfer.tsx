@@ -14,7 +14,7 @@ import { MdOutlineAddComment } from 'react-icons/md';
 import { MdOutlineFavoriteBorder } from 'react-icons/md';
 import { MdOutlineFavorite } from 'react-icons/md';
 import { MdArrowOutward } from 'react-icons/md';
-import { MdDeleteOutline } from "react-icons/md";
+import { MdDeleteOutline } from 'react-icons/md';
 
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
@@ -35,6 +35,7 @@ interface WaveSurferProps {
   isDeleting: boolean
   onGridView: boolean;
   setOnGridView: any;
+  postWidth:number;
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
@@ -65,6 +66,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [duration, setDuration] = useState<string>();
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [addComment, setAddComment] = useState<boolean>(false);
+  //const [hasCategories, setHasCategories] = useState<boolean>();
   // const { audioUrl, postId } = props;
   const containerId = `waveform-${postId || ''}`;
   console.log('wavesurfer AC', audioContext);
@@ -253,16 +255,25 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
     console.log('wave created!');
 
   };
-
+  //console.log('categories?', hasCategories);
   useEffect(() => {
     createSoundWaves();
     isFollowing();
+    // if (postObj.categories) {
+    //   if (postObj.categories.length > 0) {
+    //     setHasCategories(true);
+    //   } else {
+    //     setHasCategories(false);
+    //   }
+    // } else {
+    //   setHasCategories(false);
+    // }
   }, [audioUrl]);
   return (
     <div
       className="container"
       id="feed-container"
-      style={{ minWidth: '300px', width: '100%', height: '100%', marginTop: '1rem', marginBottom: '1rem' }}
+      style={{ width: onUserProfile || onProfile ? '300px' : '100%', height: '100%', marginTop: '1rem', marginBottom: '1rem' }}
     >
       {!isDeleting
         ?
@@ -328,7 +339,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 flexDirection: 'column',
                 paddingTop: '1rem',
                 paddingLeft: '1rem',
-                justifyContent: 'start' }}>
+                justifyContent: 'start',
+                alignContent:'end' }}>
               <div
                     style={{
                       display: 'flex',
@@ -343,17 +355,21 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     }}
                   >
                     <div
+                      
                       style={{
-                        fontSize: onUserProfile || onProfile ? '2rem' : '4rem',
+                        fontSize: onUserProfile || onProfile ? '1.5rem' : '4rem',
                         color: '#e1e1e5',
+                        marginTop:'.5rem',
+                        maxWidth:'190px',
                       }}
                     >
-                      {`${postObj.title} |`}
+                      {`${postObj.title}`}
                     </div>
                     <div
                       style={{
-                        marginLeft: '1rem',
-                        fontSize: 'large',
+                        marginTop:'.5rem',
+                        marginLeft: 'auto',
+                        fontSize: '.5rem',
                         color: '#e1e1e5',
                       }}
                     >
@@ -361,19 +377,17 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     </div>
                   </div>
                   <div
+                    className='on-profile-tags'
                     style={{
                       display: 'flex',
                       flexDirection: 'row',
-                      
                       marginTop: '-1rem',
                       flexWrap: 'wrap',
-                      // overflow:'hidden',
-                      // whiteSpace:'nowrap',
-                      // textOverflow: 'ellipsis',
-                      //overflow:'scroll',
+                      overflow: 'scroll',
+                      height: '2.5rem',
                       justifyContent: 'start',
                       marginLeft: '-1.5rem',
-                      maxWidth:'250px'
+                      //width:'15rem'
                     }}
                   >
                     {postObj.categories ? (
@@ -383,6 +397,11 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                           style={{
                             color: '#e1e1e5',
                             textDecoration: 'none',
+                            margin: '-.5rem',
+                            // overflow:'hidden',
+                            // whiteSpace:'nowrap',
+                            // textOverflow: 'ellipsis',
+                            //width:'5rem'
                           }}
                           onClick={() => getPosts('explore', cat)}
                           key={(index + 1).toString()}
@@ -424,7 +443,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                       display: 'flex',
                       flexDirection: 'row',
                       justifyContent: 'start',
-                      alignItems: 'center',
+                      alignItems: 'start',
                       flexWrap: 'wrap',
                       marginTop: '-2rem',
                       marginLeft: '-1rem',
@@ -434,15 +453,16 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   >
                     <div
                       style={{
-                        fontSize: onUserProfile || onProfile ? '2rem' : '4rem',
+                        fontSize: '4rem',
                         color: '#e1e1e5',
                       }}
                     >
-                      {`${postObj.title} |`}
+                      {postObj.title}
                     </div>
                     <div
                       style={{
-                        marginLeft: '1rem',
+                        marginTop:'1.5rem',
+                        marginLeft: 'auto',
                         fontSize: 'large',
                         color: '#e1e1e5',
                       }}
@@ -558,8 +578,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   <div style={{ color: '#e1e1e5', marginLeft: 'auto' }}>{duration ? duration : ''}</div>
                 </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginBottom:'8px' 
-            }}>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginBottom: '8px', 
+              }}>
               {postObj.isLiked ? (
                 <div>
                   {' '}
@@ -632,7 +652,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                         onClick={() => {
                           if (!isDeleting) {
                             setIsDeleting(true);
-                            setCorrectPostId(postId)
+                            setCorrectPostId(postId);
                           } else {
                             setIsDeleting(false);
                             setCorrectPostId(null);
@@ -642,12 +662,12 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                           color: '#e1e1e5',
                           height: '3rem',
                           width: '3rem',
-                          marginRight: '1rem'
+                          marginRight: '1rem',
                         }}></MdDeleteOutline>
                     </div>
-                  ) : (
+                ) : (
                     <div></div>
-                  )}
+                )}
               </div>
               {/* {onUserProfile ? (
                 <a></a>
@@ -671,7 +691,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
         <div
           className="container"
           id="feed-container"
-          style={{width: '100%', height: '100%'}}
+          style={{ width: '100%', height: '100%' }}
         >
           <Delete id={postId} userId={userId} setIsDeleting={setIsDeleting} setSelectedUserPosts={setSelectedUserPosts} />
         </div>}
