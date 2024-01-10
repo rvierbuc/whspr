@@ -11,7 +11,8 @@ import Container from 'react-bootstrap/Container';
 import WaveSurferComponent from './WaveSurfer';
 import WaveSurferSimple from './WaveSurferSimple';
 import { Link } from 'react-router-dom';
-import Delete from './Delete';
+import { Modal, Button } from 'react-bootstrap';
+
 interface PostAttributes {
   id: number;
   userId: number;
@@ -60,6 +61,7 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
   const [onProfile, setOnProfile] = useState<boolean>(true);
   const [onUserProfile, setOnUserProfile] = useState<boolean>(true);
   const [selectedUserFollowers, setSelectedUserFollowers] = useState<followerAttributes[]>([]);
+  const [currentDeletePostId, setCurrentDeletePostId] = useState<number>(0);
   const currentUser: any = useLoaderData();
 
   // setting a delete state => if true => render a fade in asking if the user wants to delete the post
@@ -108,9 +110,37 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
     const row = selectedUserPosts.slice(i, i + numberOfPostsPerRow);
     rows.push(row);
   }
+  // delete function
+  const handleDelete: (postId: number) => void = async (postId) => {
+    try {
+      const deletePost = await axios.delete(`/deletePost/${currentUser.id}/${postId}`);
+      console.log(deletePost.status);
+      const getPosts = await axios.get(`/post/selected/${currentUser.id}`);
+      setSelectedUserPosts(getPosts.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
 
     <Container>
+      <Modal style={ { backgroundColor: 'rgba(209, 209, 209, 0.6)' } } show={isDeleting} onHide={() => setIsDeleting(!isDeleting)}>
+        <Modal.Dialog style={ { backgroundColor: 'rgba(209, 209, 209, 0.6)' } }>
+          <Modal.Header closeButton>
+            <Modal.Title>Delete Post</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Are you sure you want to delete this post?
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setIsDeleting(!isDeleting)}>Cancel</Button>
+            <Button variant="danger" onClick={() => {
+              setIsDeleting(false);
+              handleDelete(currentDeletePostId);
+            }}>Delete</Button>
+          </Modal.Footer>
+        </Modal.Dialog>
+      </Modal>
       <div className="user-main" style={{ display: 'flex' }}>
         <Col xs={12} lg={5}>
           <Row>
@@ -176,7 +206,7 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
                       setIsDeleting={setIsDeleting}
                       setCorrectPostId={setCorrectPostId}
                       setSelectedUserPosts={setSelectedUserPosts}
-                      isDeleting={isDeleting}
+                      setCurrentDeletePostId={setCurrentDeletePostId}
                     />
                   </div>
                 </Col>
