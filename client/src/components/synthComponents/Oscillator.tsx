@@ -63,18 +63,18 @@ const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings,
           {/* oscillator types */}
           <div className="text-center text-white oscillatorOptions">
             <h5 className="text-center mb-2">Oscillator Type</h5>
-            <Button className="btn mx-1" id="sine" variant={selectedOscillator === oscillatorKeys[0] ? 'danger' : 'dark'} onClick={() => handleOscillatorChange(oscillator)}>Default</Button>
-            <Button className="btn mx-1" id="triangle" variant={selectedOscillator === oscillatorKeys[1] ? 'danger' : 'dark'} onClick={() => handleOscillatorChange(fatOscillator)} >Fat</Button>
-            <Button className="btn mx-1" id="square" variant={selectedOscillator === oscillatorKeys[2] ? 'danger' : 'dark'} onClick={() => handleOscillatorChange(fmOscillator)} >FM</Button>
-            <Button className="btn mx-1" id="sawtooth" variant={selectedOscillator === oscillatorKeys[3] ? 'danger' : 'dark'} onClick={() => handleOscillatorChange(amOscillator)} >AM</Button>
+            <Button className={`btn mx-1  ${selectedOscillator === oscillatorKeys[0] && 'activeButton'}`} variant='dark' onClick={() => handleOscillatorChange(oscillator)}>Default</Button>
+            <Button className={`btn mx-1 ${selectedOscillator === oscillatorKeys[1] && 'activeButton'}`} variant='dark' onClick={() => handleOscillatorChange(fatOscillator)} >Fat</Button>
+            <Button className={`btn mx-1 ${selectedOscillator === oscillatorKeys[2] && 'activeButton'}`} variant='dark' onClick={() => handleOscillatorChange(fmOscillator)} >FM</Button>
+            <Button className={`btn mx-1 ${selectedOscillator === oscillatorKeys[3] && 'activeButton'}`} variant='dark' onClick={() => handleOscillatorChange(amOscillator)} >AM</Button>
           </div>
           {/* wave types */}
           <div className="text-center text-white mx-auto">
             <h5 className="text-center mb-2">Wave Type</h5>
-            <Button className="btn mx-1" variant={type === 'sine' ? 'danger' : 'dark'} id="sine" onClick={(e) => handleTypeChange(e)}>Sine</Button>
-            <Button className="btn mx-1" variant={type === 'triangle' ? 'danger' : 'dark'} id="triangle" onClick={(e) => handleTypeChange(e)} >Triangle</Button>
-            <Button className="btn mx-1" variant={type === 'square' ? 'danger' : 'dark'} id="square" onClick={(e) => handleTypeChange(e)} >Square</Button>
-            <Button className="btn mx-1" variant={type === 'sawtooth' ? 'danger' : 'dark'} id="sawtooth" onClick={(e) => handleTypeChange(e)} >Sawtooth</Button>
+            <Button className={`btn mx-1 ${type === 'sine' && 'activeButton'}`} variant='dark' id="sine" onClick={(e) => handleTypeChange(e)}>Sine</Button>
+            <Button className={`btn mx-1 ${type === 'triangle' && 'activeButton'}`} variant='dark' id="triangle" onClick={(e) => handleTypeChange(e)} >Triangle</Button>
+            <Button className={`btn mx-1 ${type === 'square' && 'activeButton'}`} variant='dark' id="square" onClick={(e) => handleTypeChange(e)} >Square</Button>
+            <Button className={`btn mx-1 ${type === 'sawtooth' && 'activeButton'}`} variant='dark' id="sawtooth" onClick={(e) => handleTypeChange(e)} >Sawtooth</Button>
           </div>
           {/* frequency/detune and synth filters below */}
           <div className="mx-auto">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, BaseSyntheticEvent } from 'react';
-import { Container, Stack } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import Oscillator from './Oscillator';
-import { RecordPost }from '../RecordPost';
+import { RecordPost } from '../RecordPost';
 import Filters from './Filters';
 import PostCard from '../PostCard';
 import * as Tone from 'tone';
@@ -25,7 +25,7 @@ const defaultSettings = {
   highPassFrequency: 350,
   highPassType: 'highpass',
   lowPassType: 'lowpass',
-}
+};
 
 const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter }: Props): React.JSX.Element => {
   const [addSynth, setAddSynth ] = useState(false);
@@ -37,7 +37,7 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter }: Props)
 
   useEffect(() => {
     setAddSynth(false);
-    setInstrument(oscillatorOptions.oscillator)
+    setInstrument(oscillatorOptions.oscillator);
   }, []);
 
   const toggleSynth: () => void = () => addSynth === false ? setAddSynth(true) : setAddSynth(false);
@@ -56,7 +56,7 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter }: Props)
   };
 
   const stop: () => void = () => {
-    instrument.stop()
+    instrument.stop();
     if (audioContext.state === 'running') {
       audioContext.suspend();
     }
@@ -80,19 +80,28 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter }: Props)
   };
 
   return (
-    <Container className="w-75 rounded text-white text-center">
+    <Container className="rounded text-white text-center" style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '-1rem' }}>
       <div className="card p-3">
-        <div className="p-3 mb-3">
+        <div className="p-2 mb-1">
           <PostCard setPostCategories={setPostCategories} setPostTitle={setPostTitle} />
-          <Filters setFilter={setFilter} audioContext={audioContext} />
+          <Filters filter={filter} setFilter={setFilter} audioContext={audioContext} />
         </div>
-          <div className="synthOption">
-            <button type="button" className="text-white btn btn-dark btn-rounded" style={ { margin: '0.5rem', width: '50%' } } onClick={toggleSynth}>Synthesize your own sound!</button>
-          </div>
-          {addSynth === true &&
-          <Container className="syntheSize rounded mt-3">
-            <Oscillator setSynthAudioChunks={setSynthAudioChunks} stop={stop} start={start} instrument={instrument} oscillatorOptions={oscillatorOptions} setInstrument={setInstrument} oscSettings={oscSettings} changeType={changeType} changeValue={changeValue} />
-          </Container>}
+        <div className="synthOption">
+          <button type="button" className="text-white btn btn-dark btn-rounded" style={ { margin: '0.1rem', width: '50%' } } onClick={toggleSynth}>Synthesize your own sound!</button>
+        </div>
+        {addSynth === true &&
+        <Container className="syntheSize rounded mt-3">
+          <Oscillator
+            setSynthAudioChunks={setSynthAudioChunks}
+            stop={stop}
+            start={start}
+            instrument={instrument}
+            oscillatorOptions={oscillatorOptions}
+            setInstrument={setInstrument}
+            oscSettings={oscSettings}
+            changeType={changeType}
+            changeValue={changeValue} />
+        </Container>}
         <RecordPost
           addSynth={addSynth}
           user={user}
