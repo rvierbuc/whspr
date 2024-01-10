@@ -791,3 +791,51 @@ $bg: rgb(69, 67, 67);
     transition: opacity 200ms;
   }
 }
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  cursor: pointer;
+  outline: none;
+  height: 15px;
+  background: #ccc;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 15px;
+  background: #ccc;
+  border-radius: 16px;
+}
+
+input[type="range"]::-moz-range-track {
+  height: 15px;
+  background: #ccc;
+  border-radius: 16px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 15px;
+  width: 15px;
+  background-color: gray;
+  border-radius: 50%;
+  border: 2px solid rgb(60, 53, 86);
+  box-shadow: -407px 0 0 400px rgb(60, 53, 86);
+}
+
+input[type="range"]::-moz-range-thumb {
+  height: 15px;
+  width: 15px;
+  background-color: gray;
+  border-radius: 50%;
+  border: 1px solid rgb(60, 53, 86);
+  box-shadow: -407px 0 0 400px rgb(60, 53, 86);
+}
+
+.activeButton {
+  background-color: #7C3030;
+  border-color: #A51C30;
+}
