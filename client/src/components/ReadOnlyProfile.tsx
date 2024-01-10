@@ -85,7 +85,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
   return (
         <div >
            {selectedUserInfo ? 
-          <div className='card' style={{margin:'1rem'}}>
+          <div className='card' style={{margin:'1rem', height:'100%'}}>
             <div id='header' style={{margin:'1rem'}}>
             <div className="row-container" >
                 <div >
@@ -113,7 +113,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
               <div>Following 45 listeners</div>
             </div>
             </div>
-            <div style={{maxWidth: '1000px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+            <div style={{maxWidth: '100vw', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'start', gap:'1rem', marginLeft:'.5rem'}}>
               {selectedUserInfo.map((post, index) => (
                 <div>
                 <WaveSurferComponent
@@ -127,6 +127,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
                 updatePost={updatePost}
                 setOnGridView={setOnGridView}
                 onProfile={onProfile}
+                postWidth={100 / selectedUserInfo.length}
                 />
                 {/* each post should have its own instance of a waveSurfer comp */}
               </div>

@@ -13,7 +13,7 @@ import { MdOutlineAddComment } from 'react-icons/md';
 import { MdOutlineFavoriteBorder } from 'react-icons/md';
 import { MdOutlineFavorite } from 'react-icons/md';
 import { MdArrowOutward } from 'react-icons/md';
-import { MdDeleteOutline } from "react-icons/md";
+import { MdDeleteOutline } from 'react-icons/md';
 
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
@@ -66,6 +66,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [duration, setDuration] = useState<string>();
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [addComment, setAddComment] = useState<boolean>(false);
+  //const [hasCategories, setHasCategories] = useState<boolean>();
   // const { audioUrl, postId } = props;
   const containerId = `waveform-${postId || ''}`;
   console.log('wavesurfer AC', audioContext);
@@ -254,16 +255,25 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
     console.log('wave created!');
 
   };
-
+  //console.log('categories?', hasCategories);
   useEffect(() => {
     createSoundWaves();
     isFollowing();
+    // if (postObj.categories) {
+    //   if (postObj.categories.length > 0) {
+    //     setHasCategories(true);
+    //   } else {
+    //     setHasCategories(false);
+    //   }
+    // } else {
+    //   setHasCategories(false);
+    // }
   }, [audioUrl]);
   return (
     <div
       className="container"
       id="feed-container"
-      style={{ minWidth: '300px', width: '100%', height: '100%', marginTop: '1rem', marginBottom: '1rem' }}
+      style={{ width: onUserProfile || onProfile ? '300px' : '100%', height: '100%', marginTop: '1rem', marginBottom: '1rem' }}
     >
       <div className="row" id="feed-row">
         <div className="col-sm" id="feed-col-sm">
