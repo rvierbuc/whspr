@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" fill="rgb(155, 44, 22)" class="bi bi-record-fill" viewBox="0 0 16 16">
+<svg xmlns="http://www.w3.org/2000/svg" fill="rgb(155, 44, 22)" width="3.5rem" height="3.5rem" class="bi bi-record-fill" viewBox="0 0 16 16">
  
   <filter id="shadow">
       <feDropShadow dx="0.2" dy="0.4" stdDeviation="0.2" flood-color="#e9ecf343"/>
