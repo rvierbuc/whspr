@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg"  fill="rgb(155, 44, 22)" class="bi bi-record-circle-fill" viewBox="0 0 18 18">
+  
+  <filter id="shadow">
+      <feDropShadow dx="0.2" dy="0.4" stdDeviation="0.2" flood-color="#e9ecf343"/>
+  </filter>
+  <g filter="url(#shadow)">
+  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-8 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+  </g>
+</svg>
