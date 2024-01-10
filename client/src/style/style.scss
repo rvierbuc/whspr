@@ -159,10 +159,13 @@ body {
 }
 .card.user-profile-followers-card {
   display: flex;
-  justify-content: center;
+  flex-wrap:wrap;
+  justify-content: space-between;
   align-items: center;
   top: 6%;
   width: 130%;
+  padding-top: 20px;
+  padding-bottom: 45px;
 }
 .row-container {
   display: flex;
