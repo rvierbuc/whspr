@@ -43,28 +43,41 @@ interface PostAttributes {
     soundUrl: string;
     createdAt: Date;
     updatedAt: Date;
-  }
+  };
   isLiked: boolean;
 }
-interface followerAttributes {
+interface FollowerAttributes {
   id: number;
   username: string;
   profileImgUrl: string;
   createdAt: Date;
   updatedAt: Date;
 }
+
+interface FollowingAttributes {
+  id: number;
+  username: string;
+  profileImgUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 const UserProfile = ({ audioContext }) => {
-  const [selectedUserPosts, setSelectedUserPosts] = useState<PostAttributes[]>([]);
+  const [selectedUserPosts, setSelectedUserPosts] = useState<PostAttributes[]>(
+    [],
+  );
   const [onProfile, setOnProfile] = useState<boolean>(true);
   const [onUserProfile, setOnUserProfile] = useState<boolean>(true);
-  const [selectedUserFollowers, setSelectedUserFollowers] = useState<followerAttributes[]>([]);
+  const [selectedUserFollowers, setSelectedUserFollowers] = useState<FollowerAttributes[]>([]);
+  const [selectedUserFollowing, setSelectedUserFollowing] = useState<FollowingAttributes[]>([]);
+  const [displayFollowers, setDisplayFollowers] = useState<boolean>(true);
   const currentUser: any = useLoaderData();
-  
-
 
   const getSelectedUserInfo = async () => {
     try {
-      const selectedUserObj = await axios.get(`/post/selected/${currentUser.id}`);
+      const selectedUserObj = await axios.get(
+        `/post/selected/${currentUser.id}`,
+      );
       setSelectedUserPosts(selectedUserObj.data);
       // setUserPosts(selectedUserObj.data[0].Posts)
       console.log('heyx2', selectedUserObj);
@@ -74,27 +87,48 @@ const UserProfile = ({ audioContext }) => {
   };
   const updatePost = async (postId, updateType) => {
     try {
-      const updatedPost = await axios.get(`/post/updatedPost/${postId}/${currentUser.id}`);
-      const postIndex = selectedUserPosts.findIndex((post) => post.id === updatedPost.data.id);
+      const updatedPost = await axios.get(
+        `/post/updatedPost/${postId}/${currentUser.id}`,
+      );
+      const postIndex = selectedUserPosts.findIndex(
+        (post) => post.id === updatedPost.data.id,
+      );
       updatedPost.data.rank = selectedUserPosts[postIndex].rank;
-      const postsWUpdatedPost = selectedUserPosts.splice(postIndex, 1, updatedPost.data);
-     
+      const postsWUpdatedPost = selectedUserPosts.splice(
+        postIndex,
+        1,
+        updatedPost.data,
+      );
     } catch (error) {
       console.log('could not update post', error);
     }
   };
   const getSelectedUserFollowers = async () => {
     try {
-      const followers = await axios.get(`/post/user/${currentUser.id}/followers`);
+      const followers = await axios.get(
+        `/post/user/${currentUser.id}/followers`,
+      );
       setSelectedUserFollowers(followers.data);
     } catch (error) {
       console.log('error fetching current user followers', error);
+    }
+  };
+  const getSelectedUserFollowing = async () => {
+    try {
+      const following = await axios.get(
+        `/post/user/${currentUser.id}/following`,
+      );
+      setSelectedUserFollowing(following.data);
+      console.log('set following', following.data);
+    } catch (error) {
+      console.log('error fetching current user following', error);
     }
   };
   // use effect to load user posts on page load and the followers
   useEffect(() => {
     getSelectedUserInfo();
     getSelectedUserFollowers();
+    getSelectedUserFollowing();
   }, []);
   // code to separate the posts on the user profile into a grid
   const numberOfPostsPerRow = 3;
@@ -108,45 +142,131 @@ const UserProfile = ({ audioContext }) => {
       <div className="user-main" style={{ display: 'flex' }}>
         <Col xs={12} lg={5}>
           <Row>
-            <div className="card user-profile-card" style={{ justifyContent: 'center' }}>
+            <div
+              className="card user-profile-card"
+              style={{ justifyContent: 'center' }}
+            >
               <div className="user-profile-image">
-                <img 
-                src={currentUser.profileImgUrl} 
-                alt="user profile image" 
-                style={{ borderRadius: '50%', width: '100px', height: '100px' }}
+                <img
+                  src={currentUser.profileImgUrl}
+                  alt="user profile image"
+                  style={{
+                    borderRadius: '50%',
+                    width: '100px',
+                    height: '100px',
+                    marginTop: '10px',
+                    marginBottom: '10px',
+                  }}
                 />
               </div>
               <div className="user-profile-info">
                 <h2 style={{ color: 'white' }}>{currentUser.username}</h2>
               </div>
+              <div className="display-followers-btn">
+                <button 
+                type="button" 
+                onClick={() => setDisplayFollowers(true)}
+                className='btn btn-light btn-lg'
+                >
+                  Followers
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDisplayFollowers(false)}
+                  className='btn btn-light btn-lg'
+                >
+                  Following
+                </button>
+              </div>
             </div>
           </Row>
-        <Row>
-          <Col xs={12} lg={6}>
-        <div className="card user-profile-followers-card">
-          <h2 style={{ color: 'white' }}>Followers</h2>
-          <div className="user-profile-followers">
-            {selectedUserFollowers.map((follower, index) => (
-              <div className="user-profile-follower" key={index}>
-                <Link to={`/protected/profile/${follower.id}`}>
-                <img
-                  src={follower.profileImgUrl}
-                  alt="user profile image"
-                  style={{ borderRadius: '50%', width: '50px', height: '50px' }}
-                />
-                <h5 style={{ 
-                  color: 'white', 
-                  textOverflow: 'ellipsis', 
-                  overflow: 'hidden', 
-                  whiteSpace: 'nowrap',
-                }}>{follower.username}</h5>
-                  </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-            </Col>
-          </Row>
+          {displayFollowers ? (
+            <Row>
+              <Col xs={12} lg={6}>
+                <div className="card user-profile-followers-card">
+                  <h2 style={{ color: 'white' }}>Followers</h2>
+                  <div className="user-profile-followers">
+                    {selectedUserFollowers.map((follower, index) => (
+                      <div className="user-profile-follower" key={index}>
+                        <Row>
+                          <Col>
+                            <Link to={`/protected/profile/${follower.id}`}>
+                              <img
+                                src={follower.profileImgUrl}
+                                alt="user profile image"
+                                style={{
+                                  borderRadius: '50%',
+                                  width: '50px',
+                                  height: '50px',
+                                }}
+                              />
+                            </Link>
+                          </Col>
+                          <Col style={{ paddingTop: '10px' }}>
+                            <div className="follower-username">
+                              <h5
+                                style={{
+                                  color: 'white',
+                                  textOverflow: 'ellipsis',
+                                  overflow: 'hidden',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {follower.username}
+                              </h5>
+                            </div>
+                          </Col>
+                        </Row>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Col>
+            </Row>
+          ) : (
+            <Row>
+              <Col xs={12} lg={6}>
+                <div className="card user-profile-followers-card">
+                  <h2 style={{ color: 'white' }}>Following</h2>
+                  <div className="user-profile-following">
+                    {selectedUserFollowing.map((followedUser, index) => (
+                      <div className="user-profile-following" key={index}>
+                        <Row>
+                          <Col>
+                            <Link to={`/protected/profile/${followedUser.id}`}>
+                              <img
+                                src={followedUser.profileImgUrl}
+                                alt="user profile image"
+                                style={{
+                                  borderRadius: '50%',
+                                  width: '50px',
+                                  height: '50px',
+                                }}
+                              />
+                            </Link>
+                          </Col>
+                          <Col style={{ paddingTop: '10px' }}>
+                            <div className="follower-username">
+                              <h5
+                                style={{
+                                  color: 'white',
+                                  textOverflow: 'ellipsis',
+                                  overflow: 'hidden',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {followedUser.username}
+                              </h5>
+                            </div>
+                          </Col>
+                        </Row>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Col>
+            </Row>
+          )}
         </Col>
         <div className="grid-post-container">
           {rows.map((row, index) => (

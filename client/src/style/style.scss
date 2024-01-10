@@ -72,7 +72,6 @@ body {
   margin-left: 15px;
   color:rgb(166, 197, 255);
   cursor: pointer;
-  
 }
 .login:hover {
   color: rgb(166, 197, 255);
@@ -88,10 +87,13 @@ body {
 }
 .card.user-profile-followers-card {
   display: flex;
-  justify-content: center;
+  flex-wrap:wrap;
+  justify-content: space-between;
   align-items: center;
   top: 6%;
   width: 130%;
+  padding-top: 20px;
+  padding-bottom: 45px;
 }
 #header {
  
