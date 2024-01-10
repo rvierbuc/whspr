@@ -4,7 +4,6 @@ import RegionsPlugin from 'wavesurfer.js/dist/plugins/regions.js';
 import React, { useEffect, useState } from 'react';
 import Delete from './Delete';
 import axios from 'axios';
-import { Modal } from './Modal';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Post from './Post';
@@ -14,6 +13,7 @@ import { MdOutlineAddComment } from 'react-icons/md';
 import { MdOutlineFavoriteBorder } from 'react-icons/md';
 import { MdOutlineFavorite } from 'react-icons/md';
 import { MdArrowOutward } from 'react-icons/md';
+import { MdDeleteOutline } from 'react-icons/md';
 import { MdDeleteOutline } from 'react-icons/md';
 
 dayjs.extend(relativeTime);
@@ -35,7 +35,7 @@ interface WaveSurferProps {
   isDeleting: boolean
   onGridView: boolean;
   setOnGridView: any;
-  postWidth:number;
+  setCurrentDeletePostId: any
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
@@ -56,6 +56,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   isDeleting,
   onGridView,
   setOnGridView,
+  setCurrentDeletePostId
 }) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
@@ -275,8 +276,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       id="feed-container"
       style={{ width: onUserProfile || onProfile ? '300px' : '100%', height: '100%', marginTop: '1rem', marginBottom: '1rem' }}
     >
-      {!isDeleting
-        ?
+      
         <div className="row" id="feed-row">
           <div className="col-sm" id="feed-col-sm">
             <div className="card" id="feed-card" >
@@ -687,14 +687,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
             </div>
           </div>
         </div>
-        :
-        <div
-          className="container"
-          id="feed-container"
-          style={{ width: '100%', height: '100%' }}
-        >
-          <Delete id={postId} userId={userId} setIsDeleting={setIsDeleting} setSelectedUserPosts={setSelectedUserPosts} />
-        </div>}
+      
     </div>
   );
 };
