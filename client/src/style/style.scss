@@ -34,6 +34,7 @@ body {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   @include blur(4.2px);
   border: 1px solid rgba(236, 210, 210, 0.36);
+  //height:100%
 }
 
 .room-info {
@@ -76,6 +77,7 @@ body {
 .simple-btn {
   background: transparent;
   border: none;
+  margin-top: 1rem;
 }
 #comment-btn {
   margin-left: 15px;
@@ -84,19 +86,20 @@ body {
 }
 //recording buttons
 #play-btn-new {
-  background: #e9ecf343 url(play-fill.svg) no-repeat 1rem;
+  background: #e9ecf300 url(play-fill.svg) no-repeat 1rem;
 }
 #stop-btn-new {
-  background: #e9ecf343 url(stop-fill.svg) no-repeat 1rem;
+  background: #e9ecf300 url(stop-fill.svg) no-repeat;
 }
 #record-btn-new {
-  background: #e9ecf343 url(record-circle-fill.svg) no-repeat 1rem;
+  background: #e9ecf300 url(record-circle-fill.svg) no-repeat;
+  
 }
 #post-btn-new {
-  background: #e9ecf343 url(post.svg) no-repeat 1rem;
+  background: #e9ecf300 url(post.svg) no-repeat 1rem;
 }
 #remove-btn-new {
-  background: #e9ecf343 url(trash3-fill.svg) no-repeat 1rem;
+  background: #e9ecf300 url(trash3-fill.svg) no-repeat 1rem;
 }
 #stop-btn-new,
 #play-btn-new,
@@ -104,16 +107,41 @@ body {
 #post-btn-new,
 #remove-btn-new {
   background-position: center;
-  height: 2rem;
-  width: 2rem;
-  border-radius: 6px;
-  margin: 1rem;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-  @include blur(4.2px);
-  border: 1px solid rgba(236, 210, 210, 0.36);
-  // border: 1px solid rgb(45, 58, 81);
+  //background-size: cover;
+  height: 3rem; 
+  width: 3rem;
+  //border-radius: 6px;
+  margin:1rem;
+  //box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  //@include blur(4.2px);
+  border: none;
+ // border: 1px solid rgb(45, 58, 81);
 }
+#record-btn-new:hover {
+  background: #e9ecf300 url(record-circle-fill-hover.svg) no-repeat 1rem;
+  background-position: center;
+}
+#play-btn-new:hover {
+  background: #e9ecf300 url(play-fill-hover.svg) no-repeat 1rem;
+  background-position: center;
+  //background-size: cover;
+}
+#stop-btn-new:hover {
+  background: #e9ecf300 url(stop-fill-hover.svg) no-repeat 1rem;
+  background-position: center;
+  //background-size: cover;
 
+}
+#post-btn-new:hover {
+  background: #e9ecf300 url(post-hover.svg) no-repeat 1rem;
+  background-position: center;
+  //background-size: cover;
+}
+#remove-btn-new:hover {
+  background: #e9ecf300 url(trash3-fill-hover.svg) no-repeat 1rem;
+  background-position: center;
+  //background-size: cover;
+}
 #stop-btn-new:disabled,
 #play-btn-new:disabled,
 #record-btn-new:disabled,
@@ -278,6 +306,44 @@ body {
   font-size: 16px;
   z-index: 200;
   max-width: 300px;
+}
+// .on-profile-tag:-webkit-scrollbar {
+//    background: 'pink';
+//    //border:'blue'
+// }
+/* width */
+.on-profile-tags::-webkit-scrollbar{
+  background-color: transparent;
+  //width: 8px;
+}
+
+.on-profile-tags::-webkit-scrollbar-corner {
+  background: transparent;
+  border: none;
+}
+/* Track */
+.on-profile-tags::-webkit-scrollbar-track:hover {
+  box-shadow: inset 0 0 5px rgb(65, 65, 65);
+  background: transparent;
+  border-radius: 10px;
+}
+
+/* Handle */
+.on-profile-tags::-webkit-scrollbar-thumb:vertical {
+  width: 8px;
+  background: #e9ecf313;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  @include blur(4.2px);
+  border: 1px solid rgba(236, 210, 210, 0.36);
+}
+.on-profile-tags::-webkit-scrollbar-thumb:horizontal:hover {
+  width: 8px;
+  background: #e9ecf313;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  @include blur(4.2px);
+  border: 1px solid rgba(236, 210, 210, 0.36);
 }
 
 .navbar-collapse.show {

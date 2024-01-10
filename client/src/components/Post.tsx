@@ -62,7 +62,7 @@ const Post = (props) => {
 
       { comments.length > 0
         ? <div className='card' style={{ margin: '1rem', height:'25rem', overflow:'scroll' }} >
-          <div style={{ margin: 'auto', fontSize: '32px', color: '#e1e1e5' }}>Comments</div>
+          <div style={{ marginLeft: 'auto', marginRight:'auto', fontSize: '32px', color: '#e1e1e5' }}>Comments</div>
       { comments.map((commentObj: any) => (
           <Comment 
           key={commentObj.id}
@@ -81,7 +81,7 @@ const Post = (props) => {
                     //className='btn-link'
                     onClick={() => { getComments(); }}
                     >{`Listen to all ${postObj.commentCount} comments`}</button>
-              : <div></div>
+              : <div> <button className='simple-btn'></button></div>
               }
             {hearLess
               ? <button
