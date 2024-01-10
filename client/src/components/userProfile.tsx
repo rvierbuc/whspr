@@ -149,8 +149,8 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
   return (
 
     <Container>
-      <Modal style={ { backgroundColor: 'rgba(209, 209, 209, 0.6)' } } show={isDeleting} onHide={() => setIsDeleting(!isDeleting)}>
-        <Modal.Dialog style={ { backgroundColor: 'rgba(209, 209, 209, 0.6)' } }>
+      <Modal style={{ backgroundColor: 'rgba(209, 209, 209, 0.6)' }} show={isDeleting} onHide={() => setIsDeleting(!isDeleting)}>
+        <Modal.Dialog style={{ backgroundColor: 'rgba(209, 209, 209, 0.6)' }}>
           <Modal.Header closeButton>
             <Modal.Title>Delete Post</Modal.Title>
           </Modal.Header>
@@ -192,10 +192,10 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
               <RadioConfig setRoomProps={setRoomProps} />
 
               <div className="display-followers-btn">
-                <button 
-                type="button" 
-                onClick={() => setDisplayFollowers(true)}
-                className='btn btn-light btn-lg'
+                <button
+                  type="button"
+                  onClick={() => setDisplayFollowers(true)}
+                  className='btn btn-light btn-lg'
                 >
                   Followers
                 </button>
@@ -219,7 +219,7 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
                       <div className="user-profile-follower" key={index}>
                         <Row>
                           <Col>
-                            <Link to={`/protected/profile/${follower.id}`}>
+                            <Link to={`/protected/feed/profile/${follower.id}`}>
                               <img
                                 src={follower.profileImgUrl}
                                 alt="user profile image"
@@ -262,7 +262,7 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
                       <div className="user-profile-following" key={index}>
                         <Row>
                           <Col>
-                            <Link to={`/protected/profile/${followedUser.id}`}>
+                            <Link to={`/protected/feed/profile/${followedUser.id}`}>
                               <img
                                 src={followedUser.profileImgUrl}
                                 alt="user profile image"
