@@ -652,10 +652,10 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                         onClick={() => {
                           if (!isDeleting) {
                             setIsDeleting(true);
-                            setCorrectPostId(postId);
+                            setCurrentDeletePostId(postId);
                           } else {
                             setIsDeleting(false);
-                            setCorrectPostId(null);
+                            setCurrentDeletePostId(null);
                           }
                         }}
                         style={{
