@@ -15,6 +15,7 @@ import { MdOutlineFavorite } from 'react-icons/md';
 import { MdArrowOutward } from 'react-icons/md';
 import { MdDeleteOutline } from 'react-icons/md';
 import { MdDeleteOutline } from 'react-icons/md';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
@@ -274,7 +275,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
     <div
       className="container"
       id="feed-container"
-      style={{ width: onUserProfile || onProfile ? '300px' : '100%', height: '100%', marginTop: '1rem', marginBottom: '1rem' }}
+      style={{ width: onUserProfile || onProfile ? '315px' : '100%', height: '100%', marginTop: '1rem', marginBottom: '1rem' }}
     >
       
         <div className="row" id="feed-row">
@@ -347,7 +348,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                       flexDirection: 'row',
                       justifyContent: 'start',
                       alignItems: 'center',
-                      flexWrap: 'wrap',
+                      //flexWrap: 'wrap',
                       marginTop: '-2rem',
                       marginLeft: '-1rem',
                       marginBottom: '.5rem',
@@ -355,12 +356,16 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     }}
                   >
                     <div
-                      
+                      title={postObj.title}
                       style={{
                         fontSize: onUserProfile || onProfile ? '1.5rem' : '4rem',
                         color: '#e1e1e5',
                         marginTop:'.5rem',
-                        maxWidth:'190px',
+                        width:'190px',
+                        overflow:'hidden',
+                        whiteSpace:'nowrap',
+                        textOverflow: 'ellipsis',
+                        cursor:'pointer',
                       }}
                     >
                       {`${postObj.title}`}
@@ -585,7 +590,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   {' '}
                   <MdOutlineFavorite
                   data-toggle="tooltip" data-placement="top"
-                  title={`Liked by you & ${postObj.likeCount - 1} listeners`}
+                  title='Like'
                     type="button"
                     //className="btn"
                     onClick={() => handleUnlike()}
@@ -607,7 +612,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   <MdOutlineFavoriteBorder
                     type="button"
                     data-toggle="tooltip" data-placement="top"
-                    title={`Liked by ${postObj.likeCount} listeners`}
+                    title='Like'
                     //className="btn btn-light"
                     onClick={() => handleLike()}
                     style={{
@@ -626,6 +631,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
               )}
               <MdOutlineAddComment
                 type='button'
+                title='Comment'
                 onClick={() => { setAddComment(() => !addComment); }}
                 style={{
                   //backgroundColor: 'rgba(233, 236, 243, 0.00)',
@@ -637,7 +643,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 }}
                 >
                 </MdOutlineAddComment>
-                <MdArrowOutward style={{
+                <MdArrowOutward 
+                title='Share'
+                style={{
                   //backgroundColor: 'rgba(233, 236, 243, 0.00)',
                   //borderColor: 'rgba(233, 236, 243, 0.00)',
                   color: '#e1e1e5',
