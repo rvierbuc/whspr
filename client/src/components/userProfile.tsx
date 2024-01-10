@@ -107,6 +107,7 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
   return (
     
     <Container>
+      
       <div className="user-main" style={{ display: 'flex' }}>
         <Col xs={12} lg={5}>
           <Row>
