@@ -59,6 +59,7 @@ const NavBar = () => {
               placement="end"
               show={isOpen}
               className='card'
+              onHide={() => setIsOpen(false)}
             >
               <Offcanvas.Header style={{ color: '#e1e1e5', cursor: 'pointer' }} onClick={() => { setIsOpen(() => !isOpen); }} >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-x-circle" viewBox="0 0 16 16">

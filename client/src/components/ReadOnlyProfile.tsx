@@ -4,8 +4,8 @@ import axios from 'axios';
 import { useLoaderData } from 'react-router-dom';
 import Post from './Post';
 import WaveSurferComponent from './WaveSurfer';
-import { IoPersonAdd } from "react-icons/io5";
-import { IoPersonRemoveOutline } from "react-icons/io5";
+import { IoPersonAdd } from 'react-icons/io5';
+import { IoPersonRemoveOutline } from 'react-icons/io5';
 
 interface FollowerAttributes {
   id: number;
@@ -29,6 +29,8 @@ const ReadOnlyProfile = ({ audioContext }) => {
   const [onProfile, setOnProfile] = useState<boolean>(true);
   const [selectedUserFollowing, setSelectedUserFollowing] = useState<FollowingAttributes[]>([]);
   const [selectedUserFollowers, setSelectedUserFollowers] = useState<FollowerAttributes[]>([]);
+  
+
   //const [userPosts, setUserPosts]  = useState<any>()
   const { id } = useParams();
   const user:any = useLoaderData();
@@ -127,8 +129,11 @@ const ReadOnlyProfile = ({ audioContext }) => {
   return (
         <div >
            {selectedUserInfo ? 
-          <div className='card' style={{ width:'100%', height:'100%', display:'flex', flexDirection: 'column', alignItems:'center'}}>
-            <div id='header' style={{margin:'1rem'}}>
+          <div 
+            className='card' 
+            style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+            >
+            <div id='header' style={{ margin: '1rem' }}>
             <div className="row-container" >
                 <div >
                     <img className="profile-image"
@@ -141,27 +146,27 @@ const ReadOnlyProfile = ({ audioContext }) => {
                 {following ? 
                 <IoPersonRemoveOutline
                 //className='btn btn-light'
-                style={{ marginLeft: '1rem', marginRight: '1rem', height:'1.5rem', width:'1.5rem', color:'rgb(155, 44, 22)'}}
+                style={{ marginLeft: '1rem', marginRight: '1rem', height: '1.5rem', width: '1.5rem', color: 'rgb(155, 44, 22)' }}
                 onClick={() => stopFollowing()}
                 ></IoPersonRemoveOutline>
                   : <IoPersonAdd
                 //className='btn btn-light'
-                style={{ marginLeft: '1rem', marginRight: '1rem', height:'1.5rem', width:'1.5rem', color:'rgb(54, 89, 169)' }}
+                style={{ marginLeft: '1rem', marginRight: '1rem', height: '1.5rem', width: '1.5rem', color: 'rgb(54, 89, 169)' }}
                 onClick={() => startFollowing()}
                 ></IoPersonAdd>}
             </div>
-            <div className='row-container' style={{justifyContent:'center'}}>
-              <div style ={{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', margin:'.5rem'}}>
+            <div className='row-container' style={{ justifyContent: 'center' }}>
+              <div style ={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: '.5rem' }}>
                   <div>{selectedUserFollowing.length}</div>
                   <div>Following</div>
               </div>
-              <div style ={{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', margin:'.5rem'}}>
+              <div style ={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: '.5rem' }}>
                   <div>{selectedUserFollowers.length}</div>
                   <div>Followers</div>
               </div>
             </div>
             </div>
-            <div style={{maxWidth: '999px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'start', gap:'1rem', }}>
+            <div style={{ maxWidth: '999px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'start', gap: '1rem' }}>
               {selectedUserInfo.map((post, index) => (
                 <div>
                 <WaveSurferComponent
@@ -175,7 +180,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
                 updatePost={updatePost}
                 setOnGridView={setOnGridView}
                 onProfile={onProfile}
-                postWidth={100 / selectedUserInfo.length}
+                audioContext={AudioContext}
                 />
                 {/* each post should have its own instance of a waveSurfer comp */}
               </div>

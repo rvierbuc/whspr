@@ -35,10 +35,6 @@ const Post = (props) => {
     setHearLess(false);
   };
 
-  useEffect(() => {
-    //getComments(2, 'first');
-  }, []);
-  //style={{borderRadius: "75px"}}
   return (
     <div style={{minHeight:'50px'}} >
       {

@@ -6,27 +6,42 @@ import WaveSurferComponent from './WaveSurfer';
 import { Params, useLoaderData } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
 import { useParams } from 'react-router';
-
+import { useNavigate } from 'react-router-dom';
+import Modal  from 'react-bootstrap/Modal';
 const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   const [posts, setPosts] = useState<any>();
   //const [title, setTitle] = useState<string>('Explore WHSPR');
   //const [onProfile, setOnProfile] = useState<boolean>(false);
   const [feed, setFeed] = useState<string>('following');
-  //const [show, setShow] = useState<boolean>(false);
+  const [showTagModal, setShowTagModal] = useState<boolean>(false);
   const user: any = useLoaderData();
   const { type }:Readonly<Params<string>> = useParams();
+  
+  // navigate functionality
+  const navigate = useNavigate();
+  const handleNavigation: (path: string) => void = (path: string) => navigate(path);
 
-  console.log('feed AC', audioContext);
+  //console.log('feed AC', audioContext);
   const getPosts = async (feedType, tag) => {
     setFeed(feedType);
     try {
       const allPosts: AxiosResponse = await axios.get(`/post/${type}/${user.id}/${tag}`);
-      setPosts(allPosts.data);
+      if (allPosts.data.length === 0) {
+        handleNavigation('/protected/feed/explore');
+        
+        setShowTagModal(true);
+      } else {
+        setPosts(allPosts.data);
+      }
       console.log('all posts', allPosts.data);
     } catch (error) {
       console.log('client get friends', error);
     }
   };
+
+  // const getTagList = async () => {
+  //   const tagList = await 
+  // }
 
   const updatePost = async (postId, updateType) => {
     try {
@@ -61,6 +76,15 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   // const placeHolder: Blob[] = [];
   return (
     <div>
+      <Modal show={showTagModal} onHide={() => setShowTagModal(false)} aria-labelledby="contained-modal-title-vcenter"
+      centered>
+        <Modal.Header closeButton>
+          You are not following any whsprers yet!
+        </Modal.Header>
+        <Modal.Body>
+          Select some tags below to get started with some interesting sounds or check out our most popular posts!
+        </Modal.Body>
+      </Modal>
       {posts 
         ? (posts.length === 0 ? <a href='explore' style={{ color: 'white', fontSize: 'xxx-large' }}>Explore Popular Posts to Find Friends</a>
           : posts.map((post: any) => (
