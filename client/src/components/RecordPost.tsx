@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import * as Tone from 'tone';
+import Tuna from 'tuna';
 
 interface Props {
   instrument: Tone.Oscillator | Tone.FatOscillator | Tone.FMOscillator | Tone.AMOscillator
@@ -14,6 +15,8 @@ interface Props {
   addSynth: boolean
   start: () => void
   stop: () => void
+  tremoloFilter: Tuna.Tremolo
+  phaseFilter: Tuna.Phaser
 }
 
 interface Constraints {

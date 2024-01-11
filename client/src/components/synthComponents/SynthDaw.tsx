@@ -31,7 +31,6 @@ const defaultSettings = {
 
 const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, tremoloFilter }: Props): React.JSX.Element => {
   const [addSynth, setAddSynth ] = useState(false);
-  const [synthAudioChunks, setSynthAudioChunks] = useState<Blob[]>([]);
   const [filter, setFilter] = useState(defaultSettings);
   const [instrument, setInstrument] = useState(oscillatorOptions.oscillator);
   const [postCategories, setPostCategories] = useState<string[]>([]);
@@ -166,6 +165,8 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, tremoloF
           instrument={instrument}
           start={start}
           stop={stop}
+          phaseFilter={phaseFilter}
+          tremoloFilter={tremoloFilter}
         />
       </div>
     </Container>

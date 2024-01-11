@@ -20,6 +20,7 @@ interface Options {
 const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
   const user: any = useLoaderData();
   const tuna = new Tuna(audioContext);
+  console.log(user)
 
   const oscillatorOptions: Options = {
     oscillator: new Tone.Oscillator().toDestination(),
