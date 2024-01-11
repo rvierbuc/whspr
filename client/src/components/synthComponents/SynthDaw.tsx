@@ -34,7 +34,11 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, bitCrush
   const [instrument, setInstrument] = useState(oscillatorOptions.oscillator);
   const [postCategories, setPostCategories] = useState<string[]>([]);
   const [postTitle, setPostTitle] = useState<string>('');
-  const [synthFilters, setSynthFilters] = useState<{}>({phaseFilter, bitCrushFilter});
+  const [synthFilters, setSynthFilters] = useState<{phaseFilter: Tone.Phaser, bitCrushFilter: Tone.BitCrusher}>({phaseFilter, bitCrushFilter});
+  const [synthBypass, setSynthBypass] = useState<{phaseFilter: boolean, bitCrushFilter: boolean}>({
+    phaseFilter: true,
+    bitCrushFilter: true
+  });
   const [oscSettings, setOscSettings] = useState({
     frequency: instrument.frequency.value,
     detune: instrument.detune.value,
@@ -95,37 +99,28 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, bitCrush
     const value: number = e.target.value;
     const id: string = e.target.id;
     if (id === 'phaseFilter') {
-      if (!synthFilters[id]) {
-        setSynthFilters(synthFilters[id] = phaseFilter);
-      } else {
-        setSynthFilters(delete synthFilters[id]);
-      }
+      setSynthBypass({...synthBypass, [id]: !synthBypass[id]})
     } else {
       setPhaserSettings({ ...phaserSettings, [id]: Number(value) });
-      if (id === 'frequency') {
-        phaseFilter.frequency.value = Number(value);
-      } else if (id === 'wet') {
+      if (id === 'quality') {
+        phaseFilter.Q.value = Number(value);
+      } else if (id === 'phaseWet') {
         phaseFilter.wet.value = Number(value);
       }
     }
   };
-  console.log(synthFilters);
 
   const changeBitCrusher: (e: BaseSyntheticEvent) => void = (e) => {
     const value: number = e.target.value;
     const id: string = e.target.id;
     if (id === 'bitCrushFilter') {
-      if (!synthFilters[id]) {
-        setSynthFilters(synthFilters[id] = bitCrushFilter);
-      } else {
-        delete synthFilters[id];
-      }
+      setSynthBypass({...synthBypass, [id]: !synthBypass[id]})
     } else {
       setBitCrushSettings({ ...bitCrushSettings, [id]: Number(value) });
-      if (id === 'tremoloIntensity') {
-        bitCrushFilter.intensity = Number(value);
-      } else if (id === 'tremoloRate') {
-        bitCrushFilter.rate = Number(value);
+      if (id === 'bitWet') {
+        bitCrushFilter.bits.value = Number(value);
+      } else if (id === 'bitWet') {
+        bitCrushFilter.wet.value = Number(value);
       }
     }
   };
@@ -154,6 +149,7 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, bitCrush
             changePhase={changePhase}
             phaserSettings={phaserSettings}
             bitCrushSettings={bitCrushSettings}
+            synthBypass={synthBypass}
              />
         </Container>}
         <RecordPost
@@ -168,6 +164,8 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, bitCrush
           stop={stop}
           phaseFilter={phaseFilter}
           bitCrushFilter={bitCrushFilter}
+          synthFilters={synthFilters}
+          synthBypass={synthBypass}
         />
       </div>
     </Container>

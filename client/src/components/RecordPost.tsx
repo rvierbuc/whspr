@@ -17,6 +17,14 @@ interface Props {
   stop: () => void
   bitCrushFilter: Tuna.Tremolo
   phaseFilter: Tone.Phaser
+  synthFilters: {
+    phaseFilter: Tone.Phaser,
+    bitCrushFilter: Tone.BitCrusher
+  }
+  synthBypass: {
+    phaseFilter: boolean,
+    bitCrushFilter: boolean
+  }
 }
 
 interface Constraints {
@@ -34,7 +42,7 @@ const constraints: Constraints = {
   video: false,
 };
 
-export const RecordPost = ({ user, audioContext, title, categories, filter, addSynth, instrument, start, stop, bitCrushFilter, phaseFilter }: Props) => {
+export const RecordPost = ({ synthFilters, user, audioContext, title, categories, filter, addSynth, instrument, start, stop, bitCrushFilter, phaseFilter }: Props) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);

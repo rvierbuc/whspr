@@ -31,6 +31,10 @@ interface Props {
   }
   start: () => void;
   stop: () => void;
+  synthBypass: {
+    phaseFilter: boolean
+    bitCrushFilter: boolean
+  }
 }
 
 const Oscillator = ({
@@ -44,6 +48,7 @@ const Oscillator = ({
   changeBitCrusher,
   changePhase,
   bitCrushSettings,
+  synthBypass,
   phaserSettings }: Props): React.JSX.Element => {
 
   const oscillatorKeys = Object.keys(oscillatorOptions).map(option => option = option[0].toUpperCase() + option.substring(1));
@@ -52,8 +57,6 @@ const Oscillator = ({
   const { type, frequency, detune } = oscSettings;
   const { Q, phaseFrequency, phaseWet } = phaserSettings;
   const { bits, bitWet } = bitCrushSettings;
-  const [phaseBypass, setPhaseBypass] = useState<boolean>(true);
-  const [bitBypass, setBitBypass] = useState<boolean>(true);
   const [selectedWave, setSelectedWave] = useState('Select Wave');
   const [selectedOscillator, setSelectedOscillator] = useState<string>(oscillatorKeys[0]);
 
@@ -116,13 +119,10 @@ const Oscillator = ({
           {/* PHASER OPTIONS */}
           <div className="mx-auto" style={{marginBottom: '-1rem'}}>
             <Button
-              className={`btn-sm btn-dark ${!phaseBypass && 'activeButton'}`}
+              className={`btn-sm btn-dark ${!synthBypass.phaseFilter && 'activeButton'}`}
               style={{display: 'flex', justifyContent: 'center'}}
               id='phaseFilter'
-              onClick={(e) => {
-                setPhaseBypass(!phaseBypass);
-                changePhase(e)
-              }}>Phaser</Button>
+              onClick={changePhase}>Phaser</Button>
           </div>
           <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
             <Stack direction="horizontal" gap={5}>
@@ -136,16 +136,13 @@ const Oscillator = ({
               </div>
             </Stack>
           </div>
-          {/* TREMOLO OPTIONS */}
+          {/* BITCRUSHER OPTIONS */}
           <div className="mx-auto" style={{marginBottom: '-1rem'}}>
             <Button
-              className={`btn-sm btn-dark ${!bitBypass && 'activeButton'}`}
+              className={`btn-sm btn-dark ${!synthBypass.bitCrushFilter && 'activeButton'}`}
               style={{ display: 'flex', justifyContent: 'center' }}
               id='bitCrushFilter'
-              onClick={(e) => {
-                setBitBypass(!bitBypass);
-                changeBitCrusher(e)
-              }}
+              onClick={changeBitCrusher}
               >Tremolo</Button>
           </div>
           <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
