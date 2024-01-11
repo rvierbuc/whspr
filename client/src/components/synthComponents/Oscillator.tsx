@@ -11,21 +11,17 @@ interface Props {
   changeType: (e: BaseSyntheticEvent) => void;
   changeValue: (e: BaseSyntheticEvent) => void;
   phaserSettings: {
-    phaseRate: number
-    phaseDepth: number
-    phaseFeedback: number
-    phaseStereoPhase: number
-    phaseBaseModulationFrequency: number
-    phaseBypass: boolean
+    phaseFrequency: Tone.Unit.Frequency,
+    Q: number
+    octaves: number
+    phaseWet: number
   }
-  tremoloSettings: {
-    tremoloIntensity: number
-    tremoloRate: number
-    tremoloStereoPhase: number
-    tremoloBypass: boolean
+  bitCrushSettings: {
+    bitWet: number
+    bits: number
   }
   changePhase: (e: BaseSyntheticEvent) => void
-  changeTremolo: (e: BaseSyntheticEvent) => void
+  changeBitCrusher: (e: BaseSyntheticEvent) => void
   setInstrument: any
   oscillatorOptions: {
     oscillator: Tone.Oscillator
@@ -45,17 +41,19 @@ const Oscillator = ({
   changeValue,
   setInstrument,
   oscillatorOptions,
-  changeTremolo,
+  changeBitCrusher,
   changePhase,
-  tremoloSettings,
+  bitCrushSettings,
   phaserSettings }: Props): React.JSX.Element => {
 
   const oscillatorKeys = Object.keys(oscillatorOptions).map(option => option = option[0].toUpperCase() + option.substring(1));
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const { oscillator, fatOscillator, fmOscillator, amOscillator } = oscillatorOptions
   const { type, frequency, detune } = oscSettings;
-  const { phaseRate, phaseDepth, phaseBypass} = phaserSettings;
-  const { tremoloRate, tremoloIntensity, tremoloBypass } = tremoloSettings;
+  const { Q, phaseFrequency, phaseWet } = phaserSettings;
+  const { bits, bitWet } = bitCrushSettings;
+  const [phaseBypass, setPhaseBypass] = useState<boolean>(true);
+  const [bitBypass, setBitBypass] = useState<boolean>(true);
   const [selectedWave, setSelectedWave] = useState('Select Wave');
   const [selectedOscillator, setSelectedOscillator] = useState<string>(oscillatorKeys[0]);
 
@@ -118,43 +116,47 @@ const Oscillator = ({
           {/* PHASER OPTIONS */}
           <div className="mx-auto" style={{marginBottom: '-1rem'}}>
             <Button
-              className={`btn-sm btn-dark ${phaseBypass === true && 'activeButton'}`}
+              className={`btn-sm btn-dark ${!phaseBypass && 'activeButton'}`}
               style={{display: 'flex', justifyContent: 'center'}}
-              id='phaseBypass'
-              onClick={(e) => changePhase(e)}>Phaser</Button>
+              id='phaseFilter'
+              onClick={(e) => {
+                setPhaseBypass(!phaseBypass);
+                changePhase(e)
+              }}>Phaser</Button>
           </div>
           <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
             <Stack direction="horizontal" gap={5}>
               <div className="text-center text-white">
-                <h6>Rate</h6>
-                <input value={phaseRate} max="8" min="0.01" onChange={changePhase} id="phaseRate" type="range" step={0.05} />
+                <h6>Dry/Wet</h6>
+                <input value={phaseWet} max="1" min="0" onChange={changePhase} id="phaseWet" type="range" step={0.05} />
               </div>
               <div className="text-center text-white">
-                <h6>Depth</h6>
-                <input value={phaseDepth} max="1" min="0" onChange={changePhase} id="phaseDepth" type="range" step={0.005} />
+                <h6>Quality</h6>
+                <input value={Q} max="20" min="0" onChange={changePhase} id="quality" type="range" step={0.05} />
               </div>
             </Stack>
           </div>
           {/* TREMOLO OPTIONS */}
           <div className="mx-auto" style={{marginBottom: '-1rem'}}>
             <Button
-              className={`btn-sm btn-dark ${tremoloBypass === true && 'activeButton'}`}
+              className={`btn-sm btn-dark ${!bitBypass && 'activeButton'}`}
               style={{ display: 'flex', justifyContent: 'center' }}
-              id='tremoloBypass'
-              onClick={changeTremolo}
+              id='bitCrushFilter'
+              onClick={(e) => {
+                setBitBypass(!bitBypass);
+                changeBitCrusher(e)
+              }}
               >Tremolo</Button>
-          </div>
-          <div className="mx-auto" style={{marginBottom: '-1rem'}}>
           </div>
           <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
             <Stack direction="horizontal" gap={5}>
               <div className="text-center text-white">
-                <h6>Rate</h6>
-                <input value={tremoloRate} max="8" min="0.001" onChange={changeTremolo} id="tremoloRate" type="range" step={0.05} />
+                <h6>Dry/Wet</h6>
+                <input value={bitWet} max="1" min="0" onChange={changeBitCrusher} id="bitWet" type="range" step={0.05} />
               </div>
               <div className="text-center text-white">
-                <h6>Intensity</h6>
-                <input value={tremoloIntensity} max="1" min="0" onChange={changeTremolo} id="tremoloIntensity" type="range" step={0.005} />
+                <h6>Bits</h6>
+                <input value={bits} max="10" min="1" onChange={changeBitCrusher} id="bits" type="range" step={0.05} />
               </div>
             </Stack>
           </div>

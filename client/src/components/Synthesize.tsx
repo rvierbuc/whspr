@@ -20,7 +20,6 @@ interface Options {
 
 const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
   const user: any = useLoaderData();
-  // const context = Tone.context;
   const tuna = new Tuna(audioContext);
 
   const oscillatorOptions: Options = {
@@ -30,26 +29,21 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
     amOscillator: new Tone.AMOscillator().toDestination()
   }
 
-  const phaseFilter: Tuna.Phaser = new tuna.Phaser({
-    rate: 4,                     //0.01 to 8 is a decent range, but higher values are possible
-    depth: 0.5,                    //0 to 1
-    feedback: 0.7,                 //0 to 1+
-    stereoPhase: 40,               //0 to 180
-    baseModulationFrequency: 700,  //500 to 1500
-    bypass: false
-  });
+  const phaseFilter: Tone.Phaser = new Tone.Phaser({
+    frequency: 15,
+    Q: 10,
+    octaves: 4,
+    wet: 0.5
+  }).toDestination();
 
-  const tremoloFilter: Tuna.Tremolo = new tuna.Tremolo({
-    intensity: 0.5,    //0 to 1
-    rate: 4,           //0.001 to 8
-    stereoPhase: 0,    //0 to 180
-    bypass: false
-  });
+  const bitCrushFilter: Tone.BitCrusher = new Tone.BitCrusher().toDestination();
+  bitCrushFilter.bits.value = 5.5;
+  bitCrushFilter.wet.value = 0.5;
 
   return (
     <Container className="p-3 rounded w-75">
       <div>
-        <SynthDaw tremoloFilter={tremoloFilter} phaseFilter={phaseFilter} user={user} audioContext={audioContext} oscillatorOptions={oscillatorOptions} />
+        <SynthDaw bitCrushFilter={bitCrushFilter} phaseFilter={phaseFilter} user={user} audioContext={audioContext} oscillatorOptions={oscillatorOptions} />
       </div>
     </Container>
   );

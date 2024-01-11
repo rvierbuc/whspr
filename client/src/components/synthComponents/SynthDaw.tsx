@@ -5,7 +5,6 @@ import { RecordPost } from '../RecordPost';
 import Filters from './Filters';
 import PostCard from '../PostCard';
 import * as Tone from 'tone';
-import Tuna from 'tunajs';
 
 interface Options {
   oscillator: Tone.Oscillator
@@ -17,8 +16,8 @@ interface Options {
 interface Props {
   audioContext: AudioContext,
   oscillatorOptions: Options
-  phaseFilter: Tuna.Phaser
-  tremoloFilter: Tuna.Tremolo
+  phaseFilter: Tone.Phaser
+  bitCrushFilter: Tone.BitCrusher
   user: any
 }
 
@@ -29,31 +28,28 @@ const defaultSettings = {
   lowPassType: 'lowpass',
 };
 
-const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, tremoloFilter }: Props): React.JSX.Element => {
+const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, bitCrushFilter }: Props): React.JSX.Element => {
   const [addSynth, setAddSynth ] = useState(false);
   const [filter, setFilter] = useState(defaultSettings);
   const [instrument, setInstrument] = useState(oscillatorOptions.oscillator);
   const [postCategories, setPostCategories] = useState<string[]>([]);
   const [postTitle, setPostTitle] = useState<string>('');
+  const [synthFilters, setSynthFilters] = useState<{}>({phaseFilter, bitCrushFilter});
   const [oscSettings, setOscSettings] = useState({
     frequency: instrument.frequency.value,
     detune: instrument.detune.value,
     type: instrument.type,
   });
   const [phaserSettings, setPhaserSettings] = useState({
-    phaseRate: phaseFilter.rate,
-    phaseDepth: phaseFilter.depth,
-    phaseFeedback: phaseFilter.feedback,
-    phaseStereoPhase: phaseFilter.stereoPhase,
-    phaseBaseModulationFrequency: phaseFilter.baseModulationFrequency,
-    phaseBypass: phaseFilter.bypass,
+    phaseFrequency: phaseFilter.frequency.value,
+    Q: phaseFilter.Q.value,
+    octaves: phaseFilter.octaves,
+    phaseWet: phaseFilter.wet.value
   });
 
-  const [tremoloSettings, setTremoloSettings] = useState({
-    tremoloIntensity: tremoloFilter.intensity,
-    tremoloRate: tremoloFilter.rate,
-    tremoloStereoPhase: tremoloFilter.stereoPhase,
-    tremoloBypass: tremoloFilter.bypass,
+  const [bitCrushSettings, setBitCrushSettings] = useState({
+    bits: bitCrushFilter.bits.value,
+    bitWet: bitCrushFilter.wet.value,
   });
 
   useEffect(() => {
@@ -98,33 +94,38 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, tremoloF
   const changePhase: (e: BaseSyntheticEvent) => void = (e) => {
     const value: number = e.target.value;
     const id: string = e.target.id;
-    if (id === 'phaseBypass') {
-      const bool: boolean = phaseFilter.bypass;
-      setPhaserSettings({ ...phaserSettings, [id]: !bool });
-      phaseFilter.bypass = !bool;
+    if (id === 'phaseFilter') {
+      if (!synthFilters[id]) {
+        setSynthFilters(synthFilters[id] = phaseFilter);
+      } else {
+        setSynthFilters(delete synthFilters[id]);
+      }
     } else {
       setPhaserSettings({ ...phaserSettings, [id]: Number(value) });
-      if (id === 'phaseRate') {
-        phaseFilter.rate = Number(value);
-      } else if (id === 'phaseDepth') {
-        phaseFilter.depth = Number(value);
+      if (id === 'frequency') {
+        phaseFilter.frequency.value = Number(value);
+      } else if (id === 'wet') {
+        phaseFilter.wet.value = Number(value);
       }
     }
   };
+  console.log(synthFilters);
 
-  const changeTremolo: (e: BaseSyntheticEvent) => void = (e) => {
+  const changeBitCrusher: (e: BaseSyntheticEvent) => void = (e) => {
     const value: number = e.target.value;
     const id: string = e.target.id;
-    if (id === 'tremoloBypass') {
-      const bool: boolean = tremoloFilter.bypass;
-      setTremoloSettings({ ...tremoloSettings, [id]: !bool });
-      tremoloFilter.bypass = !bool;
+    if (id === 'bitCrushFilter') {
+      if (!synthFilters[id]) {
+        setSynthFilters(synthFilters[id] = bitCrushFilter);
+      } else {
+        delete synthFilters[id];
+      }
     } else {
-      setTremoloSettings({ ...tremoloSettings, [id]: Number(value) });
+      setBitCrushSettings({ ...bitCrushSettings, [id]: Number(value) });
       if (id === 'tremoloIntensity') {
-        tremoloFilter.intensity = Number(value);
+        bitCrushFilter.intensity = Number(value);
       } else if (id === 'tremoloRate') {
-        tremoloFilter.rate = Number(value);
+        bitCrushFilter.rate = Number(value);
       }
     }
   };
@@ -149,10 +150,10 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, tremoloF
             oscSettings={oscSettings}
             changeType={changeType}
             changeValue={changeValue}
-            changeTremolo={changeTremolo}
+            changeBitCrusher={changeBitCrusher}
             changePhase={changePhase}
             phaserSettings={phaserSettings}
-            tremoloSettings={tremoloSettings}
+            bitCrushSettings={bitCrushSettings}
              />
         </Container>}
         <RecordPost
@@ -166,7 +167,7 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, tremoloF
           start={start}
           stop={stop}
           phaseFilter={phaseFilter}
-          tremoloFilter={tremoloFilter}
+          bitCrushFilter={bitCrushFilter}
         />
       </div>
     </Container>

@@ -3,20 +3,20 @@ import axios from 'axios';
 import { Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import * as Tone from 'tone';
-import Tuna from 'tuna';
+import Tuna from 'tunajs';
 
 interface Props {
   instrument: Tone.Oscillator | Tone.FatOscillator | Tone.FMOscillator | Tone.AMOscillator
   user: any
-  audioContext:AudioContext
+  audioContext: AudioContext
   title: string
   categories: string[]
   filter: any
   addSynth: boolean
   start: () => void
   stop: () => void
-  tremoloFilter: Tuna.Tremolo
-  phaseFilter: Tuna.Phaser
+  bitCrushFilter: Tuna.Tremolo
+  phaseFilter: Tone.Phaser
 }
 
 interface Constraints {
@@ -34,7 +34,7 @@ const constraints: Constraints = {
   video: false,
 };
 
-export const RecordPost = ({ user, audioContext, title, categories, filter, addSynth, instrument, start, stop, tremoloFilter, phaseFilter }: Props) => {
+export const RecordPost = ({ user, audioContext, title, categories, filter, addSynth, instrument, start, stop, bitCrushFilter, phaseFilter }: Props) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
@@ -121,6 +121,13 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
     } catch (error) { console.error(error); }
   };
 
+  const stopStream = async (): Promise<void> => {
+    audioStream?.getTracks().forEach((track) => {
+      track.stop();
+    });
+    setAudioStream(null);
+  };
+
   const stopRecording = async (): Promise<void> => {
     if (mediaRecorder?.current?.state === 'recording') {
       if (addSynth) {
@@ -133,32 +140,27 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
     stopStream();
   };
 
-  const stopStream = async (): Promise<void> => {
-    audioStream?.getTracks().forEach((track) => {
-      track.stop();
-    });
-    setAudioStream(null);
-  };
 
-  const startSynthRecording = async () => {
+  const startSynthRecording = async (): Promise<void> => {
     try {
       const context = Tone.context;
       resumeAudioContext();
       setSynthAudioChunks([]);
       const destination = context.createMediaStreamDestination();
-      instrument.connect(phaseFilter)
+      instrument.connect(phaseFilter);
       phaseFilter.connect(destination);
+      Tone.start();
       mediaRecorder.current = new MediaRecorder(destination.stream);
       mediaRecorder.current.ondataavailable = event => {
         if (event.data.size > 0) {
-          setSynthAudioChunks((prevChunks: Blob[]) => [...prevChunks, event.data])
+          setSynthAudioChunks((prevChunks: Blob[]) => [...prevChunks, event.data]);
         }
       };
       mediaRecorder.current.start();
       start();
       setIsRecording(true);
-    } catch(error) {
-      console.error('Could not start recording', error)
+    } catch (error) {
+      console.error('Could not start recording', error);
     }
   };
 
