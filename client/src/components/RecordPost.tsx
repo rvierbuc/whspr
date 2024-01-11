@@ -42,7 +42,7 @@ const constraints: Constraints = {
   video: false,
 };
 
-export const RecordPost = ({ synthFilters, user, audioContext, title, categories, filter, addSynth, instrument, start, stop, bitCrushFilter, phaseFilter }: Props) => {
+export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, categories, filter, addSynth, instrument, start, stop, bitCrushFilter, phaseFilter }: Props) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
@@ -51,6 +51,9 @@ export const RecordPost = ({ synthFilters, user, audioContext, title, categories
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioSource = useRef<AudioBufferSourceNode | null>(null);
   const userId = user.id;
+
+  console.log('RecordPost', synthFilters);
+  console.log('RecordPost', synthBypass);
 
   // navigate functionality
   const navigate = useNavigate();
@@ -150,13 +153,27 @@ export const RecordPost = ({ synthFilters, user, audioContext, title, categories
 
 
   const startSynthRecording = async (): Promise<void> => {
+    const filters: any[] = [];
+    for (const key in synthBypass) {
+      if (!synthBypass[key]) {
+        filters.push(synthFilters[key]);
+      }
+    }
     try {
       const context = Tone.context;
       resumeAudioContext();
       setSynthAudioChunks([]);
       const destination = context.createMediaStreamDestination();
-      instrument.connect(phaseFilter);
-      phaseFilter.connect(destination);
+      if (filters.length === 1) {
+        instrument.connect(filters[0]);
+        filters[0].connect(destination);
+      } else if (filters.length === 2) {
+        instrument.connect(filters[0]);
+        filters[0].connect(filters[1]);
+        filters[1].connect(destination);
+      } else {
+        instrument.connect(destination);
+      }
       Tone.start();
       mediaRecorder.current = new MediaRecorder(destination.stream);
       mediaRecorder.current.ondataavailable = event => {
