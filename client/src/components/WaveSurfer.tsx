@@ -15,7 +15,7 @@ import { MdOutlineFavorite } from 'react-icons/md';
 import { MdArrowOutward } from 'react-icons/md';
 import { MdDeleteOutline } from 'react-icons/md';
 import { MdDeleteOutline } from 'react-icons/md';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { TooltipComponent } from './Tooltip';
 
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
@@ -356,7 +356,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     }}
                   >
                     <div
-                      title={postObj.title}
+                      //title={postObj.title}
                       style={{
                         fontSize: onUserProfile || onProfile ? '1.5rem' : '4rem',
                         color: '#e1e1e5',
@@ -368,7 +368,10 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                         cursor:'pointer',
                       }}
                     >
-                      {`${postObj.title}`}
+                      <TooltipComponent tooltip={postObj.title} id={`${postObj.id}`}>
+                      {postObj.title}
+                      </TooltipComponent>
+                      
                     </div>
                     <div
                       style={{
@@ -529,7 +532,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                           <path d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5m4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5"/>
                       </svg>
                     </button>
-                      : <button
+                      : <TooltipComponent id={`stop-${postObj.id}`} tooltip='Click to Pause'> <button
                       
                       style={{
                         background: 'none',
@@ -542,7 +545,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                           wave.playPause();
                           setIsPaused(() => !isPaused);
                         }
-                      }}></button>
+                      }}></button> </TooltipComponent>
                   ) : (
                     <button
                       type="button"
@@ -588,9 +591,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
               {postObj.isLiked ? (
                 <div>
                   {' '}
+                  <TooltipComponent tooltip='Unlike' id={`unlike-${postObj.id}`}>
                   <MdOutlineFavorite
-                  data-toggle="tooltip" data-placement="top"
-                  title='Like'
                     type="button"
                     //className="btn"
                     onClick={() => handleUnlike()}
@@ -605,10 +607,12 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     }}
                   >
                   </MdOutlineFavorite>
+                  </TooltipComponent>
                   {/* {postObj.likeCount ? <p style={{marginLeft: '3%', fontSize:'x-large'}}>{`${postObj.likeCount} likes`}</p> : <p></p>}  */}
                 </div>
               ) : (
                 <div>
+                  <TooltipComponent tooltip='Like' id={`like-${postObj.id}`}>
                   <MdOutlineFavoriteBorder
                     type="button"
                     data-toggle="tooltip" data-placement="top"
@@ -626,12 +630,14 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     }}
                   >
                   </MdOutlineFavoriteBorder>
+                  </TooltipComponent>
                   {/* {postObj.likeCount ? <p style={{marginLeft: '3%', fontSize:'x-large'}}>{`${postObj.likeCount} likes`}</p> : <p></p>} */}
                 </div>
               )}
+              <TooltipComponent tooltip='Add a Comment' id={`comment-${postObj.id}`}>
+
               <MdOutlineAddComment
                 type='button'
-                title='Comment'
                 onClick={() => { setAddComment(() => !addComment); }}
                 style={{
                   //backgroundColor: 'rgba(233, 236, 243, 0.00)',
@@ -643,8 +649,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 }}
                 >
                 </MdOutlineAddComment>
-                <MdArrowOutward 
-                title='Share'
+                  </TooltipComponent>
+                  <TooltipComponent tooltip='Share' id={`share-${postObj.id}`}>
+                <MdArrowOutward
                 style={{
                   //backgroundColor: 'rgba(233, 236, 243, 0.00)',
                   //borderColor: 'rgba(233, 236, 243, 0.00)',
@@ -653,8 +660,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   width: '3rem',
                   marginRight: '1rem',
                 }}></MdArrowOutward>
+                    </TooltipComponent>
                 {onUserProfile ? (
-                    <div onClick={() => setIsDeleting(true)}>
+                  <div onClick={() => setIsDeleting(true)}>
                       <MdDeleteOutline
                         type="button"
                         onClick={() => {
