@@ -352,11 +352,10 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                       marginTop: '-2rem',
                       marginLeft: '-1rem',
                       marginBottom: '.5rem',
-                      
                     }}
                   >
+                    <TooltipComponent tooltip={postObj.title} id={`${postObj.id}`}>
                     <div
-                      //title={postObj.title}
                       style={{
                         fontSize: onUserProfile || onProfile ? '1.5rem' : '4rem',
                         color: '#e1e1e5',
@@ -368,11 +367,10 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                         cursor:'pointer',
                       }}
                     >
-                      <TooltipComponent tooltip={postObj.title} id={`${postObj.id}`}>
+
                       {postObj.title}
-                      </TooltipComponent>
-                      
                     </div>
+                    </TooltipComponent>
                     <div
                       style={{
                         marginTop:'.5rem',
