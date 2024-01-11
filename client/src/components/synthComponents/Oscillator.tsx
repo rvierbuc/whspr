@@ -54,8 +54,8 @@ const Oscillator = ({
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const { oscillator, fatOscillator, fmOscillator, amOscillator } = oscillatorOptions
   const { type, frequency, detune } = oscSettings;
-  const { phaseRate, phaseDepth} = phaserSettings;
-  const { tremoloRate, tremoloIntensity } = tremoloSettings;
+  const { phaseRate, phaseDepth, phaseBypass} = phaserSettings;
+  const { tremoloRate, tremoloIntensity, tremoloBypass } = tremoloSettings;
   const [selectedWave, setSelectedWave] = useState('Select Wave');
   const [selectedOscillator, setSelectedOscillator] = useState<string>(oscillatorKeys[0]);
 
@@ -118,7 +118,7 @@ const Oscillator = ({
           {/* PHASER OPTIONS */}
           <div className="mx-auto" style={{marginBottom: '-1rem'}}>
             <Button
-              className="btn-sm btn-dark"
+              className={`btn-sm btn-dark ${phaseBypass === true && 'activeButton'}`}
               style={{display: 'flex', justifyContent: 'center'}}
               id='phaseBypass'
               onClick={(e) => changePhase(e)}>Phaser</Button>
@@ -138,7 +138,7 @@ const Oscillator = ({
           {/* TREMOLO OPTIONS */}
           <div className="mx-auto" style={{marginBottom: '-1rem'}}>
             <Button
-              className="btn-sm btn-dark"
+              className={`btn-sm btn-dark ${tremoloBypass === true && 'activeButton'}`}
               style={{ display: 'flex', justifyContent: 'center' }}
               id='tremoloBypass'
               onClick={changeTremolo}
