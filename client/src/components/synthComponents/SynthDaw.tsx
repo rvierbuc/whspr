@@ -5,6 +5,7 @@ import { RecordPost } from '../RecordPost';
 import Filters from './Filters';
 import PostCard from '../PostCard';
 import * as Tone from 'tone';
+import Tuna from 'tunajs';
 
 interface Options {
   oscillator: Tone.Oscillator
@@ -16,7 +17,8 @@ interface Options {
 interface Props {
   audioContext: AudioContext,
   oscillatorOptions: Options
-  phaseFilter: Tone.Phaser
+  phaseFilter: Tuna.Phaser
+  tremoloFilter: Tuna.Tremolo
   user: any
 }
 
@@ -27,13 +29,33 @@ const defaultSettings = {
   lowPassType: 'lowpass',
 };
 
-const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter }: Props): React.JSX.Element => {
+const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, tremoloFilter }: Props): React.JSX.Element => {
   const [addSynth, setAddSynth ] = useState(false);
   const [synthAudioChunks, setSynthAudioChunks] = useState<Blob[]>([]);
   const [filter, setFilter] = useState(defaultSettings);
   const [instrument, setInstrument] = useState(oscillatorOptions.oscillator);
   const [postCategories, setPostCategories] = useState<string[]>([]);
   const [postTitle, setPostTitle] = useState<string>('');
+  const [oscSettings, setOscSettings] = useState({
+    frequency: instrument.frequency.value,
+    detune: instrument.detune.value,
+    type: instrument.type,
+  });
+  const [phaserSettings, setPhaserSettings] = useState({
+    phaseRate: phaseFilter.rate,
+    phaseDepth: phaseFilter.depth,
+    phaseFeedback: phaseFilter.feedback,
+    phaseStereoPhase: phaseFilter.stereoPhase,
+    phaseBaseModulationFrequency: phaseFilter.baseModulationFrequency,
+    phaseBypass: phaseFilter.bypass,
+  });
+
+  const [tremoloSettings, setTremoloSettings] = useState({
+    tremoloIntensity: tremoloFilter.intensity,
+    tremoloRate: tremoloFilter.rate,
+    tremoloStereoPhase: tremoloFilter.stereoPhase,
+    tremoloBypass: tremoloFilter.bypass,
+  });
 
   useEffect(() => {
     setAddSynth(false);
@@ -42,11 +64,6 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter }: Props)
 
   const toggleSynth: () => void = () => addSynth === false ? setAddSynth(true) : setAddSynth(false);
 
-  const [oscSettings, setOscSettings] = useState({
-    frequency: instrument.frequency.value,
-    detune: instrument.detune.value,
-    type: instrument.type,
-  });
 
   const start: () => void = () => {
     instrument.start();
@@ -79,6 +96,40 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter }: Props)
     }
   };
 
+  const changePhase: (e: BaseSyntheticEvent) => void = (e) => {
+    const value: number = e.target.value;
+    const id: string = e.target.id;
+    if (id === 'phaseBypass') {
+      const bool: boolean = phaseFilter.bypass;
+      setPhaserSettings({ ...phaserSettings, [id]: !bool });
+      phaseFilter.bypass = !bool;
+    } else {
+      setPhaserSettings({ ...phaserSettings, [id]: Number(value) });
+      if (id === 'phaseRate') {
+        phaseFilter.rate = Number(value);
+      } else if (id === 'phaseDepth') {
+        phaseFilter.depth = Number(value);
+      }
+    }
+  };
+
+  const changeTremolo: (e: BaseSyntheticEvent) => void = (e) => {
+    const value: number = e.target.value;
+    const id: string = e.target.id;
+    if (id === 'tremoloBypass') {
+      const bool: boolean = tremoloFilter.bypass;
+      setTremoloSettings({ ...tremoloSettings, [id]: !bool });
+      tremoloFilter.bypass = !bool;
+    } else {
+      setTremoloSettings({ ...tremoloSettings, [id]: Number(value) });
+      if (id === 'tremoloIntensity') {
+        tremoloFilter.intensity = Number(value);
+      } else if (id === 'tremoloRate') {
+        tremoloFilter.rate = Number(value);
+      }
+    }
+  };
+
   return (
     <Container className="rounded text-white text-center" style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '-1rem' }}>
       <div className="card p-3">
@@ -92,15 +143,18 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter }: Props)
         {addSynth === true &&
         <Container className="syntheSize rounded mt-3">
           <Oscillator
-            setSynthAudioChunks={setSynthAudioChunks}
             stop={stop}
             start={start}
-            instrument={instrument}
             oscillatorOptions={oscillatorOptions}
             setInstrument={setInstrument}
             oscSettings={oscSettings}
             changeType={changeType}
-            changeValue={changeValue} />
+            changeValue={changeValue}
+            changeTremolo={changeTremolo}
+            changePhase={changePhase}
+            phaserSettings={phaserSettings}
+            tremoloSettings={tremoloSettings}
+             />
         </Container>}
         <RecordPost
           addSynth={addSynth}

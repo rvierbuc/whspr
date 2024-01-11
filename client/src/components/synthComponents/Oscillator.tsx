@@ -2,13 +2,6 @@ import React, { BaseSyntheticEvent, useState, useEffect } from 'react';
 import { Container, Stack, Button } from 'react-bootstrap';
 import * as Tone from 'tone';
 
-interface Options {
-  oscillator: Tone.Oscillator
-  fatOscillator: Tone.FatOscillator
-  fmOscillator: Tone.FMOscillator
-  amOscillator: Tone.AMOscillator
-}
-
 interface Props {
   oscSettings: {
     frequency: Tone.Unit.Frequency,
@@ -17,19 +10,52 @@ interface Props {
   };
   changeType: (e: BaseSyntheticEvent) => void;
   changeValue: (e: BaseSyntheticEvent) => void;
+  phaserSettings: {
+    phaseRate: number
+    phaseDepth: number
+    phaseFeedback: number
+    phaseStereoPhase: number
+    phaseBaseModulationFrequency: number
+    phaseBypass: boolean
+  }
+  tremoloSettings: {
+    tremoloIntensity: number
+    tremoloRate: number
+    tremoloStereoPhase: number
+    tremoloBypass: boolean
+  }
+  changePhase: (e: BaseSyntheticEvent) => void
+  changeTremolo: (e: BaseSyntheticEvent) => void
   setInstrument: any
-  oscillatorOptions: Options
+  oscillatorOptions: {
+    oscillator: Tone.Oscillator
+    fatOscillator: Tone.FatOscillator
+    fmOscillator: Tone.FMOscillator
+    amOscillator: Tone.AMOscillator
+  }
   start: () => void;
   stop: () => void;
-  setSynthAudioChunks: any
-  instrument: Tone.Oscillator | Tone.FatOscillator | Tone.FMOscillator | Tone.AMOscillator
 }
 
-const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings, changeType, changeValue, setInstrument, oscillatorOptions }: Props): React.JSX.Element => {
+const Oscillator = ({
+  start,
+  stop,
+  oscSettings,
+  changeType,
+  changeValue,
+  setInstrument,
+  oscillatorOptions,
+  changeTremolo,
+  changePhase,
+  tremoloSettings,
+  phaserSettings }: Props): React.JSX.Element => {
+
   const oscillatorKeys = Object.keys(oscillatorOptions).map(option => option = option[0].toUpperCase() + option.substring(1));
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const { oscillator, fatOscillator, fmOscillator, amOscillator } = oscillatorOptions
   const { type, frequency, detune } = oscSettings;
+  const { phaseRate, phaseDepth} = phaserSettings;
+  const { tremoloRate, tremoloIntensity } = tremoloSettings;
   const [selectedWave, setSelectedWave] = useState('Select Wave');
   const [selectedOscillator, setSelectedOscillator] = useState<string>(oscillatorKeys[0]);
 
@@ -59,7 +85,7 @@ const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings,
 
   return (
     <div className="oscillator card">
-        <Stack direction="vertical" gap={4} className="mx-auto mb-1">
+        <Stack direction="vertical" gap={3} className="mx-auto mb-1">
           {/* oscillator types */}
           <div className="text-center text-white oscillatorOptions">
             <h5 className="text-center mb-2">Oscillator Type</h5>
@@ -77,7 +103,7 @@ const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings,
             <Button className={`btn mx-1 ${type === 'sawtooth' && 'activeButton'}`} variant='dark' id="sawtooth" onClick={(e) => handleTypeChange(e)} >Sawtooth</Button>
           </div>
           {/* frequency/detune and synth filters below */}
-          <div className="mx-auto">
+          <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
             <Stack direction="horizontal" gap={5}>
               <div className="text-center text-white">
                 <h6>Frequency</h6>
@@ -86,6 +112,49 @@ const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings,
               <div className="text-center text-white">
                 <h6>Detune</h6>
                 <input value={detune} max="150" min="-150" onChange={changeValue} id="detune" type="range" />
+              </div>
+            </Stack>
+          </div>
+          {/* PHASER OPTIONS */}
+          <div className="mx-auto" style={{marginBottom: '-1rem'}}>
+            <Button
+              className="btn-sm btn-dark"
+              style={{display: 'flex', justifyContent: 'center'}}
+              id='phaseBypass'
+              onClick={(e) => changePhase(e)}>Phaser</Button>
+          </div>
+          <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
+            <Stack direction="horizontal" gap={5}>
+              <div className="text-center text-white">
+                <h6>Rate</h6>
+                <input value={phaseRate} max="8" min="0.01" onChange={changePhase} id="phaseRate" type="range" step={0.05} />
+              </div>
+              <div className="text-center text-white">
+                <h6>Depth</h6>
+                <input value={phaseDepth} max="1" min="0" onChange={changePhase} id="phaseDepth" type="range" step={0.005} />
+              </div>
+            </Stack>
+          </div>
+          {/* TREMOLO OPTIONS */}
+          <div className="mx-auto" style={{marginBottom: '-1rem'}}>
+            <Button
+              className="btn-sm btn-dark"
+              style={{ display: 'flex', justifyContent: 'center' }}
+              id='tremoloBypass'
+              onClick={changeTremolo}
+              >Tremolo</Button>
+          </div>
+          <div className="mx-auto" style={{marginBottom: '-1rem'}}>
+          </div>
+          <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
+            <Stack direction="horizontal" gap={5}>
+              <div className="text-center text-white">
+                <h6>Rate</h6>
+                <input value={tremoloRate} max="8" min="0.001" onChange={changeTremolo} id="tremoloRate" type="range" step={0.05} />
+              </div>
+              <div className="text-center text-white">
+                <h6>Intensity</h6>
+                <input value={tremoloIntensity} max="1" min="0" onChange={changeTremolo} id="tremoloIntensity" type="range" step={0.005} />
               </div>
             </Stack>
           </div>
