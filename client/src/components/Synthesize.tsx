@@ -3,6 +3,7 @@ import SynthDaw from './synthComponents/SynthDaw';
 import { Container } from 'react-bootstrap';
 import * as Tone from 'tone';
 import { useLoaderData } from 'react-router-dom';
+import * as Tone from 'tone';
 import Tuna from 'tunajs';
 
 
@@ -19,8 +20,8 @@ interface Options {
 
 const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
   const user: any = useLoaderData();
+  // const context = Tone.context;
   const tuna = new Tuna(audioContext);
-  console.log(user)
 
   const oscillatorOptions: Options = {
     oscillator: new Tone.Oscillator().toDestination(),

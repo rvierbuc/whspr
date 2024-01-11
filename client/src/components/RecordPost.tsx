@@ -34,7 +34,7 @@ const constraints: Constraints = {
   video: false,
 };
 
-export const RecordPost = ({ user, audioContext, title, categories, filter, addSynth, instrument, start, stop }: Props) => {
+export const RecordPost = ({ user, audioContext, title, categories, filter, addSynth, instrument, start, stop, tremoloFilter, phaseFilter }: Props) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
@@ -146,7 +146,8 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
       resumeAudioContext();
       setSynthAudioChunks([]);
       const destination = context.createMediaStreamDestination();
-      instrument.connect(destination);
+      instrument.connect(phaseFilter)
+      phaseFilter.connect(destination);
       mediaRecorder.current = new MediaRecorder(destination.stream);
       mediaRecorder.current.ondataavailable = event => {
         if (event.data.size > 0) {
