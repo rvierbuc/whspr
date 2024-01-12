@@ -131,7 +131,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       console.error('could not follow user', error);
     }
   };
-  console.log('isGrid', onGridView);
   const stopFollowing = async () => {
     try {
       const createFollowing = await axios.delete(

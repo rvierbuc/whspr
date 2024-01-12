@@ -168,6 +168,34 @@ body {
   padding-top: 20px;
   padding-bottom: 45px;
 }
+.followers-div {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  @include blur(4.2px);
+  border: 1px solid rgba(236, 210, 210, 0.36);
+  text-align: center;
+  .card.follower-search {
+    display: flex;
+    flex-wrap:wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    padding-bottom: 45px;
+    .follower-info-wrap{
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+.display-followers-btn {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
 .row-container {
   display: flex;
   flex-direction: row;
