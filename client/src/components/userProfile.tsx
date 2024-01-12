@@ -1,8 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useLoaderData } from 'react-router-dom';
-import Card from 'react-bootstrap/Card';
-import CardTitle from 'react-bootstrap/esm/CardTitle';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Post from './Post';
@@ -12,7 +11,7 @@ import WaveSurferComponent from './WaveSurfer';
 import WaveSurferSimple from './WaveSurferSimple';
 import { Link } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap';
-
+import { FaSearch } from 'react-icons/fa';
 interface PostAttributes {
   id: number;
   userId: number;
@@ -53,6 +52,7 @@ interface FollowerAttributes {
   id: number;
   username: string;
   profileImgUrl: string;
+  followerCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -61,68 +61,139 @@ interface FollowingAttributes {
   id: number;
   username: string;
   profileImgUrl: string;
+  followingCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
-const UserProfile = ({ audioContext, setRoomProps }) => {
-  const [selectedUserPosts, setSelectedUserPosts] = useState<PostAttributes[]>([]);
+interface CurrentUserAttributes {
+  id: number;
+  username: string;
+  profileImgUrl: string;
+  googleId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+const UserProfile = ({
+  audioContext,
+  setRoomProps,
+}: PropsType): JSX.Element => {
+  const currentUser: CurrentUserAttributes =
+    useLoaderData() as CurrentUserAttributes;
+  const [selectedUserPosts, setSelectedUserPosts] = useState<PostAttributes[]>(
+    [],
+  );
   const [onProfile, setOnProfile] = useState<boolean>(true);
   const [onUserProfile, setOnUserProfile] = useState<boolean>(true);
-  const [selectedUserFollowers, setSelectedUserFollowers] = useState<FollowerAttributes[]>([]);
+  const [selectedUserFollowers, setSelectedUserFollowers] = useState<
+  FollowerAttributes[]
+  >([]);
   const [currentDeletePostId, setCurrentDeletePostId] = useState<number>(0);
-  const [selectedUserFollowing, setSelectedUserFollowing] = useState<FollowingAttributes[]>([]);
+  const [selectedUserFollowing, setSelectedUserFollowing] = useState<
+  FollowingAttributes[]
+  >([]);
   const [displayFollowers, setDisplayFollowers] = useState<boolean>(true);
-  const currentUser: any = useLoaderData();
-
+  const [followerCount, setFollowerCount] = useState<number>(0);
+  const [followingCount, setFollowingCount] = useState<number>(0);
+  const [searchModal, setSearchModal] = useState<boolean>(false);
+  const [searchInput, setSearchInput] = useState<string>('');
+  const [followerSearchResults, setFollowerSearchResults] = useState<
+  FollowerAttributes[]
+  >([]);
+  const [followingSearchResults, setFollowingSearchResults] = useState<
+  FollowingAttributes[]
+  >([]);
   // setting a delete state => if true => render a fade in asking if the user wants to delete the post
   // then if they delete => set the state with the current posts
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [correctPostId, setCorrectPostId] = useState<number | null>(null);
 
-  const getSelectedUserInfo = async () => {
+  // function to get the selected user information
+  const getSelectedUserInfo = async (): Promise<void> => {
     try {
+      // make a request to the server endpoint using the currentUser's id
       const selectedUserObj = await axios.get(
         `/post/selected/${currentUser.id}`,
       );
+      // set the selected user posts to the data from the request
       setSelectedUserPosts(selectedUserObj.data);
-      // setUserPosts(selectedUserObj.data[0].Posts)
-      console.log('heyx2', selectedUserObj);
     } catch (error) {
       console.error('could not get selected user info', error);
     }
   };
-  const updatePost = async (postId, updateType) => {
+  // function to update the posts
+  const updatePost = async (postId, updateType): Promise<void> => {
     try {
-      const updatedPost = await axios.get(`/post/updatedPost/${postId}/${currentUser.id}`);
-      const postIndex = await selectedUserPosts.findIndex((post) => post.id === updatedPost.data.id);
+      // make a request to the server endpoint made for updating posts and use the post id and the current user id as params
+      const updatedPost = await axios.get(
+        `/post/updatedPost/${postId}/${currentUser.id}`,
+      );
+      // find the index of the post that was updated
+      const postIndex = await selectedUserPosts.findIndex(
+        (post) => post.id === updatedPost.data.id,
+      );
       //updatedPost.data.rank = selectedUserPosts[postIndex].rank;
-      const postsWUpdatedPost = await selectedUserPosts.toSpliced(postIndex, 1, updatedPost.data);
+      const postsWUpdatedPost = await selectedUserPosts.splice(
+        postIndex,
+        1,
+        updatedPost.data,
+      );
     } catch (error) {
       console.log('could not update post', error);
     }
   };
-  const getSelectedUserFollowers = async () => {
+  // function to get the selected user's followers
+  const getSelectedUserFollowers = async (): Promise<void> => {
     try {
+      // make a request to the server endpoint using the current user's id as an identifying param
       const followers = await axios.get(
         `/post/user/${currentUser.id}/followers`,
       );
+      // using the information fetched, set the selected user's followers and set the follower count using the length property on the array of followers
       setSelectedUserFollowers(followers.data);
+      setFollowerCount(followers.data.length);
     } catch (error) {
       console.log('error fetching current user followers', error);
     }
   };
-  const getSelectedUserFollowing = async () => {
+  // function to get the selected user's following list
+  const getSelectedUserFollowing = async (): Promise<void> => {
     try {
+      // make a request to the server endpoint using the current user's id as an identifying param
       const following = await axios.get(
         `/post/user/${currentUser.id}/following`,
       );
+      // using the information fetched, set the selected user's followers and set the follower count using the length property on the array of followers
       setSelectedUserFollowing(following.data);
-      console.log('set following', following.data);
+      setFollowingCount(following.data.length);
     } catch (error) {
       console.log('error fetching current user following', error);
     }
   };
-  // use effect to load user posts on page load and the followers
+  // function to handle the search input change and set the search input state
+  const handleSearchChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ): void => {
+    setSearchInput(event.target.value);
+  };
+  // function to handle the search submission
+  const handleSearchSubmission = async (): Promise<void> => {
+    try {
+      // make a request to the server endpoint using the current user's id and the search input as identifying params to get
+      // the search results for the followers and the following
+      const followersQueryResults = await axios.get(
+        `/post/user/${currentUser.id}/followers/search/${searchInput}`,
+      );
+      const followingQueryResults = await axios.get(
+        `/post/user/${currentUser.id}/following/search/${searchInput}`,
+      );
+      // using hooks, set the search results for the followers and the following respectively
+      setFollowerSearchResults(followersQueryResults.data);
+      setFollowingSearchResults(followingQueryResults.data);
+    } catch (error) {
+      console.log('error fetching search results', error);
+    }
+  };
+  // use effect to load user posts on page load and the followers / following
   useEffect(() => {
     getSelectedUserInfo();
     getSelectedUserFollowers();
@@ -138,7 +209,9 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
   // delete function
   const handleDelete: (postId: number) => void = async (postId) => {
     try {
-      const deletePost = await axios.delete(`/deletePost/${currentUser.id}/${postId}`);
+      const deletePost = await axios.delete(
+        `/deletePost/${currentUser.id}/${postId}`,
+      );
       console.log(deletePost.status);
       const getPosts = await axios.get(`/post/selected/${currentUser.id}`);
       setSelectedUserPosts(getPosts.data);
@@ -147,27 +220,127 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
     }
   };
   return (
-
     <Container>
-      <Modal style={{ backgroundColor: 'rgba(209, 209, 209, 0.6)' }} show={isDeleting} onHide={() => setIsDeleting(!isDeleting)}>
+      <Modal
+        style={{ backgroundColor: 'rgba(209, 209, 209, 0.6)' }}
+        show={isDeleting}
+        onHide={() => setIsDeleting(!isDeleting)}
+      >
         <Modal.Dialog style={{ backgroundColor: 'rgba(209, 209, 209, 0.6)' }}>
           <Modal.Header closeButton>
             <Modal.Title>Delete Post</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
-            Are you sure you want to delete this post?
-          </Modal.Body>
+          <Modal.Body>Are you sure you want to delete this post?</Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setIsDeleting(!isDeleting)}>Cancel</Button>
-            <Button variant="danger" onClick={() => {
-              setIsDeleting(false);
-              handleDelete(currentDeletePostId);
-            }}>Delete</Button>
+            <Button
+              variant="secondary"
+              onClick={() => setIsDeleting(!isDeleting)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              onClick={() => {
+                setIsDeleting(false);
+                handleDelete(currentDeletePostId);
+              }}
+            >
+              Delete
+            </Button>
           </Modal.Footer>
         </Modal.Dialog>
       </Modal>
+      <Modal
+        style={{
+          backgroundColor: 'rgb(209, 209, 209, 0.6',
+          textAlign: 'center',
+        }}
+        show={searchModal}
+        onHide={() => setSearchModal(!searchModal)}
+      >
+        <Modal.Dialog style={{ backgroundColor: 'rgb(209, 209, 209, 0.6' }}>
+          <Modal.Header closeButton>
+            <Modal.Title>Search for users who follow/are followed!</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchInput}
+              onChange={handleSearchChange}
+            />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => setSearchModal(!searchModal)}
+            >
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={() => handleSearchSubmission()}>
+              Search
+            </Button>
+          </Modal.Footer>
+        </Modal.Dialog>
+        {followerSearchResults.length > 0 && (
+          <div className="followers-div">
+            <h3>Followers</h3>
+            {followerSearchResults.map((follower) => (
+              <div className="card follower-search" key={follower.id}>
+                <Link
+                  to={`/protected/feed/profile/${follower.id}`}
+                  onClick={() => setSearchModal(false)}
+                >
+                  <div className="follower-info-wrap">
+                    <img
+                      src={follower.profileImgUrl}
+                      alt="follower profile image"
+                      style={{
+                        borderRadius: '50%',
+                        width: '100px',
+                        height: '100px',
+                        marginTop: '10px',
+                        marginBottom: '10px',
+                      }}
+                    />
+                    <h4>{follower.username}</h4>
+                  </div>
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
+        {followingSearchResults.length > 0 && (
+          <div className="followers-div">
+            <h3>Following</h3>
+            {followingSearchResults.map((following) => (
+              <div className="card follower-search" key={following.id}>
+                <Link
+                  to={`/protected/feed/profile/${following.id}`}
+                  onClick={() => setSearchModal(false)}
+                >
+                  <div className="follower-info-wrap">
+                    <img
+                      src={following.profileImgUrl}
+                      alt="follower profile image"
+                      style={{
+                        borderRadius: '50%',
+                        width: '100px',
+                        height: '100px',
+                        marginTop: '10px',
+                        marginBottom: '10px',
+                      }}
+                    />
+                    <h4>{following.username}</h4>
+                  </div>
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
+      </Modal>
       <div className="user-main" style={{ display: 'flex' }}>
-        <Col xs={12} lg={5}>
+        <div className="grid-post-container">
           <Row>
             <div
               className="card user-profile-card"
@@ -194,114 +367,29 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
               <div className="display-followers-btn">
                 <button
                   type="button"
-                  onClick={() => setDisplayFollowers(true)}
-                  className='btn btn-light btn-lg'
+                  onClick={() => setSearchModal(true)}
+                  className="btn btn-light btn-lg"
                 >
-                  Followers
+                  {followerCount} Followers
                 </button>
                 <button
                   type="button"
                   onClick={() => setDisplayFollowers(false)}
-                  className='btn btn-light btn-lg'
+                  className="btn btn-light btn-lg"
                 >
-                  Following
+                  {followingCount} Following
                 </button>
+                <FaSearch
+                  style={{ marginLeft: '10px', cursor: 'pointer' }}
+                  onClick={() => setSearchModal(true)}
+                />
               </div>
             </div>
           </Row>
-          {displayFollowers ? (
-            <Row>
-              <Col xs={12} lg={6}>
-                <div className="card user-profile-followers-card">
-                  <h2 style={{ color: 'white' }}>Followers</h2>
-                  <div className="user-profile-followers">
-                    {selectedUserFollowers.map((follower, index) => (
-                      <div className="user-profile-follower" key={index}>
-                        <Row>
-                          <Col>
-                            <Link to={`/protected/feed/profile/${follower.id}`}>
-                              <img
-                                src={follower.profileImgUrl}
-                                alt="user profile image"
-                                style={{
-                                  borderRadius: '50%',
-                                  width: '50px',
-                                  height: '50px',
-                                }}
-                              />
-                            </Link>
-                          </Col>
-                          <Col style={{ paddingTop: '10px' }}>
-                            <div className="follower-username">
-                              <h5
-                                style={{
-                                  color: 'white',
-                                  textOverflow: 'ellipsis',
-                                  overflow: 'hidden',
-                                  whiteSpace: 'nowrap',
-                                }}
-                              >
-                                {follower.username}
-                              </h5>
-                            </div>
-                          </Col>
-                        </Row>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </Col>
-            </Row>
-          ) : (
-            <Row>
-              <Col xs={12} lg={6}>
-                <div className="card user-profile-followers-card">
-                  <h2 style={{ color: 'white' }}>Following</h2>
-                  <div className="user-profile-following">
-                    {selectedUserFollowing.map((followedUser, index) => (
-                      <div className="user-profile-following" key={index}>
-                        <Row>
-                          <Col>
-                            <Link to={`/protected/feed/profile/${followedUser.id}`}>
-                              <img
-                                src={followedUser.profileImgUrl}
-                                alt="user profile image"
-                                style={{
-                                  borderRadius: '50%',
-                                  width: '50px',
-                                  height: '50px',
-                                }}
-                              />
-                            </Link>
-                          </Col>
-                          <Col style={{ paddingTop: '10px' }}>
-                            <div className="follower-username">
-                              <h5
-                                style={{
-                                  color: 'white',
-                                  textOverflow: 'ellipsis',
-                                  overflow: 'hidden',
-                                  whiteSpace: 'nowrap',
-                                }}
-                              >
-                                {followedUser.username}
-                              </h5>
-                            </div>
-                          </Col>
-                        </Row>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </Col>
-            </Row>
-          )}
-        </Col>
-        <div className="grid-post-container">
           {rows.map((row, index) => (
-            <Row key={index}>
+            <Col key={index}>
               {row.map((post) => (
-                <Col key={post.id}>
+                <Row key={post.id}>
                   <div className="grid-post-item">
                     <WaveSurferComponent
                       audioContext={audioContext}
@@ -320,15 +408,13 @@ const UserProfile = ({ audioContext, setRoomProps }) => {
                       setCurrentDeletePostId={setCurrentDeletePostId}
                     />
                   </div>
-                </Col>
+                </Row>
               ))}
-            </Row>
+            </Col>
           ))}
         </div>
-
       </div>
     </Container>
-
   );
 };
 
