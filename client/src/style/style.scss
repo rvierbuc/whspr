@@ -42,6 +42,7 @@ body {
 }
 #tag-mod-header{
 //width: auto;
+text-align:center;
 background-color:#3c3556;
 color:#e1e1e1;
 font-size: 3rem;
@@ -75,6 +76,44 @@ font-size: 3rem;
   box-shadow: 0 4px 30px rgb(0, 0, 0);
   @include blur(4.2px);
   border: none
+}
+.selected-tag{
+  background-color:#3c3556;
+  border:none;
+  border-radius:8px;
+  color:#e1e1e1;
+  box-shadow: 0 4px 3px #525151;
+}
+.selected-tag:disabled{
+  background-color:#3c3556b0;
+  border:none;
+  border-radius:8px;
+  color:#e1e1e1;
+  box-shadow: 0 4px 3px #525151;
+ 
+}
+#tag-submit {
+  border-radius:8px;
+  border-color:#3c3556;
+  color:#3c3556;
+}
+#tag-submit:hover {
+  border-radius:8px;
+  background-color:#3c3556;
+  color:#e1e1e1;
+  box-shadow: 0 4px 3px #525151;
+}
+.not-selected-tag {
+  background-color: transparent;
+  border:none;
+  //filter: saturate(0%)
+  //text-shadow: 1px 1px 2px black;
+}
+
+.not-selected-tag:hover {
+  background-color: transparent;
+  border:none;
+  text-shadow: 1px 1px 1px black;
 }
 #header {
   //more opaque
