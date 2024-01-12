@@ -7,7 +7,7 @@ import { useLoaderData } from 'react-router-dom';
 import axios, { AxiosResponse } from 'axios';
 
 const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
-  const [message, setMessage] = useState<any>();
+  const [messages, setMessages] = useState<any>();
   const [type, setType] = useState<string>('inbox');
   const [title, setTitle] = useState<string>('');
   const [category, setCategory] = useState<string>('');
@@ -24,10 +24,10 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
         try{
           const response: AxiosResponse = await axios.get(`/conch/${user.id}`)
           console.log('message', response)
-            const message = response.data[0]
-            message.user = user
-            message.userId = user.id
-          setMessage(message)
+            const messages = response.data
+            messages.user = user
+            messages.userId = user.id
+          setMessages(messages)
         } catch(error) {
           console.log('couldnt get message', error)
         }
@@ -37,10 +37,10 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
         try{
           const response: AxiosResponse = await axios.get(`/conch/sent/${user.id}`)
           console.log('message', response)
-            const message = response.data[0]
-            message.user = user
-            message.userId = user.id
-          setMessage(message)
+            const messages = response.data
+            messages.user = user
+            messages.userId = user.id
+          setMessages(messages)
         } catch(error) {
           console.log('couldnt get message', error)
         }
@@ -63,6 +63,9 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
 
   return (
         <div >
+          <div style={{color: 'white'}}>
+            <h2>Record a message that gets sent to a random user!</h2>
+          </div>
 
             <PostConch audioContext={audioContext} />
 
@@ -97,7 +100,7 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
           <div style={{justifyContent: 'center', flexDirection: 'column', display: 'flex', alignItems: 'center'}}>
 
 {type === 'inbox' ?
-    <div s>
+    <div>
         <button
         type="button"
         className="btn btn-dark"
@@ -125,8 +128,10 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
 
 
             <div>
-                {message ? 
-                    <WaveSurferComponent postObj={message} audioUrl={message.soundUrl} postId={message.id} />
+                {messages ? 
+                    messages.map((message) => {
+                      <WaveSurferComponent postObj={message} audioUrl={message.soundUrl} postId={message.id} />
+                    })
                   : <div>No messages!</div>}
             </div>
         </div>

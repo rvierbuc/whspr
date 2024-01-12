@@ -50,11 +50,13 @@ const App = () => {
   const [channelName, setChannelName] = useState<string>();
   const [host, setHost] = useState<string>();
   const [uid, setUid] = useState<number>();
+  const [creator, setCreator] = useState<any>()
 
-  const setRoomProps = (channelName, host, uid) => {
+  const setRoomProps = (channelName, host, uid, creator) => {
     setChannelName(channelName);
     setHost(host);
     setUid(uid);
+    setCreator(creator)
   };
 
   const getUserLoader = async () => {
@@ -81,7 +83,7 @@ const App = () => {
                     <Route path="post" element={<PostCard />} loader={() => getUserLoader()}/>
                     <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
                     <Route path="radio" element={<Radio setRoomProps={setRoomProps} />} />
-                    <Route path="room/:name" element={<Room channel={channelName} host={host} id={uid}/>} />
+                    <Route path="room/:name" element={<Room audioContext={audioContext} channel={channelName} host={host} id={uid} creator={creator}/>} loader={() => getUserLoader()}/>
                     <Route path="conch" element={<MagicConch audioContext={audioContext}/>} loader={() => getUserLoader()}/>
                     <Route path="feed/profile/:id" element={<ReadOnlyProfile audioContext={audioContext}/> } loader={() => getUserLoader()} />
                 </Route>

@@ -49,8 +49,8 @@ const RadioConfig = ({setRoomProps}) => {
         if(name === ''){
             setError("Please name your channel")
         }else{
-            console.log('name', name)
-            setRoomProps(name, user.username, room.data.id)
+            console.log('create', user)
+            setRoomProps(name, user.username, room.data.id, user)
             
             navigate(`/protected/room/${name}`)
         }
@@ -61,10 +61,13 @@ const RadioConfig = ({setRoomProps}) => {
 
         try {
 
-            const room = await axios.post('/post/radio', {host: user.username, title: name, })
+            if(name !== ''){
+                const room = await axios.post('/post/radio', {host: user.username, title: name, })
+    
+                console.log('room', room)
+                navigateTo(room)
 
-            console.log('room', room)
-            navigateTo(room)
+            }
         }catch {
 
         }
