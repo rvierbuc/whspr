@@ -15,7 +15,7 @@
 
 body {
   background-image: url('./mirrored.png');
-  background-color: rgb(96, 96, 96);
+  background-color: #606060;
   background-repeat: repeat;
   //background-size: auto
 }
@@ -37,6 +37,18 @@ body {
   //height:100%
   //height:100%
 }
+#modal-background {
+  background-color: #e1e1e500;
+}
+#tag-mod-header{
+//width: auto;
+background-color:#3c3556;
+color:#e1e1e1;
+font-size: 3rem;
+//border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  @include blur(4.2px);
+}
 
 .room-info {
   //background: rgba(233, 236, 243, 0.075);
@@ -56,7 +68,14 @@ body {
   @include blur(4.2px);
   border: 1px solid rgba(236, 210, 210, 0.36);
 }
-
+.modal-content{
+  background:#e1e1e1;
+  //opacity: 60%;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgb(0, 0, 0);
+  @include blur(4.2px);
+  border: none
+}
 #header {
   //more opaque
   background: #e9ecf343;
@@ -538,6 +557,7 @@ body {
   position: absolute;
   bottom: 0;
   right: 0;
+  //color: #a6c5ff
 }
 
 .modalCustom {

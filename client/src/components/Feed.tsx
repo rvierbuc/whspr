@@ -40,10 +40,10 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
       const allPosts: AxiosResponse = await axios.get(`/post/${type}/${user.id}/${tag}`);
       if (allPosts.data.length === 0) {
         handleNavigation('/protected/feed/explore');
-        if (!user.selectedTags) {
+        //if (!user.selectedTags) {
           setShowTagModal(true);
           getTagList();
-        }
+        //}
         
       } else {
         setPosts(allPosts.data);
@@ -112,13 +112,14 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   // const placeHolder: Blob[] = [];
   return (
     <div>
-      <Modal show={showTagModal} onHide={() => setShowTagModal(false)} aria-labelledby="contained-modal-title-vcenter"
+      <Modal id='modal-background' show={showTagModal} onHide={() => setShowTagModal(false)} aria-labelledby="contained-modal-title-vcenter"
       centered>
-        <Modal.Header closeButton>
-          You are not following any whsprers yet!
-        </Modal.Header>
-        <Modal.Body>
-          Select up to 5 tags below to get started with some interesting sounds or check out our most popular posts!
+        {/* <Modal.Dialog > */}
+        <Modal.Header id='tag-mod-header'>
+         What do you want to hear about?
+        </Modal.Header >
+        <Modal.Body id='tags'style={{fontSize:'1.5rem'}} >
+          Select up to 5 tags to get started with some interesting whsprs.
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
           {tags ? tags.map((tag, index) => (
             <div key={index} style={{ display: 'flex', flexDirection: 'row', margin: '.5rem' }}>
@@ -127,9 +128,10 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
             </div>
           )) : <div></div>}
           </div>
-          <button onClick={ () => submitTagSelection() }>Submit</button>
+          <button id='tag' style={{marginLeft:'auto'}}onClick={ () => submitTagSelection() }>Submit</button>
           {/* <button onClick={ () => setCannotSelect(false)}>edit</button> */}
         </Modal.Body>
+        {/* </Modal.Dialog> */}
       </Modal>
       {posts 
         ? (posts.length === 0 ? <a href='explore' style={{ color: 'white', fontSize: 'xxx-large' }}>Explore Popular Posts to Find Friends</a>

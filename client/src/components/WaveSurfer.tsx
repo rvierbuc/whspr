@@ -16,7 +16,7 @@ import { MdArrowOutward } from 'react-icons/md';
 import { MdDeleteOutline } from 'react-icons/md';
 import { MdDeleteOutline } from 'react-icons/md';
 import { TooltipComponent } from './Tooltip';
-
+import Modal from 'react-bootstrap/Modal';
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
   audioUrl: string;
@@ -34,9 +34,8 @@ interface WaveSurferProps {
   setCorrectPostId: any
   setSelectedUserPosts: any
   isDeleting: boolean
-  onGridView: boolean;
-  setOnGridView: any;
   setCurrentDeletePostId: any
+
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
@@ -55,9 +54,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   setCorrectPostId,
   setSelectedUserPosts,
   isDeleting,
-  onGridView,
-  setOnGridView,
-  setCurrentDeletePostId
+  setCurrentDeletePostId,
+
 }) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
@@ -68,6 +66,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [duration, setDuration] = useState<string>();
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [addComment, setAddComment] = useState<boolean>(false);
+  const [showFullPost, setShowFullPost] = useState<boolean>(false);
   //const [hasCategories, setHasCategories] = useState<boolean>();
   // const { audioUrl, postId } = props;
   const containerId = `waveform-${postId || ''}`;
@@ -259,15 +258,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   useEffect(() => {
     createSoundWaves();
     isFollowing();
-    // if (postObj.categories) {
-    //   if (postObj.categories.length > 0) {
-    //     setHasCategories(true);
-    //   } else {
-    //     setHasCategories(false);
-    //   }
-    // } else {
-    //   setHasCategories(false);
-    // }
   }, [audioUrl]);
   return (
     <div
@@ -339,7 +329,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 paddingTop: '1rem',
                 paddingLeft: '1rem',
                 justifyContent: 'start',
-                alignContent:'end' }}>
+                alignContent:'end' }}
+                onClick={() => showFullPost ? setShowFullPost(false) : setShowFullPost(true)}
+                >
               <div
                     style={{
                       display: 'flex',
@@ -699,7 +691,26 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
             </div>
           </div>
         </div>
-      
+      {/* <Modal isOpen={showFullPost} onClose={() => setShowFullPost(false)} >
+        <WaveSurferComponent
+        postObj={postObj}
+        audioUrl={postObj.soundUrl}
+        postId={postObj.id}
+        userId={userId}
+        getPosts={getPosts}
+        updatePost={updatePost}
+        onProfile={onProfile}
+        audioContext={audioContext}
+        feed={feed}
+        setIsDeleting={setIsDeleting}
+        setCorrectPostId={setCorrectPostId}
+        setSelectedUserPosts={setSelectedUserPosts}
+        isDeleting={isDeleting}
+        setCurrentDeletePostId={setCurrentDeletePostId}
+        onUserProfile={onUserProfile}
+        setOnProfile={setOnProfile}
+        ></WaveSurferComponent>
+      </Modal> */}
     </div>
   );
 };
