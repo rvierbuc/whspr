@@ -178,6 +178,10 @@ const UserProfile = ({
   // function to handle the search submission
   const handleSearchSubmission = async (): Promise<void> => {
     try {
+      if (searchInput === '') {
+        alert('Please enter a search input');
+        return;
+      }
       // make a request to the server endpoint using the current user's id and the search input as identifying params to get
       // the search results for the followers and the following
       const followersQueryResults = await axios.get(
