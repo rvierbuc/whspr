@@ -591,7 +591,40 @@ try{
   }
  })
 
- 
+ //get top tags 
+ router.get('/tags', async (req: Request, res: Response) => {
+try{
+
+  const tags = await Post.findAll({
+    where: {
+      categories: {
+        [Op.ne]: null
+      }
+    },
+    attributes: ['categories']
+  })
+
+  const tagFrequencyObj = tags.flatMap((tagObj) => tagObj.dataValues.categories)
+  .reduce((tagCounterObj, tag)=> {
+    if(tagCounterObj[tag]){
+      tagCounterObj[tag] += 1
+    } else {
+      tagCounterObj[tag] = 1
+    }
+    return tagCounterObj
+  }, {})
+
+  const sortedTopTags = Object.entries(tagFrequencyObj).sort((a:any, b:any) => b[1] - a[1]).flatMap(tagArr => tagArr[0])
+
+  const tagsToSend = sortedTopTags.length > 20 ? sortedTopTags.slice(0, 20) : sortedTopTags
+  //console.log('tags', tagsToSend)
+  res.status(200).send(tagsToSend)
+}catch (error){
+  console.error('get tags error:', error)
+  res.sendStatus(500)
+}
+  
+ })
 
 
 // *************POST REQUESTS***********************
@@ -675,6 +708,25 @@ let updateResult;
 }
  } )
 
+ router.put('/selectedTags/:id', async (req:Request, res: Response) => {
+  const { id } = req.params
+  const { tags } = req.body
+
+try{
+  await User.update(
+    {selectedTags: tags},
+    {where: {
+      id
+    }}
+    )
+    //console.log(updated)
+    res.sendStatus(200)
+  }catch (error){
+    console.error('could not add selected tags to user', error)
+    res.send(500)
+  }
+
+ })
  // **********************DELETE REQUESTS****************************
  //allows user to unlike a post and removes like record from db
  router.delete('/unlike/:userId/:postId', async (req: Request, res: Response) => {
