@@ -468,7 +468,10 @@ try{
         as: 'user'
       },
     Like,
-    Comment]
+    Comment],
+    order: [
+      ['createdAt', 'DESC']
+    ],
     }
   )
     //console.log('got user posts', selectedUserPosts)
