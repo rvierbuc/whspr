@@ -26,11 +26,11 @@ const getRandomPosts = () => {
   for(let i = 0; i < 10; i++){
     let samplePost:any = {
       commentCount: 0,
-      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702167980979.wav'
+      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1704992206087.wav'
     }
     samplePost.userId = Math.floor(Math.random() * 5) + 1
     samplePost.title = `title${i}`
-    samplePost.createdAt = getRandomDate(new Date(2023, 11, 13), new Date())
+    samplePost.createdAt = getRandomDate(new Date(2024, 1, 3), new Date())
     samplePost.updatedAt = samplePost.createdAt
     samplePost.likeCount = Math.floor(Math.random() * 50) + 1
     samplePost.listenCount = Math.floor(Math.random() * 200) + 20
@@ -117,13 +117,13 @@ export const seedDatabase = async () => {
   await Sound.bulkCreate([
     {
       postId: 1,
-      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702167980979.wav',
+      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1704992206087.wav',
       createdAt: new Date(),
       updatedAt: new Date(),
     },
     {
       postId: 2,
-      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1702265197317.wav',
+      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1704992206087.wav',
       createdAt: new Date(),
       updatedAt: new Date(),
     },
