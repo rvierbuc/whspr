@@ -71,7 +71,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   //const [hasCategories, setHasCategories] = useState<boolean>();
   // const { audioUrl, postId } = props;
   const containerId = `waveform-${postId || ''}`;
-  console.log('wavesurfer AC', audioContext);
   // const handleDelete: () => void = async () => {
   //   try {
   //     const deletePost = await axios.delete(`/deletePost/${userId}/${postId}`);
@@ -135,7 +134,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       console.error('could not follow user', error);
     }
   };
-  console.log('isGrid', onGridView);
   const stopFollowing = async () => {
     try {
       const createFollowing = await axios.delete(
