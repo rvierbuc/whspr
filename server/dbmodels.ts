@@ -36,6 +36,9 @@ export const User = db.define('User', {
   googleId: {
     type: DataTypes.STRING,
   },
+  selectedTags: {
+    type: DataTypes.ARRAY(DataTypes.STRING),
+  },
 });
 
 export const MagicConch = db.define('MagicConch', {
