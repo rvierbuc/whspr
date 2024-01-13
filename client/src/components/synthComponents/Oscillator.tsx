@@ -1,6 +1,7 @@
 import React, { BaseSyntheticEvent, useState, useEffect } from 'react';
 import { Container, Stack, Button } from 'react-bootstrap';
 import * as Tone from 'tone';
+import Tuna from 'tunajs';
 
 interface Props {
   oscSettings: {
@@ -11,17 +12,17 @@ interface Props {
   changeType: (e: BaseSyntheticEvent) => void;
   changeValue: (e: BaseSyntheticEvent) => void;
   phaserSettings: {
-    phaseFrequency: Tone.Unit.Frequency,
-    Q: number
-    octaves: number
-    phaseWet: number
+    phaseFrequency: Tone.Unit.Frequency | undefined,
+    Q: number | undefined
+    octaves: number | undefined
+    phaseWet: number | undefined
   }
-  bitCrushSettings: {
-    bitWet: number
-    bits: number
+  distortionSettings: {
+    distortion: number | undefined
+    wet: number | undefined
   }
   changePhase: (e: BaseSyntheticEvent) => void
-  changeBitCrusher: (e: BaseSyntheticEvent) => void
+  changeDistortion: (e: BaseSyntheticEvent) => void
   setInstrument: any
   oscillatorOptions: {
     oscillator: Tone.Oscillator
@@ -33,8 +34,14 @@ interface Props {
   stop: () => void;
   synthBypass: {
     phaseFilter: boolean
-    bitCrushFilter: boolean
+    distortionFilter: boolean
   }
+  audioContext: AudioContext
+  synthFilters: {
+    phaseFilter: Tone.Phaser;
+    distortionFilter: Tone.Distortion;
+  }
+  instrument: Tone.Oscillator | Tone.FatOscillator | Tone.FMOscillator | Tone.AMOscillator
 }
 
 const Oscillator = ({
@@ -45,29 +52,31 @@ const Oscillator = ({
   changeValue,
   setInstrument,
   oscillatorOptions,
-  changeBitCrusher,
+  changeDistortion,
   changePhase,
-  bitCrushSettings,
+  distortionSettings,
   synthBypass,
-  phaserSettings }: Props): React.JSX.Element => {
+  phaserSettings,
+  audioContext,
+  synthFilters,
+  instrument }: Props): React.JSX.Element => {
 
   const oscillatorKeys = Object.keys(oscillatorOptions).map(option => option = option[0].toUpperCase() + option.substring(1));
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const { oscillator, fatOscillator, fmOscillator, amOscillator } = oscillatorOptions
   const { type, frequency, detune } = oscSettings;
-  const { Q, phaseFrequency, phaseWet } = phaserSettings;
-  const { bits, bitWet } = bitCrushSettings;
-  const [selectedWave, setSelectedWave] = useState('Select Wave');
+  const { Q, phaseWet } = phaserSettings;
+  const { wet, distortion } = distortionSettings;
   const [selectedOscillator, setSelectedOscillator] = useState<string>(oscillatorKeys[0]);
 
+  console.log(synthBypass);
+
   useEffect(() => {
-    setSelectedWave(type[0].toUpperCase() + type.substring(1))
     setSelectedOscillator(oscillatorKeys[0]);
-  }, [])
+  }, []);
 
   const handleTypeChange: (event: BaseSyntheticEvent) => void = (event) => {
     const waveId = event.target.id;
-    setSelectedWave(waveId[0].toUpperCase() + waveId.substring(1));
     changeType(event)
   };
 
@@ -82,6 +91,28 @@ const Oscillator = ({
     } else if (oscOption === amOscillator) {
       setSelectedOscillator(oscillatorKeys[3]);
     }
+  };
+
+  const hearSynth: () => void = () => {
+    const filters: any[] = Object.values(synthFilters);
+    Tone.start();
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
+    if (!synthBypass.phaseFilter) {
+      synthFilters.phaseFilter.wet.value = 0;
+    } else {
+      synthFilters.phaseFilter.wet.value = 0.5
+    }
+    if (!synthBypass.distortionFilter) {
+      synthFilters.distortionFilter.wet.value = 0;
+    } else {
+      synthFilters.distortionFilter.wet.value = 0.5;
+    }
+
+    instrument.connect(filters[0]);
+    filters[0].connect(filters[1]);
+    instrument.start()
   };
 
   return (
@@ -119,7 +150,7 @@ const Oscillator = ({
           {/* PHASER OPTIONS */}
           <div className="mx-auto" style={{marginBottom: '-1rem'}}>
             <Button
-              className={`btn-sm btn-dark ${!synthBypass.phaseFilter && 'activeButton'}`}
+              className={`btn-sm btn-dark ${synthBypass.phaseFilter && 'activeButton'}`}
               style={{display: 'flex', justifyContent: 'center'}}
               id='phaseFilter'
               onClick={changePhase}>Phaser</Button>
@@ -128,32 +159,64 @@ const Oscillator = ({
             <Stack direction="horizontal" gap={5}>
               <div className="text-center text-white">
                 <h6>Dry/Wet</h6>
-                <input value={phaseWet} max="1" min="0" onChange={changePhase} id="phaseWet" type="range" step={0.05} />
+                <input
+                  value={phaseWet}
+                  max="1"
+                  min="0"
+                  onChange={changePhase}
+                  disabled={!synthBypass.phaseFilter}
+                  id="phaseWet"
+                  type="range"
+                  step={0.05}/>
               </div>
               <div className="text-center text-white">
                 <h6>Quality</h6>
-                <input value={Q} max="20" min="0" onChange={changePhase} id="quality" type="range" step={0.05} />
+                <input
+                  value={Q}
+                  max="20"
+                  min="0"
+                  onChange={changePhase}
+                  disabled={!synthBypass.phaseFilter}
+                  id="Q"
+                  type="range"
+                  step={0.05}/>
               </div>
             </Stack>
           </div>
-          {/* BITCRUSHER OPTIONS */}
+          {/* DISTORTION OPTIONS */}
           <div className="mx-auto" style={{marginBottom: '-1rem'}}>
             <Button
-              className={`btn-sm btn-dark ${!synthBypass.bitCrushFilter && 'activeButton'}`}
+              className={`btn-sm btn-dark ${synthBypass.distortionFilter && 'activeButton'}`}
               style={{ display: 'flex', justifyContent: 'center' }}
-              id='bitCrushFilter'
-              onClick={changeBitCrusher}
-              >Tremolo</Button>
+              id='distortionFilter'
+              onClick={changeDistortion}
+              >Distortion</Button>
           </div>
           <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
             <Stack direction="horizontal" gap={5}>
               <div className="text-center text-white">
-                <h6>Dry/Wet</h6>
-                <input value={bitWet} max="1" min="0" onChange={changeBitCrusher} id="bitWet" type="range" step={0.05} />
+                <h6>Distortion</h6>
+                <input
+                  value={distortion}
+                  max="1"
+                  min="0"
+                  onChange={changeDistortion}
+                  disabled={!synthBypass.distortionFilter}
+                  id="distortion"
+                  type="range"
+                  step={0.05}/>
               </div>
               <div className="text-center text-white">
-                <h6>Bits</h6>
-                <input value={bits} max="10" min="1" onChange={changeBitCrusher} id="bits" type="range" step={0.05} />
+                <h6>Dry/Wet</h6>
+                <input
+                  value={wet}
+                  max="1"
+                  min="0"
+                  onChange={changeDistortion}
+                  disabled={!synthBypass.distortionFilter}
+                  id="wet"
+                  type="range"
+                  step={0.05}/>
               </div>
             </Stack>
           </div>
@@ -168,7 +231,7 @@ const Oscillator = ({
                 stop();
               } else {
                 setIsPlaying(true);
-                start();
+                hearSynth();
               }
             }}
           >Hear your synth</button>

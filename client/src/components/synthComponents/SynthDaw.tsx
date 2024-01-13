@@ -17,7 +17,7 @@ interface Props {
   audioContext: AudioContext,
   oscillatorOptions: Options
   phaseFilter: Tone.Phaser
-  bitCrushFilter: Tone.BitCrusher
+  distortionFilter: Tone.Distortion
   user: any
 }
 
@@ -28,16 +28,16 @@ const defaultSettings = {
   lowPassType: 'lowpass',
 };
 
-const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, bitCrushFilter }: Props): React.JSX.Element => {
+const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, distortionFilter }: Props): React.JSX.Element => {
   const [addSynth, setAddSynth ] = useState(false);
   const [filter, setFilter] = useState(defaultSettings);
   const [instrument, setInstrument] = useState(oscillatorOptions.oscillator);
   const [postCategories, setPostCategories] = useState<string[]>([]);
   const [postTitle, setPostTitle] = useState<string>('');
-  const [synthFilters, setSynthFilters] = useState<{phaseFilter: Tone.Phaser, bitCrushFilter: Tone.BitCrusher}>({phaseFilter, bitCrushFilter});
-  const [synthBypass, setSynthBypass] = useState<{phaseFilter: boolean, bitCrushFilter: boolean}>({
-    phaseFilter: true,
-    bitCrushFilter: true
+  const [synthFilters, setSynthFilters] = useState<{ phaseFilter: Tone.Phaser, distortionFilter: Tone.Distortion }>({});
+  const [synthBypass, setSynthBypass] = useState<{ phaseFilter: boolean, distortionFilter: boolean }>({
+    phaseFilter: false,
+    distortionFilter: false,
   });
   const [oscSettings, setOscSettings] = useState({
     frequency: instrument.frequency.value,
@@ -45,20 +45,24 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, bitCrush
     type: instrument.type,
   });
   const [phaserSettings, setPhaserSettings] = useState({
-    phaseFrequency: phaseFilter.frequency.value,
+    phaseFrequency: phaseFilter?.frequency.value,
     Q: phaseFilter.Q.value,
     octaves: phaseFilter.octaves,
-    phaseWet: phaseFilter.wet.value
+    phaseWet: phaseFilter.wet.value,
   });
 
-  const [bitCrushSettings, setBitCrushSettings] = useState({
-    bits: bitCrushFilter.bits.value,
-    bitWet: bitCrushFilter.wet.value,
+  const [distortionSettings, setDistortionSettings] = useState({
+    wet: distortionFilter.wet.value,
+    distortion: distortionFilter.distortion,
   });
+
+  const [toggleFilters, setToggleFilters] = useState<[Tone.Phaser, Tone.Distortion]>([]);
 
   useEffect(() => {
     setAddSynth(false);
     setInstrument(oscillatorOptions.oscillator);
+    setToggleFilters([phaseFilter, distortionFilter]);
+    setSynthFilters({ phaseFilter, distortionFilter });
   }, []);
 
   const toggleSynth: () => void = () => addSynth === false ? setAddSynth(true) : setAddSynth(false);
@@ -73,6 +77,7 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, bitCrush
 
   const stop: () => void = () => {
     instrument.stop();
+    instrument.disconnect();
     if (audioContext.state === 'running') {
       audioContext.suspend();
     }
@@ -99,28 +104,29 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, bitCrush
     const value: number = e.target.value;
     const id: string = e.target.id;
     if (id === 'phaseFilter') {
-      setSynthBypass({...synthBypass, [id]: !synthBypass[id]})
+      setSynthBypass({ ...synthBypass, [id]: !synthBypass[id] });
     } else {
       setPhaserSettings({ ...phaserSettings, [id]: Number(value) });
-      if (id === 'quality') {
+      if (id === 'Q' && phaseFilter) {
         phaseFilter.Q.value = Number(value);
-      } else if (id === 'phaseWet') {
+      }
+      if (id === 'phaseWet' && phaseFilter) {
         phaseFilter.wet.value = Number(value);
       }
     }
   };
 
-  const changeBitCrusher: (e: BaseSyntheticEvent) => void = (e) => {
+  const changeDistortion: (e: BaseSyntheticEvent) => void = (e) => {
     const value: number = e.target.value;
     const id: string = e.target.id;
-    if (id === 'bitCrushFilter') {
-      setSynthBypass({...synthBypass, [id]: !synthBypass[id]})
+    if (id === 'distortionFilter') {
+      setSynthBypass({ ...synthBypass, [id]: !synthBypass[id] });
     } else {
-      setBitCrushSettings({ ...bitCrushSettings, [id]: Number(value) });
-      if (id === 'bitWet') {
-        bitCrushFilter.bits.value = Number(value);
-      } else if (id === 'bitWet') {
-        bitCrushFilter.wet.value = Number(value);
+      setDistortionSettings({ ...distortionSettings, [id]: Number(value) });
+      if (id === 'distortion' && distortionFilter) {
+        distortionFilter.distortion = Number(value);
+      } else if (id === 'wet' && distortionFilter) {
+        distortionFilter.wet.value = Number(value);
       }
     }
   };
@@ -145,11 +151,14 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, bitCrush
             oscSettings={oscSettings}
             changeType={changeType}
             changeValue={changeValue}
-            changeBitCrusher={changeBitCrusher}
+            changeDistortion={changeDistortion}
             changePhase={changePhase}
             phaserSettings={phaserSettings}
-            bitCrushSettings={bitCrushSettings}
+            distortionSettings={distortionSettings}
             synthBypass={synthBypass}
+            audioContext={audioContext}
+            synthFilters={synthFilters}
+            instrument={instrument}
              />
         </Container>}
         <RecordPost
@@ -162,11 +171,8 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, bitCrush
           instrument={instrument}
           start={start}
           stop={stop}
-          phaseFilter={phaseFilter}
-          bitCrushFilter={bitCrushFilter}
           synthFilters={synthFilters}
-          synthBypass={synthBypass}
-        />
+          synthBypass={synthBypass}/>
       </div>
     </Container>
   );
