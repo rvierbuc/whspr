@@ -35,6 +35,7 @@ interface WaveSurferProps {
   setSelectedUserPosts: any
   isDeleting: boolean
   setCurrentDeletePostId: any
+  onHome:boolean
 
 }
 
@@ -55,7 +56,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   setSelectedUserPosts,
   isDeleting,
   setCurrentDeletePostId,
-
+  onHome,
 }) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
@@ -574,7 +575,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   <div style={{ color: '#e1e1e5', marginLeft: 'auto' }}>{duration ? duration : ''}</div>
                 </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginBottom: '8px', 
+              {onHome ? <div></div> : (<div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginBottom: '8px', 
               }}>
               {postObj.isLiked ? (
                 <div>
@@ -672,7 +673,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 ) : (
                     <div></div>
                 )}
-              </div>
+              </div>)}
               {/* {onUserProfile ? (
                 <a></a>
               ) : ( */}

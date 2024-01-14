@@ -29,28 +29,26 @@ const Login = (props) => {
   }, []);
   return (
         <div >
-          {posts ? 
+         
           <div>
-            <div id='home-header' className="d-flex align-items-center justify-content-start">
+            <div id='home-header' >
             <img 
-            src={require('../style/whspr-logo.png')}
+            src={require('../style/whspr-home.png')}
             width={'auto'}
-            height={'150px'}
+            height={'200px'}
             alt="whspr logo"
             onClick={() => handleAuth()}
-            style={{ cursor: 'pointer', marginTop: '15px', marginRight: '15px' }}
+            style={{objectFit: 'scale-down'}}
             />
-              <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 'auto', justifyContent: 'center' }}>
-          
-           <h1 style={{ color: 'rgb(166, 197, 255)', marginRight: '25px' }}>Open Your Ears</h1>
+            {/* <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 'auto', justifyContent: 'center' }}> */}
            <button type='button' 
-            style={{ marginLeft: 'auto', padding: '25px', fontSize: 'xx-large', borderRadius: '16px', marginRight: '70px' }}
+            style={{ fontSize: '2rem', border:'none', borderRadius: '16px', width:'7rem', height:'5rem', position:'absolute', marginRight:'1.5rem', marginBottom:'1rem' }}
             className="login btn btn-dark centered"
             id="header"
             onClick={()=> { handleAuth(); }}>
                 Login
             </button>
-           </div>
+           {/* </div> */}
           
             </div>
             <VerticalCarousel
@@ -61,8 +59,7 @@ const Login = (props) => {
           
             
             </div>
-            : <div>Loading...</div>
-      }
+          
         </div>
   );
 };

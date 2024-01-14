@@ -1,5 +1,6 @@
 const HomePageData = {
-  leadingText: 'WHSPR your',
+  leadingText: '../style/whspr-your.png',
+  
   slides: [
     {
       id: 700,
@@ -7,6 +8,7 @@ const HomePageData = {
       title: 'Joke Title',
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1704992206087.wav',
       categories: ['funny', 'hilarious', 'GoodJoke'],
+      likeCount: '1,258',
       user: {
         id: 700,
         profileImgUrl: 'https://d1nhio0ox7pgb.cloudfront.net/_img/o_collection_png/green_dark_grey/512x512/plain/ear.png',
@@ -19,6 +21,7 @@ const HomePageData = {
       title: 'Short Story Title',
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1704992206087.wav',
       categories: ['timeless', 'interesting', 'GoodStory'],
+      likeCount: '1,258',
       user: {
         id: 700,
         profileImgUrl: 'https://d1nhio0ox7pgb.cloudfront.net/_img/o_collection_png/green_dark_grey/512x512/plain/ear.png',
@@ -31,6 +34,7 @@ const HomePageData = {
       title: 'New Theory Title',
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1704992206087.wav',
       categories: ['DidYouKnow', 'smart', 'amazing'],
+      likeCount: '1,258',
       user: {
         id: 700,
         profileImgUrl: 'https://d1nhio0ox7pgb.cloudfront.net/_img/o_collection_png/green_dark_grey/512x512/plain/ear.png',
@@ -43,6 +47,7 @@ const HomePageData = {
       title: 'Drum Solo Title',
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1704992206087.wav',
       categories: ['SickBeats', 'rad', 'music'],
+      likeCount: '1,258',
       user: {
         id: 700,
         profileImgUrl: 'https://d1nhio0ox7pgb.cloudfront.net/_img/o_collection_png/green_dark_grey/512x512/plain/ear.png',
@@ -55,6 +60,7 @@ const HomePageData = {
       title: 'Hot Goss Title',
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1704992206087.wav',
       categories: ['DidYouHear', 'OMG', 'CanYouBelieve'],
+      likeCount: '1,258',
       user: {
         id: 700,
         profileImgUrl: 'https://d1nhio0ox7pgb.cloudfront.net/_img/o_collection_png/green_dark_grey/512x512/plain/ear.png',
@@ -67,6 +73,7 @@ const HomePageData = {
       title: 'Opinion Title',
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1704992206087.wav',
       categories: ['funny', 'hilarious', 'GoodJoke'],
+      likeCount: '1,258',
       user: {
         id: 700,
         profileImgUrl: 'https://d1nhio0ox7pgb.cloudfront.net/_img/o_collection_png/green_dark_grey/512x512/plain/ear.png',
@@ -79,6 +86,7 @@ const HomePageData = {
       title: 'Poetry Title',
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1704992206087.wav',
       categories: ['timeless', 'interesting', 'GoodStory'],
+      likeCount: '1,258',
       user: {
         id: 700,
         profileImgUrl: 'https://d1nhio0ox7pgb.cloudfront.net/_img/o_collection_png/green_dark_grey/512x512/plain/ear.png',
@@ -91,6 +99,7 @@ const HomePageData = {
       title: 'Monologue Title',
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1704992206087.wav',
       categories: ['DidYouKnow', 'smart', 'amazing'],
+      likeCount: '1,258',
       user: {
         id: 700,
         profileImgUrl: 'https://d1nhio0ox7pgb.cloudfront.net/_img/o_collection_png/green_dark_grey/512x512/plain/ear.png',
@@ -103,23 +112,13 @@ const HomePageData = {
       title: 'Latest Track Title',
       soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1704992206087.wav',
       categories: ['SickBeats', 'rad', 'music'],
+      likeCount: '1,258',
       user: {
         id: 700,
         profileImgUrl: 'https://d1nhio0ox7pgb.cloudfront.net/_img/o_collection_png/green_dark_grey/512x512/plain/ear.png',
         username: 'User9',
       },
     },
-    {
-      id: 709,
-      introLine: 'ASMR',
-      title: 'ASMR Title',
-      soundUrl: 'https://storage.googleapis.com/whspr-sounds/audio/1704992206087.wav',
-      categories: ['DidYouHear', 'OMG', 'CanYouBelieve'],
-      user: {
-        id: 700,
-        profileImgUrl: 'https://d1nhio0ox7pgb.cloudfront.net/_img/o_collection_png/green_dark_grey/512x512/plain/ear.png',
-        username: 'User10',
-      },
-    },
+  
   ] };
 export default HomePageData;
