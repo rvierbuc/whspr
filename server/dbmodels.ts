@@ -36,6 +36,9 @@ export const User = db.define('User', {
   googleId: {
     type: DataTypes.STRING,
   },
+  displayUsername: {
+    type: DataTypes.STRING,
+  },
 });
 
 export const MagicConch = db.define('MagicConch', {
@@ -117,7 +120,7 @@ export const Listen = db.define('Listen', {
   postId: {
     type: DataTypes.INTEGER,
   },
-} );
+});
 
 export const Radio = db.define('Radio', {
   host: {
@@ -175,21 +178,21 @@ export const Stat = db.define('Stat', {
     type: DataTypes.INTEGER,
   },
   type: {
-    type: DataTypes.STRING
-  }
-})
+    type: DataTypes.STRING,
+  },
+});
 
 export const AIMessage = db.define('AIMessage', {
   userId: {
-    type: DataTypes.INTEGER
+    type: DataTypes.INTEGER,
   },
   role: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
   },
   message: {
-    type: DataTypes.TEXT
-  }
-})
+    type: DataTypes.TEXT,
+  },
+});
 
 // defines table relations
 User.hasMany(MagicConch, { foreignKey: 'sendingUserId' });
