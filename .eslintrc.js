@@ -82,7 +82,7 @@ module.exports = {
     // typescript rules
     '@typescript-eslint/indent': [2, 2],
     '@typescript-eslint/explicit-function-return-type': 'warn',
-    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': ['off', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/no-explicit-any': ['off', { ignoreRestArgs: true }],
     '@typescript-eslint/no-use-before-define': ['error', { functions: false, classes: false }],
     '@typescript-eslint/no-empty-function': ['error', { allow: ['arrowFunctions'] }],

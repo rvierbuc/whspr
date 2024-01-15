@@ -69,8 +69,6 @@ const Search: React.FC = () => {
     const { hits } = useHits(); // the array of hits
     const { refine } = useSearchBox();
     
-    console.log('hits', hits); // the individual hit obj
-    console.log('currentSearch inside of hits component', currentSearch);
 
     return (
       <article>
