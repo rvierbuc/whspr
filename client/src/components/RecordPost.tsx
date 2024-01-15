@@ -15,15 +15,13 @@ interface Props {
   addSynth: boolean
   start: () => void
   stop: () => void
-  bitCrushFilter: Tuna.Tremolo
-  phaseFilter: Tone.Phaser
   synthFilters: {
     phaseFilter: Tone.Phaser,
-    bitCrushFilter: Tone.BitCrusher
+    distortionFilter: Tone.Distortion
   }
   synthBypass: {
     phaseFilter: boolean,
-    bitCrushFilter: boolean
+    distortionFilter: boolean
   }
 }
 
@@ -153,27 +151,25 @@ export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, titl
 
 
   const startSynthRecording = async (): Promise<void> => {
-    const filters: any[] = [];
-    for (const key in synthBypass) {
-      if (!synthBypass[key]) {
-        filters.push(synthFilters[key]);
-      }
+    if (!synthBypass.phaseFilter) {
+      synthFilters.phaseFilter.wet.value = 0;
+    } else {
+      synthFilters.phaseFilter.wet.value = 0.5
+    }
+    if (!synthBypass.distortionFilter) {
+      synthFilters.distortionFilter.wet.value = 0;
+    } else {
+      synthFilters.distortionFilter.wet.value = 0.5;
     }
     try {
+      const filters: any[] = Object.values(synthFilters)
       const context = Tone.context;
+      const destination = context.createMediaStreamDestination();
       resumeAudioContext();
       setSynthAudioChunks([]);
-      const destination = context.createMediaStreamDestination();
-      if (filters.length === 1) {
-        instrument.connect(filters[0]);
-        filters[0].connect(destination);
-      } else if (filters.length === 2) {
-        instrument.connect(filters[0]);
-        filters[0].connect(filters[1]);
-        filters[1].connect(destination);
-      } else {
-        instrument.connect(destination);
-      }
+      instrument.connect(filters[0]);
+      filters[0].connect(filters[1]);
+      filters[1].connect(destination);
       Tone.start();
       mediaRecorder.current = new MediaRecorder(destination.stream);
       mediaRecorder.current.ondataavailable = event => {

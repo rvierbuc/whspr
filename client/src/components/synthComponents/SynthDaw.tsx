@@ -56,12 +56,9 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, distorti
     distortion: distortionFilter.distortion,
   });
 
-  const [toggleFilters, setToggleFilters] = useState<[Tone.Phaser, Tone.Distortion]>([]);
-
   useEffect(() => {
     setAddSynth(false);
     setInstrument(oscillatorOptions.oscillator);
-    setToggleFilters([phaseFilter, distortionFilter]);
     setSynthFilters({ phaseFilter, distortionFilter });
   }, []);
 
