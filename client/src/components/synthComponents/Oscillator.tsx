@@ -1,6 +1,7 @@
 import React, { BaseSyntheticEvent, useState, useEffect } from 'react';
 import { Container, Stack, Button } from 'react-bootstrap';
 import * as Tone from 'tone';
+import { SlQuestion } from "react-icons/sl";
 
 interface Props {
   oscSettings: {
@@ -41,6 +42,7 @@ interface Props {
     distortionFilter: Tone.Distortion;
   }
   instrument: Tone.Oscillator | Tone.FatOscillator | Tone.FMOscillator | Tone.AMOscillator
+  handleInfoToggle: (event: BaseSyntheticEvent) => void
 }
 
 const Oscillator = ({
@@ -58,6 +60,7 @@ const Oscillator = ({
   phaserSettings,
   audioContext,
   synthFilters,
+  handleInfoToggle,
   instrument }: Props): React.JSX.Element => {
 
   const oscillatorKeys = Object.keys(oscillatorOptions).map(option => option = option[0].toUpperCase() + option.substring(1));
@@ -117,7 +120,7 @@ const Oscillator = ({
         <Stack direction="vertical" gap={3} className="mx-auto mb-1">
           {/* oscillator types */}
           <div className="text-center text-white oscillatorOptions">
-            <h5 className="text-center mb-2">Oscillator Type</h5>
+            <h5 className="text-center mb-2">Oscillator Type <SlQuestion id="oscType" onClick={handleInfoToggle} /></h5>
             <Button className={`btn mx-1  ${selectedOscillator === oscillatorKeys[0] && 'activeButton'}`} variant='dark' onClick={() => handleOscillatorChange(oscillator)}>Default</Button>
             <Button className={`btn mx-1 ${selectedOscillator === oscillatorKeys[1] && 'activeButton'}`} variant='dark' onClick={() => handleOscillatorChange(fatOscillator)} >Fat</Button>
             <Button className={`btn mx-1 ${selectedOscillator === oscillatorKeys[2] && 'activeButton'}`} variant='dark' onClick={() => handleOscillatorChange(fmOscillator)} >FM</Button>
@@ -125,7 +128,7 @@ const Oscillator = ({
           </div>
           {/* wave types */}
           <div className="text-center text-white mx-auto">
-            <h5 className="text-center mb-2">Wave Type</h5>
+            <h5 className="text-center mb-2">Wave Type <SlQuestion id="waveType" onClick={handleInfoToggle} /></h5>
             <Button className={`btn mx-1 ${type === 'sine' && 'activeButton'}`} variant='dark' id="sine" onClick={(e) => handleTypeChange(e)}>Sine</Button>
             <Button className={`btn mx-1 ${type === 'triangle' && 'activeButton'}`} variant='dark' id="triangle" onClick={(e) => handleTypeChange(e)} >Triangle</Button>
             <Button className={`btn mx-1 ${type === 'square' && 'activeButton'}`} variant='dark' id="square" onClick={(e) => handleTypeChange(e)} >Square</Button>
@@ -146,11 +149,14 @@ const Oscillator = ({
           </div>
           {/* PHASER OPTIONS */}
           <div className="mx-auto" style={{marginBottom: '-1rem'}}>
-            <Button
-              className={`btn-sm btn-dark ${synthBypass.phaseFilter && 'activeButton'}`}
-              style={{display: 'flex', justifyContent: 'center'}}
-              id='phaseFilter'
-              onClick={changePhase}>Phaser</Button>
+            <div style={{ display: 'inline-block', justifyContent: 'center' }}>
+              <Button
+                className={`btn-sm btn-dark ${synthBypass.phaseFilter && 'activeButton'}`}
+                style={{display: 'inline-block', marginLeft: '1.7rem' }}
+                id='phaseFilter'
+                onClick={changePhase}>Phaser</Button>
+            </div>
+            <h5 className="text-white" style={{display: 'inline-block', marginLeft: '0.5rem'}}><SlQuestion id="phaser" onClick={handleInfoToggle} /></h5>
           </div>
           <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
             <Stack direction="horizontal" gap={5}>
@@ -182,12 +188,15 @@ const Oscillator = ({
           </div>
           {/* DISTORTION OPTIONS */}
           <div className="mx-auto" style={{marginBottom: '-1rem'}}>
-            <Button
-              className={`btn-sm btn-dark ${synthBypass.distortionFilter && 'activeButton'}`}
-              style={{ display: 'flex', justifyContent: 'center' }}
-              id='distortionFilter'
-              onClick={changeDistortion}
-              >Distortion</Button>
+            <div style={{ display: 'inline-block', justifyContent: 'center' }}>
+              <Button
+                className={`btn-sm btn-dark ${synthBypass.distortionFilter && 'activeButton'}`}
+                style={{ display: 'inline-block', marginLeft: '1.7rem' }}
+                id='distortionFilter'
+                onClick={changeDistortion}
+                >Distortion</Button>
+            </div>
+            <h5 className="text-white" style={{display: 'inline-block', marginLeft: '0.5rem'}}><SlQuestion id="distortion" onClick={handleInfoToggle} /></h5>
           </div>
           <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
             <Stack direction="horizontal" gap={5}>

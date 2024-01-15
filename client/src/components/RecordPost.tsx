@@ -50,9 +50,6 @@ export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, titl
   const audioSource = useRef<AudioBufferSourceNode | null>(null);
   const userId = user.id;
 
-  console.log('RecordPost', synthFilters);
-  console.log('RecordPost', synthBypass);
-
   // navigate functionality
   const navigate = useNavigate();
   const handleNavigation: (path: string) => void = (path: string) => navigate(path);

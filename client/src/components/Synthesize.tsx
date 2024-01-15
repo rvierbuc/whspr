@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { BaseSyntheticEvent, useState } from 'react';
 import SynthDaw from './synthComponents/SynthDaw';
-import { Container } from 'react-bootstrap';
+import { Container, Modal } from 'react-bootstrap';
 import * as Tone from 'tone';
 import { useLoaderData } from 'react-router-dom';
 
@@ -15,8 +15,29 @@ interface Options {
   amOscillator: Tone.AMOscillator
 }
 
+interface ModalToggle {
+  oscType: boolean
+  waveType: boolean
+  phaser: boolean
+  distortion: boolean
+}
+
 const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
   const user: any = useLoaderData();
+
+  const [toggleInfo, setToggleInfo] = useState<ModalToggle>({
+    oscType: false,
+    waveType: false,
+    phaser: false,
+    distortion: false
+  });
+
+  console.log(toggleInfo);
+
+  const handleInfoToggle: (event: BaseSyntheticEvent) => void = (event) => {
+    const id: string = event.target.id;
+    setToggleInfo({ ...toggleInfo, [id]: !toggleInfo[id] })
+  };
 
   const oscillatorOptions: Options = {
     oscillator: new Tone.Oscillator().toDestination(),
@@ -39,7 +60,7 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
   return (
     <Container className="p-3 rounded w-75">
       <div>
-        <SynthDaw distortionFilter={distortionFilter} phaseFilter={phaseFilter} user={user} audioContext={audioContext} oscillatorOptions={oscillatorOptions} />
+        <SynthDaw handleInfoToggle={handleInfoToggle} distortionFilter={distortionFilter} phaseFilter={phaseFilter} user={user} audioContext={audioContext} oscillatorOptions={oscillatorOptions} />
       </div>
     </Container>
   );

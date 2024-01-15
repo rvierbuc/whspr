@@ -19,6 +19,7 @@ interface Props {
   phaseFilter: Tone.Phaser
   distortionFilter: Tone.Distortion
   user: any
+  handleInfoToggle: (event: BaseSyntheticEvent) => void
 }
 
 const defaultSettings = {
@@ -28,7 +29,7 @@ const defaultSettings = {
   lowPassType: 'lowpass',
 };
 
-const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, distortionFilter }: Props): React.JSX.Element => {
+const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, phaseFilter, distortionFilter }: Props): React.JSX.Element => {
   const [addSynth, setAddSynth ] = useState(false);
   const [filter, setFilter] = useState(defaultSettings);
   const [instrument, setInstrument] = useState(oscillatorOptions.oscillator);
@@ -156,6 +157,7 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, distorti
             audioContext={audioContext}
             synthFilters={synthFilters}
             instrument={instrument}
+            handleInfoToggle={handleInfoToggle}
              />
         </Container>}
         <RecordPost
@@ -169,6 +171,7 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter, distorti
           start={start}
           stop={stop}
           synthFilters={synthFilters}
+          handlInfoToggle={handleInfoToggle}
           synthBypass={synthBypass}/>
       </div>
     </Container>
