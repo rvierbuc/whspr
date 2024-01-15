@@ -6,6 +6,9 @@ import Post from './Post';
 import WaveSurferComponent from './WaveSurfer';
 import { IoPersonAdd } from 'react-icons/io5';
 import { IoPersonRemoveOutline } from 'react-icons/io5';
+import { Modal, Button } from 'react-bootstrap';
+import { FaSearch } from 'react-icons/fa';
+import { Link, Navigate } from 'react-router-dom';
 
 interface FollowerAttributes {
   id: number;
@@ -33,6 +36,42 @@ const ReadOnlyProfile = ({ audioContext }) => {
   const [selectedUserFollowers, setSelectedUserFollowers] = useState<
   FollowerAttributes[]
   >([]);
+  const [searchModal, setSearchModal] = useState<boolean>(false);
+  const [searchInput, setSearchInput] = useState<string>('');
+  const [followerSearchResults, setFollowerSearchResults] = useState<
+  FollowerAttributes[]
+  >([]);
+  const [followingSearchResults, setFollowingSearchResults] = useState<
+  FollowingAttributes[]
+  >([]);
+
+  const handleSearchChange = (e) => {
+    setSearchInput(e.target.value);
+  };
+  const handleSearchSubmission = async (): Promise<void> => {
+    try {
+      console.log(
+        'inside search submission',
+        selectedUserInfo,
+        'userid',
+        selectedUserInfo.userId,
+      );
+      if (searchInput === '') {
+        alert('Please enter a search term');
+        return;
+      }
+      const followerResults = await axios.get(
+        `/post/user/${selectedUserInfo[0].userId}/followers/search/${searchInput}`,
+      );
+      const followingResults = await axios.get(
+        `/post/user/${selectedUserInfo[0].userId}/following/search/${searchInput}`,
+      );
+      setFollowerSearchResults(followerResults.data);
+      setFollowingSearchResults(followingResults.data);
+    } catch (error) {
+      console.log('error searching for followers', error);
+    }
+  };
 
   //const [userPosts, setUserPosts]  = useState<any>()
   const { id } = useParams();
@@ -43,6 +82,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
       setSelectedUserInfo(selectedUserObj.data);
       // setUserPosts(selectedUserObj.data[0].Posts)
       // console.log(selectedUserObj.data[0].Posts)
+      console.log(selectedUserObj.data);
     } catch (error) {
       console.error('could not get selected user info', error);
     }
@@ -69,7 +109,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
       console.log('could not update post', error);
     }
   };
-  const startFollowing = async () => {
+  const startFollowing = async (): Promise<void> => {
     try {
       const createFollowing = await axios.post('/post/startFollowing', {
         userId: user.id,
@@ -83,7 +123,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
     }
   };
 
-  const stopFollowing = async () => {
+  const stopFollowing = async (): Promise<void> => {
     try {
       const createFollowing = await axios.delete(
         `/post/stopFollowing/${user.id}/${id}`,
@@ -96,7 +136,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
     }
   };
 
-  const isFollowing = async () => {
+  const isFollowing = async (): Promise<void> => {
     try {
       const findFollowing = await axios.get(
         `/post/isFollowing/${user.id}/${id}`,
@@ -111,7 +151,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
       console.log('following error', error);
     }
   };
-  const getSelectedUserFollowers = async () => {
+  const getSelectedUserFollowers = async (): Promise<void> => {
     try {
       const followers = await axios.get(`/post/user/${id}/followers`);
       setSelectedUserFollowers(followers.data);
@@ -119,7 +159,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
       console.log('error fetching current user followers', error);
     }
   };
-  const getSelectedUserFollowing = async () => {
+  const getSelectedUserFollowing = async (): Promise<void> => {
     try {
       const followingArr = await axios.get(`/post/user/${id}/following`);
       setSelectedUserFollowing(followingArr.data);
@@ -132,9 +172,98 @@ const ReadOnlyProfile = ({ audioContext }) => {
     isFollowing();
     getSelectedUserFollowers();
     getSelectedUserFollowing();
-  }, []);
+  }, [id]); //update when id changes to trigger re-render for search
   return (
     <div>
+      <Modal
+        style={{
+          backgroundColor: 'rgb(209, 209, 209, 0.6',
+          textAlign: 'center',
+        }}
+        show={searchModal}
+        onHide={() => setSearchModal(!searchModal)}
+      >
+        <Modal.Dialog style={{ backgroundColor: 'rgb(209, 209, 209, 0.6' }}>
+          <Modal.Header closeButton>
+            <Modal.Title>Search for users who follow/are followed!</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchInput}
+              onChange={handleSearchChange}
+            />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => setSearchModal(!searchModal)}
+            >
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={() => handleSearchSubmission()}>
+              Search
+            </Button>
+          </Modal.Footer>
+        </Modal.Dialog>
+        {followerSearchResults.length > 0 && (
+          <div className="followers-div">
+            <h3>Followers</h3>
+            {followerSearchResults.map((follower) => (
+              <div className="card follower-search" key={follower.id}>
+                <Link
+                  to={`/protected/feed/profile/${follower.id}`}
+                  onClick={() => setSearchModal(false)}
+                >
+                  <div className="follower-info-wrap">
+                    <img
+                      src={follower.profileImgUrl}
+                      alt="follower profile image"
+                      style={{
+                        borderRadius: '50%',
+                        width: '100px',
+                        height: '100px',
+                        marginTop: '10px',
+                        marginBottom: '10px',
+                      }}
+                    />
+                    <h4>{follower.username}</h4>
+                  </div>
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
+        {followingSearchResults.length > 0 && (
+          <div className="followers-div">
+            <h3>Following</h3>
+            {followingSearchResults.map((followingUser) => (
+              <div className="card follower-search" key={followingUser.id}>
+                <Link
+                  to={`/protected/feed/profile/${followingUser.id}`}
+                  onClick={() => setSearchModal(false)}
+                >
+                  <div className="follower-info-wrap">
+                    <img
+                      src={followingUser.profileImgUrl}
+                      alt="follower profile image"
+                      style={{
+                        borderRadius: '50%',
+                        width: '100px',
+                        height: '100px',
+                        marginTop: '10px',
+                        marginBottom: '10px',
+                      }}
+                    />
+                    <h4>{followingUser.username}</h4>
+                  </div>
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
+      </Modal>
       {selectedUserInfo ? (
         <div
           className="card"
@@ -212,7 +341,13 @@ const ReadOnlyProfile = ({ audioContext }) => {
                 }}
               >
                 <div>{selectedUserFollowers.length}</div>
-                <div>Followers</div>
+                <div>
+                  Followers{' '}
+                  <FaSearch
+                    style={{ marginLeft: '10px', cursor: 'pointer' }}
+                    onClick={() => setSearchModal(true)}
+                  />
+                </div>
               </div>
             </div>
           </div>

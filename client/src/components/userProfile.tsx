@@ -179,7 +179,7 @@ const UserProfile = ({
   const handleSearchSubmission = async (): Promise<void> => {
     try {
       if (searchInput === '') {
-        alert('Please enter a search input');
+        alert('Please enter a search term');
         return;
       }
       // make a request to the server endpoint using the current user's id and the search input as identifying params to get
