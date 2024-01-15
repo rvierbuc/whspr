@@ -161,10 +161,10 @@ const Oscillator = ({
           <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
             <Stack direction="horizontal" gap={5}>
               <div className="text-center text-white">
-                <h6>Quality</h6>
+                <h6>Spread</h6>
                 <input
                   value={Q}
-                  max="20"
+                  max="50"
                   min="0"
                   onChange={changePhase}
                   disabled={!synthBypass.phaseFilter}

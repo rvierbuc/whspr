@@ -926,3 +926,20 @@ input[type="range"]::-moz-range-thumb {
   background-color: #7C3030;
   border-color: #A51C30;
 }
+
+
+// .modalCustom {
+  // position: absolute;
+  // top: 56%;
+  // left: 74%;
+  // background-color: grey;
+  // border: 1px solid rgba(236, 210, 210, 0.36);
+  // border-radius: 3px;
+// }
+
+// SYNTH MODAL STYLING
+.synthModal {
+  border: 1px solid rgba(236, 210, 210, 0.36);
+  @include blur(4.2px);
+  color: rgb(60, 53, 86);
+}

@@ -40,7 +40,7 @@ const constraints: Constraints = {
   video: false,
 };
 
-export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, categories, filter, addSynth, instrument, start, stop, bitCrushFilter, phaseFilter }: Props) => {
+export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, categories, filter, addSynth, instrument, start, stop }: Props) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);

@@ -171,7 +171,6 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
           start={start}
           stop={stop}
           synthFilters={synthFilters}
-          handlInfoToggle={handleInfoToggle}
           synthBypass={synthBypass}/>
       </div>
     </Container>
