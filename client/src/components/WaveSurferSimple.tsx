@@ -12,18 +12,20 @@ interface WaveSurferProps {
   audioUrl: string;
   postId: number;
   audioContext: AudioContext;
+  type: string;
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   audioUrl,
   postId,
   audioContext,
+  type,
 }) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
-  const containerId = `waveform-${postId || ''}-comment`;
+  const containerId = `waveform-${postId || ''}-${type}`;
   const createSoundWaves = () => {
     let regions: RegionsPlugin;
     //if there is a wavesurfer already, destroy it

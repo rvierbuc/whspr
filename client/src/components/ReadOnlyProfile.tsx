@@ -44,57 +44,6 @@ const ReadOnlyProfile = ({ audioContext }) => {
       console.error('could not get selected user info', error);
     }
   };
-  const updatePost = async (postId, updateType) => {
-    try {
-      const updatedPost:any = await axios.get(`/post/updatedPost/${postId}/${user.id}`);
-      console.log('updated post obj', updatedPost);
-      const postIndex = selectedUserInfo.findIndex((post) => post.id === updatedPost.data.id);
-      updatedPost.data.rank = selectedUserInfo[postIndex].rank;
-      //console.log('post index', updatePostIndex)
-      const postsWUpdatedPost = selectedUserInfo.toSpliced(postIndex, 1, updatedPost.data );
-      console.log(postsWUpdatedPost);
-      setSelectedUserInfo(postsWUpdatedPost);
-    } catch (error) {
-      console.log('could not update post', error);
-    }
-  };
-  const startFollowing = async () => {
-    try {
-      const createFollowing = await axios.post('/post/startFollowing', { userId: user.id, followingId: id });
-      if (createFollowing.data === 'Created') {
-        setFollowing(true);
-      }
-    } catch (error) {
-      console.error('could not follow user', error);
-
-    }
-  };
-
-  const stopFollowing = async () => {
-    try {
-      const createFollowing = await axios.delete(`/post/stopFollowing/${user.id}/${id}`);
-      if (createFollowing.data === 'Created') {
-        setFollowing(false);
-      }
-    } catch (error) {
-      console.error('could not follow user', error);
-
-    }
-  };
-
-  const isFollowing = async () => {
-    try {
-      const findFollowing = await axios.get(`/post/isFollowing/${user.id}/${id}`);
-      if (findFollowing.status === 200) {
-        setFollowing(true);
-      }
-    } catch (error: any) {
-      if (error.response.status === 404) {
-        setFollowing(false);
-      }
-      console.log('following error', error);
-    }
-  };
   const getSelectedUserFollowers = async () => {
     try {
       const followers = await axios.get(
@@ -116,6 +65,60 @@ const ReadOnlyProfile = ({ audioContext }) => {
       console.log('error fetching current user following', error);
     }
   };
+  const updatePost = async (postId, updateType) => {
+    try {
+      const updatedPost:any = await axios.get(`/post/updatedPost/${postId}/${user.id}`);
+      console.log('updated post obj', updatedPost);
+      const postIndex = selectedUserInfo.findIndex((post) => post.id === updatedPost.data.id);
+      updatedPost.data.rank = selectedUserInfo[postIndex].rank;
+      //console.log('post index', updatePostIndex)
+      const postsWUpdatedPost = selectedUserInfo.toSpliced(postIndex, 1, updatedPost.data );
+      console.log(postsWUpdatedPost);
+      setSelectedUserInfo(postsWUpdatedPost);
+    } catch (error) {
+      console.log('could not update post', error);
+    }
+  };
+  const startFollowing = async () => {
+    try {
+      const createFollowing = await axios.post('/post/startFollowing', { userId: user.id, followingId: id });
+      if (createFollowing.data === 'Created') {
+        setFollowing(true);
+        getSelectedUserFollowers();
+      }
+    } catch (error) {
+      console.error('could not follow user', error);
+
+    }
+  };
+
+  const stopFollowing = async () => {
+    try {
+      const createFollowing = await axios.delete(`/post/stopFollowing/${user.id}/${id}`);
+      if (createFollowing.data === 'Created') {
+        setFollowing(false);
+        getSelectedUserFollowers();
+      }
+    } catch (error) {
+      console.error('could not follow user', error);
+
+    }
+  };
+
+  const isFollowing = async () => {
+    try {
+      const findFollowing = await axios.get(`/post/isFollowing/${user.id}/${id}`);
+      if (findFollowing.status === 200) {
+        setFollowing(true);
+      }
+    } catch (error: any) {
+      if (error.response.status === 404) {
+        setFollowing(false);
+      }
+      console.log('following error', error);
+    }
+  };
+
   useEffect(() => {
     console.log('use effect in read only profile', onUserProfile);
     getSelectedUserInfo();

@@ -18,6 +18,7 @@ const Comment = (props) => {
         postId={comment.id}
         audioUrl={comment.soundUrl}
         audioContext={audioContext}
+        type={'comment'}
       />
       {/* <audio controls>
           <source src={comment.soundUrl} type="audio/webm" />

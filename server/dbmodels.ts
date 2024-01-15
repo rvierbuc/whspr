@@ -192,7 +192,22 @@ export const AIMessage = db.define('AIMessage', {
   message: {
     type: DataTypes.TEXT
   }
-})
+});
+
+export const SharedPost = db.define('SharedPost', {
+  sentFromId: {
+    type: DataTypes.INTEGER,
+  },
+  sentToId: {
+    type: DataTypes.INTEGER,
+  },
+  postId: {
+    type: DataTypes.INTEGER,
+  },
+  captionUrl: {
+    type: DataTypes.STRING,
+  },
+});
 
 // defines table relations
 User.hasMany(MagicConch, { foreignKey: 'sendingUserId' });
@@ -204,6 +219,13 @@ User.hasMany(Like, { foreignKey: 'userId' });
 Like.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 Post.hasMany(Like, { foreignKey: 'postId' });
 Like.belongsTo(Post, { foreignKey: 'postId' });
+
+User.hasMany(SharedPost, { foreignKey: 'sentFromId' });
+SharedPost.belongsTo(User, { foreignKey: 'sentFromId' });
+User.hasMany(SharedPost, { foreignKey: 'sentToId' });
+SharedPost.belongsTo(User, { foreignKey: 'sentToId' });
+Post.hasMany(SharedPost, { foreignKey: 'postId' });
+SharedPost.belongsTo(Post, { foreignKey: 'postId' });
 
 User.hasMany(Listen, { foreignKey: 'userId' });
 Listen.belongsTo(User, { foreignKey: 'userId' });

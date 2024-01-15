@@ -19,6 +19,8 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [cannotSelect, setCannotSelect] = useState<boolean>(false);
+  const [clicked, setClicked] = useState<boolean>(false);
+  const [tagCounter, setTagCounter] = useState<number>(0);
   //const tagsRef = useRef([]);
   const user: any = useLoaderData();
   const { type }:Readonly<Params<string>> = useParams();
@@ -55,28 +57,32 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   };
 
   const handleTagSelect = (event): void => {
-    if (selectedTags.length === 5) {
-      setCannotSelect(true);
-      event.target.checked = false;
-      
-    }
-    if (!event.target.checked && selectedTags.includes(event.target.value)) {
-      const uncheckedInd = selectedTags.indexOf(event.target.value);
-      const updatedTags = selectedTags.toSpliced(uncheckedInd, 1);
-      setSelectedTags(updatedTags);
+  
+    if (selectedTags.includes(event.target.value)) {
+      setSelectedTags(selectedTags.filter(tag => tag !== event.target.value));
+      setTagCounter(() => tagCounter - 1);
+      console.log('selected tags unchecked', selectedTags);
+      event.target.className = 'not-selected-tag';
     }
 
-    if (event.target.checked && !selectedTags.includes(event.target.value)) {
-      setSelectedTags(() => [...selectedTags, event.target.value]);
+    if (!selectedTags.includes(event.target.value)) {
+      setSelectedTags([...selectedTags, event.target.value]);
+      setTagCounter(() => tagCounter + 1);
+      event.target.className = 'selected-tag';
+      if (tagCounter === 5) {
+        setCannotSelect(true);
+        console.log('selected tags length=4', selectedTags);
+        event.target.className = 'not-selected-tag';
+        setSelectedTags(selectedTags.filter(tag => tag !== event.target.value));
+      }
     }
- 
   };
   
   const submitTagSelection = () => {
     axios.put(`/post/selectedTags/${user.id}`, { tags: selectedTags });
     setShowTagModal(false);
     getPosts('explore', 'none');
-    console.log(selectedTags);
+    //console.log(selectedTags);
     //getPosts('explore', 'none')
   };
   const updatePost = async (postId, updateType) => {
@@ -112,24 +118,28 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   // const placeHolder: Blob[] = [];
   return (
     <div>
-      <Modal show={showTagModal} onHide={() => setShowTagModal(false)} aria-labelledby="contained-modal-title-vcenter"
+      <Modal id='modal-background' show={showTagModal} onHide={() => setShowTagModal(false)} aria-labelledby="contained-modal-title-vcenter"
       centered>
-        <Modal.Header closeButton>
-          You are not following any whsprers yet!
-        </Modal.Header>
-        <Modal.Body>
-          Select up to 5 tags below to get started with some interesting sounds or check out our most popular posts!
-          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
+        {/* <Modal.Dialog > */}
+        <Modal.Header id='tag-mod-header' centered>
+         What do you want to hear about?
+        </Modal.Header >
+        <Modal.Body id='tags'style={{ fontSize: '1.5rem' }} >
+         Select up to 5 tags to get started with some interesting whsprs.
+          <div className='card' style={{ margin: '.5rem', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
           {tags ? tags.map((tag, index) => (
             <div key={index} style={{ display: 'flex', flexDirection: 'row', margin: '.5rem' }}>
-            <input id={tag} onChange={ (e) => handleTagSelect(e) } disabled={cannotSelect} type='checkbox' value={tag}/>
-            <label htmlFor={tag} style={{ marginLeft: '.5rem' }}>{tag}</label>
+            <button className='not-selected-tag' onClick={(e) => handleTagSelect(e)} disabled={cannotSelect} value={tag}>{`#${tag}`}</button>
             </div>
           )) : <div></div>}
           </div>
-          <button onClick={ () => submitTagSelection() }>Submit</button>
+          <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'row', justifyContent: 'end' }}>
+
+          <button id='tag-submit' onClick={ () => submitTagSelection() }>Submit</button>
+          </div>
           {/* <button onClick={ () => setCannotSelect(false)}>edit</button> */}
         </Modal.Body>
+        {/* </Modal.Dialog> */}
       </Modal>
       {posts 
         ? (posts.length === 0 ? <a href='explore' style={{ color: 'white', fontSize: 'xxx-large' }}>Explore Popular Posts to Find Friends</a>

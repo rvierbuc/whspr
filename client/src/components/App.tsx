@@ -23,6 +23,7 @@ import MagicConch from './MagicConch';
 import ReadOnlyProfile from './ReadOnlyProfile';
 // import Search from './Search';
 import Post from './Post';
+
 import axios from 'axios';
 import { WhsprAI } from './WhsprAI';
 import aa from 'search-insights';
@@ -71,7 +72,7 @@ const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
             <Route>
-                <Route path="/" element={<Login />} />
+                <Route path="/" element={<Login audioContext={audioContext} />} />
                 <Route path="/protected" element={<PrivateRoutes />} >
                     <Route path="dashboard" element={<WaveSurferComponent />} /> 
                     <Route path="WhsprAI" element={<WhsprAI audioContext={audioContext} />} loader={() => getUserLoader()}/>

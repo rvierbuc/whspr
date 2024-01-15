@@ -16,6 +16,8 @@ import { MdArrowOutward } from 'react-icons/md';
 import { MdDeleteOutline } from 'react-icons/md';
 import { MdDeleteOutline } from 'react-icons/md';
 import { TooltipComponent } from './Tooltip';
+import Modal from 'react-bootstrap/Modal';
+import { SharePost } from './SharePost';
 
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
@@ -34,9 +36,9 @@ interface WaveSurferProps {
   setCorrectPostId: any
   setSelectedUserPosts: any
   isDeleting: boolean
-  onGridView: boolean;
-  setOnGridView: any;
   setCurrentDeletePostId: any
+  onHome: boolean
+
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
@@ -55,9 +57,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   setCorrectPostId,
   setSelectedUserPosts,
   isDeleting,
-  onGridView,
-  setOnGridView,
-  setCurrentDeletePostId
+  setCurrentDeletePostId,
+  onHome,
 }) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
@@ -68,6 +69,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [duration, setDuration] = useState<string>();
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [addComment, setAddComment] = useState<boolean>(false);
+  const [showFullPost, setShowFullPost] = useState<boolean>(false);
+  const [showShareModal, setShowShareModal] = useState<boolean>(false);
+ 
   //const [hasCategories, setHasCategories] = useState<boolean>();
   // const { audioUrl, postId } = props;
   const containerId = `waveform-${postId || ''}`;
@@ -79,6 +83,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   //     console.error(error);
   //   }
   // };
+
+
+
   const handleLike = async ()=> {
     try {
       await axios.post('/post/like', { userId, postId: postObj.id });
@@ -259,15 +266,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   useEffect(() => {
     createSoundWaves();
     isFollowing();
-    // if (postObj.categories) {
-    //   if (postObj.categories.length > 0) {
-    //     setHasCategories(true);
-    //   } else {
-    //     setHasCategories(false);
-    //   }
-    // } else {
-    //   setHasCategories(false);
-    // }
   }, [audioUrl]);
   return (
     <div
@@ -276,6 +274,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       style={{ width: onUserProfile || onProfile ? '315px' : '100%', height: '100%', marginTop: '1rem', marginBottom: '1rem' }}
     >
       
+
         <div className="row" id="feed-row">
           <div className="col-sm" id="feed-col-sm">
             <div className="card" id="feed-card" >
@@ -339,7 +338,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 paddingTop: '1rem',
                 paddingLeft: '1rem',
                 justifyContent: 'start',
-                alignContent:'end' }}>
+                alignContent: 'end' }}
+                onClick={() => showFullPost ? setShowFullPost(false) : setShowFullPost(true)}
+                >
               <div
                     style={{
                       display: 'flex',
@@ -357,12 +358,12 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                       style={{
                         fontSize: onUserProfile || onProfile ? '1.5rem' : '4rem',
                         color: '#e1e1e5',
-                        marginTop:'.5rem',
-                        width:'190px',
-                        overflow:'hidden',
-                        whiteSpace:'nowrap',
+                        marginTop: '.5rem',
+                        width: '190px',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
                         textOverflow: 'ellipsis',
-                        cursor:'pointer',
+                        cursor: 'pointer',
                       }}
                     >
 
@@ -371,7 +372,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     </TooltipComponent>
                     <div
                       style={{
-                        marginTop:'.5rem',
+                        marginTop: '.5rem',
                         marginLeft: 'auto',
                         fontSize: '.5rem',
                         color: '#e1e1e5',
@@ -465,7 +466,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     </div>
                     <div
                       style={{
-                        marginTop:'1.5rem',
+                        marginTop: '1.5rem',
                         marginLeft: 'auto',
                         fontSize: 'large',
                         color: '#e1e1e5',
@@ -582,7 +583,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   <div style={{ color: '#e1e1e5', marginLeft: 'auto' }}>{duration ? duration : ''}</div>
                 </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginBottom: '8px', 
+              {onHome ? <div></div> : (<div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginBottom: '8px', 
               }}>
               {postObj.isLiked ? (
                 <div>
@@ -648,6 +649,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   </TooltipComponent>
                   <TooltipComponent tooltip='Share' id={`share-${postObj.id}`}>
                 <MdArrowOutward
+                onClick={() => { setShowShareModal(true); }}
                 style={{
                   //backgroundColor: 'rgba(233, 236, 243, 0.00)',
                   //borderColor: 'rgba(233, 236, 243, 0.00)',
@@ -680,7 +682,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 ) : (
                     <div></div>
                 )}
-              </div>
+              </div>)}
               {/* {onUserProfile ? (
                 <a></a>
               ) : ( */}
@@ -699,7 +701,36 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
             </div>
           </div>
         </div>
-      
+        <Modal show={showShareModal} onHide={() => setShowShareModal(false)} aria-labelledby="contained-modal-title-vcenter"
+      centered>
+        <SharePost
+        postObj={postObj}
+        userId={userId}
+        setShowShareModal={setShowShareModal}
+        showShareModal={showShareModal}
+        audioContext={audioContext}
+        ></SharePost>
+        </Modal>
+      {/* <Modal isOpen={showFullPost} onClose={() => setShowFullPost(false)} >
+        <WaveSurferComponent
+        postObj={postObj}
+        audioUrl={postObj.soundUrl}
+        postId={postObj.id}
+        userId={userId}
+        getPosts={getPosts}
+        updatePost={updatePost}
+        onProfile={onProfile}
+        audioContext={audioContext}
+        feed={feed}
+        setIsDeleting={setIsDeleting}
+        setCorrectPostId={setCorrectPostId}
+        setSelectedUserPosts={setSelectedUserPosts}
+        isDeleting={isDeleting}
+        setCurrentDeletePostId={setCurrentDeletePostId}
+        onUserProfile={onUserProfile}
+        setOnProfile={setOnProfile}
+        ></WaveSurferComponent>
+      </Modal> */}
     </div>
   );
 };
