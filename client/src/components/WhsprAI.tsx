@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Modal } from './Modal';
 import axios from 'axios';
 import { useLoaderData } from 'react-router-dom';
+import mute from '../style/mute.svg';
+import unmute from '../style/unmute.svg';
 
 export const WhsprAI = ({ audioContext }) => {
   const [isPhone, setIsPhone] = useState(false);
@@ -11,9 +13,11 @@ export const WhsprAI = ({ audioContext }) => {
   const [showText, setShowText] = useState(false);
   const [AIResponse, setAIResponse] = useState<string[]>([]);
   const [lengthTracker, setLengthTracker] = useState(0);
+  const [isMuted, setIsMuted] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [animationInitialized, setAnimationInitialized] = useState(false);
   const [newMessageCount, setNewMessageCount] = useState(0)
+  const audioRef = useRef(null);
   const canvasRef = useRef(null);
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const frameRef = useRef<number | null>(null);
@@ -240,6 +244,9 @@ export const WhsprAI = ({ audioContext }) => {
       }
     });
     audio.play();
+    //attaches audio to audioRef
+    audioRef.current = audio
+    if (isMuted) audio.volume = 0
   };
 
   //this voice variable controls which endpoint is used for the tts
@@ -377,6 +384,12 @@ export const WhsprAI = ({ audioContext }) => {
     }
   };
 
+  const toggleMute = () => {
+    setIsMuted(!isMuted)
+    if (audioRef.current) {
+      audioRef.current.volume = !isMuted ? 0 : 1;
+    }
+  }
 
   return (
     <div className='container-whsprAI'>
@@ -419,7 +432,9 @@ export const WhsprAI = ({ audioContext }) => {
                   : <img src={require('../style/pressedtotalk.png')}
                     draggable="false"
                     className="presstotalk-img" />} */}
-                press and<br />hold to talk
+                <span>
+                  press and<br />hold to talk
+                </span>
               </button>
               )}
           </div>
@@ -431,6 +446,13 @@ export const WhsprAI = ({ audioContext }) => {
               </div>
             ))}
           </div>}
+        </div>
+        <div className='mute-btn-container'>
+          <img
+            src={isMuted ? mute : unmute}
+            className='mute-btn'
+            onClick={toggleMute}
+          />
         </div>
         <div className='text-btn-container'>
           <img

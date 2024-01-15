@@ -4,6 +4,9 @@ import axios from 'axios';
 import { useLoaderData } from 'react-router-dom';
 import Post from './Post';
 import WaveSurferComponent from './WaveSurfer';
+import { IoPersonAdd } from 'react-icons/io5';
+import { IoPersonRemoveOutline } from 'react-icons/io5';
+
 interface FollowerAttributes {
   id: number;
   username: string;
@@ -26,12 +29,11 @@ const ReadOnlyProfile = ({ audioContext }) => {
   const [onProfile, setOnProfile] = useState<boolean>(true);
   const [selectedUserFollowing, setSelectedUserFollowing] = useState<FollowingAttributes[]>([]);
   const [selectedUserFollowers, setSelectedUserFollowers] = useState<FollowerAttributes[]>([]);
+  
+
   //const [userPosts, setUserPosts]  = useState<any>()
   const { id } = useParams();
   const user:any = useLoaderData();
-  console.log('user in read', user);
-  console.log('id in read', id);
-  console.log('onProfile in read', onProfile);
   const getSelectedUserInfo = async () => {
     try {
       const selectedUserObj = await axios.get(`/post/selected/${id}`);
@@ -96,7 +98,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
   const getSelectedUserFollowers = async () => {
     try {
       const followers = await axios.get(
-        `/post/user/${currentUser.id}/followers`,
+        `/post/user/${id}/followers`,
       );
       setSelectedUserFollowers(followers.data);
     } catch (error) {
@@ -105,11 +107,11 @@ const ReadOnlyProfile = ({ audioContext }) => {
   };
   const getSelectedUserFollowing = async () => {
     try {
-      const following = await axios.get(
-        `/post/user/${currentUser.id}/following`,
+      const followingArr = await axios.get(
+        `/post/user/${id}/following`,
       );
-      setSelectedUserFollowing(following.data);
-      console.log('set following', following.data);
+      setSelectedUserFollowing(followingArr.data);
+      console.log('set following', followingArr.data);
     } catch (error) {
       console.log('error fetching current user following', error);
     }
@@ -124,8 +126,11 @@ const ReadOnlyProfile = ({ audioContext }) => {
   return (
         <div >
            {selectedUserInfo ? 
-          <div className='card' style={{margin:'1rem', height:'100%'}}>
-            <div id='header' style={{margin:'1rem'}}>
+          <div 
+            className='card' 
+            style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+            >
+            <div id='header' style={{ margin: '1rem' }}>
             <div className="row-container" >
                 <div >
                     <img className="profile-image"
@@ -136,29 +141,29 @@ const ReadOnlyProfile = ({ audioContext }) => {
                   <h2 style={{ color: '#0f0c0c', fontSize: '2rem' }}>{selectedUserInfo[0].user.username}</h2>
                 </div>
                 {following ? 
-                <button
-                className='btn btn-light'
-                style={{ marginLeft: 'auto', marginRight: '1rem' }}
+                <IoPersonRemoveOutline
+                //className='btn btn-light'
+                style={{ marginLeft: '1rem', marginRight: '1rem', height: '1.5rem', width: '1.5rem', color: 'rgb(155, 44, 22)' }}
                 onClick={() => stopFollowing()}
-                >Unfollow</button>
-                  : <button
-                className='btn btn-light'
-                style={{ marginLeft: 'auto', marginRight: '1rem' }}
+                ></IoPersonRemoveOutline>
+                  : <IoPersonAdd
+                //className='btn btn-light'
+                style={{ marginLeft: '1rem', marginRight: '1rem', height: '1.5rem', width: '1.5rem', color: 'rgb(54, 89, 169)' }}
                 onClick={() => startFollowing()}
-                >Follow</button>}
+                ></IoPersonAdd>}
             </div>
-            <div className='row-container' style={{justifyContent:'center'}}>
-              <div style ={{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', margin:'.5rem'}}>
+            <div className='row-container' style={{ justifyContent: 'center' }}>
+              <div style ={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: '.5rem' }}>
                   <div>{selectedUserFollowing.length}</div>
                   <div>Following</div>
               </div>
-              <div style ={{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', margin:'.5rem'}}>
+              <div style ={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: '.5rem' }}>
                   <div>{selectedUserFollowers.length}</div>
-                  <div>Following</div>
+                  <div>Followers</div>
               </div>
             </div>
             </div>
-            <div style={{maxWidth: '100vw', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'start', gap:'1rem', marginLeft:'.5rem'}}>
+            <div style={{ maxWidth: '999px', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'start', gap: '1rem' }}>
               {selectedUserInfo.map((post, index) => (
                 <div>
                 <WaveSurferComponent
@@ -172,7 +177,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
                 updatePost={updatePost}
                 setOnGridView={setOnGridView}
                 onProfile={onProfile}
-                postWidth={100 / selectedUserInfo.length}
+                audioContext={AudioContext}
                 />
                 {/* each post should have its own instance of a waveSurfer comp */}
               </div>

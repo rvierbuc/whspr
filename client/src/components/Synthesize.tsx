@@ -4,7 +4,6 @@ import { Container } from 'react-bootstrap';
 import * as Tone from 'tone';
 import { useLoaderData } from 'react-router-dom';
 
-
 interface Props {
   audioContext: AudioContext
 }
@@ -26,12 +25,21 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
     amOscillator: new Tone.AMOscillator().toDestination()
   }
 
-  const phaseFilter: Tone.Phaser = new Tone.Phaser();
+  const phaseFilter: Tone.Phaser = new Tone.Phaser({
+    frequency: 15,
+    Q: 10,
+    octaves: 4,
+    wet: 0.5
+  }).toDestination();
+
+  const distortionFilter: Tone.Distortion = new Tone.Distortion().toDestination();
+  distortionFilter.wet.value = 0.5;
+  distortionFilter.distortion = 0.5;
 
   return (
     <Container className="p-3 rounded w-75">
       <div>
-        <SynthDaw phaseFilter={phaseFilter} user={user} audioContext={audioContext} oscillatorOptions={oscillatorOptions} />
+        <SynthDaw distortionFilter={distortionFilter} phaseFilter={phaseFilter} user={user} audioContext={audioContext} oscillatorOptions={oscillatorOptions} />
       </div>
     </Container>
   );

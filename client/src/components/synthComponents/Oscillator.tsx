@@ -2,13 +2,6 @@ import React, { BaseSyntheticEvent, useState, useEffect } from 'react';
 import { Container, Stack, Button } from 'react-bootstrap';
 import * as Tone from 'tone';
 
-interface Options {
-  oscillator: Tone.Oscillator
-  fatOscillator: Tone.FatOscillator
-  fmOscillator: Tone.FMOscillator
-  amOscillator: Tone.AMOscillator
-}
-
 interface Props {
   oscSettings: {
     frequency: Tone.Unit.Frequency,
@@ -17,30 +10,70 @@ interface Props {
   };
   changeType: (e: BaseSyntheticEvent) => void;
   changeValue: (e: BaseSyntheticEvent) => void;
+  phaserSettings: {
+    phaseFrequency: Tone.Unit.Frequency | undefined,
+    Q: number | undefined
+    octaves: number | undefined
+    phaseWet: number | undefined
+  }
+  distortionSettings: {
+    distortion: number | undefined
+    wet: number | undefined
+  }
+  changePhase: (e: BaseSyntheticEvent) => void
+  changeDistortion: (e: BaseSyntheticEvent) => void
   setInstrument: any
-  oscillatorOptions: Options
+  oscillatorOptions: {
+    oscillator: Tone.Oscillator
+    fatOscillator: Tone.FatOscillator
+    fmOscillator: Tone.FMOscillator
+    amOscillator: Tone.AMOscillator
+  }
   start: () => void;
   stop: () => void;
-  setSynthAudioChunks: any
+  synthBypass: {
+    phaseFilter: boolean
+    distortionFilter: boolean
+  }
+  audioContext: AudioContext
+  synthFilters: {
+    phaseFilter: Tone.Phaser;
+    distortionFilter: Tone.Distortion;
+  }
   instrument: Tone.Oscillator | Tone.FatOscillator | Tone.FMOscillator | Tone.AMOscillator
 }
 
-const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings, changeType, changeValue, setInstrument, oscillatorOptions }: Props): React.JSX.Element => {
+const Oscillator = ({
+  start,
+  stop,
+  oscSettings,
+  changeType,
+  changeValue,
+  setInstrument,
+  oscillatorOptions,
+  changeDistortion,
+  changePhase,
+  distortionSettings,
+  synthBypass,
+  phaserSettings,
+  audioContext,
+  synthFilters,
+  instrument }: Props): React.JSX.Element => {
+
   const oscillatorKeys = Object.keys(oscillatorOptions).map(option => option = option[0].toUpperCase() + option.substring(1));
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const { oscillator, fatOscillator, fmOscillator, amOscillator } = oscillatorOptions
   const { type, frequency, detune } = oscSettings;
-  const [selectedWave, setSelectedWave] = useState('Select Wave');
+  const { Q, phaseWet } = phaserSettings;
+  const { wet, distortion } = distortionSettings;
   const [selectedOscillator, setSelectedOscillator] = useState<string>(oscillatorKeys[0]);
 
   useEffect(() => {
-    setSelectedWave(type[0].toUpperCase() + type.substring(1))
     setSelectedOscillator(oscillatorKeys[0]);
-  }, [])
+  }, []);
 
   const handleTypeChange: (event: BaseSyntheticEvent) => void = (event) => {
     const waveId = event.target.id;
-    setSelectedWave(waveId[0].toUpperCase() + waveId.substring(1));
     changeType(event)
   };
 
@@ -57,9 +90,31 @@ const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings,
     }
   };
 
+  const hearSynth: () => void = () => {
+    const filters: any[] = Object.values(synthFilters);
+    Tone.start();
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
+    if (!synthBypass.phaseFilter) {
+      synthFilters.phaseFilter.wet.value = 0;
+    } else {
+      synthFilters.phaseFilter.wet.value = 0.5
+    }
+    if (!synthBypass.distortionFilter) {
+      synthFilters.distortionFilter.wet.value = 0;
+    } else {
+      synthFilters.distortionFilter.wet.value = 0.5;
+    }
+
+    instrument.connect(filters[0]);
+    filters[0].connect(filters[1]);
+    instrument.start()
+  };
+
   return (
     <div className="oscillator card">
-        <Stack direction="vertical" gap={4} className="mx-auto mb-1">
+        <Stack direction="vertical" gap={3} className="mx-auto mb-1">
           {/* oscillator types */}
           <div className="text-center text-white oscillatorOptions">
             <h5 className="text-center mb-2">Oscillator Type</h5>
@@ -77,7 +132,7 @@ const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings,
             <Button className={`btn mx-1 ${type === 'sawtooth' && 'activeButton'}`} variant='dark' id="sawtooth" onClick={(e) => handleTypeChange(e)} >Sawtooth</Button>
           </div>
           {/* frequency/detune and synth filters below */}
-          <div className="mx-auto">
+          <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
             <Stack direction="horizontal" gap={5}>
               <div className="text-center text-white">
                 <h6>Frequency</h6>
@@ -86,6 +141,79 @@ const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings,
               <div className="text-center text-white">
                 <h6>Detune</h6>
                 <input value={detune} max="150" min="-150" onChange={changeValue} id="detune" type="range" />
+              </div>
+            </Stack>
+          </div>
+          {/* PHASER OPTIONS */}
+          <div className="mx-auto" style={{marginBottom: '-1rem'}}>
+            <Button
+              className={`btn-sm btn-dark ${synthBypass.phaseFilter && 'activeButton'}`}
+              style={{display: 'flex', justifyContent: 'center'}}
+              id='phaseFilter'
+              onClick={changePhase}>Phaser</Button>
+          </div>
+          <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
+            <Stack direction="horizontal" gap={5}>
+              <div className="text-center text-white">
+                <h6>Dry/Wet</h6>
+                <input
+                  value={phaseWet}
+                  max="1"
+                  min="0"
+                  onChange={changePhase}
+                  disabled={!synthBypass.phaseFilter}
+                  id="phaseWet"
+                  type="range"
+                  step={0.05}/>
+              </div>
+              <div className="text-center text-white">
+                <h6>Quality</h6>
+                <input
+                  value={Q}
+                  max="20"
+                  min="0"
+                  onChange={changePhase}
+                  disabled={!synthBypass.phaseFilter}
+                  id="Q"
+                  type="range"
+                  step={0.05}/>
+              </div>
+            </Stack>
+          </div>
+          {/* DISTORTION OPTIONS */}
+          <div className="mx-auto" style={{marginBottom: '-1rem'}}>
+            <Button
+              className={`btn-sm btn-dark ${synthBypass.distortionFilter && 'activeButton'}`}
+              style={{ display: 'flex', justifyContent: 'center' }}
+              id='distortionFilter'
+              onClick={changeDistortion}
+              >Distortion</Button>
+          </div>
+          <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
+            <Stack direction="horizontal" gap={5}>
+              <div className="text-center text-white">
+                <h6>Distortion</h6>
+                <input
+                  value={distortion}
+                  max="1"
+                  min="0"
+                  onChange={changeDistortion}
+                  disabled={!synthBypass.distortionFilter}
+                  id="distortion"
+                  type="range"
+                  step={0.05}/>
+              </div>
+              <div className="text-center text-white">
+                <h6>Dry/Wet</h6>
+                <input
+                  value={wet}
+                  max="1"
+                  min="0"
+                  onChange={changeDistortion}
+                  disabled={!synthBypass.distortionFilter}
+                  id="wet"
+                  type="range"
+                  step={0.05}/>
               </div>
             </Stack>
           </div>
@@ -100,7 +228,7 @@ const Oscillator = ({ start, stop, setSynthAudioChunks, instrument, oscSettings,
                 stop();
               } else {
                 setIsPlaying(true);
-                start();
+                hearSynth();
               }
             }}
           >Hear your synth</button>

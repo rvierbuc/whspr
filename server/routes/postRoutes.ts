@@ -167,9 +167,70 @@ router.get('/users', async (req: Request, res: Response) => {
     res.sendStatus(500)
   }
 })
+// searches selected user's followers for matching username
+router.get('/user/:userId/followers/search/:searchInput', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId, searchInput } = req.params;
+    const followers = await Follower.findAll({
+      where: {
+        followingId: userId
+      }
+    })
+    const followerDisplayInformation = await User.findAll({
+      where: {
+        id: followers.map((follower: any) => follower.userId),
+        username: {
+          [Op.iLike]: `%${searchInput}%`
+        }
+      }
+    })
+    const extractedFollowerInfo = followerDisplayInformation.map((follower: any) => {
+      return {
+        id: follower.id,
+        username: follower.username,
+        profileImgUrl: follower.profileImgUrl,
+      }
+    });
+    res.send(extractedFollowerInfo);
+  } catch (error) {
+    console.error('Error searching the followers', error);
+    res.sendStatus(500);
+  }
+});
+
+// gets the selected users following and searches for matching username
+router.get('/user/:userId/following/search/:searchInput', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId, searchInput } = req.params;
+    const following = await Follower.findAll({
+      where: {
+        userId
+      }
+    })
+    const followingDisplayInformation = await User.findAll({
+      where: {
+        id: following.map((follower: any) => follower.followingId),
+        username: {
+          [Op.iLike]: `%${searchInput}%`
+        }
+      }
+    })
+    const extractedFollowingInfo = followingDisplayInformation.map((following: any) => {
+      return {
+        id: following.id,
+        username: following.username,
+        profileImgUrl: following.profileImgUrl,
+      }
+    });
+    res.send(extractedFollowingInfo);
+  } catch (error) {
+    console.error('Error searching the followers', error);
+    res.sendStatus(500);
+  }
+});
 
 //gets all the selected Users Followers
-router.get('/user/:userId/followers', async (req: Request, res: Response) => {
+router.get('/user/:userId/followers', async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId } = req.params;
     // fetch the followers and extract the user Id's to cross reference with the users table to get the user info
@@ -197,7 +258,7 @@ router.get('/user/:userId/followers', async (req: Request, res: Response) => {
   }
 })
 // Gets all the users that the selected user is following
-router.get('/user/:userId/following', async (req: Request, res: Response) => {
+router.get('/user/:userId/following', async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId } = req.params;
     // fetch the following and get the user id's to cross ref
@@ -226,7 +287,7 @@ router.get('/user/:userId/following', async (req: Request, res: Response) => {
 })
 
 //Gets all posts from people user is following (for following feed)
-router.get('/following/:userId/:tag', async (req: Request, res: Response) => {
+router.get('/following/:userId/:tag', async (req: Request, res: Response): Promise<void> => {
 const { userId, tag } = req.params;
 try{
   const following = await Follower.findAll({
@@ -468,7 +529,10 @@ try{
         as: 'user'
       },
     Like,
-    Comment]
+    Comment],
+    order: [
+      ['createdAt', 'DESC']
+    ],
     }
   )
     //console.log('got user posts', selectedUserPosts)
@@ -527,7 +591,40 @@ try{
   }
  })
 
- 
+ //get top tags 
+ router.get('/tags', async (req: Request, res: Response) => {
+try{
+
+  const tags = await Post.findAll({
+    where: {
+      categories: {
+        [Op.ne]: null
+      }
+    },
+    attributes: ['categories']
+  })
+
+  const tagFrequencyObj = tags.flatMap((tagObj) => tagObj.dataValues.categories)
+  .reduce((tagCounterObj, tag)=> {
+    if(tagCounterObj[tag]){
+      tagCounterObj[tag] += 1
+    } else {
+      tagCounterObj[tag] = 1
+    }
+    return tagCounterObj
+  }, {})
+
+  const sortedTopTags = Object.entries(tagFrequencyObj).sort((a:any, b:any) => b[1] - a[1]).flatMap(tagArr => tagArr[0])
+
+  const tagsToSend = sortedTopTags.length > 20 ? sortedTopTags.slice(0, 20) : sortedTopTags
+  //console.log('tags', tagsToSend)
+  res.status(200).send(tagsToSend)
+}catch (error){
+  console.error('get tags error:', error)
+  res.sendStatus(500)
+}
+  
+ })
 
 
 // *************POST REQUESTS***********************
@@ -611,6 +708,25 @@ let updateResult;
 }
  } )
 
+ router.put('/selectedTags/:id', async (req:Request, res: Response) => {
+  const { id } = req.params
+  const { tags } = req.body
+
+try{
+  await User.update(
+    {selectedTags: tags},
+    {where: {
+      id
+    }}
+    )
+    //console.log(updated)
+    res.sendStatus(200)
+  }catch (error){
+    console.error('could not add selected tags to user', error)
+    res.send(500)
+  }
+
+ })
  // **********************DELETE REQUESTS****************************
  //allows user to unlike a post and removes like record from db
  router.delete('/unlike/:userId/:postId', async (req: Request, res: Response) => {
