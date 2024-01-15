@@ -40,7 +40,7 @@ const constraints: Constraints = {
   video: false,
 };
 
-export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, categories, filter, addSynth, instrument, start, stop, bitCrushFilter, phaseFilter }: Props) => {
+export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, categories, filter, addSynth, instrument, start, stop }: Props) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
@@ -49,9 +49,6 @@ export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, titl
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioSource = useRef<AudioBufferSourceNode | null>(null);
   const userId = user.id;
-
-  console.log('RecordPost', synthFilters);
-  console.log('RecordPost', synthBypass);
 
   // navigate functionality
   const navigate = useNavigate();
