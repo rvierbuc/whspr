@@ -1,7 +1,6 @@
 import React, { BaseSyntheticEvent, useState, useEffect } from 'react';
 import { Container, Stack, Button } from 'react-bootstrap';
 import * as Tone from 'tone';
-import Tuna from 'tunajs';
 
 interface Props {
   oscSettings: {
@@ -68,8 +67,6 @@ const Oscillator = ({
   const { Q, phaseWet } = phaserSettings;
   const { wet, distortion } = distortionSettings;
   const [selectedOscillator, setSelectedOscillator] = useState<string>(oscillatorKeys[0]);
-
-  console.log(synthBypass);
 
   useEffect(() => {
     setSelectedOscillator(oscillatorKeys[0]);
