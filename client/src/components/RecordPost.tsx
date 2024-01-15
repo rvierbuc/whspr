@@ -7,7 +7,7 @@ import * as Tone from 'tone';
 interface Props {
   instrument: Tone.Oscillator | Tone.FatOscillator | Tone.FMOscillator | Tone.AMOscillator
   user: any
-  audioContext:AudioContext
+  audioContext: AudioContext
   title: string
   categories: string[]
   filter: any
@@ -153,7 +153,7 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
       mediaRecorder.current.start();
       start();
       setIsRecording(true);
-    } catch(error) {
+    } catch (error) {
       console.error('Could not start recording', error)
     }
   };
@@ -209,6 +209,7 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
   };
 
   const saveAudioToGoogleCloud = async (): Promise<void> => {
+    title = title || "untitled"
     if (title) {
       handleNavigation('/protected/feed/following');
     } else {
@@ -263,7 +264,7 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
           disabled={isRecording || audioChunks.length > 0}
         >
           {/* <img src={require('../style/recordbutton.png')} /> */}
-          </button>
+        </button>
         <button
           id='play-btn-new'
           //className="play-button"
@@ -272,7 +273,7 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
           disabled={isPlaying || (audioChunks.length === 0 && synthAudioChunks.length === 0)}
         >
           {/* <img src={require('../style/playbutton.png')} /> */}
-          </button>
+        </button>
         <button
           id='stop-btn-new'
           //style={{height:'4rem', width:'4rem'}}
@@ -281,7 +282,7 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
           disabled={!isRecording && !isPlaying}
         >
           {/* <img src={require('../style/stopbutton.png')} /> */}
-          </button>
+        </button>
         <button
           id='remove-btn-new'
           className="delete-button"
@@ -294,7 +295,7 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
           disabled={audioChunks.length === 0 || isRecording}
         >
           {/* <img src={require('../style/deletebutton.png')} /> */}
-          </button>
+        </button>
         <button
           id='post-btn-new'
           //className="post-button"
@@ -307,7 +308,7 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
           disabled={(audioChunks.length === 0 && synthAudioChunks.length === 0) || isRecording}
         >
           {/* <img src={require('../style/postbutton.png')} /> */}
-          </button>
+        </button>
       </Stack>
     </div >
   );
