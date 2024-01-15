@@ -134,22 +134,6 @@ const ReadOnlyProfile = ({ audioContext }) => {
       console.log('following error', error);
     }
   };
-  const getSelectedUserFollowers = async () => {
-    try {
-      const followers = await axios.get(`/post/user/${id}/followers`);
-      setSelectedUserFollowers(followers.data);
-    } catch (error) {
-      console.log('error fetching current user followers', error);
-    }
-  };
-  const getSelectedUserFollowing = async () => {
-    try {
-      const followingArr = await axios.get(`/post/user/${id}/following`);
-      setSelectedUserFollowing(followingArr.data);
-    } catch (error) {
-      console.log('error fetching current user following', error);
-    }
-  };
   useEffect(() => {
     getSelectedUserInfo();
     isFollowing();
