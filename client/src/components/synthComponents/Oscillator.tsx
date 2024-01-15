@@ -164,7 +164,7 @@ const Oscillator = ({
                 <h6>Spread</h6>
                 <input
                   value={Q}
-                  max="50"
+                  max="20"
                   min="0"
                   onChange={changePhase}
                   disabled={!synthBypass.phaseFilter}
