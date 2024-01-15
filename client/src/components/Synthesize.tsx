@@ -1,6 +1,6 @@
 import React, { BaseSyntheticEvent, useState } from 'react';
 import SynthDaw from './synthComponents/SynthDaw';
-import { Container, Modal } from 'react-bootstrap';
+import { Container, Modal, Button } from 'react-bootstrap';
 import * as Tone from 'tone';
 import { useLoaderData } from 'react-router-dom';
 
@@ -32,11 +32,14 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
     distortion: false
   });
 
-  console.log(toggleInfo);
+  console.log('CHECKING THE MODAL', toggleInfo)
+
+  const [toggleModal, setToggleModal] = useState<boolean>(false);
 
   const handleInfoToggle: (event: BaseSyntheticEvent) => void = (event) => {
     const id: string = event.target.id;
-    setToggleInfo({ ...toggleInfo, [id]: !toggleInfo[id] })
+    setToggleInfo({ ...toggleInfo, [id]: !toggleInfo[id] });
+    setToggleModal(!toggleModal);
   };
 
   const oscillatorOptions: Options = {
@@ -59,6 +62,23 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
 
   return (
     <Container className="p-3 rounded w-75">
+      <Modal show={toggleModal} centered>
+        <Modal.Header>
+          {toggleInfo.oscType ? "Oscillator" : null}
+          {toggleInfo.waveType ? "Wave Type" : null}
+          {toggleInfo.phaser ? "Phaser Filter" : null}
+          {toggleInfo.distortion ? "Distortion Filter" : null}
+        </Modal.Header>
+        <Modal.Body>
+
+        </Modal.Body>
+        <Modal.Footer>
+          {toggleInfo.oscType ? <Button id='oscType' onClick={handleInfoToggle} className="btn btn-dark activeButton">Got it!</Button> : null}
+          {toggleInfo.waveType ? <Button id='waveType' onClick={handleInfoToggle} className="btn btn-dark activeButton">Got it!</Button> : null}
+          {toggleInfo.phaser ? <Button id='phaser' onClick={handleInfoToggle} className="btn btn-dark activeButton">Got it!</Button> : null}
+          {toggleInfo.distortion ? <Button id='distortion' onClick={handleInfoToggle} className="btn btn-dark activeButton">Got it!</Button> : null}
+        </Modal.Footer>
+      </Modal>
       <div>
         <SynthDaw handleInfoToggle={handleInfoToggle} distortionFilter={distortionFilter} phaseFilter={phaseFilter} user={user} audioContext={audioContext} oscillatorOptions={oscillatorOptions} />
       </div>

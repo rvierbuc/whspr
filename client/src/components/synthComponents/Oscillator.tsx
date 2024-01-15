@@ -161,18 +161,6 @@ const Oscillator = ({
           <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
             <Stack direction="horizontal" gap={5}>
               <div className="text-center text-white">
-                <h6>Dry/Wet</h6>
-                <input
-                  value={phaseWet}
-                  max="1"
-                  min="0"
-                  onChange={changePhase}
-                  disabled={!synthBypass.phaseFilter}
-                  id="phaseWet"
-                  type="range"
-                  step={0.05}/>
-              </div>
-              <div className="text-center text-white">
                 <h6>Quality</h6>
                 <input
                   value={Q}
@@ -181,6 +169,18 @@ const Oscillator = ({
                   onChange={changePhase}
                   disabled={!synthBypass.phaseFilter}
                   id="Q"
+                  type="range"
+                  step={0.05}/>
+              </div>
+              <div className="text-center text-white">
+                <h6>Dry/Wet</h6>
+                <input
+                  value={phaseWet}
+                  max="1"
+                  min="0"
+                  onChange={changePhase}
+                  disabled={!synthBypass.phaseFilter}
+                  id="phaseWet"
                   type="range"
                   step={0.05}/>
               </div>
