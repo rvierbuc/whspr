@@ -224,7 +224,7 @@ const UserProfile = ({
     }
   };
   return (
-    <Container>
+    <div>
       <Modal
         style={{ backgroundColor: 'rgba(209, 209, 209, 0.6)' }}
         show={isDeleting}
@@ -343,9 +343,9 @@ const UserProfile = ({
           </div>
         )}
       </Modal>
-      <div className="user-main" style={{ display: 'flex' }}>
+      <div className="card" id="user-main-container">
         <div className="grid-post-container">
-          <Row>
+          <div>
             <div
               className="card user-profile-card"
               style={{ justifyContent: 'center' }}
@@ -372,25 +372,49 @@ const UserProfile = ({
                 <button
                   type="button"
                   onClick={() => setSearchModal(true)}
-                  className="btn btn-light btn-lg"
+                  className="btn btn-dark btn-md"
+                  style={{ marginLeft: '10px' }}
                 >
                   {followerCount} Followers
                 </button>
                 <button
                   type="button"
                   onClick={() => setDisplayFollowers(false)}
-                  className="btn btn-light btn-lg"
+                  className="btn btn-dark btn-md"
+                  style={{ marginLeft: '10px' }}
                 >
                   {followingCount} Following
                 </button>
                 <FaSearch
-                  style={{ marginLeft: '10px', cursor: 'pointer' }}
+                  style={{ marginLeft: '10px', marginRight: '10px', cursor: 'pointer' }}
                   onClick={() => setSearchModal(true)}
                 />
               </div>
             </div>
-          </Row>
-          {rows.map((row, index) => (
+          </div>
+          <div className="grid-post-container">
+            {selectedUserPosts.map((post, index) => (
+              <div className="grid-post-item" key={index}>
+                <WaveSurferComponent
+                  audioContext={audioContext}
+                  postObj={post}
+                  audioUrl={post.soundUrl}
+                  postId={post.id}
+                  userId={currentUser.id}
+                  updatePost={updatePost}
+                  getPosts={getSelectedUserInfo}
+                  onProfile={onProfile}
+                  onUserProfile={onUserProfile}
+                  setOnProfile={setOnProfile}
+                  setIsDeleting={setIsDeleting}
+                  setCorrectPostId={setCorrectPostId}
+                  setSelectedUserPosts={setSelectedUserPosts}
+                  setCurrentDeletePostId={setCurrentDeletePostId}
+                />
+              </div>
+            ))}
+          </div>
+          {/* {rows.map((row, index) => (
             <Col key={index}>
               {row.map((post) => (
                 <Row key={post.id}>
@@ -415,10 +439,10 @@ const UserProfile = ({
                 </Row>
               ))}
             </Col>
-          ))}
+          ))} */}
         </div>
       </div>
-    </Container>
+    </div>
   );
 };
 
