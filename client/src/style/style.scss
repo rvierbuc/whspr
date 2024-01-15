@@ -34,8 +34,13 @@ body {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   @include blur(4.2px);
   border: 1px solid rgba(236, 210, 210, 0.36);
-  //height:100%
-  //height:100%
+}
+#user-main-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
 }
 #modal-background {
   background-color: #e1e1e500;
@@ -247,10 +252,11 @@ font-size: 3rem;
 
 .card.user-profile-card {
   display: flex;
-  position: relative;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
+  // height: 100%;
 }
 .card.user-profile-followers-card {
   display: flex;
@@ -298,6 +304,14 @@ font-size: 3rem;
   //padding: 1rem;
   //margin: 1rem
 
+}
+.grid-post-container {
+  display: flex;
+  flex-direction: row;
+  max-width: 999px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .profile-image {

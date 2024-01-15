@@ -31,9 +31,7 @@ const RadioConfig = ({setRoomProps}) => {
             const followers = await axios.get(`/post/followers/${user.id}`)
             console.log('followers', followers)
             for(let i in followers.data){
-                console.log('iii')
                 const users = await axios.get(`/post/use/${followers.data[i].id}`)
-                console.log('usee', users)
                 setOptions((pre) => [...pre, users.data])
             }
 
