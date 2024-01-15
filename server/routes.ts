@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 import { Router, Request, Response } from 'express'
-import { saveAudio, getAudioUrl, saveAudioComment, saveAudioConch, deleteAudioPost } from './google-cloud-storage'
+import { saveAudio, getAudioUrl, saveAudioComment, saveAudioConch, deleteAudioPost, saveSharePost } from './google-cloud-storage'
 import { MagicConch, Radio, Post, Sound } from './dbmodels';
 
 const router = Router()
@@ -40,6 +40,24 @@ router.post('/uploadComment', async (req: Request, res: Response) => {
       }
     }
   })
+  
+  router.post('/uploadSharePost', async (req: Request, res: Response) => {
+    const {sentFromId, sentToId, postId} = req.body;
+      if (!req.file) {
+        console.error('req.file is undefined in route upload.')
+        res.sendStatus(400)
+      } else {
+        try {
+          const downloadUrl = await saveSharePost(req.file.buffer, sentFromId, sentToId, postId)
+          if(downloadUrl){
+            res.status(200).send(downloadUrl)
+          }
+        } catch (error) {
+          console.error('Error in upload router: ', error)
+          res.status(500).send('Upload failed')
+        }
+      }
+    })
 
 router.get('/getAudio', async (req: Request, res: Response) => {
   const { postId } = req.query;

@@ -17,6 +17,8 @@ import { MdDeleteOutline } from 'react-icons/md';
 import { MdDeleteOutline } from 'react-icons/md';
 import { TooltipComponent } from './Tooltip';
 import Modal from 'react-bootstrap/Modal';
+import { SharePost } from './SharePost';
+
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
   audioUrl: string;
@@ -35,7 +37,7 @@ interface WaveSurferProps {
   setSelectedUserPosts: any
   isDeleting: boolean
   setCurrentDeletePostId: any
-  onHome:boolean
+  onHome: boolean
 
 }
 
@@ -68,6 +70,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [addComment, setAddComment] = useState<boolean>(false);
   const [showFullPost, setShowFullPost] = useState<boolean>(false);
+  const [showShareModal, setShowShareModal] = useState<boolean>(false);
+ 
   //const [hasCategories, setHasCategories] = useState<boolean>();
   // const { audioUrl, postId } = props;
   const containerId = `waveform-${postId || ''}`;
@@ -79,6 +83,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   //     console.error(error);
   //   }
   // };
+
+
+
   const handleLike = async ()=> {
     try {
       await axios.post('/post/like', { userId, postId: postObj.id });
@@ -267,6 +274,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       style={{ width: onUserProfile || onProfile ? '315px' : '100%', height: '100%', marginTop: '1rem', marginBottom: '1rem' }}
     >
       
+
         <div className="row" id="feed-row">
           <div className="col-sm" id="feed-col-sm">
             <div className="card" id="feed-card" >
@@ -330,7 +338,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 paddingTop: '1rem',
                 paddingLeft: '1rem',
                 justifyContent: 'start',
-                alignContent:'end' }}
+                alignContent: 'end' }}
                 onClick={() => showFullPost ? setShowFullPost(false) : setShowFullPost(true)}
                 >
               <div
@@ -350,12 +358,12 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                       style={{
                         fontSize: onUserProfile || onProfile ? '1.5rem' : '4rem',
                         color: '#e1e1e5',
-                        marginTop:'.5rem',
-                        width:'190px',
-                        overflow:'hidden',
-                        whiteSpace:'nowrap',
+                        marginTop: '.5rem',
+                        width: '190px',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
                         textOverflow: 'ellipsis',
-                        cursor:'pointer',
+                        cursor: 'pointer',
                       }}
                     >
 
@@ -364,7 +372,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     </TooltipComponent>
                     <div
                       style={{
-                        marginTop:'.5rem',
+                        marginTop: '.5rem',
                         marginLeft: 'auto',
                         fontSize: '.5rem',
                         color: '#e1e1e5',
@@ -458,7 +466,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     </div>
                     <div
                       style={{
-                        marginTop:'1.5rem',
+                        marginTop: '1.5rem',
                         marginLeft: 'auto',
                         fontSize: 'large',
                         color: '#e1e1e5',
@@ -641,6 +649,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   </TooltipComponent>
                   <TooltipComponent tooltip='Share' id={`share-${postObj.id}`}>
                 <MdArrowOutward
+                onClick={() => { setShowShareModal(true); }}
                 style={{
                   //backgroundColor: 'rgba(233, 236, 243, 0.00)',
                   //borderColor: 'rgba(233, 236, 243, 0.00)',
@@ -692,6 +701,16 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
             </div>
           </div>
         </div>
+        <Modal show={showShareModal} onHide={() => setShowShareModal(false)} aria-labelledby="contained-modal-title-vcenter"
+      centered>
+        <SharePost
+        postObj={postObj}
+        userId={userId}
+        setShowShareModal={setShowShareModal}
+        showShareModal={showShareModal}
+        audioContext={audioContext}
+        ></SharePost>
+        </Modal>
       {/* <Modal isOpen={showFullPost} onClose={() => setShowFullPost(false)} >
         <WaveSurferComponent
         postObj={postObj}
