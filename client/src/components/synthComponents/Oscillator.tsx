@@ -76,7 +76,6 @@ const Oscillator = ({
   }, []);
 
   const handleTypeChange: (event: BaseSyntheticEvent) => void = (event) => {
-    const waveId = event.target.id;
     changeType(event)
   };
 
@@ -139,7 +138,7 @@ const Oscillator = ({
             <Stack direction="horizontal" gap={5}>
               <div className="text-center text-white">
                 <h6>Frequency</h6>
-                <input value={frequency} max="880" onChange={changeValue} id="frequency" type="range" />
+                <input value={frequency} max="660" onChange={changeValue} id="frequency" type="range" />
               </div>
               <div className="text-center text-white">
                 <h6>Detune</h6>

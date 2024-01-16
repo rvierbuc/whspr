@@ -46,6 +46,10 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
     fmOscillator: new Tone.FMOscillator().toDestination(),
     amOscillator: new Tone.AMOscillator().toDestination(),
   };
+  oscillatorOptions.oscillator.frequency.value = 330;
+  oscillatorOptions.fatOscillator.frequency.value = 330;
+  oscillatorOptions.fmOscillator.frequency.value = 330;
+  oscillatorOptions.amOscillator.frequency.value = 330;
 
   const phaseFilter: Tone.Phaser = new Tone.Phaser({
     frequency: 15,
