@@ -38,7 +38,7 @@ interface WaveSurferProps {
   isDeleting: boolean
   setCurrentDeletePostId: any
   onHome: boolean
-
+  onConch: boolean
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
@@ -59,6 +59,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   isDeleting,
   setCurrentDeletePostId,
   onHome,
+  onConch
 }) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
@@ -576,18 +577,17 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
               <div
                 className="d-flex flex-row align-items-center justify-content-start"
                 style={{ marginTop: '.5rem' }}
-              >
-                <div style={{ color: '#e1e1e5' }}>
-                  {postObj.isLiked
-                    ? `Liked by you and ${postObj.likeCount - 1} other listeners`
-                    : `Liked by ${postObj.likeCount} listeners`}
-                </div>
-                <div style={{ color: '#e1e1e5', marginLeft: 'auto' }}>{duration ? duration : ''}</div>
-              </div>
+                >
+                    <div style={{ color: '#e1e1e5' }}>
+              {onConch ? <div></div> : (postObj.isLiked 
+                ? `Liked by you and ${postObj.likeCount - 1} other listeners` 
+                : `Liked by ${postObj.likeCount} listeners`)}
             </div>
-            {onHome ? <div></div> : (<div style={{
-              display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginBottom: '8px',
-            }}>
+                  <div style={{ color: '#e1e1e5', marginLeft: 'auto' }}>{duration ? duration : ''}</div>
+                </div>
+              </div>
+              {onHome || onConch ? <div></div> : (<div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginBottom: '8px', 
+              }}>
               {postObj.isLiked ? (
                 <div>
                   {' '}

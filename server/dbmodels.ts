@@ -227,9 +227,9 @@ Post.hasMany(Like, { foreignKey: 'postId' });
 Like.belongsTo(Post, { foreignKey: 'postId' });
 
 User.hasMany(SharedPost, { foreignKey: 'sentFromId' });
-SharedPost.belongsTo(User, { foreignKey: 'sentFromId' });
+SharedPost.belongsTo(User, { foreignKey: 'sentFromId', as: 'sentFromUser' });
 User.hasMany(SharedPost, { foreignKey: 'sentToId' });
-SharedPost.belongsTo(User, { foreignKey: 'sentToId' });
+SharedPost.belongsTo(User, { foreignKey: 'sentToId', as: 'sentToUser' });
 Post.hasMany(SharedPost, { foreignKey: 'postId' });
 SharedPost.belongsTo(Post, { foreignKey: 'postId' });
 

@@ -168,4 +168,14 @@ router.post('/upload-image', upload.single('image'), async (req, res) => {
   }
 });
 
+  router.post('/testing', async (req: Request, res: Response) => {
+    const {sendingUserId, receivingUserId, title, soundUrl} = req.body
+    try{
+      const testConch = await MagicConch.create({sendingUserId, receivingUserId, title, soundUrl})
+      res.sendStatus(201)
+    } catch(error) {
+      console.error(error)
+    }
+
+  })
 export default router

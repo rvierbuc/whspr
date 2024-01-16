@@ -9,7 +9,7 @@ import {
   Like,
   Comment,
   Listen,
-  Radio,
+  Radio, SharedPost,
 } from "../dbmodels";
 import { getTagsByEngagement } from "../algorithmHelpers";
 // ****HELPER FUNCTIONS***********
@@ -629,8 +629,36 @@ router.get("/tags", async (req: Request, res: Response) => {
     res.sendStatus(500);
   }
 });
+ router.get('/shared/:id/:type', async (req: Request, res: Response) => {
+  const { id, type } = req.params;
+  const userModel = type === 'sentToId' ? 'sentFromUser' : 'sentToUser'
+  try{
+   const sharedPosts = await SharedPost.findAll({
+    where: {[type]: id},
+    include: [Post, { model: User,
+      as: userModel }]
+   })
+    console.log('shared', sharedPosts)
+    res.send(sharedPosts)
+  }catch(error){
+    console.error('error getting shared posts', error)
+  }
+ })
 
 // *************POST REQUESTS***********************
+
+ router.post('/radio', async(req: Request, res: Response) => {
+  const {host, listenerCount, category, soundUrl, title} = req.body
+
+  try {
+    const radio = await Radio.create({host, listenerCount: 0, title})
+    console.log('radio', radio)
+    res.status(201).send(radio)
+  }catch {
+
+  }
+ })
+
 //creates comment
 router.post("/createCommentRecord", async (req: Request, res: Response) => {
   const { userId, postId, soundUrl } = req.body;
