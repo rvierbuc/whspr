@@ -9,10 +9,6 @@ interface Props {
 }
 
 const Filters = ({ setFilter, audioContext, filter }: Props) => {
-  const [bgColor1, setBgColor1] = useState<string>('danger')
-  const [bgColor2, setBgColor2] = useState<string>('dark')
-  const [bgColor3, setBgColor3] = useState<string>('dark')
-  const [bgColor4, setBgColor4] = useState<string>('dark');
   const [currentFilter, setCurrentFilter] = useState<string>('defaultSettings')
   const tuna = new Tuna(audioContext);
 
@@ -26,6 +22,8 @@ const Filters = ({ setFilter, audioContext, filter }: Props) => {
       setCurrentFilter('wobbly');
     } else if (filter === robot) {
       setCurrentFilter('robot');
+    } else if (filter === newFilter) {
+      setCurrentFilter('newFilter');
     }
   };
 
@@ -80,15 +78,15 @@ const Filters = ({ setFilter, audioContext, filter }: Props) => {
       delayTimeLeft: 60,
       delayTimeRight: 100,
     }),
-    gain: new tuna.Gain({ gain: 250})
-  }
+    gain: new tuna.Gain({ gain: 850})
+  };
 
   const alien = {
     lowPassType: 'lowpass',
     lowPassFrequency: 50,
     highPassType: 'highpass',
     highPassFrequency: 7000,
-    gain: new tuna.Gain({ gain: 150 }),
+    gain: new tuna.Gain({ gain: 600 }),
     compressor: new tuna.Compressor({
       threshold: -80,
       makeupGain: 20,
@@ -107,16 +105,35 @@ const Filters = ({ setFilter, audioContext, filter }: Props) => {
       baseModulationFrequency: 1000,
       bypass: false,
     }),
-  }
+  };
+
+  const newFilter = {
+    lowPassType: 'lowpass',
+    lowPassFrequency: 150,
+    highPassType: 'highpass',
+    highPassFrequency: 8500,
+    gain: new tuna.Gain({ gain: 30000 }), // no higher than 30000
+    wah: new tuna.Bitcrusher({
+      bits: 16,          //1 to 16
+      normfreq: 0.15,    //0 to 1
+      bufferSize: 4096  //256 to 16384
+    }),
+    tremolo: new tuna.MoogFilter({
+      cutoff: 0.9,    //0 to 1
+      resonance: 3.5,   //0 to 4
+      bufferSize: 4096 //256 to 16384
+    }),
+  };
 
   return (
     <Container className="text-center my-2 rounded">
-    <h5 className="text-white">Try out one of our filters</h5>
-    <Stack direction="horizontal" className="mx-5 mb-1 typeCard">
-      <Button className={`mx-2 btn text-white ${currentFilter === 'defaultSettings' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(defaultSettings)}>None</Button>
-      <Button className={`mx-2 btn text-white ${currentFilter === 'alien' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(alien)}>Alien</Button>
-      <Button className={`mx-2 btn text-white ${currentFilter === 'wobbly' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(wobbly)}>Wobbly</Button>
-      <Button className={`mx-2 btn text-white ${currentFilter === 'robot' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(robot)}>Robot</Button>
+    <h5 className="text-white mb-2">Try out one of our filters</h5>
+    <Stack direction="horizontal" gap={3} className="mx-4 my-1 typeCard">
+      <Button className={`btn text-white ${currentFilter === 'defaultSettings' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(defaultSettings)}>None</Button>
+      <Button className={`btn text-white ${currentFilter === 'alien' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(alien)}>Alien</Button>
+      <Button className={`btn text-white ${currentFilter === 'wobbly' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(wobbly)}>Wobbly</Button>
+      <Button className={`btn text-white ${currentFilter === 'robot' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(robot)}>Robot</Button>
+      <Button className={`btn text-white ${currentFilter === 'newFilter' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(newFilter)}>16-bit</Button>
     </Stack>
   </Container>
   );
