@@ -23,13 +23,13 @@ interface ModalToggle {
 }
 
 const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
-  const user: any = useLoaderData();
+  const user = useLoaderData();
 
   const [toggleInfo, setToggleInfo] = useState<ModalToggle>({
     oscType: false,
     waveType: false,
     phaser: false,
-    distortion: false
+    distortion: false,
   });
 
   const [toggleModal, setToggleModal] = useState<boolean>(false);
@@ -44,14 +44,14 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
     oscillator: new Tone.Oscillator().toDestination(),
     fatOscillator: new Tone.FatOscillator().toDestination(),
     fmOscillator: new Tone.FMOscillator().toDestination(),
-    amOscillator: new Tone.AMOscillator().toDestination()
-  }
+    amOscillator: new Tone.AMOscillator().toDestination(),
+  };
 
   const phaseFilter: Tone.Phaser = new Tone.Phaser({
     frequency: 15,
     Q: 10,
     octaves: 4,
-    wet: 0.5
+    wet: 0.5,
   }).toDestination();
 
   const distortionFilter: Tone.Distortion = new Tone.Distortion().toDestination();
@@ -64,8 +64,8 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
         <Modal.Header>
           {toggleInfo.oscType ? <p><strong>Oscillators</strong> are the basic components of a synth sound and we have four types you can choose to play with!</p> : null}
           {toggleInfo.waveType ? <p><strong>Wave Types</strong> are the primary wave forms/shapes that make up the basic ingredients of sound</p> : null}
-          {toggleInfo.phaser ? <p><strong>Phaser filters</strong> are used to filter audio by creating a series of hills and valleys, aka peaks, in the oscillator's frequency and we have two customizable options to play with!</p> : null}
-          {toggleInfo.distortion ? <p><strong>Distortion filters</strong> are used to distort the audio's waveform from its original form and we have two customizable options to play with!</p> : null}
+          {toggleInfo.phaser ? <p><strong>Phaser filters</strong> are used to filter audio by creating a series of hills and valleys, aka peaks, in the oscillator frequency and we have two customizable options to play with!</p> : null}
+          {toggleInfo.distortion ? <p><strong>Distortion filters</strong> are used to distort the audio waveform from its original form and we have two customizable options to play with!</p> : null}
         </Modal.Header>
         <Modal.Body>
           {/* OSCILLATORS MODAL */}
@@ -91,7 +91,7 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
           {toggleInfo.phaser ?
             <div>
               <ul>
-                <li><em>Spread</em>: Controls the spread of the peaks in the waveform's magnitude.</li>
+                <li><em>Spread</em>: Controls the spread of the peaks in the waveform magnitude.</li>
                 <li><em>Dry/Wet</em>: Controls how much of the phaser is present in the output of the audio. The drier the filter, the less present it is.</li>
               </ul>
             </div> : null}

@@ -27,10 +27,6 @@ const Filters = ({ setFilter, audioContext, filter }: Props) => {
     } else if (filter === robot) {
       setCurrentFilter('robot');
     }
-    // filter === defaultSettings ? setBgColor1('danger') : setBgColor1('dark');
-    // filter === alien ? setBgColor2('danger') : setBgColor2('dark');
-    // filter === wobbly ? setBgColor3('danger') : setBgColor3('dark');
-    // filter === robot ? setBgColor4('danger') : setBgColor4('dark');
   };
 
   const defaultSettings = {
@@ -115,9 +111,9 @@ const Filters = ({ setFilter, audioContext, filter }: Props) => {
 
   return (
     <Container className="text-center my-2 rounded">
-    <h5 className="text-white">Select a filter</h5>
+    <h5 className="text-white">Try out one of our filters</h5>
     <Stack direction="horizontal" className="mx-5 mb-1 typeCard">
-      <Button className={`mx-2 btn text-white ${currentFilter === 'defaultSettings' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(defaultSettings)}>Default</Button>
+      <Button className={`mx-2 btn text-white ${currentFilter === 'defaultSettings' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(defaultSettings)}>None</Button>
       <Button className={`mx-2 btn text-white ${currentFilter === 'alien' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(alien)}>Alien</Button>
       <Button className={`mx-2 btn text-white ${currentFilter === 'wobbly' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(wobbly)}>Wobbly</Button>
       <Button className={`mx-2 btn text-white ${currentFilter === 'robot' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(robot)}>Robot</Button>

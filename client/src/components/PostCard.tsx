@@ -106,6 +106,9 @@ const PostCard = ({ setPostCategories, setPostTitle }) => {
   return (
     <div>
       <div id="responsive-navbar-nav" className={postCreated ? 'show' : ''}>
+          <div>
+            <h3 className="text-white" style={{marginTop: '-0.7rem', marginBottom: '0.9rem'}}>Set your title and categories!</h3>
+          </div>
         <div className="d-flex justify-content-center">
           <input type="text"
             maxLength={22}
