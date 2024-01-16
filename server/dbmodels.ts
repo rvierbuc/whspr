@@ -39,6 +39,9 @@ export const User = db.define('User', {
   displayUsername: {
     type: DataTypes.STRING,
   },
+  userBio: {
+    type: DataTypes.TEXT,
+  },
   selectedTags: {
     type: DataTypes.ARRAY(DataTypes.STRING),
   },

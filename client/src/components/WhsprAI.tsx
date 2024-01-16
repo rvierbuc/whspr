@@ -398,11 +398,12 @@ export const WhsprAI = ({ audioContext }) => {
           <img
             src={require('../style/help.png')}
             className='help-btn'
+            title='Help'
             onClick={() => setModalOpen(!modalOpen)}
             style={{ opacity: modalOpen ? .25 : 1 }}
           />
-          <div className="help-modal-whsprAI">
-            <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
+          <div className="help-modal-whsprAI" onClick={() => setModalOpen(!modalOpen)}>
+            <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} >
               <p>Press and hold the button to talk to Whisper, our AI chatbot.</p>
             </Modal>
           </div>
@@ -418,6 +419,7 @@ export const WhsprAI = ({ audioContext }) => {
               ? (<img src={require('../style/loading.gif')}
                 className="loading-img"></img>)
               : (<button
+                title="Press to talk"
                 onMouseDown={!isPhone ? () => { startUserMedia(); handlePressToTalkPress(); } : undefined}
                 onMouseUp={!isPhone ? handlePressToTalkRelease : undefined}
                 onMouseLeave={!isPhone ? handlePressToTalkRelease : undefined}
@@ -449,6 +451,7 @@ export const WhsprAI = ({ audioContext }) => {
         </div>
         <div className='mute-btn-container'>
           <img
+            title={!isMuted ? "Mute" : "Unmute"}
             src={isMuted ? mute : unmute}
             className='mute-btn'
             onClick={toggleMute}
@@ -456,6 +459,7 @@ export const WhsprAI = ({ audioContext }) => {
         </div>
         <div className='text-btn-container'>
           <img
+            title="Chat Transcript"
             src={require('../style/posticon.png')}
             className='text-btn'
             onClick={handleSetShowText}

@@ -45,7 +45,7 @@ const upload = multer({ storage: storage })
 
 
 const postRoutes = require('./routes/postRoutes')
-import { Sound, Post, User, AIMessage} from './dbmodels'
+import { Sound, Post, User, AIMessage } from './dbmodels'
 
 
 const app = express()
@@ -57,7 +57,6 @@ const secret = crypto.randomBytes(64).toString('hex'); //secret hash for session
 const cookieParser = require('cookie-parser');
 const cookie = require('cookie');
 app.use(cors())
-app.use(upload.single('audio'))
 
 app.use(cookieParser(secret, { sameSite: 'strict' }))
 app.use(session({
@@ -98,7 +97,7 @@ app.get('/auth/google', (req: Request, res: Response) => {
   passport.authenticate('google', { scope: ['email', 'profile'] })(req, res);
 })
 
-app.get('/google/callback',  passport.authenticate('google', {
+app.get('/google/callback', passport.authenticate('google', {
   successRedirect: '/protected/feed/following',
   failureRedirect: '/auth/google/failure',
 }),
@@ -137,31 +136,6 @@ app.get('/current-user', async (req: Request, res: Response) => {
   } catch (err) {
     console.error('Error fetching user:', err);
     res.status(500).send('Error fetching user');
-  }
-})
-
-
-app.get('/getSoundURLPostId', async (req, res) => {
-  const { postId } = req.query;
-  if (!postId) {
-    console.error('post Id is undefined or null')
-    res.send('post Id is undefined or null').status(400);
-    return;
-  }
-  try {
-    const soundRecord = await Sound.findOne({ where: { postId } });
-    if (!soundRecord) {
-      console.error('Sound record not found.')
-      res.send('Sound record not found.').status(404);
-      return
-    }
-    const soundUrl = soundRecord.get('soundUrl');
-    if (soundUrl) {
-      res.status(200).send({ soundUrl });
-    }
-  } catch (error) {
-    console.error('Nonspecific error retrieving audio id:', error);
-    res.send('Nonspecific error retrieving audio id.').status(500)
   }
 })
 
@@ -374,11 +348,23 @@ app.post('/speechToTextOpenAI', async (req, res) => {
 
 })
 
+app.post('/update-profile-bio', async (req, res) => {
+  const { field, value } = req.body;
+  const userId = req.body; // Assumes you have the user's ID in req.user
+
+  try {
+    const updatedUser = await User.update({ [field]: value }, { where: { id: userId } });
+    res.status(200).send('User updated successfully');
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).send('Error updating user');
+  }
+});
+
+
 // MAKE SURE THIS IS LAST
 app.get('/*', (req: Request, res: Response) => {
   res.sendFile(path.join(clientPath, 'index.html'))
 })
-
-
 
 export default server
