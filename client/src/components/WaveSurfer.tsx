@@ -39,6 +39,7 @@ interface WaveSurferProps {
   setCurrentDeletePostId: any
   onHome: boolean
   onConch: boolean
+  waveHeight: number;
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
@@ -59,7 +60,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   isDeleting,
   setCurrentDeletePostId,
   onHome,
-  onConch
+  onConch,
+  waveHeight,
 }) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
@@ -176,7 +178,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       progressColor: 'rgb(60, 53, 86)',
       url: audioUrl,
       width: 'auto',
-      height: onUserProfile || onProfile ? 200 : 500, //TODO: maybe change this back to auto
+      height: waveHeight, //TODO: maybe change this back to auto
       normalize: true,
 
       renderFunction: (channels, ctx) => {
@@ -278,9 +280,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
 
       <div className="row" id="feed-row">
         <div className="col-sm" id="feed-col-sm">
-          <div className="card" id="feed-card" >
+          <div className="card" id="feed-card" style={{marginBottom:'1rem'}}>
             {/* <br/> */}
-            <div className="card-body">
+            <div className="card-body" style={{height: onConch ? '400px' : '100%'}}>
               {onProfile ? (
                 <a></a>
               ) : (
@@ -296,8 +298,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     className="rounded-circle"
                     style={{
                       width: 'auto',
-                      height: '70px',
-                      margin: '20px',
+                      height: onConch ? '35px' : '70px',
+                      margin: onConch ? '10px' : '20px',
                       objectFit: 'scale-down',
                       borderStyle: 'solid',
                       borderWidth: 'medium',
@@ -306,7 +308,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   />
                   <a
                     href={`profile/${postObj.user.id}`}
-                    style={{ fontSize: 'xx-large', color: '#0f0c0c' }}
+                    style={{ fontSize: onConch ? '1.5rem' : '2rem', color: '#0f0c0c' }}
                     id="feed-username"
                   >
                     {postObj.user.displayUsername || postObj.user.username}
@@ -424,7 +426,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 className="wavesurfer-container"
                 style={{
                   marginTop: onProfile ? '0px' : '1rem',
-                  height: '100%',
+                  height: waveHeight,
                   borderRadius: '6px',
                   //position: 'relative',
                 }}
@@ -443,7 +445,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     padding: '2rem',
                     justifyContent: 'start',
                     width: '100%',
-                    height: onUserProfile || onProfile ? '200px' : '500px',
+                    height: onUserProfile || onProfile || onConch ? '200px' : '500px',
                   }}
                 >
                   <div
@@ -461,7 +463,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   >
                     <div
                       style={{
-                        fontSize: '4rem',
+                        fontSize: onConch ? '2.5rem' : '4rem',
                         color: '#e1e1e5',
                       }}
                     >
@@ -471,7 +473,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                       style={{
                         marginTop: '1.5rem',
                         marginLeft: 'auto',
-                        fontSize: 'large',
+                        fontSize: onConch ? '1rem' : 'large',
                         color: '#e1e1e5',
                       }}
                     >
@@ -511,7 +513,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                       <button
                         type="button"
                         style={{
-                          marginTop: onUserProfile || onProfile ? '5%' : '15%',
+                          marginTop: onConch ? '10%' : '10%',
+                        //marginBottom: onConch ? '5%' : '',
                           alignSelf: 'center',
                         }}
                         className="simple-btn"
@@ -524,7 +527,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                         }}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg"
-                          width={onUserProfile || onProfile ? '5rem' : '10rem'} height={onUserProfile || onProfile ? '5rem' : '10rem'}
+                          width={onUserProfile || onProfile || onConch ? '5rem' : '10rem'} height={onUserProfile || onProfile || onConch ? '5rem' : '10rem'}
                           fill="#e9ecf343"
                           className="bi bi-pause"
                           viewBox="0 0 16 16"
@@ -551,7 +554,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                       type="button"
                       className="simple-btn"
                       style={{
-                        marginTop: onUserProfile || onProfile ? '5%' : '15%',
+                        marginTop: onConch ? '10%' : '10%',
                         alignSelf: 'center',
                       }}
                       onClick={() => {
@@ -563,7 +566,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width={onUserProfile || onProfile ? '5rem' : '10rem'} height={onUserProfile || onProfile ? '5rem' : '10rem'}
+                        width={onUserProfile || onProfile || onConch ? '5rem' : '10rem'} height={onUserProfile || onProfile || onConch ? '5rem' : '10rem'}
                         fill="#e9ecf343"
                         className="bi bi-play-fill"
                         viewBox="0 0 16 16"
@@ -586,7 +589,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   <div style={{ color: '#e1e1e5', marginLeft: 'auto' }}>{duration ? duration : ''}</div>
                 </div>
               </div>
-              {onHome || onConch ? <div></div> : (<div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginBottom: '8px', 
+              {onHome ? <div></div> : (<div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginTop: onConch ? '10px' : 'none', marginBottom: '8px', 
               }}>
               {postObj.isLiked ? (
                 <div>
