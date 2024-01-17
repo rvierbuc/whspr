@@ -1,8 +1,10 @@
-import React, { BaseSyntheticEvent, useState } from 'react';
-import SynthDaw from './synthComponents/SynthDaw';
+import React, { BaseSyntheticEvent, useState, lazy } from 'react';
+// import SynthDaw from './synthComponents/SynthDaw';
 import { Container, Modal, Button } from 'react-bootstrap';
 import * as Tone from 'tone';
 import { useLoaderData } from 'react-router-dom';
+
+const SynthDaw = lazy(() => import('./synthComponents/SynthDaw'));
 
 interface Props {
   audioContext: AudioContext
@@ -49,7 +51,7 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
   oscillatorOptions.oscillator.frequency.value = 330;
   oscillatorOptions.fatOscillator.frequency.value = 330;
   oscillatorOptions.fmOscillator.frequency.value = 330;
-  oscillatorOptions.amOscillator.frequency.value = 330;
+  oscillatorOptions.amOscillator.frequency.value = 0;
 
   const phaseFilter: Tone.Phaser = new Tone.Phaser({
     frequency: 15,
