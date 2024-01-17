@@ -32,7 +32,7 @@ const Room = ({ channel, host, id, creator, audioContext }) => {
         .then((stream) => {
              console.log('user', user)
 
-        createChannel(channel, uid, '007eJxTYPBdOLtmftV7Yz+P1GfSx08pdH/dXbfQbEfv229pB0S8KjYpMCQaJyUbmJgmWphZWphYmJtbGKUYpJoZJhmbmllYWpoaHTlcktoQyMggWH2RlZEBAkF8RoZEBgYAV0cfRw==', stream);
+        createChannel(channel, uid, '007eJxTYGA5vi/0oVHez1zh26WN9zf6ljmFlfq+u2q64U2i2e6es+sVGBKNk5INTEwTLcwsLUwszM0tjFIMUs0Mk4xNzSwsLU2NsrhXpDYEMjK4Fk1lYIRCEJ+RIZGBAQAzyx5E', stream);
         setStream(stream);
       });
 
@@ -48,7 +48,7 @@ const Room = ({ channel, host, id, creator, audioContext }) => {
   }, [remoteAudioTracks]);
 
   const handleJoinChannel = (stream) => {
-    joinChannel(channel, uid, '007eJxTYPBdOLtmftV7Yz+P1GfSx08pdH/dXbfQbEfv229pB0S8KjYpMCQaJyUbmJgmWphZWphYmJtbGKUYpJoZJhmbmllYWpoaHTlcktoQyMggWH2RlZEBAkF8RoZEBgYAV0cfRw==');
+    joinChannel(channel, uid, '007eJxTYGA5vi/0oVHez1zh26WN9zf6ljmFlfq+u2q64U2i2e6es+sVGBKNk5INTEwTLcwsLUwszM0tjFIMUs0Mk4xNzSwsLU2NsrhXpDYEMjK4Fk1lYIRCEJ+RIZGBAQAzyx5E');
     startAudio();
   };
 
@@ -72,9 +72,9 @@ const Room = ({ channel, host, id, creator, audioContext }) => {
     }
     navigate('/protected/radio')
   };
-
+  
   return (
-
+    
     <div>
       <div style={{justifyContent: 'right', flexDirection: 'row', display: 'flex', alignItems: 'right'}}>
 
@@ -120,7 +120,7 @@ const Room = ({ channel, host, id, creator, audioContext }) => {
       {/* <button
       type="button"
       className='btn btn-dark'
-      onClick={handleLeaveChannel}>Leave Channel</button> */}
+    onClick={handleLeaveChannel}>Leave Channel</button> */}
       </div>
 
       <div style={{ marginTop: '20px',  alignItems: 'center'}} className='container'>
@@ -130,9 +130,9 @@ const Room = ({ channel, host, id, creator, audioContext }) => {
             { listeners ?
             listeners.map((listener) => {
               <img style={{margin: '15px'}} width="100" src={listener.profileImgUrl} alt="user profile image" />
-       {mute ?  <button
-        type="button"
-        style={{margin: '15px'}}
+              {mute ?  <button
+                type="button"
+                style={{margin: '15px'}}
         className='btn btn-dark'
         onClick={() => {muted()}}
         >Unmute</button> : <button
@@ -141,8 +141,9 @@ const Room = ({ channel, host, id, creator, audioContext }) => {
         className='btn btn-light'
         onClick={() => {muted()}}
         >Mute</button>}
-            }) : <br></br>
-            }
+      }) : <br></br>
+    }
+        <Analyser audioContext={audioContext}  stream={stream}/>
           {/* <img style={{margin: '15px'}} width="100" src="https://lh3.googleusercontent.com/a/ACg8ocI6UOrLKNPeKzMpAobwFfMo2jVBc2SccK66hzTPMkEk=s96-c" alt="user profile image" />
        {mute ?  <button
         type="button"
@@ -156,7 +157,6 @@ const Room = ({ channel, host, id, creator, audioContext }) => {
         onClick={() => {muted()}}
         >Mute</button>} */}
 
-        <Analyser audioContext={audioContext}  stream={stream}/>
 
           </div>
           
