@@ -176,7 +176,7 @@ export const RecordComment = ({ setShowShareModal, sentToId, isSharing, postObj,
   // }
   
   return (
-    <div>
+    <div style={{ width: isSharing ? '70%' : '100' }}>
     <div style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between' }}>
     <button
       //className="record-button"
@@ -224,13 +224,18 @@ export const RecordComment = ({ setShowShareModal, sentToId, isSharing, postObj,
         {/* <img src={require('../style/postbutton.png')} /> */}
         </button>}
   </div>
-  {isSharing ? <button id='save-btn-new'
-       onClick={() =>{
-         saveSharePostToGoogleCloud();
-         emptyRecording();
-       }}
-       disabled={audioChunks.length === 0 || isRecording}> Send
-     </button> : <div></div>}
+  {isSharing ? 
+  <div style={{ display: 'flex', justifyContent: 'end', marginTop: '-1rem' }}>
+
+  <button className='share-btn' style={{ padding: '.25rem' }}
+  onClick={() =>{
+    saveSharePostToGoogleCloud();
+    emptyRecording();
+  }}
+  disabled={audioChunks.length === 0 || isRecording}> Send
+  
+     </button> 
+     </div> : <div></div>}
   </div>
   );
 };

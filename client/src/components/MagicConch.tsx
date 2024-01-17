@@ -11,7 +11,7 @@ import Modal from 'react-bootstrap/Modal';
 import { Mail } from './Mail';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-
+dayjs.extend(relativeTime);
 const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
   const [messages, setMessages] = useState<any>();
   const [type, setType] = useState<string>('inbox');
@@ -60,7 +60,6 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
       if (sharedPostsArray.data.length > 0) {
         console.log('get shared posts', sharedPostsArray.data);
         setSharedPosts(sharedPostsArray.data);
-        
       }
     } catch (error) {
       console.error('error getting shared posts in inbox', error);
@@ -90,10 +89,10 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
   return (
         <div >
 {/** commented out code below component */}
-    <div style={{ display: 'flex', alignItems: 'start', margin:'1rem' }}>
-
-{type === 'inbox' ?
-    <div>
+    <div style={{ display: 'flex', justifyContent:'center', alignItems: 'center', margin:'1rem' }}>
+    <img src={require('../style/inbox.png')}></img>
+{/* {type === 'inbox' ?
+    <div >
         <button
         type="button"
         className="btn btn-dark"
@@ -116,16 +115,18 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
         className="btn btn-dark"
         onClick={() => getMessages('outbox')}
         >Outbox</button>
-      </div>}
+      </div>} */}
             </div>
 
 
             <div>
                 {message ? 
-                  <Modal show={showConch} onHide={() => setShowConch(false)} aria-labelledby="contained-modal-title-vcenter"
+                  <Modal  show={showConch} onHide={() => setShowConch(false)} aria-labelledby="contained-modal-title-vcenter"
                   centered>
+                    <Modal.Body className='bs-conch-modal-content'>
                     <Modal.Header>You have been Conched!!</Modal.Header>
                       <WaveSurferComponent onConch={true} waveHeight={300} postObj={message} audioUrl={message.soundUrl} postId={message.id} />
+                      </Modal.Body>
                     </Modal>
 
                     // <Modal backdropId='conchBackdrop' childId='conchChild' isOpen={showConch} onClose={() => setShowConch(false)} >
@@ -139,7 +140,7 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
             </div>
             <div className='card' style={{ display: 'flex', flexDirection: 'row', margin:'auto', maxWidth:'75vw', minWidth:'700px', maxHeight: '700px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap:'.5rem', padding:'1rem', width:'50%', maxHeight:'650px', overflow:'scroll' }}>
-              {sharedPosts ? sharedPosts.map((post) => (
+              {sharedPosts ? sharedPosts.map((post, index) => (
                 <Mail
                 key={post.id}
                 sharePost={post}
@@ -148,6 +149,9 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
                 type={type}
                 setDisplayMessage={setDisplayMessage}
                 setDisplayPost={setDisplayPost}
+                setSharedPosts={setSharedPosts}
+                sharePostIndex={index}
+                sharedPosts={sharedPosts}
                 ></Mail>
               )) : <div>no messaged yet!</div>} 
                 </div>

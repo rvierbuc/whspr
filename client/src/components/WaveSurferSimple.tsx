@@ -13,12 +13,14 @@ interface WaveSurferProps {
   postId: number;
   audioContext: AudioContext;
   type: string;
+  onShare: boolean;
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   audioUrl,
   postId,
   audioContext,
+  onShare,
   type,
 }) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
@@ -105,7 +107,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
     createSoundWaves();
   }, [audioUrl]);
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'start', marginLeft: '1rem', marginRight:'1rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'start', marginLeft: onShare ? '0' : '1rem', marginRight:'1rem' }}>
       {isPlaying ? (
         <button
           type="button"

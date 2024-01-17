@@ -213,6 +213,9 @@ export const SharedPost = db.define('SharedPost', {
   captionUrl: {
     type: DataTypes.STRING,
   },
+  hasSeen: {
+    type: DataTypes.BOOLEAN
+  },
 });
 
 // defines table relations

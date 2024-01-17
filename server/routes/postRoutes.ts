@@ -636,9 +636,13 @@ router.get("/tags", async (req: Request, res: Response) => {
    const sharedPosts = await SharedPost.findAll({
     where: {[type]: id},
     include: [Post, { model: User,
-      as: userModel }]
+      as: userModel }],
+    order:[
+        ['createdAt', 'DESC']
+      ],
    })
-    console.log('shared', sharedPosts)
+   
+    //console.log('shared', sharedPosts)
     res.send(sharedPosts)
   }catch(error){
     console.error('error getting shared posts', error)
@@ -646,6 +650,21 @@ router.get("/tags", async (req: Request, res: Response) => {
  })
 
 // *************POST REQUESTS***********************
+
+router.post('/hasSeen', async (req:Request, res:Response) => {
+  const { id, bool, type } = req.body;
+  const userModel = type === 'sentToId' ? 'sentFromUser' : 'sentToUser'
+  console.log(userModel)
+  try {
+    const updateHasSeen = await SharedPost.update({hasSeen: bool}, {where: {id}})
+    const updated = await SharedPost.findByPk(id, {include: [Post, { model: User,
+      as: userModel }] })
+    res.send(updated)
+  }catch (error){
+    console.error('could not update hasSeen on share post', error)
+    res.sendStatus(500)
+  }
+})
 
  router.post('/radio', async(req: Request, res: Response) => {
   const {host, listenerCount, category, soundUrl, title} = req.body

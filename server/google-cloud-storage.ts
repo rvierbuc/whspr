@@ -108,7 +108,8 @@ const saveSharePost = async (audio: any, sentFromId, sentToId, postId): Promise<
       sentFromId,
       sentToId,
       postId,
-      captionUrl: downloadURL
+      captionUrl: downloadURL,
+      hasSeen: false,
     })
     const writeStream = file.createWriteStream({
       metadata: {
