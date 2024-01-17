@@ -178,7 +178,7 @@ export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, titl
       start();
       setIsRecording(true);
     } catch (error) {
-      console.error('Could not start recording', error);
+      console.error('Could not start recording', error)
     }
   };
 
@@ -233,6 +233,7 @@ export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, titl
   };
 
   const saveAudioToGoogleCloud = async (): Promise<void> => {
+    title = title || "untitled"
     if (title) {
       handleNavigation('/protected/feed/following');
     } else {
@@ -287,7 +288,7 @@ export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, titl
           disabled={isRecording || audioChunks.length > 0}
         >
           {/* <img src={require('../style/recordbutton.png')} /> */}
-          </button>
+        </button>
         <button
           id='play-btn-new'
           //className="play-button"
@@ -296,7 +297,7 @@ export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, titl
           disabled={isPlaying || (audioChunks.length === 0 && synthAudioChunks.length === 0)}
         >
           {/* <img src={require('../style/playbutton.png')} /> */}
-          </button>
+        </button>
         <button
           id='stop-btn-new'
           //style={{height:'4rem', width:'4rem'}}
@@ -305,7 +306,7 @@ export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, titl
           disabled={!isRecording && !isPlaying}
         >
           {/* <img src={require('../style/stopbutton.png')} /> */}
-          </button>
+        </button>
         <button
           id='remove-btn-new'
           className="delete-button"
@@ -318,7 +319,7 @@ export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, titl
           disabled={audioChunks.length === 0 || isRecording}
         >
           {/* <img src={require('../style/deletebutton.png')} /> */}
-          </button>
+        </button>
         <button
           id='post-btn-new'
           //className="post-button"
@@ -331,7 +332,7 @@ export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, titl
           disabled={(audioChunks.length === 0 && synthAudioChunks.length === 0) || isRecording}
         >
           {/* <img src={require('../style/postbutton.png')} /> */}
-          </button>
+        </button>
       </Stack>
     </div >
   );

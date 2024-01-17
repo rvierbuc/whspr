@@ -23,7 +23,7 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   const [tagCounter, setTagCounter] = useState<number>(0);
   //const tagsRef = useRef([]);
   const user: any = useLoaderData();
-  const { type }:Readonly<Params<string>> = useParams();
+  const { type }: Readonly<Params<string>> = useParams();
   //const selected = [];
   // navigate functionality
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
           setShowTagModal(true);
           getTagList();
         }
-        
+
       } else {
         setPosts(allPosts.data);
       }
@@ -57,7 +57,7 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   };
 
   const handleTagSelect = (event): void => {
-  
+
     if (selectedTags.includes(event.target.value)) {
       setSelectedTags(selectedTags.filter(tag => tag !== event.target.value));
       setTagCounter(() => tagCounter - 1);
@@ -77,7 +77,7 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
       }
     }
   };
-  
+
   const submitTagSelection = () => {
     axios.put(`/post/selectedTags/${user.id}`, { tags: selectedTags });
     setShowTagModal(false);
@@ -87,12 +87,12 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   };
   const updatePost = async (postId, updateType) => {
     try {
-      const updatedPost:any = await axios.get(`/post/updatedPost/${postId}/${updateType}`);
+      const updatedPost: any = await axios.get(`/post/updatedPost/${postId}/${updateType}`);
       console.log('updated post obj', updatedPost);
       const postIndex = posts.findIndex((post) => post.id === updatedPost.data.id);
       updatedPost.data.rank = posts[postIndex].rank;
       //console.log('post index', updatePostIndex)
-      const postsWUpdatedPost = posts.toSpliced(postIndex, 1, updatedPost.data );
+      const postsWUpdatedPost = posts.toSpliced(postIndex, 1, updatedPost.data);
       console.log(postsWUpdatedPost);
       setPosts(postsWUpdatedPost);
     } catch (error) {
@@ -102,8 +102,8 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   useEffect(() => {
     console.log('feed', type);
     getPosts(type, 'none');
-  
-   
+
+
   }, [type]);
 
   // SYDNEY => these are placeholders passing into PostCard so my added functionality in RecordPost doesn't conflict
@@ -119,44 +119,44 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   return (
     <div>
       <Modal id='modal-background' show={showTagModal} onHide={() => setShowTagModal(false)} aria-labelledby="contained-modal-title-vcenter"
-      centered>
+        centered>
         {/* <Modal.Dialog > */}
         <Modal.Header id='tag-mod-header' centered>
-         What do you want to hear about?
+          What do you want to hear about?
         </Modal.Header >
-        <Modal.Body id='tags'style={{ fontSize: '1.5rem' }} >
-         Select up to 5 tags to get started with some interesting whsprs.
+        <Modal.Body id='tags' style={{ fontSize: '1.5rem' }} >
+          Select up to 5 tags to get started with some interesting whsprs.
           <div className='card' style={{ margin: '.5rem', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' }}>
-          {tags ? tags.map((tag, index) => (
-            <div key={index} style={{ display: 'flex', flexDirection: 'row', margin: '.5rem' }}>
-            <button className='not-selected-tag' onClick={(e) => handleTagSelect(e)} disabled={cannotSelect} value={tag}>{`#${tag}`}</button>
-            </div>
-          )) : <div></div>}
+            {tags ? tags.map((tag, index) => (
+              <div key={index} style={{ display: 'flex', flexDirection: 'row', margin: '.5rem' }}>
+                <button className='not-selected-tag' onClick={(e) => handleTagSelect(e)} disabled={cannotSelect} value={tag}>{`#${tag}`}</button>
+              </div>
+            )) : <div></div>}
           </div>
           <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'row', justifyContent: 'end' }}>
 
-          <button id='tag-submit' onClick={ () => submitTagSelection() }>Submit</button>
+            <button id='tag-submit' onClick={() => submitTagSelection()}>Submit</button>
           </div>
           {/* <button onClick={ () => setCannotSelect(false)}>edit</button> */}
         </Modal.Body>
         {/* </Modal.Dialog> */}
       </Modal>
-      {posts 
+      {posts
         ? (posts.length === 0 ? <a href='explore' style={{ color: 'white', fontSize: 'xxx-large' }}>Explore Popular Posts to Find Friends</a>
           : posts.map((post: any) => (
-        <div style={{ marginBottom: '2rem', maxWidth: '950px', marginLeft: 'auto', marginRight: 'auto' }} className="centered">
-          <WaveSurferComponent
-                  key={post.id}
-                  postObj={post}
-                  audioUrl={post.soundUrl}
-                  postId={post.id}
-                  userId={user.id}
-                  getPosts={getPosts}
-                  updatePost={updatePost}
-                  audioContext={audioContext}
-                  feed={feed} onProfile={false} setOnProfile={undefined} />
-        </div>),
-          )) : <div>Loading...</div>}
+            <div style={{ marginBottom: '2rem', maxWidth: '950px', marginLeft: 'auto', marginRight: 'auto' }} className="centered">
+              <WaveSurferComponent
+                key={post.id}
+                postObj={post}
+                audioUrl={post.soundUrl}
+                postId={post.id}
+                userId={user.id}
+                getPosts={getPosts}
+                updatePost={updatePost}
+                audioContext={audioContext}
+                feed={feed} onProfile={false} setOnProfile={undefined} />
+            </div>),
+          )) : <div>Database is broken.</div>}
     </div>
 
   );
