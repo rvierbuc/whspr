@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Tuna from 'tunajs';
 import { Stack, Button, Container } from 'react-bootstrap';
 

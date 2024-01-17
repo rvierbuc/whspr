@@ -35,7 +35,7 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
   const [instrument, setInstrument] = useState(oscillatorOptions.oscillator);
   const [postCategories, setPostCategories] = useState<string[]>([]);
   const [postTitle, setPostTitle] = useState<string>('');
-  const [synthFilters, setSynthFilters] = useState<{ phaseFilter: Tone.Phaser, distortionFilter: Tone.Distortion }>({});
+  const [synthFilters, setSynthFilters] = useState<{ phaseFilter: Tone.Phaser, distortionFilter: Tone.Distortion }>({phaseFilter, distortionFilter});
   const [synthBypass, setSynthBypass] = useState<{ phaseFilter: boolean, distortionFilter: boolean }>({
     phaseFilter: false,
     distortionFilter: false,
@@ -60,7 +60,6 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
   useEffect(() => {
     setAddSynth(false);
     setInstrument(oscillatorOptions.oscillator);
-    setSynthFilters({ phaseFilter, distortionFilter });
   }, []);
 
   const toggleSynth: () => void = () => addSynth === false ? setAddSynth(true) : setAddSynth(false);
