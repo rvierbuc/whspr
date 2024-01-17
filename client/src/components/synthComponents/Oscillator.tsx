@@ -1,5 +1,5 @@
 import React, { BaseSyntheticEvent, useState, useEffect } from 'react';
-import { Container, Stack, Button } from 'react-bootstrap';
+import { Stack, Button } from 'react-bootstrap';
 import * as Tone from 'tone';
 import { SlQuestion } from "react-icons/sl";
 
@@ -70,13 +70,14 @@ const Oscillator = ({
   const { Q, phaseWet } = phaserSettings;
   const { wet, distortion } = distortionSettings;
   const [selectedOscillator, setSelectedOscillator] = useState<string>(oscillatorKeys[0]);
+  const gainNode: Tone.Gain = new Tone.Gain();
+  gainNode.gain.value = -1;
 
   useEffect(() => {
     setSelectedOscillator(oscillatorKeys[0]);
   }, []);
 
   const handleTypeChange: (event: BaseSyntheticEvent) => void = (event) => {
-    const waveId = event.target.id;
     changeType(event)
   };
 
@@ -109,10 +110,15 @@ const Oscillator = ({
     } else {
       synthFilters.distortionFilter.wet.value = 0.5;
     }
-
-    instrument.connect(filters[0]);
+    instrument.volume.value = -2;
+    gainNode.gain.value = -1;
+    const compressor: Tone.Compressor = new Tone.Compressor();
+    instrument.connect(compressor);
+    compressor.connect(filters[0]);
     filters[0].connect(filters[1]);
-    instrument.start()
+    filters[1].connect(gainNode);
+    instrument.start();
+    gainNode.gain.rampTo(1, 0.3);
   };
 
   return (
@@ -139,7 +145,7 @@ const Oscillator = ({
             <Stack direction="horizontal" gap={5}>
               <div className="text-center text-white">
                 <h6>Frequency</h6>
-                <input value={frequency} max="880" onChange={changeValue} id="frequency" type="range" />
+                <input value={frequency} max="660" onChange={changeValue} id="frequency" type="range" />
               </div>
               <div className="text-center text-white">
                 <h6>Detune</h6>
@@ -233,6 +239,7 @@ const Oscillator = ({
             className="btn btn-dark"
             onClick={() => {
               if (isPlaying) {
+                gainNode.gain.rampTo(-2, 0.3);
                 setIsPlaying(false);
                 stop();
               } else {
