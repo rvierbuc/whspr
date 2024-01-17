@@ -6,16 +6,15 @@ import {
   createRoutesFromElements,
 } from 'react-router-dom';
 
-import Login from './Login';
-import Room from './Room';
 import Radio from './Radio';
-import PrivateRoutes from './PrivateRoutes';
-import WaveSurferComponent from './WaveSurfer';
-import Feed from './Feed';
-import PostCard from './PostCard';
-import UserProfile from './userProfile';
-import MagicConch from './MagicConch';
-import ReadOnlyProfile from './ReadOnlyProfile';
+const Login = lazy(() => import('./Login'));
+const Room = lazy(() => import('./Room'));
+const PrivateRoutes = lazy(() => import('./PrivateRoutes'));
+const WaveSurferComponent = lazy(() => import('./WaveSurfer'));
+const Feed = lazy(() => import('./Feed'));
+const UserProfile = lazy(() => import('./userProfile'));
+const MagicConch = lazy(() => import('./MagicConch'));
+const ReadOnlyProfile = lazy(() => import('./ReadOnlyProfile'));
 // import Search from './Search';
 const Synthesize = lazy(() => import('./Synthesize'));
 
@@ -73,7 +72,7 @@ const App = () => {
                     {/* <Route path="search" element={<Search />} /> */}
                     <Route path="profile" element={<UserProfile setRoomProps={setRoomProps} audioContext={audioContext} />} loader={() => getUserLoader()}/>
                     <Route path="feed/:type" element={<Feed audioContext={audioContext} />} loader={() => getUserLoader()}/>
-                    <Route path="post" element={<PostCard />} loader={() => getUserLoader()}/>
+                    {/* <Route path="post" element={<PostCard />} loader={() => getUserLoader()}/> */}
                     <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
                     <Route path="radio" element={<Radio setRoomProps={setRoomProps} />} />
                     <Route path="room/:name" element={<Room channel={channelName} host={host} id={uid}/>} />
