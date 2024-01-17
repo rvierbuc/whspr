@@ -362,9 +362,8 @@ const ReadOnlyProfile = ({ audioContext }) => {
             }}
           >
             {selectedUserInfo.map((post, index) => (
-              <div>
+              <div key={index}>
                 <WaveSurferComponent
-                  key={index}
                   postObj={post}
                   audioUrl={post.soundUrl}
                   postId={post.id}

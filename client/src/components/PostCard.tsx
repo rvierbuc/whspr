@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { RecordPost } from './RecordPost';
 import { useLoaderData } from 'react-router-dom';
 import algoliasearch from 'algoliasearch';
-import { InstantSearch, SearchBox, Hits, useSearchBox, Configure } from 'react-instantsearch';
+import { InstantSearch, SearchBox, Hits, useHits, useSearchBox, Configure } from 'react-instantsearch';
 import { v4 as uuidv4 } from 'uuid';
 import searchInsights from 'search-insights';
+
 
 
 const generateUserToken = (): string => {
@@ -20,19 +21,7 @@ const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251
 });
 
 
-const Hit = ({ hit, onSelect }: { hit: any; onSelect: (category: string[] | string) => void }) => {
-  console.log('hits', hit); //the individual hit obj
-  // this log logs each category but letter by letter
-  // console.log('onselect hit', [...hit.category]);
-  return (
-    // TODO: issue, when you click on a hit, it just adds the input value to the selected categories instead of the hit value
-    <article id='cat-hit' onClick={() => onSelect([hit.category])}
-      style={{ border: '1px solid black', padding: '10px', margin: '10px' }}
-    >
-      {hit.category}
-    </article>
-  );
-};
+
 
 const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: string[] | string) => void }) => {
   const [currentSearch, setCurrentSearch] = useState<string>('');
@@ -55,10 +44,33 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
     }
     setCurrentSearch('');
   };
+  const handleHitClick = (hit: any) => {
+    console.log('hit inside of handlehitclick', hit);
+    handleCategorySelection(hit[0]);
+  };
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // console.log('currentSearch', currentSearch);
     handleCategorySelection(currentSearch);
+  };
+  const Hit = ({ hit, onSelect }: { hit: any; onSelect: (category: string[] | string) => void }) => {
+    const { hits } = useHits();
+    // console.log('hits', hit); //the individual hit obj
+    console.log('hits array', hits);
+    // this log logs each category but letter by letter
+    // console.log('onselect hit', [...hit.category]);
+    //  filter the hits based on the current search
+    const filteredHits = hits.filter((individualHit: any) => {
+      return individualHit.category.toLowerCase().includes(currentSearch.toLowerCase());
+    });
+    console.log('search + indiv hits', currentSearch, filteredHits);
+    return (
+      // TODO: issue, when you click on a hit, it just adds the input value to the selected categories instead of the hit value
+      <article id='cat-hit' onClick={() => onSelect([hit.category])}
+        style={{ border: '1px solid black', padding: '10px', margin: '10px' }}
+      >
+        {hit.category}
+      </article>
+    );
   };
   return (
     <div>
@@ -66,6 +78,7 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
         searchClient={searchClient}
         indexName="category_index"
         initialUiState={{ searchBox: { query: currentSearch } }}
+        
       >
         {/* <SearchBox onInput={handleSearchChange} placeholder={'' || selectedCategory} className='input-control'/> */}
         <form onSubmit={handleSubmit}>
@@ -79,7 +92,7 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
           />
         </form>
         {/* create an input that holds the selected categories */}
-        {currentSearch && <Hits className="cat-hits" hitComponent={(props) => <Hit {...props} onSelect={() => { handleCategorySelection(currentSearch); }} />} />}
+        {currentSearch && <Hits className="cat-hits" hitComponent={(props) => <Hit {...props} onSelect={handleHitClick} />} />}
         <input type="text" value={selectedCategories} readOnly={true} className='input-control text-white' id='category-read-only' />
         <Configure userToken={userToken} />
       </InstantSearch>
