@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, lazy } from 'react';
 import {
   Route,
   RouterProvider,
@@ -14,7 +14,6 @@ import Login from './Login';
 import Room from './Room';
 import Radio from './Radio';
 import PrivateRoutes from './PrivateRoutes';
-import Synthesize from './Synthesize';
 import WaveSurferComponent from './WaveSurfer';
 import Feed from './Feed';
 import PostCard from './PostCard';
@@ -23,6 +22,7 @@ import MagicConch from './MagicConch';
 import ReadOnlyProfile from './ReadOnlyProfile';
 // import Search from './Search';
 import Post from './Post';
+const Synthesize = lazy(() => import('./Synthesize'));
 
 import axios from 'axios';
 import { WhsprAI } from './WhsprAI';
@@ -31,7 +31,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 // THE MAIN audio context to be used throughout the application (DO NOT ALTER)
-// const AudioContext = window.AudioContext;
 const audioContext: AudioContext = new AudioContext();
 // algolia initialization
 aa('init', {

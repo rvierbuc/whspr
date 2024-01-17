@@ -1,10 +1,10 @@
-import React, { useState, useEffect, BaseSyntheticEvent } from 'react';
+import React, { useState, useEffect, BaseSyntheticEvent, lazy } from 'react';
 import { Container } from 'react-bootstrap';
 import Oscillator from './Oscillator';
-import { RecordPost } from '../RecordPost';
-import Filters from './Filters';
-import PostCard from '../PostCard';
 import * as Tone from 'tone';
+const Filters = lazy(() => import('./Filters'));
+const RecordPost = lazy(() => import('../RecordPost'));
+const PostCard = lazy(() => import('../PostCard'));
 
 interface Options {
   oscillator: Tone.Oscillator
@@ -129,6 +129,14 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
     }
   };
 
+  const handleToggle = async () => {
+    try {
+      toggleSynth();
+    } catch {
+      console.error('Could not load synth');
+    }
+  };
+
   return (
     <Container className="rounded text-white text-center" style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '-1rem' }}>
       <div className="card p-3">
@@ -137,7 +145,7 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
           <Filters filter={filter} setFilter={setFilter} audioContext={audioContext} />
         </div>
         <div className="synthOption">
-          <button type="button" className="text-white btn btn-dark btn-rounded" style={ { margin: '0.1rem', width: '50%' } } onClick={toggleSynth}>Synthesize your own sound!</button>
+          <button type="button" className="text-white btn btn-dark btn-rounded" style={ { margin: '0.1rem', width: '50%' } } onClick={handleToggle}>Synthesize your own sound!</button>
         </div>
         {addSynth === true &&
         <Container className="syntheSize rounded mt-3">

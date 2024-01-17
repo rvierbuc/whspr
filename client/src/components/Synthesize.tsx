@@ -1,5 +1,4 @@
 import React, { BaseSyntheticEvent, useState, lazy } from 'react';
-// import SynthDaw from './synthComponents/SynthDaw';
 import { Container, Modal, Button } from 'react-bootstrap';
 import * as Tone from 'tone';
 import { useLoaderData } from 'react-router-dom';
