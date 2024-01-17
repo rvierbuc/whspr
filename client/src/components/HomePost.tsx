@@ -99,7 +99,7 @@ const HomePost = (props) => {
           <div
             className="card"
             id="feed-card"
-            // style={{ width: "100%", height: "100%" }}
+          // style={{ width: "100%", height: "100%" }}
           >
             <div className="card-body">
               <div
@@ -131,7 +131,7 @@ const HomePost = (props) => {
                   }}
                   id="feed-username"
                 >
-                  {postObj.user.username}
+                  {postObj.user.displayUsername || postObj.user.username}
                 </a>
               </div>
               <div
@@ -158,7 +158,7 @@ const HomePost = (props) => {
                   {dayjs(postObj.createdAt).fromNow()}
                 </div>
               </div>
-              <div  
+              <div
                 // onClick={() => {
                 //       if (wave) {
                 //         wave.playPause();
@@ -268,7 +268,7 @@ const HomePost = (props) => {
               <div
                 className="d-flex flex-row align-items-center justify-content-center"
                 style={{ margin: '2%' }}
-                >
+              >
                 {isPlaying ? (
                   <button
                     type="button"
@@ -298,7 +298,7 @@ const HomePost = (props) => {
                     Play
                   </button>
                 )}
-                </div>
+              </div>
               {comments ? (
                 comments.map((commentObj: any) => (
                   <Comment
@@ -350,5 +350,5 @@ const HomePost = (props) => {
 export default HomePost;
 /**
  *    <div id={containerId}></div>
-                
+
  */

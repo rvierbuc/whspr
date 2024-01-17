@@ -129,6 +129,7 @@ app.get('/current-user', async (req: Request, res: Response) => {
   try {
     const results = await User.findOne({ where: { googleId: req.user } })
     if (results) {
+      console.log('current user:', results)
       res.status(200).send(results);
     } else {
       res.status(404).send('User not found');
@@ -348,19 +349,32 @@ app.post('/speechToTextOpenAI', async (req, res) => {
 
 })
 
-app.post('/update-profile-bio', async (req, res) => {
-  const { field, value } = req.body;
-  const userId = req.body; // Assumes you have the user's ID in req.user
+app.post('/update-username', async (req, res) => {
+  const { displayUsername, userId } = req.body;
 
   try {
-    const updatedUser = await User.update({ [field]: value }, { where: { id: userId } });
-    res.status(200).send('User updated successfully');
+    const userExists = await User.findOne({ where: { displayUsername } });
+    if (userExists) {
+      return res.status(400).send('Display username already exists');
+    }
+    await User.update({ displayUsername }, { where: { id: userId } });
+    res.status(200).send('User display name updated successfully');
   } catch (error) {
-    console.error('Error updating user:', error);
-    res.status(500).send('Error updating user');
+    console.error('Error updating user display name:', error);
+    res.status(500).send('Error updating user display name');
   }
 });
 
+app.patch('/update-bio', async (req, res) => {
+  const { userBio, userId } = req.body;
+  try {
+    await User.update({ userBio }, { where: { id: userId } });
+    res.status(200).send('User bio updated successfully');
+  } catch (error) {
+    console.error('Error updating user bio:', error);
+    res.status(500).send('Error updating user bio');
+  }
+});
 
 // MAKE SURE THIS IS LAST
 app.get('/*', (req: Request, res: Response) => {

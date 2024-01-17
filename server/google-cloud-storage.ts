@@ -1,7 +1,6 @@
 import { Storage } from '@google-cloud/storage'
-import { v4 } from 'uuid';
-import { Post, Sound, Comment, MagicConch } from './dbmodels'
 import { v4 as uuidv4 } from 'uuid';
+import { Post, Sound, Comment, MagicConch, SharedPost } from './dbmodels'
 const storage = new Storage({
   keyFilename: './key.json',
   projectId: 'whspr-406622'
@@ -90,6 +89,45 @@ const saveAudioComment = async (audio: any, userId, postId): Promise<void | stri
       Sound.create({
         userId,
         postId,
+        soundUrl: downloadURL,
+      }).catch((soundError) => {
+        console.error('Error creating Sound record:', soundError);
+      }),
+    ])
+    console.log('Audio saved to cloud')
+    return downloadURL
+  } catch (error) {
+    console.error('Error handling audio upload:', error)
+  }
+}
+const saveSharePost = async (audio: any, sentFromId, sentToId, postId): Promise<void | string> => {
+  const file = bucket.file(`audio/${Date.now()}.wav`)
+  const downloadURL = `https://storage.googleapis.com/${bucket.name}/${file.name}`
+  try {
+    const sharePostRecord = await SharedPost.create({
+      sentFromId,
+      sentToId,
+      postId,
+      captionUrl: downloadURL
+    })
+    const writeStream = file.createWriteStream({
+      metadata: {
+        contentType: 'audio/wav'
+      }
+    })
+    await Promise.all([
+      new Promise<void>((resolve, reject) => {
+        writeStream.on('error', (error) => {
+          console.error('Error uploading audio:', error);
+          reject(error);
+        });
+        writeStream.on('finish', () => {
+          resolve();
+        });
+        writeStream.end(audio);
+      }),
+      Sound.create({
+        userId: sentFromId,
         soundUrl: downloadURL,
       }).catch((soundError) => {
         console.error('Error creating Sound record:', soundError);
@@ -211,4 +249,4 @@ const saveImage = async (imageBuffer: Buffer, imageType: string, userId: string)
 
 
 
-export { saveAudio, getAudioUrl, saveAudioComment, saveAudioConch, deleteAudioPost, saveImage }
+export { saveAudio, getAudioUrl, saveAudioComment, saveAudioConch, deleteAudioPost, saveSharePost, saveImage }
