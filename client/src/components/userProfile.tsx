@@ -224,9 +224,7 @@ const UserProfile = ({
       <Modal
         style={{ backgroundColor: 'rgba(209, 209, 209, 0.6)' }}
         show={isDeleting}
-        onHide={() => setIsDeleting(!isDeleting)}
-      >
-        <Modal.Dialog style={{ backgroundColor: 'rgba(209, 209, 209, 0.6)' }}>
+        onHide={() => setIsDeleting(!isDeleting)}>
           <Modal.Header closeButton>
             <Modal.Title>Delete Post</Modal.Title>
           </Modal.Header>
@@ -248,7 +246,6 @@ const UserProfile = ({
               Delete
             </Button>
           </Modal.Footer>
-        </Modal.Dialog>
       </Modal>
       <Modal
         style={{
@@ -258,7 +255,6 @@ const UserProfile = ({
         show={searchModal}
         onHide={() => setSearchModal(!searchModal)}
       >
-        <Modal.Dialog style={{ backgroundColor: 'rgb(209, 209, 209, 0.6' }}>
           <Modal.Header closeButton>
             <Modal.Title>Search for users who follow/are followed!</Modal.Title>
           </Modal.Header>
@@ -281,7 +277,6 @@ const UserProfile = ({
               Search
             </Button>
           </Modal.Footer>
-        </Modal.Dialog>
         {followerSearchResults.length > 0 && (
           <div className="followers-div">
             <h3>Followers</h3>
