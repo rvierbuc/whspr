@@ -222,10 +222,11 @@ const UserProfile = ({
   return (
     <Container>
       <Modal
-        style={{ backgroundColor: 'rgba(209, 209, 209, 0.6)' }}
+        className="typeCard"
+        style={{backgroundColor: 'rgba(209, 209, 209, 0.6)' }}
         show={isDeleting}
         onHide={() => setIsDeleting(!isDeleting)}>
-          <Modal.Header closeButton>
+          <Modal.Header>
             <Modal.Title>Delete Post</Modal.Title>
           </Modal.Header>
           <Modal.Body>Are you sure you want to delete this post?</Modal.Body>
@@ -248,6 +249,7 @@ const UserProfile = ({
           </Modal.Footer>
       </Modal>
       <Modal
+        className="typeCard"
         style={{
           backgroundColor: 'rgb(209, 209, 209, 0.6',
           textAlign: 'center',
