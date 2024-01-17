@@ -4,10 +4,6 @@ import {
   RouterProvider,
   createBrowserRouter,
   createRoutesFromElements,
-  Outlet,
-  Link,
-  Routes,
-  useLoaderData,
 } from 'react-router-dom';
 
 import Login from './Login';
@@ -21,7 +17,6 @@ import UserProfile from './userProfile';
 import MagicConch from './MagicConch';
 import ReadOnlyProfile from './ReadOnlyProfile';
 // import Search from './Search';
-import Post from './Post';
 const Synthesize = lazy(() => import('./Synthesize'));
 
 import axios from 'axios';
@@ -51,7 +46,7 @@ const App = () => {
   const [host, setHost] = useState<string>();
   const [uid, setUid] = useState<number>();
 
-  const setRoomProps = (channelName, host, uid) => {
+  const setRoomProps = (channelName: string, host: string, uid: number) => {
     setChannelName(channelName);
     setHost(host);
     setUid(uid);
@@ -73,7 +68,7 @@ const App = () => {
             <Route>
                 <Route path="/" element={<Login audioContext={audioContext} />} />
                 <Route path="/protected" element={<PrivateRoutes />} >
-                    <Route path="dashboard" element={<WaveSurferComponent />} /> 
+                    <Route path="dashboard" element={<WaveSurferComponent />} />
                     <Route path="WhsprAI" element={<WhsprAI audioContext={audioContext} />} loader={() => getUserLoader()}/>
                     {/* <Route path="search" element={<Search />} /> */}
                     <Route path="profile" element={<UserProfile setRoomProps={setRoomProps} audioContext={audioContext} />} loader={() => getUserLoader()}/>
@@ -85,7 +80,6 @@ const App = () => {
                     <Route path="conch" element={<MagicConch audioContext={audioContext}/>} loader={() => getUserLoader()}/>
                     <Route path="feed/profile/:id" element={<ReadOnlyProfile audioContext={audioContext}/> } loader={() => getUserLoader()} />
                 </Route>
-             
             </Route>,
     ),
   );
