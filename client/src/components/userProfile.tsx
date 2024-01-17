@@ -222,7 +222,6 @@ const UserProfile = ({
   return (
     <Container>
       <Modal
-        className="typeCard"
         style={{backgroundColor: 'rgba(209, 209, 209, 0.6)' }}
         show={isDeleting}
         onHide={() => setIsDeleting(!isDeleting)}>
@@ -249,7 +248,6 @@ const UserProfile = ({
           </Modal.Footer>
       </Modal>
       <Modal
-        className="typeCard"
         style={{
           backgroundColor: 'rgb(209, 209, 209, 0.6',
           textAlign: 'center',
