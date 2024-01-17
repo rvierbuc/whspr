@@ -6,12 +6,14 @@ import WaveSurferComponent from './WaveSurfer';
 import WaveSurferSimple from './WaveSurferSimple';
 import { useLoaderData } from 'react-router-dom';
 import axios, { AxiosResponse } from 'axios';
-import Modal from 'react-bootstrap/Modal';
-//import {Modal} from './Modal'
+//import Modal from 'react-bootstrap/Modal';
+import {ConchModal} from './ConchModal'
 import { Mail } from './Mail';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+//import { ReactComponent as ConchTitle } from '../style/conch-title.svg';
 dayjs.extend(relativeTime);
+
 const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
   const [messages, setMessages] = useState<any>();
   const [type, setType] = useState<string>('inbox');
@@ -121,25 +123,33 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
 
             <div>
                 {message ? 
-                  <Modal  show={showConch} onHide={() => setShowConch(false)} aria-labelledby="contained-modal-title-vcenter"
-                  centered>
-                    <Modal.Body className='bs-conch-modal-content'>
-                    <Modal.Header>You have been Conched!!</Modal.Header>
-                      <WaveSurferComponent onConch={true} waveHeight={300} postObj={message} audioUrl={message.soundUrl} postId={message.id} />
-                      </Modal.Body>
-                    </Modal>
+                  // <Modal  show={showConch} onHide={() => setShowConch(false)} aria-labelledby="contained-modal-title-vcenter"
+                  // centered>
+                  //   <Modal.Body className='bs-conch-modal-content'>
+                  //   <Modal.Header>You have been Conched!!</Modal.Header>
+                  //     <WaveSurferComponent onConch={true} waveHeight={300} postObj={message} audioUrl={message.soundUrl} postId={message.id} />
+                  //     </Modal.Body>
+                  //   </Modal>
 
-                    // <Modal backdropId='conchBackdrop' childId='conchChild' isOpen={showConch} onClose={() => setShowConch(false)} >
-                    //   <div id="header" className='conch-trans' style={{width:'100%'}}> 
-                    //   <div>You got a conched!</div>
-                    //       <WaveSurferComponent onConch={true} waveHeight={300} postObj={message} audioUrl={message.soundUrl} postId={message.id} />
-                    //       <div className="wave"></div>
-                    //   </div>
-                    //  </Modal>
-                  : <div>No messages!</div>}
+                    <ConchModal isOpen={showConch} onClose={() => setShowConch(false)} >
+                      <div style={{width:'100%'}}> 
+                      <div style={{margin:'.5rem 1rem .5rem 1rem '}} onClick={() => setShowConch(false)}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-x-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                      </svg>
+                      </div>
+                      <div className='conch-title' >
+                        A MAGIC CONCH HAS WASHED UP JUST FOR YOU!
+                      </div>
+                          <WaveSurferComponent onConch={true} waveHeight={300} postObj={message} audioUrl={message.soundUrl} postId={message.id} />
+                          {/* <div className="wave"></div> */}
+                      </div>
+                     </ConchModal>
+                  : <div></div>}
             </div>
             <div className='card' style={{ display: 'flex', flexDirection: 'row', margin:'auto', maxWidth:'75vw', minWidth:'700px', maxHeight: '700px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap:'.5rem', padding:'1rem', width:'50%', maxHeight:'650px', overflow:'scroll' }}>
+              <div className='on-profile-tags' style={{ display: 'flex', flexDirection: 'column', gap:'.5rem', padding:'1rem', width:'50%', maxHeight:'650px', overflow:'scroll' }}>
               {sharedPosts ? sharedPosts.map((post, index) => (
                 <Mail
                 key={post.id}
