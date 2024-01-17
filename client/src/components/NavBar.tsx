@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { Link, Navigate, useNavigate, Outlet } from "react-router-dom";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import Container from "react-bootstrap/Container";
-import { Modal, Form } from "react-bootstrap";
-import { useParams } from "react-router";
+import React, { useState, useEffect } from 'react';
+import { Link, Navigate, useNavigate, Outlet } from 'react-router-dom';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import Container from 'react-bootstrap/Container';
+import { Modal, Form } from 'react-bootstrap';
+import { useParams } from 'react-router';
 
 // import Form from 'react-bootstrap/Form';
 // import Button from 'react-bootstrap/Button';
 // import InputGroup from 'react-bootstrap/InputGroup';
 // import NavDropdown from 'react-bootstrap/NavDropdown';
-import Offcanvas from "react-bootstrap/Offcanvas";
+import Offcanvas from 'react-bootstrap/Offcanvas';
 // import '../style/style.scss'
-import Search from "./Search";
+import Search from './Search';
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [show, setShow] = useState<boolean>(false);
   const { type }: Readonly<Params<string>> = useParams();
-  const [logo, setLogo] = useState<any>(require("../style/whspr-logo.png"));
+  const [logo, setLogo] = useState<any>(require('../style/whspr-logo.png'));
   const navigate = useNavigate();
   const handleNavigation = (path: string) => {
     setIsOpen(() => !isOpen);
@@ -26,7 +26,7 @@ const NavBar = () => {
   };
 
   const logout = () => {
-    window.location.href = "/logout";
+    window.location.href = '/logout';
   };
   const close = () => {
     setShow(false);
@@ -36,14 +36,14 @@ const NavBar = () => {
     setShow(true);
   };
 
-  const expand = "false";
+  const expand = 'false';
   useEffect(() => {
-    if (type === "explore") {
-      setLogo(require("../style/explore-logo.png"));
-    } else if (type === "following") {
-      setLogo(require("../style/following-logo.png"));
+    if (type === 'explore') {
+      setLogo(require('../style/explore-logo.png'));
+    } else if (type === 'following') {
+      setLogo(require('../style/following-logo.png'));
     } else if (!type) {
-      setLogo(require("../style/whspr-logo.png"));
+      setLogo(require('../style/whspr-logo.png'));
     }
   });
   return (
@@ -57,7 +57,7 @@ const NavBar = () => {
               height={100}
               className="d-inline-block align-top"
               alt="whspr logo"
-              style={{ cursor: "pointer", margin: "10px" }}
+              style={{ cursor: 'pointer', margin: '10px' }}
             />
           </Navbar.Brand>
           <Navbar.Toggle
@@ -66,10 +66,10 @@ const NavBar = () => {
             }}
             aria-controls={`offcanvasNavbar-expand-${expand}`}
             style={{
-              color: "#e1e1e5",
-              borderColor: "#e1e1e5",
-              borderWidth: "medium",
-              margin: "10px",
+              color: '#e1e1e5',
+              borderColor: '#e1e1e5',
+              borderWidth: 'medium',
+              margin: '10px',
             }}
           >
             <svg
@@ -95,7 +95,7 @@ const NavBar = () => {
             onHide={() => setIsOpen(false)}
           >
             <Offcanvas.Header
-              style={{ color: "#e1e1e5", cursor: "pointer" }}
+              style={{ color: '#e1e1e5', cursor: 'pointer' }}
               onClick={() => {
                 setIsOpen(() => !isOpen);
               }}
@@ -113,37 +113,37 @@ const NavBar = () => {
               </svg>
             </Offcanvas.Header>
             <Offcanvas.Body>
-              <Nav className="ml-auto" style={{ color: "#e1e1e5" }}>
+              <Nav className="ml-auto" style={{ color: '#e1e1e5' }}>
                 {/* <Nav.Link onClick={() => handleNavigation('/protected/feed')} >Home</Nav.Link> */}
                 {/* <Nav.Link onClick={() => handleNavigation('/protected/post')}>Post</Nav.Link> */}
                 <Nav.Link
-                  onClick={() => handleNavigation("/protected/synthesize")}
+                  onClick={() => handleNavigation('/protected/synthesize')}
                 >
                   Say Something
                 </Nav.Link>
-                <Nav.Link onClick={() => handleNavigation("/protected/conch")}>
+                <Nav.Link onClick={() => handleNavigation('/protected/conch')}>
                   Magic Conch
                 </Nav.Link>
                 <Nav.Link
-                  onClick={() => handleNavigation("/protected/feed/explore")}
+                  onClick={() => handleNavigation('/protected/feed/explore')}
                 >
                   Explore
                 </Nav.Link>
                 <Nav.Link
-                  onClick={() => handleNavigation("/protected/feed/following")}
+                  onClick={() => handleNavigation('/protected/feed/following')}
                 >
                   Following
                 </Nav.Link>
                 <Nav.Link
-                  onClick={() => handleNavigation("/protected/profile")}
+                  onClick={() => handleNavigation('/protected/profile')}
                 >
                   My Profile
                 </Nav.Link>
-                <Nav.Link onClick={() => handleNavigation("/protected/radio")}>
+                <Nav.Link onClick={() => handleNavigation('/protected/radio')}>
                   Radio
                 </Nav.Link>
                 <Nav.Link
-                  onClick={() => handleNavigation("/protected/WhsprAI")}
+                  onClick={() => handleNavigation('/protected/WhsprAI')}
                 >
                   Whspr AI
                 </Nav.Link>

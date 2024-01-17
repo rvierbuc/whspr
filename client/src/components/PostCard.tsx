@@ -5,6 +5,7 @@ import algoliasearch from 'algoliasearch';
 import { InstantSearch, SearchBox, Hits, useHits, useSearchBox, Configure } from 'react-instantsearch';
 import { v4 as uuidv4 } from 'uuid';
 import searchInsights from 'search-insights';
+import { FaDeleteLeft } from 'react-icons/fa6';
 
 
 
@@ -26,9 +27,10 @@ const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251
 const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: string[] | string) => void }) => {
   const [currentSearch, setCurrentSearch] = useState<string>('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [placeholderCategories, setPlaceholderCategories] = useState<string[]>([]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('working', event.target.value, event);
+    // console.log('working', event.target.value, event);
     setCurrentSearch(event.target.value);
   };
   const handleCategorySelection = (category: string) => {
@@ -43,11 +45,62 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
       alert('You can only add up to 5 categories!');
     }
     setCurrentSearch('');
+    // setPlaceholderCategories(null);
+  };
+  // create custom button using <FaDeleteLeft /> from react-icons to delete selected categories
+  const CustomDeleteButton = ({ category, onSelect }: { category?: string; onSelect: (category: string) => void }) => {
+    return (
+      <button onClick={() => onSelect(category)}>
+        {category}
+        <FaDeleteLeft />
+      </button>
+    );
+  };
+  const CategoryWithDeleteButton = ({ category, onSelect }: { category?: string; onSelect: (category: string) => void }) => {
+    return category ? <CustomDeleteButton category={category} onSelect={onSelect} /> : null;
   };
   const handleHitClick = (hit: any) => {
-    console.log('hit inside of handlehitclick', hit);
-    handleCategorySelection(hit[0]);
+    if (typeof hit === 'object' && hit.length > 0 && hit[0].category) {
+      console.log('hit inside of handlehitclick', hit);
+      const selectedCategory = hit[0].category;
+      const trimmedCategory = selectedCategory.trim();
+      
+      // Check if the category is already selected
+      if (selectedCategories.includes(trimmedCategory)) {
+        // Remove the category from selectedCategories
+        const updatedCategories = selectedCategories.filter(category => category !== trimmedCategory);
+        setSelectedCategories(updatedCategories);
+        onCategorySelect(updatedCategories);
+      } else {
+        // Add the category if not already selected
+        handleCategorySelection(trimmedCategory);
+        setPlaceholderCategories(trimmedCategory);
+      }
+  
+      setCurrentSearch('');
+    } else if (typeof hit === 'string') {
+      // If hit is a string, assume it's the category itself
+      const trimmedCategory = hit.trim();
+      
+      // Check if the category is already selected
+      if (selectedCategories.includes(trimmedCategory)) {
+        // Remove the category from selectedCategories
+        const updatedCategories = selectedCategories.filter(category => category !== trimmedCategory);
+        setSelectedCategories(updatedCategories);
+        onCategorySelect(updatedCategories);
+        setPlaceholderCategories(updatedCategories);
+      } else {
+        // Add the category if not already selected
+        handleCategorySelection(trimmedCategory);
+        setPlaceholderCategories(trimmedCategory);
+      }
+  
+      setCurrentSearch('');
+    } else {
+      console.error('Invalid hit object:', hit);
+    }
   };
+  
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     handleCategorySelection(currentSearch);
@@ -56,8 +109,6 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
     const { hits } = useHits();
     // console.log('hits', hit); //the individual hit obj
     console.log('hits array', hits);
-    // this log logs each category but letter by letter
-    // console.log('onselect hit', [...hit.category]);
     //  filter the hits based on the current search
     const filteredHits = hits.filter((individualHit: any) => {
       return individualHit.category.toLowerCase().includes(currentSearch.toLowerCase());
@@ -65,13 +116,24 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
     console.log('search + indiv hits', currentSearch, filteredHits);
     return (
       // TODO: issue, when you click on a hit, it just adds the input value to the selected categories instead of the hit value
-      <article id='cat-hit' onClick={() => onSelect([hit.category])}
+      <article id='cat-hit' onClick={() => onSelect(filteredHits)}
         style={{ border: '1px solid black', padding: '10px', margin: '10px' }}
       >
-        {hit.category}
+        {filteredHits.map(filteredHit => (
+          <div key={filteredHit.objectID}>
+            <p>{filteredHit.category}</p>
+          </div>
+        ))}
+
+        {/* {filteredHits[0]} */}
       </article>
     );
   };
+  useEffect(() => {
+    console.log('selectedCategories', selectedCategories);
+    console.log('placeholderCategories', placeholderCategories);
+  }, [selectedCategories, placeholderCategories]);
+  
   return (
     <div>
       <InstantSearch
@@ -86,15 +148,20 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
             type="text"
             value={currentSearch}
             onInput={handleSearchChange}
-            placeholder={'Add up to 5 categories!'}
+            // placeholder={<CategoryWithDeleteButton category={placeholderCategories} onSelect={handleCategorySelection} /> || 'Add up to 5 categories!'}
+            // placeholder={placeholderCategories ? <CategoryWithDeleteButton category={placeholderCategories} onSelect={handleCategorySelection} /> : 'Add up to 5 categories!'}
+            placeholder={placeholderCategories ? placeholderCategories : 'Add up to 5 categories!'}
             className='input-control text-white mb-2'
             id='category-search'
           />
         </form>
         {/* create an input that holds the selected categories */}
         {currentSearch && <Hits className="cat-hits" hitComponent={(props) => <Hit {...props} onSelect={handleHitClick} />} />}
-        <input type="text" value={selectedCategories} readOnly={true} className='input-control text-white' id='category-read-only' />
+        {/* <input type="text" value={selectedCategories} readOnly={true} className='input-control text-white' id='category-read-only' /> */}
         <Configure userToken={userToken} />
+        {selectedCategories ? selectedCategories.map((category, index) => (
+          <CategoryWithDeleteButton key={index} category={category} onSelect={handleHitClick} />
+        )) : null}
       </InstantSearch>
     </div>
   );

@@ -745,13 +745,18 @@ font-size: 3rem;
   margin-top: 4px;
   align-items: center;
 }
+.ais-Hits-list {
+  padding-left: 0rem;
+}
 .ais-Hits {
   &.cat-hits {
-    top: -1%;
-    z-index: 100;
+    top: 1%;
+    left: 101%;
+    z-index: 999;
     display: flex;
     position: absolute;
     justify-content: center;
+    color: #ffff;
   }
 }
 
@@ -788,6 +793,10 @@ font-size: 3rem;
 }
 ais-SearchBox-reset {
   display: none !important;
+}
+#post-card-box {
+  max-width: 520px;
+  max-height: 341px;
 }
 
 #cat-hit {

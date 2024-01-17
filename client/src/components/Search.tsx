@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
+import { FaDeleteLeft } from 'react-icons/fa6';
 const generateUserToken = (): string => {
   return uuidv4();
 };
@@ -70,12 +71,16 @@ const Search: React.FC = () => {
       objectID: string;
       title: string;
     };
+    searchQuery: string;
   }
 
-  const Hit: React.FC<HitProps> = ({ hit }) => {
+  const Hit: React.FC<HitProps> = ({ hit, searchQuery }) => {
     const { hits } = useHits(); // the array of hits
-    const { refine, query } = useSearchBox();
+    const { query } = useSearchBox();
     console.log('search query', query);
+    console.log('hit prop searchQuery pass down', searchQuery);
+    console.log('hit inside of hit inside of search', hit);
+    console.log('hits inside of hit comp ins earch', hits);
     // filter the hits based on the current search
     const filteredHits = hits.filter((individualHit) => {
       return individualHit.username
@@ -84,14 +89,13 @@ const Search: React.FC = () => {
     });
     console.log('curr search and indiv hits in hit', currentSearch, filteredHits);
     // limit the number of hits to only display how many are in the filtered hits array
-    
     return (
       <>
-        {filteredHits.map((filteredHit, index) => {
+        {filteredHits.slice(0, 5).map((filteredHit, index) => {
           console.log('hit inside of filtered hits', hit);
           return (
             <article key={index}>
-              <img
+              {/* <img
                 src={filteredHit.profileImgUrl || ''}
                 alt={filteredHit.name}
                 style={{
@@ -99,7 +103,7 @@ const Search: React.FC = () => {
                   height: '100px',
                   objectFit: 'scale-down',
                 }}
-              />
+              /> */}
               <Link to={`/protected/profile/${hit.objectID}`}>
                 {filteredHit.username}
               </Link>
@@ -111,14 +115,14 @@ const Search: React.FC = () => {
       </>
     );
   };
-  useEffect(() => {
-    console.log('current search', currentSearch);
-  }, []);
+  // useEffect(() => {
+  //   console.log('current search', currentSearch);
+  // }, []);
 
   return (
     <InstantSearch
       searchClient={searchClient}
-      indexName="search_index"
+      indexName="user_index"
       // initialUiState={{ searchBox: { query: currentSearch } }}
       searchState={{ query: currentSearch }}
       insights={true}
@@ -136,7 +140,9 @@ const Search: React.FC = () => {
           />
         </InputGroup>
       </div>
-      {currentSearch && <Hits hitComponent={Hit} className="card" />}
+      {currentSearch && (
+      <Hits hitComponent={(hit) => <Hit {...hit} searchQuery={currentSearch} />} className="card" />
+      )}
       <Configure clickAnalytics={true} queryType="prefixLast" />
     </InstantSearch>
   );
