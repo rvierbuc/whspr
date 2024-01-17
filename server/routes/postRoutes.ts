@@ -755,9 +755,10 @@ try{
   try {
     const destroyRadio = Radio.destroy({
       where: {
-        title: name
+        host: name
       }
     })
+    console.log('deleted', destroyRadio)
     res.sendStatus(201)
   }catch{
     console.log('no')
