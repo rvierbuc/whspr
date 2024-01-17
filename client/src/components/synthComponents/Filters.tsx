@@ -15,7 +15,6 @@ const Filters = ({ setFilter, audioContext, filter }: Props) => {
   const [bgColor4, setBgColor4] = useState<string>('dark');
   const [currentFilter, setCurrentFilter] = useState<string>('defaultSettings')
   const tuna = new Tuna(audioContext);
-  console.log('Filters.tsx', filter);
 
   const handleFilterChange = (filter: any) => {
     setFilter(filter);

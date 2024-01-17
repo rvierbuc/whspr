@@ -76,7 +76,6 @@ export const getTagsByEngagement = async(userId) => {
     const userLikedTagObj = await rankTags(userLikesData, 1)
     let userSelectedTagObj = {};
     if(userSelectedTags.dataValues.selectedTags){
-      console.log('hello')
       userSelectedTagObj = await rankSelectedTags(userSelectedTags)
     }
     //console.log(userSelectedTagObj)

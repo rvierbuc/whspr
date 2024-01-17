@@ -4,6 +4,8 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import {Modal, Form} from 'react-bootstrap'
+import { useParams } from 'react-router';
+
 // import Form from 'react-bootstrap/Form';
 // import Button from 'react-bootstrap/Button';
 // import InputGroup from 'react-bootstrap/InputGroup';
@@ -15,7 +17,8 @@ import Search from './Search';
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [show, setShow] = useState<boolean>(false)
-
+  const { type }:Readonly<Params<string>> = useParams();
+  const [logo, setLogo] = useState<any>(require('../style/whspr-logo.png'))
   const navigate = useNavigate();
   const handleNavigation = (path: string) => {
     setIsOpen(() => !isOpen);
@@ -35,14 +38,23 @@ const NavBar = () => {
   }
   
   const expand = 'false';
+  useEffect(() => {
+    if (type === 'explore') {
+      setLogo(require('../style/explore-logo.png'))
+    } else if (type === 'following') {
+      setLogo(require('../style/following-logo.png'))
+    } else if (!type) {
+      setLogo(require('../style/whspr-logo.png'))
+    }
+  })
   return (
     <>
 
       <Navbar key={expand} expand={expand} className="navbar">
         <Container fluid>
           <Navbar.Brand href="/protected/feed/following"><img
-            src={require('../style/whspr-logo.png')}
-            width={100}
+            src={logo}
+            width='auto'
             height={100}
             className="d-inline-block align-top"
             alt="whspr logo"
@@ -74,6 +86,7 @@ const NavBar = () => {
                 <Nav.Link onClick={() => handleNavigation('/protected/synthesize')}>Say Something</Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/conch')}>Magic Conch</Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/feed/explore')}>Explore</Nav.Link>
+                <Nav.Link onClick={() => handleNavigation('/protected/feed/following')}>Following</Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/profile')}>My Profile</Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/radio')}>Radio</Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/WhsprAI')}>Whspr AI</Nav.Link>

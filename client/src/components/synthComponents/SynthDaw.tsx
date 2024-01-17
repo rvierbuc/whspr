@@ -17,7 +17,9 @@ interface Props {
   audioContext: AudioContext,
   oscillatorOptions: Options
   phaseFilter: Tone.Phaser
+  distortionFilter: Tone.Distortion
   user: any
+  handleInfoToggle: (event: BaseSyntheticEvent) => void
 }
 
 const defaultSettings = {
@@ -27,26 +29,42 @@ const defaultSettings = {
   lowPassType: 'lowpass',
 };
 
-const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter }: Props): React.JSX.Element => {
+const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, phaseFilter, distortionFilter }: Props): React.JSX.Element => {
   const [addSynth, setAddSynth ] = useState(false);
-  const [synthAudioChunks, setSynthAudioChunks] = useState<Blob[]>([]);
   const [filter, setFilter] = useState(defaultSettings);
   const [instrument, setInstrument] = useState(oscillatorOptions.oscillator);
   const [postCategories, setPostCategories] = useState<string[]>([]);
   const [postTitle, setPostTitle] = useState<string>('');
-
-  useEffect(() => {
-    setAddSynth(false);
-    setInstrument(oscillatorOptions.oscillator);
-  }, []);
-
-  const toggleSynth: () => void = () => addSynth === false ? setAddSynth(true) : setAddSynth(false);
-
+  const [synthFilters, setSynthFilters] = useState<{ phaseFilter: Tone.Phaser, distortionFilter: Tone.Distortion }>({});
+  const [synthBypass, setSynthBypass] = useState<{ phaseFilter: boolean, distortionFilter: boolean }>({
+    phaseFilter: false,
+    distortionFilter: false,
+  });
   const [oscSettings, setOscSettings] = useState({
     frequency: instrument.frequency.value,
     detune: instrument.detune.value,
     type: instrument.type,
   });
+  const [phaserSettings, setPhaserSettings] = useState({
+    phaseFrequency: phaseFilter?.frequency.value,
+    Q: phaseFilter.Q.value,
+    octaves: phaseFilter.octaves,
+    phaseWet: phaseFilter.wet.value,
+  });
+
+  const [distortionSettings, setDistortionSettings] = useState({
+    wet: distortionFilter.wet.value,
+    distortion: distortionFilter.distortion,
+  });
+
+  useEffect(() => {
+    setAddSynth(false);
+    setInstrument(oscillatorOptions.oscillator);
+    setSynthFilters({ phaseFilter, distortionFilter });
+  }, []);
+
+  const toggleSynth: () => void = () => addSynth === false ? setAddSynth(true) : setAddSynth(false);
+
 
   const start: () => void = () => {
     instrument.start();
@@ -57,6 +75,7 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter }: Props)
 
   const stop: () => void = () => {
     instrument.stop();
+    instrument.disconnect();
     if (audioContext.state === 'running') {
       audioContext.suspend();
     }
@@ -79,6 +98,37 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter }: Props)
     }
   };
 
+  const changePhase: (e: BaseSyntheticEvent) => void = (e) => {
+    const value: number = e.target.value;
+    const id: string = e.target.id;
+    if (id === 'phaseFilter') {
+      setSynthBypass({ ...synthBypass, [id]: !synthBypass[id] });
+    } else {
+      setPhaserSettings({ ...phaserSettings, [id]: Number(value) });
+      if (id === 'Q' && phaseFilter) {
+        phaseFilter.Q.value = Number(value);
+      }
+      if (id === 'phaseWet' && phaseFilter) {
+        phaseFilter.wet.value = Number(value);
+      }
+    }
+  };
+
+  const changeDistortion: (e: BaseSyntheticEvent) => void = (e) => {
+    const value: number = e.target.value;
+    const id: string = e.target.id;
+    if (id === 'distortionFilter') {
+      setSynthBypass({ ...synthBypass, [id]: !synthBypass[id] });
+    } else {
+      setDistortionSettings({ ...distortionSettings, [id]: Number(value) });
+      if (id === 'distortion' && distortionFilter) {
+        distortionFilter.distortion = Number(value);
+      } else if (id === 'wet' && distortionFilter) {
+        distortionFilter.wet.value = Number(value);
+      }
+    }
+  };
+
   return (
     <Container className="rounded text-white text-center" style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '-1rem' }}>
       <div className="card p-3">
@@ -92,15 +142,23 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter }: Props)
         {addSynth === true &&
         <Container className="syntheSize rounded mt-3">
           <Oscillator
-            setSynthAudioChunks={setSynthAudioChunks}
             stop={stop}
             start={start}
-            instrument={instrument}
             oscillatorOptions={oscillatorOptions}
             setInstrument={setInstrument}
             oscSettings={oscSettings}
             changeType={changeType}
-            changeValue={changeValue} />
+            changeValue={changeValue}
+            changeDistortion={changeDistortion}
+            changePhase={changePhase}
+            phaserSettings={phaserSettings}
+            distortionSettings={distortionSettings}
+            synthBypass={synthBypass}
+            audioContext={audioContext}
+            synthFilters={synthFilters}
+            instrument={instrument}
+            handleInfoToggle={handleInfoToggle}
+             />
         </Container>}
         <RecordPost
           addSynth={addSynth}
@@ -112,7 +170,8 @@ const SynthDaw = ({ audioContext, oscillatorOptions, user, phaseFilter }: Props)
           instrument={instrument}
           start={start}
           stop={stop}
-        />
+          synthFilters={synthFilters}
+          synthBypass={synthBypass}/>
       </div>
     </Container>
   );

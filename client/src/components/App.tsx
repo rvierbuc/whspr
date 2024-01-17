@@ -21,8 +21,10 @@ import PostCard from './PostCard';
 import UserProfile from './userProfile';
 import MagicConch from './MagicConch';
 import ReadOnlyProfile from './ReadOnlyProfile';
+import ProfileEdit from './test'
 // import Search from './Search';
 import Post from './Post';
+
 import axios from 'axios';
 import { WhsprAI } from './WhsprAI';
 import aa from 'search-insights';
@@ -72,6 +74,7 @@ const App = () => {
 
   const router = createBrowserRouter(
     createRoutesFromElements(
+
             <Route>
                 <Route path="/" element={<Login />} />
                 <Route path="/protected" element={<PrivateRoutes />} >
@@ -89,10 +92,11 @@ const App = () => {
                 </Route>
              
             </Route>,
+
     ),
   );
   return (
-        <RouterProvider router={router} />
+    <RouterProvider router={router} />
   );
 };
 

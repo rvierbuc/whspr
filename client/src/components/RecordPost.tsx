@@ -3,17 +3,26 @@ import axios from 'axios';
 import { Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import * as Tone from 'tone';
+import Tuna from 'tunajs';
 
 interface Props {
   instrument: Tone.Oscillator | Tone.FatOscillator | Tone.FMOscillator | Tone.AMOscillator
   user: any
-  audioContext:AudioContext
+  audioContext: AudioContext
   title: string
   categories: string[]
   filter: any
   addSynth: boolean
   start: () => void
   stop: () => void
+  synthFilters: {
+    phaseFilter: Tone.Phaser,
+    distortionFilter: Tone.Distortion
+  }
+  synthBypass: {
+    phaseFilter: boolean,
+    distortionFilter: boolean
+  }
 }
 
 interface Constraints {
@@ -31,7 +40,7 @@ const constraints: Constraints = {
   video: false,
 };
 
-export const RecordPost = ({ user, audioContext, title, categories, filter, addSynth, instrument, start, stop }: Props) => {
+export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, categories, filter, addSynth, instrument, start, stop }: Props) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
@@ -118,6 +127,13 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
     } catch (error) { console.error(error); }
   };
 
+  const stopStream = async (): Promise<void> => {
+    audioStream?.getTracks().forEach((track) => {
+      track.stop();
+    });
+    setAudioStream(null);
+  };
+
   const stopRecording = async (): Promise<void> => {
     if (mediaRecorder?.current?.state === 'recording') {
       if (addSynth) {
@@ -130,30 +146,38 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
     stopStream();
   };
 
-  const stopStream = async (): Promise<void> => {
-    audioStream?.getTracks().forEach((track) => {
-      track.stop();
-    });
-    setAudioStream(null);
-  };
 
-  const startSynthRecording = async () => {
+  const startSynthRecording = async (): Promise<void> => {
+    if (!synthBypass.phaseFilter) {
+      synthFilters.phaseFilter.wet.value = 0;
+    } else {
+      synthFilters.phaseFilter.wet.value = 0.5
+    }
+    if (!synthBypass.distortionFilter) {
+      synthFilters.distortionFilter.wet.value = 0;
+    } else {
+      synthFilters.distortionFilter.wet.value = 0.5;
+    }
     try {
+      const filters: any[] = Object.values(synthFilters)
       const context = Tone.context;
+      const destination = context.createMediaStreamDestination();
       resumeAudioContext();
       setSynthAudioChunks([]);
-      const destination = context.createMediaStreamDestination();
-      instrument.connect(destination);
+      instrument.connect(filters[0]);
+      filters[0].connect(filters[1]);
+      filters[1].connect(destination);
+      Tone.start();
       mediaRecorder.current = new MediaRecorder(destination.stream);
       mediaRecorder.current.ondataavailable = event => {
         if (event.data.size > 0) {
-          setSynthAudioChunks((prevChunks: Blob[]) => [...prevChunks, event.data])
+          setSynthAudioChunks((prevChunks: Blob[]) => [...prevChunks, event.data]);
         }
       };
       mediaRecorder.current.start();
       start();
       setIsRecording(true);
-    } catch(error) {
+    } catch (error) {
       console.error('Could not start recording', error)
     }
   };
@@ -209,6 +233,7 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
   };
 
   const saveAudioToGoogleCloud = async (): Promise<void> => {
+    title = title || "untitled"
     if (title) {
       handleNavigation('/protected/feed/following');
     } else {
@@ -263,7 +288,7 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
           disabled={isRecording || audioChunks.length > 0}
         >
           {/* <img src={require('../style/recordbutton.png')} /> */}
-          </button>
+        </button>
         <button
           id='play-btn-new'
           //className="play-button"
@@ -272,7 +297,7 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
           disabled={isPlaying || (audioChunks.length === 0 && synthAudioChunks.length === 0)}
         >
           {/* <img src={require('../style/playbutton.png')} /> */}
-          </button>
+        </button>
         <button
           id='stop-btn-new'
           //style={{height:'4rem', width:'4rem'}}
@@ -281,7 +306,7 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
           disabled={!isRecording && !isPlaying}
         >
           {/* <img src={require('../style/stopbutton.png')} /> */}
-          </button>
+        </button>
         <button
           id='remove-btn-new'
           className="delete-button"
@@ -294,7 +319,7 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
           disabled={audioChunks.length === 0 || isRecording}
         >
           {/* <img src={require('../style/deletebutton.png')} /> */}
-          </button>
+        </button>
         <button
           id='post-btn-new'
           //className="post-button"
@@ -307,7 +332,7 @@ export const RecordPost = ({ user, audioContext, title, categories, filter, addS
           disabled={(audioChunks.length === 0 && synthAudioChunks.length === 0) || isRecording}
         >
           {/* <img src={require('../style/postbutton.png')} /> */}
-          </button>
+        </button>
       </Stack>
     </div >
   );

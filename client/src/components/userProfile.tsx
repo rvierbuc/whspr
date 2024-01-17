@@ -12,6 +12,8 @@ import WaveSurferSimple from './WaveSurferSimple';
 import { Link } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap';
 import { FaSearch } from 'react-icons/fa';
+//edit profile imports:
+import { Modal as CustomModal } from './Modal'
 interface PostAttributes {
   id: number;
   userId: number;
@@ -68,6 +70,8 @@ interface FollowingAttributes {
 interface CurrentUserAttributes {
   id: number;
   username: string;
+  displayUsername?: string;
+  userBio?: string;
   profileImgUrl: string;
   googleId: string;
   createdAt: Date;
@@ -85,11 +89,11 @@ const UserProfile = ({
   const [onProfile, setOnProfile] = useState<boolean>(true);
   const [onUserProfile, setOnUserProfile] = useState<boolean>(true);
   const [selectedUserFollowers, setSelectedUserFollowers] = useState<
-  FollowerAttributes[]
+    FollowerAttributes[]
   >([]);
   const [currentDeletePostId, setCurrentDeletePostId] = useState<number>(0);
   const [selectedUserFollowing, setSelectedUserFollowing] = useState<
-  FollowingAttributes[]
+    FollowingAttributes[]
   >([]);
   const [displayFollowers, setDisplayFollowers] = useState<boolean>(true);
   const [followerCount, setFollowerCount] = useState<number>(0);
@@ -97,11 +101,19 @@ const UserProfile = ({
   const [searchModal, setSearchModal] = useState<boolean>(false);
   const [searchInput, setSearchInput] = useState<string>('');
   const [followerSearchResults, setFollowerSearchResults] = useState<
-  FollowerAttributes[]
+    FollowerAttributes[]
   >([]);
   const [followingSearchResults, setFollowingSearchResults] = useState<
-  FollowingAttributes[]
+    FollowingAttributes[]
   >([]);
+  //editing profile states
+  const [username, setUsername] = useState(currentUser.displayUsername || currentUser.username);
+  const [usernameError, setUsernameError] = useState('');
+  const [profileImgError, setProfileImgError] = useState('')
+  const [profileImg, setprofileImg] = useState(currentUser.profileImgUrl);
+  const [userBio, setUserBio] = useState(currentUser.userBio);
+  const [openModal, setOpenModal] = useState(null);
+  const [rerender, setRerender] = useState(0)
   // setting a delete state => if true => render a fade in asking if the user wants to delete the post
   // then if they delete => set the state with the current posts
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -206,6 +218,87 @@ const UserProfile = ({
     const row = selectedUserPosts.slice(i, i + numberOfPostsPerRow);
     rows.push(row);
   }
+  //editing profile funcs
+
+  const openModalHandler = (modalName) => {
+    const newModalState = openModal === modalName ? null : modalName;
+    setOpenModal(newModalState);
+  };
+
+  const closeModalHandler = () => {
+    setOpenModal(null);
+  };
+
+  const updateBio = () => {
+    let userId = currentUser.id.toString()
+    axios.patch('/update-bio', { userBio: userBio, userId })
+      .then(response => {
+        console.log('Profile updated:', response.data);
+        setUserBio(userBio)
+        closeModalHandler();
+      })
+      .catch(error => {
+        console.error('Error updating profile:', error);
+      });
+  };
+
+  const updateUsername = () => {
+    let userId = currentUser.id.toString()
+    setUsernameError('');
+    axios.post('/update-username', { displayUsername: username, userId })
+      .then(response => {
+        console.log('Profile updated:', response.data);
+        setUsername(username)
+        console.log(rerender)
+        closeModalHandler();
+      })
+      .catch(error => {
+        if (error.response && error.response.status === 400) {
+          setUsernameError('Username already exists.');
+        }
+        console.error('Error updating profile:', error);
+      });
+  };
+
+  const uploadImage = () => {
+    setProfileImgError('')
+    let userId = currentUser.id.toString()
+    const formData = new FormData();
+
+    if (!profileImg) {
+      setProfileImgError('Please select an image.')
+      console.error('image not selected');
+      return;
+    }
+
+    formData.append('image', profileImg);
+    formData.append('userId', userId);
+
+    axios.post('/upload-image', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+      .then(() => {
+        window.location.reload()
+        closeModalHandler();
+        console.log('Image uploaded correctly');
+      })
+      .catch(error => {
+        setProfileImgError('Please select an image.')
+        console.error('Error uploading image:', error);
+      });
+  };
+
+  const handleFileButtonClick = () => {
+    document.getElementById('profileImgInput')!.click();
+  };
+
+  const handleImageChange = (e) => {
+    setprofileImg(e.target.files[0]);
+    uploadImage();
+  };
+
   // delete function
   const handleDelete: (postId: number) => void = async (postId) => {
     try {
@@ -340,13 +433,13 @@ const UserProfile = ({
         )}
       </Modal>
       <div className="user-main" style={{ display: 'flex' }}>
-        <div className="grid-post-container">
+        <div className="grid-post-container" >
           <Row>
             <div
               className="card user-profile-card"
               style={{ justifyContent: 'center' }}
             >
-              <div className="user-profile-image">
+              <div className="user-profile-image" onClick={() => openModalHandler('img')}>
                 <img
                   src={currentUser.profileImgUrl}
                   alt="user profile image"
@@ -358,9 +451,42 @@ const UserProfile = ({
                     marginBottom: '10px',
                   }}
                 />
+                <div className="modal-button-container">
+                  <CustomModal className="modal-profile-edit" isOpen={openModal === 'img'} onClose={closeModalHandler}>
+                    <h2>Upload Profile Image</h2>
+                    <input style={{ display: 'none' }} id="profileImgInput" type="file" onChange={handleImageChange} />
+                    <button className="btn btn-dark" onClick={handleFileButtonClick}>Choose File</button>
+                    <button className="btn btn-dark" onClick={uploadImage}>Upload Image</button>
+                    <button className="btn btn-dark" onClick={closeModalHandler}>Cancel</button>
+                    {profileImgError && <div className='text-warning'>{profileImgError}</div>}
+                  </CustomModal>
+                </div>
               </div>
-              <div className="user-profile-info">
-                <h2 style={{ color: 'white' }}>{currentUser.username}</h2>
+              <div className="user-profile-info" onClick={() => openModalHandler('username')}>
+                <div className="modal-button-container">
+                  <CustomModal className="modal-profile-edit" isOpen={openModal === 'username'} onClose={closeModalHandler}>
+                    <h2>Change Username</h2>
+                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+                    {usernameError && <div className='text-warning'>{usernameError}</div>}
+                    <button className="btn btn-dark" onClick={() => updateUsername()}>Commit</button>
+                    <button className="btn btn-dark" onClick={closeModalHandler}>Cancel</button>
+                  </CustomModal>
+                </div>
+                <h2 style={{ color: 'white' }}>{username}</h2>
+              </div>
+
+              <div className="user-profile-bio" onClick={() => openModalHandler('bio')}>{userBio || "Click to add bio"}
+                <div className="modal-button-container">
+                  <CustomModal className="modal-profile-edit" isOpen={openModal === 'bio'} onClose={closeModalHandler}>
+                    <h2>Change Your Bio</h2>
+                    <textarea onChange={(e) => setUserBio(e.target.value)}
+                      value={userBio} />
+                    <div>
+                      <button className="btn btn-dark" onClick={() => updateBio()}>Commit</button>
+                      <button className="btn btn-dark" onClick={closeModalHandler}>Cancel</button>
+                    </div>
+                  </CustomModal>
+                </div>
               </div>
               <RadioConfig setRoomProps={setRoomProps} />
 
@@ -386,35 +512,37 @@ const UserProfile = ({
               </div>
             </div>
           </Row>
-          {rows.map((row, index) => (
-            <Col key={index}>
-              {row.map((post) => (
-                <Row key={post.id}>
-                  <div className="grid-post-item">
-                    <WaveSurferComponent
-                      audioContext={audioContext}
-                      postObj={post}
-                      audioUrl={post.soundUrl}
-                      postId={post.id}
-                      userId={currentUser.id}
-                      updatePost={updatePost}
-                      getPosts={getSelectedUserInfo}
-                      onProfile={onProfile}
-                      onUserProfile={onUserProfile}
-                      setOnProfile={setOnProfile}
-                      setIsDeleting={setIsDeleting}
-                      setCorrectPostId={setCorrectPostId}
-                      setSelectedUserPosts={setSelectedUserPosts}
-                      setCurrentDeletePostId={setCurrentDeletePostId}
-                    />
-                  </div>
-                </Row>
-              ))}
-            </Col>
-          ))}
-        </div>
-      </div>
-    </Container>
+          {
+            rows.map((row, index) => (
+              <Col key={index}>
+                {row.map((post) => (
+                  <Row key={post.id}>
+                    <div className="grid-post-item">
+                      <WaveSurferComponent
+                        audioContext={audioContext}
+                        postObj={post}
+                        audioUrl={post.soundUrl}
+                        postId={post.id}
+                        userId={currentUser.id}
+                        updatePost={updatePost}
+                        getPosts={getSelectedUserInfo}
+                        onProfile={onProfile}
+                        onUserProfile={onUserProfile}
+                        setOnProfile={setOnProfile}
+                        setIsDeleting={setIsDeleting}
+                        setCorrectPostId={setCorrectPostId}
+                        setSelectedUserPosts={setSelectedUserPosts}
+                        setCurrentDeletePostId={setCurrentDeletePostId}
+                      />
+                    </div>
+                  </Row>
+                ))}
+              </Col>
+            ))
+          }
+        </div >
+      </div >
+    </Container >
   );
 };
 

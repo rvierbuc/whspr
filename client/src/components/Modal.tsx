@@ -1,19 +1,24 @@
 import React from 'react';
 
-interface ModalProps{
+interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
     children: React.ReactNode;
+    className?: string;
 }
 
-export const Modal: React.FC<ModalProps> = ({isOpen, onClose, children}) =>{    
-    if(!isOpen)return null;
-return(
-<div className='modalCustom' onClick={onClose}>
-    <div>
-    {children}
-    </div>
-</div>
+const handleModalClick = (event) => {
+    event.stopPropagation();
+};
 
-)
+export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
+    if (!isOpen) return null;
+    return (
+        <div className='modalCustom' onClick={handleModalClick}>
+            <div>
+                {children}
+            </div>
+        </div>
+
+    )
 };

@@ -45,7 +45,7 @@ const upload = multer({ storage: storage })
 
 
 const postRoutes = require('./routes/postRoutes')
-import { Sound, Post, User, AIMessage} from './dbmodels'
+import { Sound, Post, User, AIMessage } from './dbmodels'
 
 
 const app = express()
@@ -57,7 +57,6 @@ const secret = crypto.randomBytes(64).toString('hex'); //secret hash for session
 const cookieParser = require('cookie-parser');
 const cookie = require('cookie');
 app.use(cors())
-app.use(upload.single('audio'))
 
 app.use(cookieParser(secret, { sameSite: 'strict' }))
 app.use(session({
@@ -98,7 +97,7 @@ app.get('/auth/google', (req: Request, res: Response) => {
   passport.authenticate('google', { scope: ['email', 'profile'] })(req, res);
 })
 
-app.get('/google/callback',  passport.authenticate('google', {
+app.get('/google/callback', passport.authenticate('google', {
   successRedirect: '/protected/feed/following',
   failureRedirect: '/auth/google/failure',
 }),
@@ -130,6 +129,7 @@ app.get('/current-user', async (req: Request, res: Response) => {
   try {
     const results = await User.findOne({ where: { googleId: req.user } })
     if (results) {
+      console.log('current user:', results)
       res.status(200).send(results);
     } else {
       res.status(404).send('User not found');
@@ -137,31 +137,6 @@ app.get('/current-user', async (req: Request, res: Response) => {
   } catch (err) {
     console.error('Error fetching user:', err);
     res.status(500).send('Error fetching user');
-  }
-})
-
-
-app.get('/getSoundURLPostId', async (req, res) => {
-  const { postId } = req.query;
-  if (!postId) {
-    console.error('post Id is undefined or null')
-    res.send('post Id is undefined or null').status(400);
-    return;
-  }
-  try {
-    const soundRecord = await Sound.findOne({ where: { postId } });
-    if (!soundRecord) {
-      console.error('Sound record not found.')
-      res.send('Sound record not found.').status(404);
-      return
-    }
-    const soundUrl = soundRecord.get('soundUrl');
-    if (soundUrl) {
-      res.status(200).send({ soundUrl });
-    }
-  } catch (error) {
-    console.error('Nonspecific error retrieving audio id:', error);
-    res.send('Nonspecific error retrieving audio id.').status(500)
   }
 })
 
@@ -346,7 +321,7 @@ app.get('/retrieveRecordsAIMessages', async (req, res) => {
 
 const writeFileAsync = promisify(fs.writeFile)
 
-app.post('/speechToTextOpenAI', async (req, res) => {
+app.post('/speechToTextOpenAI', upload.single('audio'), async (req, res) => {
   if (!req.file) {
     return res.status(400).send('Empty file in request')
   }
@@ -374,11 +349,36 @@ app.post('/speechToTextOpenAI', async (req, res) => {
 
 })
 
+app.post('/update-username', async (req, res) => {
+  const { displayUsername, userId } = req.body;
+
+  try {
+    const userExists = await User.findOne({ where: { displayUsername } });
+    if (userExists) {
+      return res.status(400).send('Display username already exists');
+    }
+    await User.update({ displayUsername }, { where: { id: userId } });
+    res.status(200).send('User display name updated successfully');
+  } catch (error) {
+    console.error('Error updating user display name:', error);
+    res.status(500).send('Error updating user display name');
+  }
+});
+
+app.patch('/update-bio', async (req, res) => {
+  const { userBio, userId } = req.body;
+  try {
+    await User.update({ userBio }, { where: { id: userId } });
+    res.status(200).send('User bio updated successfully');
+  } catch (error) {
+    console.error('Error updating user bio:', error);
+    res.status(500).send('Error updating user bio');
+  }
+});
+
 // MAKE SURE THIS IS LAST
 app.get('/*', (req: Request, res: Response) => {
   res.sendFile(path.join(clientPath, 'index.html'))
 })
-
-
 
 export default server

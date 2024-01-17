@@ -10,16 +10,19 @@ interface RecordCommentProps {
   addComment: boolean,
   setAddComment: any,
   getComments: any,
-  commentStateLength: number
+  commentStateLength: number,
+  isSharing: boolean,
+  sentToId: number,
+  setShowShareModal: any,
 }
-export const RecordComment = ({ postObj, getComments, userId, updatePost, commentStateLength, addComment, setAddComment, audioContext }) => {
+export const RecordComment = ({ setShowShareModal, sentToId, isSharing, postObj, getComments, userId, updatePost, commentStateLength, addComment, setAddComment, audioContext }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioSource = useRef<AudioBufferSourceNode | null>(null);
   
-  console.log('record comment AC', audioContext)
+  console.log('record comment AC', audioContext);
   const startRecording = async () => {
     try {
       setAudioChunks([]);
@@ -119,17 +122,37 @@ export const RecordComment = ({ postObj, getComments, userId, updatePost, commen
       formData.append('audio', audioBlob);
       formData.append('userId', userId);
       formData.append('postId', postObj.id);
-
+  
       const response = await axios.post('/uploadComment', formData);
       if (response.status === 200) {
-        await axios.put('/post/updateCount', {type: 'increment', column: 'commentCount', id: postObj.id})
-        await getComments()
-        await updatePost(postObj.id, userId)
-        await console.log('all done')
+        await axios.put('/post/updateCount', { type: 'increment', column: 'commentCount', id: postObj.id });
+        await getComments();
+        await updatePost(postObj.id, userId);
+        await console.log('all done');
       } else {
         console.error('Error saving audio:', response.statusText);
-
+          
       }
+      
+    } catch (error) {
+      console.error('Error saving audio:', error);
+    }
+  };
+  const saveSharePostToGoogleCloud = async () => {
+    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    try {
+      const formData = new FormData();
+      formData.append('audio', audioBlob);
+      formData.append('sentFromId', userId);
+      formData.append('sentToId', sentToId);
+      formData.append('postId', postObj.id);
+  
+      const response = await axios.post('/uploadSharePost', formData);
+      if (response.status === 200) {
+        console.log(response);
+        setShowShareModal(false);
+      }
+      
     } catch (error) {
       console.error('Error saving audio:', error);
     }
@@ -153,7 +176,8 @@ export const RecordComment = ({ postObj, getComments, userId, updatePost, commen
   // }
   
   return (
-    <div style={{ display:'flex', flexDirection: 'row', alignContent:'space-between'}}>
+    <div>
+    <div style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between' }}>
     <button
       //className="record-button"
       id='record-btn-new'
@@ -186,7 +210,8 @@ export const RecordComment = ({ postObj, getComments, userId, updatePost, commen
       >
         {/* <img src={require('../style/deletebutton.png')} /> */}
         </button>
-      <button
+     {isSharing 
+       ? <div></div> : <button
       //className="post-button"
       id='post-btn-new'
       onClick={() =>{
@@ -197,7 +222,15 @@ export const RecordComment = ({ postObj, getComments, userId, updatePost, commen
       disabled={audioChunks.length === 0 || isRecording}
       >
         {/* <img src={require('../style/postbutton.png')} /> */}
-        </button>
+        </button>}
+  </div>
+  {isSharing ? <button id='save-btn-new'
+       onClick={() =>{
+         saveSharePostToGoogleCloud();
+         emptyRecording();
+       }}
+       disabled={audioChunks.length === 0 || isRecording}> Send
+     </button> : <div></div>}
   </div>
   );
 };
