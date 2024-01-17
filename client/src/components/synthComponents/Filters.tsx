@@ -22,8 +22,8 @@ const Filters = ({ setFilter, audioContext, filter }: Props) => {
       setCurrentFilter('wobbly');
     } else if (filter === robot) {
       setCurrentFilter('robot');
-    } else if (filter === newFilter) {
-      setCurrentFilter('newFilter');
+    } else if (filter === sixteenBit) {
+      setCurrentFilter('sixteenBit');
     }
   };
 
@@ -107,7 +107,7 @@ const Filters = ({ setFilter, audioContext, filter }: Props) => {
     }),
   };
 
-  const newFilter = {
+  const sixteenBit = {
     lowPassType: 'lowpass',
     lowPassFrequency: 150,
     highPassType: 'highpass',
@@ -133,7 +133,7 @@ const Filters = ({ setFilter, audioContext, filter }: Props) => {
       <Button className={`btn text-white ${currentFilter === 'alien' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(alien)}>Alien</Button>
       <Button className={`btn text-white ${currentFilter === 'wobbly' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(wobbly)}>Wobbly</Button>
       <Button className={`btn text-white ${currentFilter === 'robot' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(robot)}>Robot</Button>
-      <Button className={`btn text-white ${currentFilter === 'newFilter' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(newFilter)}>16-bit</Button>
+      <Button className={`btn text-white ${currentFilter === 'sixteenBit' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(sixteenBit)}>16-bit</Button>
     </Stack>
   </Container>
   );
