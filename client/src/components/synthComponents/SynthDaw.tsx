@@ -129,14 +129,6 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
     }
   };
 
-  const handleToggle = async () => {
-    try {
-      toggleSynth();
-    } catch {
-      console.error('Could not load synth');
-    }
-  };
-
   return (
     <Container className="rounded text-white text-center" style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '-1rem' }}>
       <div className="card p-3">
@@ -145,7 +137,11 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
           <Filters filter={filter} setFilter={setFilter} audioContext={audioContext} />
         </div>
         <div className="synthOption">
-          <button type="button" className="text-white btn btn-dark btn-rounded" style={ { margin: '0.1rem', width: '50%' } } onClick={handleToggle}>Synthesize your own sound!</button>
+          <button
+            type="button"
+            className="text-white btn btn-dark btn-rounded"
+            style={ { margin: '0.1rem', width: '50%' } }
+            onClick={toggleSynth}>Synthesize your own sound!</button>
         </div>
         {addSynth === true &&
         <Container className="syntheSize rounded mt-3">

@@ -274,8 +274,6 @@ const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, cate
     <div className="d-flex justify-content-center mt-3">
       <Stack direction="horizontal" gap={3}>
         <button
-          //className="record-button"
-          //style={{height:'5rem', width:'5rem'}}
           id='record-btn-new'
           onClick={() => {
             if (addSynth) {
@@ -284,54 +282,35 @@ const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, cate
               startRecording();
             }
           }}
-          disabled={isRecording || audioChunks.length > 0}
-        >
-          {/* <img src={require('../style/recordbutton.png')} /> */}
-          </button>
+          disabled={isRecording || audioChunks.length > 0}>
+        </button>
         <button
           id='play-btn-new'
-          //className="play-button"
           onClick={playAudio}
-          // if either of the chunks has a valid length => either one can be played back
-          disabled={isPlaying || (audioChunks.length === 0 && synthAudioChunks.length === 0)}
-        >
-          {/* <img src={require('../style/playbutton.png')} /> */}
-          </button>
+          disabled={isPlaying || (audioChunks.length === 0 && synthAudioChunks.length === 0)}>
+        </button>
         <button
           id='stop-btn-new'
-          //style={{height:'4rem', width:'4rem'}}
-          //className="stop-button"
           onClick={isRecording ? stopRecording : stopPlaying}
-          disabled={!isRecording && !isPlaying}
-        >
-          {/* <img src={require('../style/stopbutton.png')} /> */}
-          </button>
+          disabled={!isRecording && !isPlaying}>
+        </button>
         <button
           id='remove-btn-new'
           className="delete-button"
           onClick={() => {
-            emptyRecording()
-            stopStream()
-          }
-          }
-
-          disabled={audioChunks.length === 0 || isRecording}
-        >
-          {/* <img src={require('../style/deletebutton.png')} /> */}
-          </button>
+            emptyRecording();
+            stopStream();
+          }}
+          disabled={audioChunks.length === 0 || isRecording}>
+        </button>
         <button
           id='post-btn-new'
-          //className="post-button"
           onClick={() => {
             saveAudioToGoogleCloud();
             stopStream();
-          }
-          }
-          // if either set of chunks is valid then that version of audio can be saved
-          disabled={(audioChunks.length === 0 && synthAudioChunks.length === 0) || isRecording}
-        >
-          {/* <img src={require('../style/postbutton.png')} /> */}
-          </button>
+          }}
+          disabled={(audioChunks.length === 0 && synthAudioChunks.length === 0) || isRecording}>
+        </button>
       </Stack>
     </div >
   );
