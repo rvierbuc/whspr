@@ -5,8 +5,8 @@ import { useLoaderData } from 'react-router-dom';
 //img imports
 import mute from '../style/mute.svg';
 import unmute from '../style/unmute.svg';
-import pause from '../style/pause.svg'
-import play from '../style/play-fill.svg'
+import pause from '../style/pause.svg';
+import play from '../style/play-grey.svg';
 
 export const WhsprAI = ({ audioContext }) => {
   const [isPhone, setIsPhone] = useState(false);
@@ -16,11 +16,12 @@ export const WhsprAI = ({ audioContext }) => {
   const [showText, setShowText] = useState(false);
   const [AIResponse, setAIResponse] = useState<string[]>([]);
   const [lengthTracker, setLengthTracker] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [animationInitialized, setAnimationInitialized] = useState(false);
-  const [newMessageCount, setNewMessageCount] = useState(0)
+  const [newMessageCount, setNewMessageCount] = useState(0);
   const audioRef = useRef(null);
   const canvasRef = useRef(null);
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
@@ -82,21 +83,8 @@ export const WhsprAI = ({ audioContext }) => {
     }
   };
 
-  // browser speech transcription
-  useEffect(() => {
-    // const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-    // const recognize = new SpeechRecognition()
-    // recognize.continuous = true;
-    // recognize.onresult = (e) => {
-    //   let currentText = ''
-    //   for (let i = e.resultIndex; i < e.results.length; ++i) {
-    //     if (e.results[i].isFinal) {
-    //       currentText = e.results[i][0].transcript;
-    //       setText(prevText => [...prevText, currentText]);
 
-    //     }
-    //   }
-    // };
+  useEffect(() => {
     let audioChunks = [];
     //starts the recording and hooks it up to the analyzer so mic sounds are also drawn
     const startRecording = async () => {
@@ -134,7 +122,7 @@ export const WhsprAI = ({ audioContext }) => {
         });
         const currentText = response.data;
         setText(prevText => [...prevText, currentText]);
-        if (!showText) { setNewMessageCount(prevCount => prevCount + 1) }
+        if (!showText) { setNewMessageCount(prevCount => prevCount + 1); }
       } catch (error) {
         console.error('error sending audio to server in getTextFromSpeech', error);
       }
@@ -142,7 +130,6 @@ export const WhsprAI = ({ audioContext }) => {
 
     //fires start recording and speech recognition when is recording is true
     if (isRecording) {
-      // recognize.start();
       startRecording();
     } else {
       if (sourceRef.current) {
@@ -153,9 +140,6 @@ export const WhsprAI = ({ audioContext }) => {
       }
     }
     return () => {
-      // if (recognize) {
-      //   recognize.stop();
-      // }
       if (mediaStreamRef.current) {
         const tracks = mediaStreamRef.current.getTracks();
         tracks.forEach(track => track.stop());
@@ -207,30 +191,8 @@ export const WhsprAI = ({ audioContext }) => {
 
     drawFrame();
   };
-  //gets the browser based voices and speaks them
-  const browserTextToSpeech = async (responseString, voiceName) => {
-    let voices = window.speechSynthesis.getVoices();
-    if (voices.length === 0) {
-      await new Promise<void>(resolve => {
-        const voicesChanged = () => {
-          voices = window.speechSynthesis.getVoices();
-          resolve();
-          window.speechSynthesis.onvoiceschanged = null;
-        };
-        window.speechSynthesis.onvoiceschanged = voicesChanged;
-      });
-    }
-    const utterance = new SpeechSynthesisUtterance(responseString);
-    const selectedVoice = voices.find(voice => voice.name === voiceName);
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
-    } else {
-      console.warn('Selected voice not found, using default voice');
-    }
-    window.speechSynthesis.speak(utterance);
-  };
 
-  //////////////////////////////gets ai generated text and speaks it
+  //gets ai generated text and speaks it
   const playAudio = (buffer) => {
     const array = new Uint8Array(buffer);
     const blob = new Blob([array], { type: 'audio/mpeg' });
@@ -241,16 +203,18 @@ export const WhsprAI = ({ audioContext }) => {
     drawAudio();
     audio.addEventListener('ended', () => {
       if (sourceRef.current) {
+        setIsPlaying(false);
         sourceRef.current = null;
       }
       if (frameRef.current) {
         cancelAnimationFrame(frameRef.current);
       }
     });
+    setIsPlaying(true);
     audio.play();
     //attaches audio to audioRef
-    audioRef.current = audio
-    if (isMuted) audio.volume = 0
+    audioRef.current = audio;
+    if (isMuted) { audio.volume = 0; }
   };
 
   //this voice variable controls which endpoint is used for the tts
@@ -273,13 +237,8 @@ export const WhsprAI = ({ audioContext }) => {
     try {
       const resp = await axios.post('/openAIGetResponse', { messages: messages });
       setAIResponse(prevResponses => [...prevResponses, resp.data.response]);
-      if (VOICE === 'browser') {
-        //you can change the browser voice selected here, it searches by the name property on the object
-        browserTextToSpeech(resp.data.response, 'Microsoft Zira - English (United States)');
-      } else {
-        const spokenResponse = await axios.post(`/text-to-speech-${VOICE}`, { text: resp.data.response }, { responseType: 'arraybuffer' });
-        playAudio(spokenResponse.data);
-      }
+      const spokenResponse = await axios.post(`/text-to-speech-${VOICE}`, { text: resp.data.response }, { responseType: 'arraybuffer' });
+      playAudio(spokenResponse.data);
       try {
         const recordsCreated = await axios.post('/createRecordsAIMessages', { newUserMessage: text[text.length - 1], newAIMessage: resp.data.response, userId: userId });
         setIsLoading(false);
@@ -317,14 +276,11 @@ export const WhsprAI = ({ audioContext }) => {
 
   //displays the text of the conversation
   function handleSetShowText() {
-    //flips whether text is shown
     setShowText(!showText);
-    //resets unread message count
-    setNewMessageCount(0)
-    //ensures text in transcript is scrolled to bottom
+    setNewMessageCount(0);
     setTimeout(() => {
       transcript.current.scrollTop = transcript.current.scrollHeight;
-    }, 0)
+    }, 0);
   }
 
   //sets canvas width to the whole screen
@@ -336,6 +292,7 @@ export const WhsprAI = ({ audioContext }) => {
     return;
 
   }, []);
+
   const handleResize = () => {
     if (canvasRef.current && cardRef.current.offsetWidth) {
       canvasRef.current.width = cardRef.current.offsetWidth;
@@ -371,7 +328,7 @@ export const WhsprAI = ({ audioContext }) => {
     pressTime.current = setTimeout(() => {
       setIsRecording(true);
       vibratePhone();
-    }, 300)
+    }, 300);
   };
 
   const handlePressToTalkRelease = () => {
@@ -389,11 +346,11 @@ export const WhsprAI = ({ audioContext }) => {
   };
 
   const toggleMute = () => {
-    setIsMuted(!isMuted)
+    setIsMuted(!isMuted);
     if (audioRef.current) {
       audioRef.current.volume = !isMuted ? 0 : 1;
     }
-  }
+  };
 
   const togglePause = () => {
     if (audioRef.current) {
@@ -426,9 +383,9 @@ export const WhsprAI = ({ audioContext }) => {
         </div>
         <div className='pause-btn-container'>
           <img
-            title={!isPaused ? "Pause" : "Play"}
+            title={!isPaused ? 'Pause' : 'Play'}
             src={!isPaused ? pause : play}
-            className='pause-btn'
+            className={`pause-btn ${!isPlaying ? 'disabled' : ''}`}
             onClick={togglePause}
           />
         </div>
@@ -469,9 +426,9 @@ export const WhsprAI = ({ audioContext }) => {
         </div>
         <div className='mute-btn-container'>
           <img
-            title={!isMuted ? "Mute" : "Unmute"}
+            title={!isMuted ? 'Mute' : 'Unmute'}
             src={isMuted ? mute : unmute}
-            className='mute-btn'
+            className={`mute-btn ${!isPlaying ? 'disabled' : ''}`}
             onClick={toggleMute}
           />
         </div>

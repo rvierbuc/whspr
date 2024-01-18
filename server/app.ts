@@ -349,7 +349,7 @@ app.post('/speechToTextOpenAI', upload.single('audio'), async (req, res) => {
 
 })
 
-app.post('/update-username', async (req, res) => {
+app.patch('/update-username', async (req, res) => {
   const { displayUsername, userId } = req.body;
 
   try {
