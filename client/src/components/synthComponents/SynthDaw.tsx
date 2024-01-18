@@ -1,10 +1,10 @@
-import React, { useState, useEffect, BaseSyntheticEvent } from 'react';
+import React, { useState, useEffect, BaseSyntheticEvent, lazy } from 'react';
 import { Container } from 'react-bootstrap';
 import Oscillator from './Oscillator';
-import { RecordPost } from '../RecordPost';
-import Filters from './Filters';
-import PostCard from '../PostCard';
 import * as Tone from 'tone';
+const Filters = lazy(() => import('./Filters'));
+const RecordPost = lazy(() => import('../RecordPost'));
+const PostCard = lazy(() => import('../PostCard'));
 
 interface Options {
   oscillator: Tone.Oscillator
@@ -35,7 +35,7 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
   const [instrument, setInstrument] = useState(oscillatorOptions.oscillator);
   const [postCategories, setPostCategories] = useState<string[]>([]);
   const [postTitle, setPostTitle] = useState<string>('');
-  const [synthFilters, setSynthFilters] = useState<{ phaseFilter: Tone.Phaser, distortionFilter: Tone.Distortion }>({});
+  const [synthFilters, setSynthFilters] = useState<{ phaseFilter: Tone.Phaser, distortionFilter: Tone.Distortion }>({phaseFilter, distortionFilter});
   const [synthBypass, setSynthBypass] = useState<{ phaseFilter: boolean, distortionFilter: boolean }>({
     phaseFilter: false,
     distortionFilter: false,
@@ -60,7 +60,6 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
   useEffect(() => {
     setAddSynth(false);
     setInstrument(oscillatorOptions.oscillator);
-    setSynthFilters({ phaseFilter, distortionFilter });
   }, []);
 
   const toggleSynth: () => void = () => addSynth === false ? setAddSynth(true) : setAddSynth(false);
@@ -131,13 +130,17 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
 
   return (
     <Container className="rounded text-white text-center" style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '-1rem' }}>
-      <div className="card p-3">
+      <div className="card p-3" id="post-card-box">
         <div className="p-2 mb-1">
           <PostCard setPostCategories={setPostCategories} setPostTitle={setPostTitle} />
           <Filters filter={filter} setFilter={setFilter} audioContext={audioContext} />
         </div>
         <div className="synthOption">
-          <button type="button" className="text-white btn btn-dark btn-rounded" style={ { margin: '0.1rem', width: '50%' } } onClick={toggleSynth}>Synthesize your own sound!</button>
+          <button
+            type="button"
+            className="text-white btn btn-dark btn-rounded"
+            style={ { margin: '0.1rem', width: '50%' } }
+            onClick={toggleSynth}>Synthesize your own sound!</button>
         </div>
         {addSynth === true &&
         <Container className="syntheSize rounded mt-3">

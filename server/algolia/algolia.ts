@@ -35,12 +35,13 @@ type user =  {
 //   profileImgUrl: "https://lh3.googleusercontent.com/a/ACg8ocIh_Xb-SutpmLO8_8HPW3kfwBWUeelHOoFlSr_17TpR=s96-c"
 // }
 const getUserData = async () => {
-  try{ 
+  try{
     const allUserData = await User.findAll({})
     const mappedUserData = allUserData.map((user) => user.dataValues)
 
         mappedUserData.map(async (record) =>{
           try{
+            console.log('record log in get User Data', record);
             await userIndex.saveObject(record, {
               autoGenerateObjectIDIfNotExist: true
             })
@@ -79,7 +80,7 @@ const getSearchData = async () => {
     //map through the data 
     mappedPostDataWithUsername.map(async (record) =>{
       try{
-        console.log('record log', record);// this successfully logs everything from the post + the associated user record with the username
+        // console.log('record log', record);// this successfully logs everything from the post + the associated user record with the username
         // extract the values we want to save to the search index instead of all the data from the post and user tables
         const valuesToSave = {
           title: record.title,
@@ -88,10 +89,11 @@ const getSearchData = async () => {
           objectID: record.userId,
           soundUrl: record.soundUrl
         }
+        console.log('valuesToSave', valuesToSave);
         // save the values to the search index
-        await searchIndex.saveObject(valuesToSave, {
-          autoGenerateObjectIDIfNotExist: true
-        })
+        // await searchIndex.saveObject(valuesToSave, {
+        //   autoGenerateObjectIDIfNotExist: true
+        // })
       }catch(error){
         console.log('save obj', error)
       }
@@ -106,8 +108,6 @@ const setSearchIndexSettings = async () => {
     await searchIndex.setSettings({
       searchableAttributes: [
         'username',
-        'title',
-        'category'
       ],
       
     });
