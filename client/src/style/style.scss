@@ -77,7 +77,7 @@ body {
 .modal-content {
   background: #e1e1e1;
   //opacity: 60%;
-  border-radius: 16px;
+  border-radius: 8px;
   box-shadow: 0 4px 30px rgb(0, 0, 0);
   @include blur(4.2px);
   border: none;
@@ -126,7 +126,7 @@ body {
   border-radius: 16px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   @include blur(4.2px);
-  border: 1px solid rgba(233, 236, 243, 0.449);
+  border: 1px solid #e9ecf343;
 }
 
 .overlay-container {
@@ -301,6 +301,15 @@ body {
   justify-content: flex-start;
   //padding: 1rem;
   //margin: 1rem
+
+}
+.share-btn {
+  background-color: rgba(54, 89, 169, 0.808);
+  color:#e1e1e1;
+  border: none;
+  border-radius: 8px;
+  @include blur(4.2px);
+  //padding:.25rem
 }
 .grid-post-container {
   display: flex;
@@ -311,6 +320,9 @@ body {
   gap: 1rem;
 }
 
+.share-btn:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
 .profile-image {
   //add height depending on how big you want it
   width: auto;
@@ -1254,18 +1266,150 @@ input[type='range']::-moz-range-thumb {
   color: black;
 }
 
-// .carousel-item-visible {
-//   color: white;
-//   position: absolute;
-//   background: none;
-//   border: none;
-//   padding: 0;
-//   margin: 0;
-//   top: 112px;
-//   transition: transform 0.4s ease, opacity 0.4s ease;
-//   //opacity: 0;
-//   //color: black;
+//mailbox//
+.display-message {
+  width:50%;
+  min-width: 400px;
+  padding:1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  @include blur(4.2px);
+  border: 1px solid rgba(233, 236, 243, 0.449);
+  margin:1rem;
+  
+}
+
+#message {
+  background: rgba(103, 122, 158, 0.61);
+}
+
+#no-message {
+  align-items: center;
+  background: #e9ecf343;
+  //opacity: 60%;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  @include blur(4.2px);
+  border: 1px solid rgba(233, 236, 243, 0.449);
+  margin:1rem
+}
+
+#share-user {
+font-size: 1.5rem;
+margin-bottom:0;
+margin-top: 1rem;
+}
+#select-mess-img {
+  height: fit-content;
+  width:fit-content;
+  opacity: 50%;
+  position: relative;
+}
+
+#conchBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100vw;
+  height: 100vh;
+  background: #0000007d 
+}
+
+#conchChild {
+  background-color: rgba(103, 122, 158);
+  max-width: 500px;
+  margin-right: auto;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  min-height: calc(100% - 500px * 2);
+  position: relative;
+  width: auto;
+  border-radius: 1rem;
+  top:20%;
+  animation: slide-right 3s, rock 6s ease-in-out infinite
+}
+
+@keyframes rock {
+	0% { 
+    transform:  rotate(-.01turn);
+
+   }
+	50% { 
+    transform: rotate(.01turn) ; 
+
+  }
+	100% { 
+    transform:  rotate(-.01turn); 
+
+  }
+}
+
+
+@keyframes slide-right {
+  from {
+    //transform: rotate(.25turn);
+    margin-left: 0%;
+  }
+  to {
+    // transform: rotate(-.25turn);
+    // transform: rotate(.25turn);
+    margin-left: 36%;
+  }
+}
+
+
+
+.ocean {
+  height: 180px; /* change the height of the waves here */
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-x: hidden;
+}
+
+.wave {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 88.7'%3E%3Cpath d='M800 56.9c-155.5 0-204.9-50-405.5-49.9-200 0-250 49.9-394.5 49.9v31.8h800v-.2-31.6z' fill='%23003F7C'/%3E%3C/svg%3E");
+  position: absolute;
+  width: 200%;
+  height: 100%;
+  animation: wave 10s -3s linear infinite;
+  transform: translate3d(0, 0, 0);
+  opacity: 0.8;
+}
+.conch-title {
+  //font-size: 1.5rem;
+  // background: -webkit-linear-gradient(rgb(166, 197, 255), rgb(236, 239, 245));
+  // -webkit-background-clip: text;
+  // -webkit-text-fill-color: transparent;
+  color: #e1e1e1;
+  font-weight: bold;
+  text-align: center;
+  margin: 0 1rem 0 1rem;
+}
+// .wave:nth-of-type(2) {
+//   bottom: 0;
+//   animation: wave 18s linear reverse infinite;
+//   opacity: 0.5;
 // }
+
+// .wave:nth-of-type(3) {
+//   bottom: 0;
+//   animation: wave 20s -1s linear infinite;
+//   opacity: 0.5;
+// }
+
+@keyframes wave {
+    0% {transform: translateX(0);}
+    50% {transform: translateX(-25%);}
+    100% {transform: translateX(-50%);}
+}
 
 .modal-button-container {
   position: relative;

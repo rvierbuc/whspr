@@ -144,19 +144,20 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
       {posts
         ? (posts.length === 0 ? <a href='explore' style={{ color: 'white', fontSize: 'xxx-large' }}>Explore Popular Posts to Find Friends</a>
           : posts.map((post: any) => (
-            <div style={{ marginBottom: '2rem', maxWidth: '950px', marginLeft: 'auto', marginRight: 'auto' }} className="centered">
-              <WaveSurferComponent
-                key={post.id}
-                postObj={post}
-                audioUrl={post.soundUrl}
-                postId={post.id}
-                userId={user.id}
-                getPosts={getPosts}
-                updatePost={updatePost}
-                audioContext={audioContext}
-                feed={feed} onProfile={false} setOnProfile={undefined} />
-            </div>),
-          )) : <div>Database is broken.</div>}
+        <div style={{ marginBottom: '2rem', maxWidth: '950px', marginLeft: 'auto', marginRight: 'auto' }} className="centered">
+          <WaveSurferComponent
+                  key={post.id}
+                  postObj={post}
+                  audioUrl={post.soundUrl}
+                  postId={post.id}
+                  userId={user.id}
+                  getPosts={getPosts}
+                  updatePost={updatePost}
+                  audioContext={audioContext}
+                  waveHeight={500}
+                  feed={feed} onProfile={false} setOnProfile={undefined} />
+        </div>),
+          )) : <div>Loading...</div>}
     </div>
 
   );

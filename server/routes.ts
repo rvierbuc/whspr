@@ -46,7 +46,7 @@ router.post('/uploadComment', upload.single('audio'), async (req: Request, res: 
   }
 })
 
-router.post('/uploadSharePost', async (req: Request, res: Response) => {
+router.post('/uploadSharePost', upload.single('audio'), async (req: Request, res: Response) => {
   const { sentFromId, sentToId, postId } = req.body;
   if (!req.file) {
     console.error('req.file is undefined in route upload.')
@@ -110,7 +110,7 @@ router.post('/conch', async (req: Request, res: Response) => {
 router.get('/conch/:receivingUser', async (req: Request, res: Response) => {
   const { receivingUser } = req.params
   try {
-    const inbox = await MagicConch.findAll({ where: { receivingUserId: receivingUser } })
+    const inbox = await MagicConch.findAll({ where: { receivingUserId: receivingUser }, include: {model: User, as: 'sentFromUser'} })
     console.log('ji', inbox)
     res.status(200).send(inbox)
   } catch {
@@ -168,4 +168,14 @@ router.post('/upload-image', upload.single('image'), async (req, res) => {
   }
 });
 
+  router.post('/testing', async (req: Request, res: Response) => {
+    const {sendingUserId, receivingUserId, title, soundUrl} = req.body
+    try{
+      const testConch = await MagicConch.create({sendingUserId, receivingUserId, title, soundUrl})
+      res.sendStatus(201)
+    } catch(error) {
+      console.error(error)
+    }
+
+  })
 export default router

@@ -364,16 +364,18 @@ const ReadOnlyProfile = ({ audioContext }) => {
             {selectedUserInfo.map((post, index) => (
               <div key={index}>
                 <WaveSurferComponent
-                  postObj={post}
-                  audioUrl={post.soundUrl}
-                  postId={post.id}
-                  userId={user.id}
-                  getPosts={getSelectedUserInfo}
-                  onGridView={onGridView}
-                  updatePost={updatePost}
-                  setOnGridView={setOnGridView}
-                  onProfile={onProfile}
-                  audioContext={AudioContext}
+                key={index}
+                postObj={post}
+                audioUrl={post.soundUrl}
+                postId={post.id}
+                userId={user.id}
+                getPosts={getSelectedUserInfo}
+                onGridView={onGridView}
+                updatePost={updatePost}
+                setOnGridView={setOnGridView}
+                onProfile={onProfile}
+                audioContext={AudioContext}
+                waveHeight={200}
                 />
                 {/* each post should have its own instance of a waveSurfer comp */}
               </div>
