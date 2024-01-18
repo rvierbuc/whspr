@@ -321,7 +321,7 @@ app.get('/retrieveRecordsAIMessages', async (req, res) => {
 
 const writeFileAsync = promisify(fs.writeFile)
 
-app.post('/speechToTextOpenAI', async (req, res) => {
+app.post('/speechToTextOpenAI', upload.single('audio'), async (req, res) => {
   if (!req.file) {
     return res.status(400).send('Empty file in request')
   }

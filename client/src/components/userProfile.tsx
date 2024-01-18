@@ -81,8 +81,7 @@ const UserProfile = ({
   audioContext,
   setRoomProps,
 }: PropsType): JSX.Element => {
-  const currentUser: CurrentUserAttributes =
-    useLoaderData() as CurrentUserAttributes;
+  const [currentUser, setCurrentUser] = useState<CurrentUserAttributes>(useLoaderData() as CurrentUserAttributes)
   const [selectedUserPosts, setSelectedUserPosts] = useState<PostAttributes[]>(
     [],
   );
@@ -110,7 +109,7 @@ const UserProfile = ({
   const [username, setUsername] = useState(currentUser.displayUsername || currentUser.username);
   const [usernameError, setUsernameError] = useState('');
   const [profileImgError, setProfileImgError] = useState('')
-  const [profileImg, setprofileImg] = useState(currentUser.profileImgUrl);
+  const [profileImg, setprofileImg] = useState(null);
   const [userBio, setUserBio] = useState(currentUser.userBio);
   const [openModal, setOpenModal] = useState(null);
   const [rerender, setRerender] = useState(0)
@@ -227,6 +226,8 @@ const UserProfile = ({
 
   const closeModalHandler = () => {
     setOpenModal(null);
+    setProfileImgError('');
+    setUsernameError('');
   };
 
   const updateBio = () => {
@@ -279,13 +280,16 @@ const UserProfile = ({
         'Content-Type': 'multipart/form-data',
       },
     })
-      .then(() => {
-        window.location.reload()
+      .then(response => {
+        const newProfileImgUrl = response.data.imageUrl;
+        console.log(newProfileImgUrl)
+        setCurrentUser(prevState => ({ ...prevState, profileImgUrl: newProfileImgUrl }))
         closeModalHandler();
         console.log('Image uploaded correctly');
+        setprofileImg(null);
       })
       .catch(error => {
-        setProfileImgError('Please select an image.')
+
         console.error('Error uploading image:', error);
       });
   };
@@ -295,8 +299,13 @@ const UserProfile = ({
   };
 
   const handleImageChange = (e) => {
-    setprofileImg(e.target.files[0]);
-    uploadImage();
+    const file = e.target.files[0];
+    if (file) {
+      setProfileImgError('')
+      setprofileImg(file);
+    } else {
+      setProfileImgError('Please select an image.')
+    }
   };
 
   // delete function

@@ -26,7 +26,7 @@ router.post('/upload', upload.single('audio'), async (req: Request, res: Respons
   }
 })
 
-router.post('/uploadComment', async (req: Request, res: Response) => {
+router.post('/uploadComment', upload.single('audio'), async (req: Request, res: Response) => {
   const { userId, postId } = req.body;
   if (!req.file) {
     console.error('req.file is undefined in route upload.')
@@ -36,6 +36,8 @@ router.post('/uploadComment', async (req: Request, res: Response) => {
       const downloadUrl = await saveAudioComment(req.file.buffer, userId, postId)
       if (downloadUrl) {
         res.status(200).send(downloadUrl)
+      } else {
+        res.status(500).send('Error retrieving download URL');
       }
     } catch (error) {
       console.error('Error in upload router: ', error)
