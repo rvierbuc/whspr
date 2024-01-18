@@ -131,7 +131,7 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
 
   return (
     <Container className="rounded text-white text-center" style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '-1rem' }}>
-      <div className="card p-3">
+      <div className="card p-3" id="post-card-box">
         <div className="p-2 mb-1">
           <PostCard setPostCategories={setPostCategories} setPostTitle={setPostTitle} />
           <Filters filter={filter} setFilter={setFilter} audioContext={audioContext} />

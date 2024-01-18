@@ -189,6 +189,10 @@ const UserProfile = ({
   // function to handle the search submission
   const handleSearchSubmission = async (): Promise<void> => {
     try {
+      if (searchInput === '') {
+        alert('Please enter a search term');
+        return;
+      }
       // make a request to the server endpoint using the current user's id and the search input as identifying params to get
       // the search results for the followers and the following
       const followersQueryResults = await axios.get(
@@ -322,13 +326,12 @@ const UserProfile = ({
     }
   };
   return (
-    <Container>
+    <div>
       <Modal
         style={{ backgroundColor: 'rgba(209, 209, 209, 0.6)' }}
         show={isDeleting}
         onHide={() => setIsDeleting(!isDeleting)}
       >
-        <Modal.Dialog style={{ backgroundColor: 'rgba(209, 209, 209, 0.6)' }}>
           <Modal.Header closeButton>
             <Modal.Title>Delete Post</Modal.Title>
           </Modal.Header>
@@ -350,7 +353,6 @@ const UserProfile = ({
               Delete
             </Button>
           </Modal.Footer>
-        </Modal.Dialog>
       </Modal>
       <Modal
         style={{
@@ -384,6 +386,7 @@ const UserProfile = ({
             </Button>
           </Modal.Footer>
         </Modal.Dialog>
+        <Modal />
         {followerSearchResults.length > 0 && (
           <div className="followers-div">
             <h3>Followers</h3>
@@ -441,9 +444,9 @@ const UserProfile = ({
           </div>
         )}
       </Modal>
-      <div className="user-main" style={{ display: 'flex' }}>
-        <div className="grid-post-container" >
-          <Row>
+      <div className="card" id="user-main-container">
+        <div className="grid-post-container">
+          <div>
             <div
               className="card user-profile-card"
               style={{ justifyContent: 'center' }}
@@ -503,55 +506,77 @@ const UserProfile = ({
                 <button
                   type="button"
                   onClick={() => setSearchModal(true)}
-                  className="btn btn-light btn-lg"
+                  className="btn btn-dark btn-md"
+                  style={{ marginLeft: '10px' }}
                 >
                   {followerCount} Followers
                 </button>
                 <button
                   type="button"
                   onClick={() => setDisplayFollowers(false)}
-                  className="btn btn-light btn-lg"
+                  className="btn btn-dark btn-md"
+                  style={{ marginLeft: '10px' }}
                 >
                   {followingCount} Following
                 </button>
                 <FaSearch
-                  style={{ marginLeft: '10px', cursor: 'pointer' }}
+                  style={{ marginLeft: '10px', marginRight: '10px', cursor: 'pointer' }}
                   onClick={() => setSearchModal(true)}
                 />
               </div>
             </div>
-          </Row>
-          {
-            rows.map((row, index) => (
-              <Col key={index}>
-                {row.map((post) => (
-                  <Row key={post.id}>
-                    <div className="grid-post-item">
-                      <WaveSurferComponent
-                        audioContext={audioContext}
-                        postObj={post}
-                        audioUrl={post.soundUrl}
-                        postId={post.id}
-                        userId={currentUser.id}
-                        updatePost={updatePost}
-                        getPosts={getSelectedUserInfo}
-                        onProfile={onProfile}
-                        onUserProfile={onUserProfile}
-                        setOnProfile={setOnProfile}
-                        setIsDeleting={setIsDeleting}
-                        setCorrectPostId={setCorrectPostId}
-                        setSelectedUserPosts={setSelectedUserPosts}
-                        setCurrentDeletePostId={setCurrentDeletePostId}
-                      />
-                    </div>
-                  </Row>
-                ))}
-              </Col>
-            ))
-          }
-        </div >
-      </div >
-    </Container >
+          </div>
+          <div className="grid-post-container">
+            {selectedUserPosts.map((post, index) => (
+              <div className="grid-post-item" key={index}>
+                <WaveSurferComponent
+                  audioContext={audioContext}
+                  postObj={post}
+                  audioUrl={post.soundUrl}
+                  postId={post.id}
+                  userId={currentUser.id}
+                  updatePost={updatePost}
+                  getPosts={getSelectedUserInfo}
+                  onProfile={onProfile}
+                  onUserProfile={onUserProfile}
+                  setOnProfile={setOnProfile}
+                  setIsDeleting={setIsDeleting}
+                  setCorrectPostId={setCorrectPostId}
+                  setSelectedUserPosts={setSelectedUserPosts}
+                  setCurrentDeletePostId={setCurrentDeletePostId}
+                />
+              </div>
+            ))}
+          </div>
+          {/* {rows.map((row, index) => (
+            <Col key={index}>
+              {row.map((post) => (
+                <Row key={post.id}>
+                  <div className="grid-post-item">
+                    <WaveSurferComponent
+                      audioContext={audioContext}
+                      postObj={post}
+                      audioUrl={post.soundUrl}
+                      postId={post.id}
+                      userId={currentUser.id}
+                      updatePost={updatePost}
+                      getPosts={getSelectedUserInfo}
+                      onProfile={onProfile}
+                      onUserProfile={onUserProfile}
+                      setOnProfile={setOnProfile}
+                      setIsDeleting={setIsDeleting}
+                      setCorrectPostId={setCorrectPostId}
+                      setSelectedUserPosts={setSelectedUserPosts}
+                      setCurrentDeletePostId={setCurrentDeletePostId}
+                    />
+                  </div>
+                </Row>
+              ))}
+            </Col>
+          ))} */}
+        </div>
+      </div>
+    </div>
   );
 };
 
