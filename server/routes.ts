@@ -46,7 +46,7 @@ router.post('/uploadComment', upload.single('audio'), async (req: Request, res: 
   }
 })
 
-router.post('/uploadSharePost', async (req: Request, res: Response) => {
+router.post('/uploadSharePost', upload.single('audio'), async (req: Request, res: Response) => {
   const { sentFromId, sentToId, postId } = req.body;
   if (!req.file) {
     console.error('req.file is undefined in route upload.')
