@@ -544,6 +544,7 @@ const UserProfile = ({
                   setCorrectPostId={setCorrectPostId}
                   setSelectedUserPosts={setSelectedUserPosts}
                   setCurrentDeletePostId={setCurrentDeletePostId}
+                  waveHeight={200}
                 />
               </div>
             ))}
