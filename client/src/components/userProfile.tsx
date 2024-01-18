@@ -497,7 +497,7 @@ const UserProfile = ({
                 <div className="modal-button-container">
                   <CustomModal className="modal-profile-edit" isOpen={openModal === 'bio'} onClose={closeModalHandler}>
                     <h2>Change Your Bio</h2>
-                    <textarea onChange={(e) => setTempUserBio(e.target.value)}
+                    <textarea maxLength={500} onChange={(e) => setTempUserBio(e.target.value)}
                       value={tempUserBio} />
                     <div>
                       <button className="btn btn-dark" onClick={() => updateBio()}>Commit</button>
