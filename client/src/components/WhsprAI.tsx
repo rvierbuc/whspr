@@ -2,8 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Modal } from './Modal';
 import axios from 'axios';
 import { useLoaderData } from 'react-router-dom';
+//img imports
 import mute from '../style/mute.svg';
 import unmute from '../style/unmute.svg';
+import pause from '../style/pause.svg'
+import play from '../style/play-fill.svg'
 
 export const WhsprAI = ({ audioContext }) => {
   const [isPhone, setIsPhone] = useState(false);
@@ -14,6 +17,7 @@ export const WhsprAI = ({ audioContext }) => {
   const [AIResponse, setAIResponse] = useState<string[]>([]);
   const [lengthTracker, setLengthTracker] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [animationInitialized, setAnimationInitialized] = useState(false);
   const [newMessageCount, setNewMessageCount] = useState(0)
@@ -391,6 +395,18 @@ export const WhsprAI = ({ audioContext }) => {
     }
   }
 
+  const togglePause = () => {
+    if (audioRef.current) {
+      if (isPaused) {
+        audioRef.current.play();
+      } else {
+        audioRef.current.pause();
+      }
+      setIsPaused(!isPaused);
+    }
+  };
+
+
   return (
     <div className='container-whsprAI'>
       <div className='card-whsprAI' ref={cardRef} style={{ height: 'calc(100vh - 150px)' }}>
@@ -407,6 +423,14 @@ export const WhsprAI = ({ audioContext }) => {
               <p>Press and hold the button to talk to Whisper, our AI chatbot.</p>
             </Modal>
           </div>
+        </div>
+        <div className='pause-btn-container'>
+          <img
+            title={!isPaused ? "Pause" : "Play"}
+            src={!isPaused ? pause : play}
+            className='pause-btn'
+            onClick={togglePause}
+          />
         </div>
         <div>
           <div className="centered-whsprAI">
@@ -428,12 +452,6 @@ export const WhsprAI = ({ audioContext }) => {
                 onContextMenu={(e) => e.preventDefault()}
                 className="push--skeuo"
                 style={{ border: 'none' }}>
-                {/* {!isRecording
-                  ? (<img src={require('../style/presstotalk.png')}
-                    className="presstotalk-img" />)
-                  : <img src={require('../style/pressedtotalk.png')}
-                    draggable="false"
-                    className="presstotalk-img" />} */}
                 <span>
                   press and<br />hold to talk
                 </span>
