@@ -2,31 +2,37 @@ import React, { ChangeEventHandler, MutableRefObject, useEffect, useRef, useStat
 import Peer from 'peerjs';
 import AgoraRTC from 'agora-rtc-sdk';
 // import agoraConfig from '../agoraConfig'
+import Analyser from './Analyser'
 import { joinChannel, leaveChannel, startAudio, stopAudio, createChannel, subscribeRemoteUser } from './AgoraClient';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import axios from 'axios'
 
 
 
-const Room = ({ channel, host, id }) => {
+const Room = ({ channel, host, id, creator, audioContext }) => {
 
-  const [channelName, setChannelName] = useState(channel);
+  const [channelName, setChannelName] = useState("a");
   const [uid, setUid] = useState<number>(id);
   const [stream, setStream] = useState<MediaStream>();
   const [remoteAudioTracks, setRemoteAudioTracks] = useState<string[]>([]);
   const remoteAudioRef = useRef<HTMLAudioElement | null>(null)
   const [mute, setMute] = useState<boolean>(false)
+  const [listeners, setListeners] = useState<any>([])
+  const [owner, setOwner] = useState<string>(host)
   const navigate = useNavigate()
   const user: any = useLoaderData();
 
 
     useEffect(() => {
-      console.log('stream', user)
+      console.log('creator', channel)
+      if(user.username !== owner){
+        setListeners([user])
+      }
         navigator.mediaDevices.getUserMedia({video: false, audio: true})
         .then((stream) => {
-             console.log('stream', user)
+             console.log('user', user)
 
-        createChannel(channelName, uid, '007eJxTYPBdOLtmftV7Yz+P1GfSx08pdH/dXbfQbEfv229pB0S8KjYpMCQaJyUbmJgmWphZWphYmJtbGKUYpJoZJhmbmllYWpoaHTlcktoQyMggWH2RlZEBAkF8RoZEBgYAV0cfRw==', stream);
+        createChannel(channel, uid, '007eJxTYGA5vi/0oVHez1zh26WN9zf6ljmFlfq+u2q64U2i2e6es+sVGBKNk5INTEwTLcwsLUwszM0tjFIMUs0Mk4xNzSwsLU2NsrhXpDYEMjK4Fk1lYIRCEJ+RIZGBAQAzyx5E', stream);
         setStream(stream);
       });
 
@@ -42,7 +48,7 @@ const Room = ({ channel, host, id }) => {
   }, [remoteAudioTracks]);
 
   const handleJoinChannel = (stream) => {
-    joinChannel(channelName, uid, '007eJxTYPBdOLtmftV7Yz+P1GfSx08pdH/dXbfQbEfv229pB0S8KjYpMCQaJyUbmJgmWphZWphYmJtbGKUYpJoZJhmbmllYWpoaHTlcktoQyMggWH2RlZEBAkF8RoZEBgYAV0cfRw==');
+    joinChannel(channel, uid, '007eJxTYGA5vi/0oVHez1zh26WN9zf6ljmFlfq+u2q64U2i2e6es+sVGBKNk5INTEwTLcwsLUwszM0tjFIMUs0Mk4xNzSwsLU2NsrhXpDYEMjK4Fk1lYIRCEJ+RIZGBAQAzyx5E');
     startAudio();
   };
 
@@ -54,19 +60,21 @@ const Room = ({ channel, host, id }) => {
 
   const handleLeaveChannel = (stream) => {
     leaveChannel();
-    console.log('stream', stream);
+    //console.log('stream', stream);
     stopAudio();
-    axios.delete(`/post/radio/${channelName}`)
-    .then(() => {
-      console.log('done')
-    }).catch(() => {
-      console.log('uhh')
-    })
+    if(user.username === owner){
+      axios.delete(`/post/radio/${user.username}`)
+      .then(() => {
+        console.log('done')
+      }).catch(() => {
+        console.log('uhh')
+      })
+    }
     navigate('/protected/radio')
   };
-
+  
   return (
-
+    
     <div>
       <div style={{justifyContent: 'right', flexDirection: 'row', display: 'flex', alignItems: 'right'}}>
 
@@ -79,7 +87,7 @@ const Room = ({ channel, host, id }) => {
 
     <div style={{ alignItems: 'center'}} className='container'>
    
-      <h1>{channelName}</h1>
+      <h1>{channel}</h1>
 
       
       <div className='card'>
@@ -112,13 +120,30 @@ const Room = ({ channel, host, id }) => {
       {/* <button
       type="button"
       className='btn btn-dark'
-      onClick={handleLeaveChannel}>Leave Channel</button> */}
+    onClick={handleLeaveChannel}>Leave Channel</button> */}
       </div>
 
       <div style={{ marginTop: '20px',  alignItems: 'center'}} className='container'>
 
         <div className='card'>
           <div className='room-users'>
+            { listeners ?
+            listeners.map((listener) => {
+              <img style={{margin: '15px'}} width="100" src={listener.profileImgUrl} alt="user profile image" />
+              {mute ?  <button
+                type="button"
+                style={{margin: '15px'}}
+        className='btn btn-dark'
+        onClick={() => {muted()}}
+        >Unmute</button> : <button
+        type="button"
+        style={{margin: '15px'}}
+        className='btn btn-light'
+        onClick={() => {muted()}}
+        >Mute</button>}
+      }) : <br></br>
+    }
+        <Analyser audioContext={audioContext}  stream={stream}/>
           {/* <img style={{margin: '15px'}} width="100" src="https://lh3.googleusercontent.com/a/ACg8ocI6UOrLKNPeKzMpAobwFfMo2jVBc2SccK66hzTPMkEk=s96-c" alt="user profile image" />
        {mute ?  <button
         type="button"
@@ -132,7 +157,6 @@ const Room = ({ channel, host, id }) => {
         onClick={() => {muted()}}
         >Mute</button>} */}
 
-        {}
 
           </div>
           
