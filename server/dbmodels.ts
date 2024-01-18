@@ -220,7 +220,7 @@ export const SharedPost = db.define('SharedPost', {
 
 // defines table relations
 User.hasMany(MagicConch, { foreignKey: 'sendingUserId' });
-MagicConch.belongsTo(User, { foreignKey: 'sendingUserId' });
+MagicConch.belongsTo(User, { foreignKey: 'sendingUserId', as: 'sentFromUser' });
 User.hasMany(MagicConch, { foreignKey: 'receivingUserId' });
 MagicConch.belongsTo(User, { foreignKey: 'receivingUserId' });
 //MagicConch.belongsTo(Sound, { foreignKey: 'soundUrl' })

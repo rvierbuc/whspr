@@ -110,7 +110,7 @@ router.post('/conch', async (req: Request, res: Response) => {
 router.get('/conch/:receivingUser', async (req: Request, res: Response) => {
   const { receivingUser } = req.params
   try {
-    const inbox = await MagicConch.findAll({ where: { receivingUserId: receivingUser } })
+    const inbox = await MagicConch.findAll({ where: { receivingUserId: receivingUser }, include: {model: User, as: 'sentFromUser'} })
     console.log('ji', inbox)
     res.status(200).send(inbox)
   } catch {

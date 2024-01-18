@@ -1411,3 +1411,12 @@ margin-top: 1rem;
     100% {transform: translateX(-50%);}
 }
 
+.modal-button-container {
+  position: relative;
+}
+
+.modal-profile-edit {
+  position: absolute;
+  top: 2rem;
+  left: 0;
+}
