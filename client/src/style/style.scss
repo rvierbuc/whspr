@@ -1391,6 +1391,7 @@ input[type='range']::-moz-range-thumb {
     margin-left: 36%;
   }
 }
+
 @keyframes slide-up {
   from {
     //transform: rotate(.25turn);
@@ -1402,7 +1403,6 @@ input[type='range']::-moz-range-thumb {
    height:100%
   }
 }
-
 
 .ocean {
   height: 180px; /* change the height of the waves here */
