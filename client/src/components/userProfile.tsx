@@ -107,10 +107,12 @@ const UserProfile = ({
   >([]);
   //editing profile states
   const [username, setUsername] = useState(currentUser.displayUsername || currentUser.username);
+  const [tempUsername, setTempUsername] = useState(currentUser.displayUsername || currentUser.username);
   const [usernameError, setUsernameError] = useState('');
   const [profileImgError, setProfileImgError] = useState('')
   const [profileImg, setprofileImg] = useState(null);
   const [userBio, setUserBio] = useState(currentUser.userBio);
+  const [tempUserBio, setTempUserBio] = useState(currentUser.userBio);
   const [openModal, setOpenModal] = useState(null);
   const [rerender, setRerender] = useState(0)
   // setting a delete state => if true => render a fade in asking if the user wants to delete the post
@@ -225,6 +227,12 @@ const UserProfile = ({
 
   const openModalHandler = (modalName) => {
     const newModalState = openModal === modalName ? null : modalName;
+    if (modalName === 'bio') {
+      setTempUserBio(userBio);
+    }
+    if (modalName === 'username') {
+      setTempUsername(username);
+    }
     setOpenModal(newModalState);
   };
 
@@ -236,11 +244,13 @@ const UserProfile = ({
 
   const updateBio = () => {
     let userId = currentUser.id.toString()
-    axios.patch('/update-bio', { userBio: userBio, userId })
+    axios.patch('/update-bio', { userBio: tempUserBio, userId })
       .then(response => {
         console.log('Profile updated:', response.data);
-        setUserBio(userBio)
+        setCurrentUser(prevState => { return ({ ...prevState, userBio: tempUserBio }) })
+        setUserBio(tempUserBio)
         closeModalHandler();
+        setTempUserBio('');
       })
       .catch(error => {
         console.error('Error updating profile:', error);
@@ -250,12 +260,13 @@ const UserProfile = ({
   const updateUsername = () => {
     let userId = currentUser.id.toString()
     setUsernameError('');
-    axios.post('/update-username', { displayUsername: username, userId })
+    axios.patch('/update-username', { displayUsername: tempUsername, userId })
       .then(response => {
         console.log('Profile updated:', response.data);
-        setUsername(username)
-        console.log(rerender)
+        setCurrentUser(prevState => ({ ...prevState, username: tempUsername }))
+        setUsername(tempUsername)
         closeModalHandler();
+        setTempUsername('');
       })
       .catch(error => {
         if (error.response && error.response.status === 400) {
@@ -289,7 +300,6 @@ const UserProfile = ({
         console.log(newProfileImgUrl)
         setCurrentUser(prevState => ({ ...prevState, profileImgUrl: newProfileImgUrl }))
         closeModalHandler();
-        console.log('Image uploaded correctly');
         setprofileImg(null);
       })
       .catch(error => {
@@ -328,30 +338,30 @@ const UserProfile = ({
   return (
     <div>
       <Modal
-        style={{backgroundColor: 'rgba(209, 209, 209, 0.6)' }}
+        style={{ backgroundColor: 'rgba(209, 209, 209, 0.6)' }}
         show={isDeleting}
         onHide={() => setIsDeleting(!isDeleting)}>
-          <Modal.Header>
-            <Modal.Title>Delete Post</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>Are you sure you want to delete this post?</Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="secondary"
-              onClick={() => setIsDeleting(!isDeleting)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="danger"
-              onClick={() => {
-                setIsDeleting(false);
-                handleDelete(currentDeletePostId);
-              }}
-            >
-              Delete
-            </Button>
-          </Modal.Footer>
+        <Modal.Header>
+          <Modal.Title>Delete Post</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this post?</Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setIsDeleting(!isDeleting)}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="danger"
+            onClick={() => {
+              setIsDeleting(false);
+              handleDelete(currentDeletePostId);
+            }}
+          >
+            Delete
+          </Button>
+        </Modal.Footer>
       </Modal>
       <Modal
         style={{
@@ -361,28 +371,28 @@ const UserProfile = ({
         show={searchModal}
         onHide={() => setSearchModal(!searchModal)}
       >
-          <Modal.Header closeButton>
-            <Modal.Title>Search for users who follow/are followed!</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <input
-              type="text"
-              placeholder="Search"
-              value={searchInput}
-              onChange={handleSearchChange}
-            />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="secondary"
-              onClick={() => setSearchModal(!searchModal)}
-            >
-              Cancel
-            </Button>
-            <Button variant="primary" onClick={() => handleSearchSubmission()}>
-              Search
-            </Button>
-          </Modal.Footer>
+        <Modal.Header closeButton>
+          <Modal.Title>Search for users who follow/are followed!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <input
+            type="text"
+            placeholder="Search"
+            value={searchInput}
+            onChange={handleSearchChange}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setSearchModal(!searchModal)}
+          >
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={() => handleSearchSubmission()}>
+            Search
+          </Button>
+        </Modal.Footer>
         {followerSearchResults.length > 0 && (
           <div className="followers-div">
             <h3>Followers</h3>
@@ -474,7 +484,7 @@ const UserProfile = ({
                 <div className="modal-button-container">
                   <CustomModal className="modal-profile-edit" isOpen={openModal === 'username'} onClose={closeModalHandler}>
                     <h2>Change Username</h2>
-                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+                    <input type="text" value={tempUsername} onChange={(e) => setTempUsername(e.target.value)} />
                     {usernameError && <div className='text-warning'>{usernameError}</div>}
                     <button className="btn btn-dark" onClick={() => updateUsername()}>Commit</button>
                     <button className="btn btn-dark" onClick={closeModalHandler}>Cancel</button>
@@ -487,8 +497,8 @@ const UserProfile = ({
                 <div className="modal-button-container">
                   <CustomModal className="modal-profile-edit" isOpen={openModal === 'bio'} onClose={closeModalHandler}>
                     <h2>Change Your Bio</h2>
-                    <textarea onChange={(e) => setUserBio(e.target.value)}
-                      value={userBio} />
+                    <textarea maxLength={500} onChange={(e) => setTempUserBio(e.target.value)}
+                      value={tempUserBio} />
                     <div>
                       <button className="btn btn-dark" onClick={() => updateBio()}>Commit</button>
                       <button className="btn btn-dark" onClick={closeModalHandler}>Cancel</button>
