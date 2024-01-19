@@ -68,7 +68,7 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
       <Modal show={toggleModal} centered className='synthModal'>
         <Modal.Header>
           {toggleInfo.oscType ? <p><strong>Oscillators</strong> are the basic components of a synth sound and we have four types you can choose to play with!</p> : null}
-          {toggleInfo.waveType ? <p><strong>Wave Types</strong> are the primary wave forms/shapes that make up the basic ingredients of sound</p> : null}
+          {toggleInfo.waveType ? <p><strong>Wave Types</strong> are the primary wave forms/shapes that make up the basic ingredients of audio. There are four types of audio waves!</p> : null}
           {toggleInfo.phaser ? <p><strong>Phaser filters</strong> are used to filter audio by creating a series of hills and valleys, aka peaks, in the oscillator frequency and we have two customizable options to play with!</p> : null}
           {toggleInfo.distortion ? <p><strong>Distortion filters</strong> are used to distort the audio waveform from its original form and we have two customizable options to play with!</p> : null}
         </Modal.Header>
