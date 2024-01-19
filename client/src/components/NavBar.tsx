@@ -122,7 +122,7 @@ const NavBar = () => {
                   Say Something
                 </Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/conch')}>
-                  Magic Conch
+                  Inbox
                 </Nav.Link>
                 <Nav.Link
                   onClick={() => handleNavigation('/protected/feed/explore')}

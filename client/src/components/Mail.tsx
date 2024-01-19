@@ -23,7 +23,7 @@ export const Mail: React.FC<WaveSurferProps> = ({
   const user = sharePost.sentFromUser ? sharePost.sentFromUser : sharePost.sentToUser;
   const getFullPost = async () => {
     try {
-      const seenMessage = await axios.post('/post/hasSeen', { id: sharePost.id, bool: true, type: 'sentToId'});
+      const seenMessage = await axios.put('/post/hasSeen', { id: sharePost.id, bool: true, userType: 'sentToId', modelType: 'SharedPost'});
       const fullPost = await axios.get(`/post/updatedPost/${sharePost.Post.id}/${currUser.id}`);
       console.log('seen message', seenMessage);
       //sharePost = seenMessage.data;

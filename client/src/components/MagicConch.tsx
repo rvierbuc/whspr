@@ -32,12 +32,31 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
       const response: AxiosResponse = await axios.get(`/conch/${user.id}`);
       console.log('message', response.data);
       const tempMessage = response.data[0];
-      tempMessage.user = tempMessage.sentFromUser;
-      tempMessage.userId = tempMessage.sentFromUser.id;
-      setMessage(tempMessage);
-      setShowConch(true);
+      // if (tempMessage.hasSeen) {
+      //   setMessage(null);
+      // } else {
+        tempMessage.user = tempMessage.sentFromUser;
+        tempMessage.userId = tempMessage.sentFromUser.id;
+        setMessage(tempMessage);
+        setShowConch(true);
+      //}
     } catch (error) {
       console.log('couldnt get message', error);
+    }
+  };
+
+  const updatePost = async (postId, updateType) => {
+    try {
+      const updatedPost: any = await axios.get(`/post/updatedPost/${postId}/${updateType}`);
+      console.log('updated post obj', updatedPost);
+      //const postIndex = sharedPosts.findIndex((post) => post.id === updatedPost.data.id);
+      //updatedPost.data.rank = sharedPosts[postIndex].rank;
+      //console.log('post index', updatePostIndex)
+      //const postsWUpdatedPost = sharedPosts.toSpliced(postIndex, 1, updatedPost.data);
+      console.log(updatedPost);
+      setDisplayPost(updatedPost.data);
+    } catch (error) {
+      console.log('could not update post', error);
     }
   };
 
@@ -82,6 +101,17 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
       getSharedPosts('sentFromId');
     }
   };
+
+  const handleConchClose = async () => {
+    try {
+      console.log('closed conch');
+      await axios.put('/post/hasSeen', { id: message.id, bool: true, userType: 'sentToId', modelType: 'MagicConch' });
+      setShowConch(false);
+    } catch (error) {
+      console.error('could not close conch', error);
+    }
+    
+  };
   useEffect(() => {
     getMessage();
     getSharedPosts('sentToId');
@@ -91,8 +121,9 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
   return (
         <div >
 {/** commented out code below component */}
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '1rem' }}>
-    <img src={require('../style/inbox.png')}></img>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '-3rem' }}>
+    <div className='inbox-title'>inbox</div>
+   {/* <PostConch audioContext={audioContext} />  */}
 {/* {type === 'inbox' ?
     <div >
         <button
@@ -131,10 +162,10 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
             //     </Modal.Body>
             //   </Modal>
 
-    <ConchModal isOpen={showConch} onClose={() => setShowConch(false)} >
+    <ConchModal isOpen={showConch} >
       <div style={{ width: '100%' }}> 
-      <div style={{ margin: '.5rem 1rem .5rem 1rem ' }} onClick={() => setShowConch(false)}>
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-x-circle" viewBox="0 0 16 16">
+      <div style={{ margin: '.5rem 1rem .5rem 1rem ' }} onClick={() => handleConchClose()}>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#e1e1e1" className="bi bi-x-circle" viewBox="0 0 16 16">
         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
         <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
       </svg>
@@ -142,7 +173,7 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
       <div className='conch-title' >
         A MAGIC CONCH HAS WASHED UP JUST FOR YOU!
       </div>
-          <WaveSurferComponent onConch={true} waveHeight={300} postObj={message} audioUrl={message.soundUrl} postId={message.id} />
+          <WaveSurferComponent onConch={true} containerType={'conch'} isConch={true} waveHeight={300} postObj={message} audioUrl={message.soundUrl} postId={message.id} />
           {/* <div className="wave"></div> */}
       </div>
      </ConchModal>
@@ -181,11 +212,14 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
                </div>
                <WaveSurferComponent
                postObj={displayPost}
+               postId={displayPost.id}
                userId={user.id}
                audioUrl={displayPost.soundUrl}
                audioContext={audioContext}
                onConch={true}
                waveHeight={300}
+               updatePost={updatePost}
+               containerType='inbox'
                ></WaveSurferComponent>  
                </div>
                  : <div className='display-message' id='no-message'>
@@ -200,7 +234,7 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
 
 export default MagicConch;
 
-{ /* <PostConch audioContext={audioContext} /> */ }
+
 
 { /* <input
             type="checkbox"

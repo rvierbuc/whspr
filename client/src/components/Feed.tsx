@@ -155,7 +155,7 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
                   updatePost={updatePost}
                   audioContext={audioContext}
                   waveHeight={500}
-                  feed={feed} onProfile={false} setOnProfile={undefined} />
+                  feed={feed} onProfile={false} setOnProfile={undefined} containerType='feed'/>
         </div>),
           )) : <div>Loading...</div>}
     </div>

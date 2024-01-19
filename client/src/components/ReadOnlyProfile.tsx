@@ -45,6 +45,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
   FollowingAttributes[]
   >([]);
 
+
   const handleSearchChange = (e) => {
     setSearchInput(e.target.value);
   };
@@ -92,7 +93,6 @@ const ReadOnlyProfile = ({ audioContext }) => {
       const updatedPost: any = await axios.get(
         `/post/updatedPost/${postId}/${user.id}`,
       );
-      console.log('updated post obj', updatedPost);
       const postIndex = selectedUserInfo.findIndex(
         (post) => post.id === updatedPost.data.id,
       );
@@ -370,12 +370,15 @@ const ReadOnlyProfile = ({ audioContext }) => {
                 postId={post.id}
                 userId={user.id}
                 getPosts={getSelectedUserInfo}
-                onGridView={onGridView}
                 updatePost={updatePost}
-                setOnGridView={setOnGridView}
                 onProfile={onProfile}
-                audioContext={AudioContext}
+                audioContext={audioContext}
                 waveHeight={200}
+                containerType='readOnly'
+                // bigPost={bigPost}
+                // setBigPost={setBigPost}
+                // showBigPost={showBigPost}
+                // setShowBigPost={setShowBigPost}
                 />
                 {/* each post should have its own instance of a waveSurfer comp */}
               </div>

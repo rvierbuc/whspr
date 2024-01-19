@@ -72,7 +72,7 @@ export const SharePost: React.FC<SharePostProps> = ({ audioContext, userId, post
               audioUrl={postObj.soundUrl}
               postId={postObj.id}
               audioContext={audioContext}
-              type={'sharePost'}
+              type='sharePost'
               ></WaveSurferComponent>
              </div>
               <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin:'2rem 0rem 1rem 0rem' }}> 
