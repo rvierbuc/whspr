@@ -1,14 +1,29 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ReactElement } from 'react';
 import { Modal } from './Modal';
 import axios from 'axios';
 import { useLoaderData } from 'react-router-dom';
+//type imports
+import {
+  Voice,
+  UserInterface,
+  CanvasRef,
+  AnalyserNodeRef,
+  MediaStreamRef,
+  SourceNodeRef,
+  FrameRef,
+  AudioRef,
+  DivRef,
+  WhsprAIProps,
+  msMaxTouchPointsCheck,
+  PressTime,
+} from './types/WhsprAITypes';
 //img imports
 import mute from '../style/mute.svg';
 import unmute from '../style/unmute.svg';
 import pause from '../style/pause.svg';
 import play from '../style/play-grey.svg';
 
-export const WhsprAI = ({ audioContext }) => {
+export const WhsprAI = ({ audioContext }: WhsprAIProps): ReactElement => {
   const [isPhone, setIsPhone] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,24 +37,26 @@ export const WhsprAI = ({ audioContext }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [animationInitialized, setAnimationInitialized] = useState(false);
   const [newMessageCount, setNewMessageCount] = useState(0);
-  const audioRef = useRef(null);
-  const canvasRef = useRef(null);
-  const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
-  const frameRef = useRef<number | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const mediaStreamRef = useRef<MediaStream | null>(null);
-  const pressTime = useRef(null);
-  const cardRef = useRef(null);
-  const transcript = useRef(null);
-  const user = useLoaderData();
-  const userId = parseFloat(user.id);
+  const audioRef: AudioRef = useRef(null);
+  const canvasRef: CanvasRef = useRef(null);
+  const sourceRef: SourceNodeRef = useRef(null);
+  const frameRef: FrameRef = useRef(null);
+  const analyserRef: AnalyserNodeRef = useRef(null);
+  const mediaStreamRef: MediaStreamRef = useRef(null);
+  const pressTime: PressTime = useRef(null);
+  const cardRef: DivRef = useRef(null);
+  const transcript: DivRef = useRef(null);
+  const user = useLoaderData() as UserInterface;
+  const userId: number = parseFloat(user.id);
 
   //this sets the number of messages that will be retrieved from the database and sent in the conversation to the ai
   const nMessages = 5;
 
   //checks if the user's device is a phone
   useEffect(() => {
-    if ('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0) {
+    const hasTouchPoints = 'maxTouchPoints' in navigator && navigator.maxTouchPoints > 0;
+    const hasMsTouchPoints = ('msMaxTouchPoints' in navigator && (navigator as msMaxTouchPointsCheck).msMaxTouchPoints) ?? 0 > 0;
+    if ('ontouchstart' in window || hasTouchPoints || hasMsTouchPoints) {
       setIsPhone(true);
       console.info('is phone');
     }
@@ -47,7 +64,7 @@ export const WhsprAI = ({ audioContext }) => {
 
   //gets past messages from the db
   useEffect(() => {
-    const getPastMessages = async () => {
+    const getPastMessages = async (): Promise<void> => {
       try {
         const response = await axios.get('/retrieveRecordsAIMessages', { params: { userId: userId, nMessages: nMessages } });
         const { latestUserMessages, latestAIMessages } = response.data;
@@ -64,7 +81,7 @@ export const WhsprAI = ({ audioContext }) => {
   }, []);
 
   //sets up an analyser for the computer's speaker audio (when AI is talking)
-  const setupAnalyser = (audio) => {
+  const setupAnalyser = (audio: HTMLAudioElement): void => {
     if (!audioContext) {
       console.error('AudioContext is not available.');
       return;
@@ -73,84 +90,20 @@ export const WhsprAI = ({ audioContext }) => {
       if (!sourceRef.current) {
         sourceRef.current = audioContext.createMediaElementSource(audio);
       }
-      const analyser = audioContext.createAnalyser();
-      sourceRef.current.connect(analyser);
-      analyser.connect(audioContext.destination);
-      analyser.fftSize = 2048;
-      analyserRef.current = analyser;
+      if (sourceRef.current) {
+        const analyser = audioContext.createAnalyser();
+        sourceRef.current.connect(analyser);
+        analyser.connect(audioContext.destination);
+        analyser.fftSize = 2048;
+        analyserRef.current = analyser;
+      } else { console.error('error creating sourceRef'); }
     } catch (error) {
       console.error('error setting up analyser:', error);
     }
   };
 
-
-  useEffect(() => {
-    let audioChunks = [];
-    //starts the recording and hooks it up to the analyzer so mic sounds are also drawn
-    const startRecording = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaStreamRef.current = stream;
-        const recorder = new MediaRecorder(stream);
-        audioChunks = [];
-
-        recorder.ondataavailable = e => {
-          audioChunks.push(e.data);
-        };
-
-        recorder.onstop = async () => {
-          const blob = new Blob(audioChunks);
-          getTextFromSpeech(blob);
-        };
-
-        recorder.start();
-
-        analyserRef.current = audioContext.createAnalyser();
-        analyserRef.current.fftSize = 2048;
-        const audio = audioContext.createMediaStreamSource(stream);
-        audio.connect(analyserRef.current);
-        drawAudio();
-      } catch (error) { console.error('error starting recording:', error); }
-    };
-
-    const getTextFromSpeech = async (blob) => {
-      const formData = new FormData();
-      formData.append('audio', blob);
-      try {
-        const response = await axios.post('/speechToTextOpenAI', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        const currentText = response.data;
-        setText(prevText => [...prevText, currentText]);
-        if (!showText) { setNewMessageCount(prevCount => prevCount + 1); }
-      } catch (error) {
-        console.error('error sending audio to server in getTextFromSpeech', error);
-      }
-    };
-
-    //fires start recording and speech recognition when is recording is true
-    if (isRecording) {
-      startRecording();
-    } else {
-      if (sourceRef.current) {
-        sourceRef.current = null;
-      }
-      if (frameRef.current) {
-        cancelAnimationFrame(frameRef.current);
-      }
-    }
-    return () => {
-      if (mediaStreamRef.current) {
-        const tracks = mediaStreamRef.current.getTracks();
-        tracks.forEach(track => track.stop());
-        mediaStreamRef.current = null;
-      }
-    };
-  }, [isRecording]);
-
-
   //animation draws the audio
-  const drawAudio = () => {
+  const drawAudio = (): void => {
     const canvas = canvasRef.current;
     const analyser = analyserRef.current;
 
@@ -158,9 +111,12 @@ export const WhsprAI = ({ audioContext }) => {
     const context = canvas.getContext('2d');
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
+    if (!context) {
+      console.error('errror creating context in drawAudio.');
+      return;
+    }
 
-
-    const drawFrame = () => {
+    const drawFrame = (): void => {
       frameRef.current = requestAnimationFrame(drawFrame);
       analyser.getByteTimeDomainData(dataArray);
       context.clearRect(0, 0, canvas.width, canvas.height);
@@ -192,8 +148,76 @@ export const WhsprAI = ({ audioContext }) => {
     drawFrame();
   };
 
+  const getTextFromSpeech = async (blob: Blob): Promise<void> => {
+    const formData = new FormData();
+    formData.append('audio', blob);
+    try {
+      const response = await axios.post('/speechToTextOpenAI', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      const currentText = response.data;
+      setText(prevText => [...prevText, currentText]);
+      if (!showText) { setNewMessageCount(prevCount => prevCount + 1); }
+    } catch (error) {
+      console.error('error sending audio to server in getTextFromSpeech', error);
+    }
+  };
+
+  useEffect(() => {
+    let audioChunks: Blob[];
+    //starts the recording and hooks it up to the analyzer so mic sounds are also drawn
+    const startRecording = async (): Promise<void> => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaStreamRef.current = stream;
+        const recorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        recorder.ondataavailable = (e: BlobEvent): void => {
+          audioChunks.push(e.data);
+        };
+
+        recorder.onstop = async (): Promise<void> => {
+          const blob = new Blob(audioChunks);
+          getTextFromSpeech(blob);
+        };
+
+        recorder.start();
+
+        analyserRef.current = audioContext.createAnalyser();
+        if (analyserRef.current) {
+          analyserRef.current.fftSize = 2048;
+          const audio = audioContext.createMediaStreamSource(stream);
+          audio.connect(analyserRef.current);
+          drawAudio();
+        } else { console.error('error creating analyserRef'); }
+      } catch (error) { console.error('error starting recording:', error); }
+    };
+
+
+    //fires start recording and speech recognition when is recording is true
+    if (isRecording) {
+      startRecording();
+    } else {
+      if (sourceRef.current) {
+        sourceRef.current = null;
+      }
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+      }
+    }
+    return () => {
+      if (mediaStreamRef.current) {
+        const tracks = mediaStreamRef.current.getTracks();
+        tracks.forEach(track => track.stop());
+        mediaStreamRef.current = null;
+      }
+    };
+  }, [isRecording]);
+
+
   //gets ai generated text and speaks it
-  const playAudio = (buffer) => {
+  const playAudio = (buffer: ArrayBuffer): void => {
     const array = new Uint8Array(buffer);
     const blob = new Blob([array], { type: 'audio/mpeg' });
     const blobUrl = URL.createObjectURL(blob);
@@ -218,13 +242,13 @@ export const WhsprAI = ({ audioContext }) => {
   };
 
   //this voice variable controls which endpoint is used for the tts
-  //supported choices are openai, google, browser, elevenlabs
-  const VOICE = 'openai';
+  //supported choices are openai, google, elevenlabs
+  const VOICE: Voice = 'openai';
   //sends user messages as text and gets text message back from open AI
-  const getAIResponse = async () => {
+  const getAIResponse = async (): Promise<void> => {
     if (text.length === lengthTracker) { return; }
     const messages = [{ role: 'system', content: 'You are an my helpful friend Whisper.' }];
-    const lastNMessages = arr => arr.length > nMessages ? arr.slice(-nMessages) : arr;
+    const lastNMessages = (arr: string[]): string[] => arr.length > nMessages ? arr.slice(-nMessages) : arr;
     const userMessages = lastNMessages(text);
     const aiMessages = lastNMessages(AIResponse);
     for (let i = 0; i < userMessages.length; i++) {
@@ -240,7 +264,7 @@ export const WhsprAI = ({ audioContext }) => {
       const spokenResponse = await axios.post(`/text-to-speech-${VOICE}`, { text: resp.data.response }, { responseType: 'arraybuffer' });
       playAudio(spokenResponse.data);
       try {
-        const recordsCreated = await axios.post('/createRecordsAIMessages', { newUserMessage: text[text.length - 1], newAIMessage: resp.data.response, userId: userId });
+        await axios.post('/createRecordsAIMessages', { newUserMessage: text[text.length - 1], newAIMessage: resp.data.response, userId: userId });
         setIsLoading(false);
       } catch (error) { console.error('Error creating records: ', error); }
     } catch (error) {
@@ -266,49 +290,27 @@ export const WhsprAI = ({ audioContext }) => {
   }, [isRecording, text]);
 
   //starts the audio context
-  function startUserMedia() {
+  const startUserMedia = (): void => {
     if (!audioContext) {
       console.error('new audio for some reason');
       audioContext = new AudioContext;
     }
     audioContext.resume();
-  }
+  };
 
   //displays the text of the conversation
-  function handleSetShowText() {
+  const handleSetShowText = (): void => {
     setShowText(!showText);
     setNewMessageCount(0);
     setTimeout(() => {
-      transcript.current.scrollTop = transcript.current.scrollHeight;
+      if (transcript.current) {
+        transcript.current.scrollTop = transcript.current.scrollHeight;
+      }
     }, 0);
-  }
-
-  //sets canvas width to the whole screen
-  useEffect(() => {
-    if (canvasRef.current && cardRef.current.offsetWidth) {
-      canvasRef.current.width = cardRef.current.offsetWidth;
-    }
-    window.addEventListener('resize', handleResize);
-    return;
-
-  }, []);
-
-  const handleResize = () => {
-    if (canvasRef.current && cardRef.current.offsetWidth) {
-      canvasRef.current.width = cardRef.current.offsetWidth;
-      initializeAnimation();
-    }
   };
 
-  //creates an analyser
-  useEffect(() => {
-    const analyser = audioContext.createAnalyser();
-    analyser.fftSize = 2048;
-    analyserRef.current = analyser;
-  }, [audioContext]);
-
   //starts and stops the animation so that a line appears on the screen
-  const initializeAnimation = () => {
+  const initializeAnimation = (): void => {
     if (!animationInitialized) {
       setTimeout(() => {
         drawAudio();
@@ -319,40 +321,71 @@ export const WhsprAI = ({ audioContext }) => {
       setAnimationInitialized(true);
     }
   };
+
+  //sets canvas width to the whole screen
+  const handleResize = (): void => {
+    if (canvasRef.current && cardRef.current?.offsetWidth) {
+      canvasRef.current.width = cardRef.current.offsetWidth;
+      initializeAnimation();
+    }
+  };
+
+  useEffect(() => {
+    if (canvasRef.current && cardRef.current?.offsetWidth) {
+      canvasRef.current.width = cardRef.current.offsetWidth;
+    }
+    window.addEventListener('resize', handleResize);
+    return;
+
+  }, []);
+
+
+  //creates an analyser
+  useEffect(() => {
+    const analyser = audioContext.createAnalyser();
+    analyser.fftSize = 2048;
+    analyserRef.current = analyser;
+  }, [audioContext]);
+
   //fires initialize animation on pageload
   useEffect(() => {
     initializeAnimation();
   }, [animationInitialized]);
 
-  const handlePressToTalkPress = () => {
+  //if device can vibrate, vibrates device
+  const vibratePhone = (): void => {
+    if ('vibrate' in navigator) {
+      navigator.vibrate(200);
+    }
+  };
+
+  const handlePressToTalkPress = (): void => {
+    if (isPlaying) { return; }
     pressTime.current = setTimeout(() => {
       setIsRecording(true);
       vibratePhone();
     }, 300);
   };
 
-  const handlePressToTalkRelease = () => {
-    clearTimeout(pressTime.current);
+  const handlePressToTalkRelease = (): void => {
+    if (isPlaying) { return; }
     if (pressTime.current) {
+      clearTimeout(pressTime.current);
       setIsRecording(false);
     }
     pressTime.current = null;
   };
 
-  const vibratePhone = () => {
-    if ('vibrate' in navigator) {
-      navigator.vibrate(200);
-    }
-  };
 
-  const toggleMute = () => {
+
+  const toggleMute = (): void => {
     setIsMuted(!isMuted);
     if (audioRef.current) {
       audioRef.current.volume = !isMuted ? 0 : 1;
     }
   };
 
-  const togglePause = () => {
+  const togglePause = (): void => {
     if (audioRef.current) {
       if (isPaused) {
         audioRef.current.play();
@@ -401,10 +434,10 @@ export const WhsprAI = ({ audioContext }) => {
                 className="loading-img"></img>)
               : (<button
                 title="Press to talk"
-                onMouseDown={!isPhone ? () => { startUserMedia(); handlePressToTalkPress(); } : undefined}
+                onMouseDown={!isPhone ? (): void => { startUserMedia(); handlePressToTalkPress(); } : undefined}
                 onMouseUp={!isPhone ? handlePressToTalkRelease : undefined}
                 onMouseLeave={!isPhone ? handlePressToTalkRelease : undefined}
-                onTouchStart={isPhone ? () => { startUserMedia(); handlePressToTalkPress(); } : undefined}
+                onTouchStart={isPhone ? (): void => { startUserMedia(); handlePressToTalkPress(); } : undefined}
                 onTouchEnd={isPhone ? handlePressToTalkRelease : undefined}
                 onContextMenu={(e) => e.preventDefault()}
                 className="push--skeuo"
