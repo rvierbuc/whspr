@@ -551,6 +551,7 @@ const UserProfile = ({
                   setSelectedUserPosts={setSelectedUserPosts}
                   setCurrentDeletePostId={setCurrentDeletePostId}
                   waveHeight={200}
+                  containerType='currUser'
                 />
               </div>
             ))}

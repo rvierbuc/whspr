@@ -12,7 +12,10 @@
     transform: translateY(0);
   }
 }
-
+@font-face {
+  font-family: headerFont;
+  src: url('./fulbo-champagne.otf');
+}
 body {
   background-image: url('./mirrored.png');
   background-color: #606060;
@@ -25,6 +28,14 @@ body {
   filter: url('data:image/svg+xml;utf8,<svg version="1.1" xmlns="http://www.w3.org/2000/svg"><filter id="blur"><feGaussianBlur stdDeviation="#{$radius}" /></filter></svg>#blur'); /* Firefox, Safari, Chrome*/
   filter: progid:DXImageTransform.Microsoft.Blur(Strength=$radius); /* IE9 */
   backdrop-filter: blur($radius);
+}
+
+.inbox-title{
+  font-family: headerFont;
+  font-size: 5rem;
+  text-shadow: 3px 3px 3px #a6c5ff;
+  color:#e1e1e1
+ 
 }
 //post background effects
 .card {
@@ -148,7 +159,11 @@ body {
   //color: rgb(63, 133, 42)
   cursor: pointer;
 }
+.bs-bigPost-modal-content {
+  background-color: #ec2812;
+}
 //recording buttons
+
 #play-btn-new {
   background: #e9ecf300 url(play-fill.svg) no-repeat 1rem;
 }
@@ -164,6 +179,7 @@ body {
 #remove-btn-new {
   background: #e9ecf300 url(trash3-fill.svg) no-repeat 1rem;
 }
+
 #stop-btn-new,
 #play-btn-new,
 #record-btn-new,
@@ -174,7 +190,7 @@ body {
   height: 3rem;
   width: 3rem;
   //border-radius: 6px;
-  margin: 1rem;
+  margin: .25rem .5rem;
   //box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   //@include blur(4.2px);
   border: none;
@@ -311,6 +327,10 @@ body {
   @include blur(4.2px);
   //padding:.25rem
 }
+.share-btn:disabled {
+  background-color: transparent;
+  color:transparent;
+}
 .grid-post-container {
   display: flex;
   flex-direction: row;
@@ -439,7 +459,7 @@ body {
 .on-profile-tags::-webkit-scrollbar-thumb:vertical {
   width: 8px;
   background: #e9ecf313;
-  border-radius: 16px;
+  border-radius: 26px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   @include blur(4.2px);
   border: 1px solid rgba(236, 210, 210, 0.36);

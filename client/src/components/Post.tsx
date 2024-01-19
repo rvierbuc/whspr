@@ -3,6 +3,7 @@ import axios, { AxiosResponse } from 'axios';
 import Comment from './Comment';
 import { RecordComment } from './RecordComment';
 import { addSyntheticLeadingComment } from 'typescript';
+import { Modal } from 'react-bootstrap';
 //import WaveSurferComponent from "./WaveSurfer";
 
 interface PostProps {
@@ -12,9 +13,11 @@ interface PostProps {
   audioContext: AudioContext,
   addComment: boolean,
   setAddComment: any,
+  onProfile: boolean,
+  onUserProfile: boolean
 }
 const Post = (props) => {
-  const { postObj, userId, updatePost, audioContext, addComment, setAddComment } = props;
+  const { postObj, userId, updatePost, audioContext, addComment, setAddComment, onProfile, onUserProfile } = props;
   const [hearLess, setHearLess] = useState<boolean>(false);
   const [comments, setComments] = useState<any>([]);
   const getComments = async () => {
@@ -38,8 +41,9 @@ const Post = (props) => {
     <div style={{minHeight:'50px'}} >
       {
         addComment ?
-        <div id="header" style={{ margin: '8px', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'start' }}>
-        <h3 style={{ margin: '1rem' }}>Record Your Comment</h3>
+        // <Modal show={addComment}>
+        <div id="header" style={{ margin: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center', }}>
+        <div style={{ margin: '.5rem 0 .25rem 0', fontSize: onProfile || onUserProfile ? '1rem' : '2rem' }}>Record Your Comment</div>
          <RecordComment
          audioContext={audioContext}
          postObj={postObj}
@@ -49,20 +53,23 @@ const Post = (props) => {
          updatePost={updatePost}
          addComment={addComment}
          setAddComment={setAddComment}
+         onProfile={onProfile || onUserProfile}
          />
       </div>
+     // </Modal>
           : <div></div>
         }
      
 
       { comments.length > 0
-        ? <div className='card' style={{ margin: '1rem', height:'25rem', overflow:'scroll' }} >
-          <div style={{ marginLeft: 'auto', marginRight:'auto', fontSize: '32px', color: '#e1e1e5' }}>Comments</div>
+        ? <div className='card on-profile-tags' style={{ margin: '1rem', maxHeight:'25rem',overflow:'scroll' }} >
+          <div style={{ marginLeft: 'auto', marginRight:'auto', fontSize: onProfile || onUserProfile ? '1rem' : '2rem', color: '#e1e1e5' }}>Comments</div>
       { comments.map((commentObj: any) => (
           <Comment 
           key={commentObj.id}
           comment={commentObj}
           audioContext={audioContext}
+          onProfile={onProfile || onUserProfile}
           />
       ))}
           </div>

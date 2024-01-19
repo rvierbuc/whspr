@@ -60,6 +60,9 @@ export const MagicConch = db.define('MagicConch', {
   soundUrl: {
     type: DataTypes.STRING,
   },
+  hasSeen: {
+    type: DataTypes.BOOLEAN,
+  }
 });
 
 export const Sound = db.define('Sound', {

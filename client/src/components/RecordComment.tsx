@@ -14,8 +14,9 @@ interface RecordCommentProps {
   isSharing: boolean,
   sentToId: number,
   setShowShareModal: any,
+  onProfile: boolean
 }
-export const RecordComment = ({ setShowShareModal, sentToId, isSharing, postObj, getComments, userId, updatePost, commentStateLength, addComment, setAddComment, audioContext }) => {
+export const RecordComment = ({ setShowShareModal, onProfile, sentToId, isSharing, postObj, getComments, userId, updatePost, commentStateLength, addComment, setAddComment, audioContext }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
@@ -177,7 +178,7 @@ export const RecordComment = ({ setShowShareModal, sentToId, isSharing, postObj,
   
   return (
     <div style={{ width: isSharing ? '70%' : '100' }}>
-    <div style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between' }}>
+    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly' } }>
     <button
       //className="record-button"
       id='record-btn-new'

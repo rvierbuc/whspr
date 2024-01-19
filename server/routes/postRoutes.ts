@@ -9,7 +9,9 @@ import {
   Like,
   Comment,
   Listen,
-  Radio, SharedPost,
+  Radio,
+  SharedPost,
+  MagicConch
 } from "../dbmodels";
 import { getTagsByEngagement } from "../algorithmHelpers";
 // ****HELPER FUNCTIONS***********
@@ -651,21 +653,6 @@ router.get("/tags", async (req: Request, res: Response) => {
 
 // *************POST REQUESTS***********************
 
-router.post('/hasSeen', async (req:Request, res:Response) => {
-  const { id, bool, type } = req.body;
-  const userModel = type === 'sentToId' ? 'sentFromUser' : 'sentToUser'
-  console.log(userModel)
-  try {
-    const updateHasSeen = await SharedPost.update({hasSeen: bool}, {where: {id}})
-    const updated = await SharedPost.findByPk(id, {include: [Post, { model: User,
-      as: userModel }] })
-    res.send(updated)
-  }catch (error){
-    console.error('could not update hasSeen on share post', error)
-    res.sendStatus(500)
-  }
-})
-
  router.post('/radio', async(req: Request, res: Response) => {
   const {host, listenerCount, category, soundUrl, title} = req.body
 
@@ -778,6 +765,27 @@ router.put("/selectedTags/:id", async (req: Request, res: Response) => {
     res.send(500);
   }
 });
+
+router.put('/hasSeen', async (req:Request, res:Response) => {
+  const { id, bool, userType, modelType } = req.body;
+  console.log('magic conch has seen', id, bool, userType, modelType)
+  const userModel = userType === 'sentToId' ? 'sentFromUser' : 'sentToUser'
+  const model = modelType === 'SharedPost' ? SharedPost : MagicConch
+  let updated;  
+  try {
+    const updateHasSeen = await model.update({hasSeen: bool}, {where: {id}})
+    if(modelType === 'SharedPost'){
+      updated = await model.findByPk(id, {include: [Post, { model: User,
+        as: userModel }] })
+    } else {
+      updated = await model.findByPk(id)
+    }
+    res.send(updated)
+  }catch (error){
+    console.error('could not update hasSeen on share post', error)
+    res.sendStatus(500)
+  }
+})
 // **********************DELETE REQUESTS****************************
 //allows user to unlike a post and removes like record from db
 router.delete(

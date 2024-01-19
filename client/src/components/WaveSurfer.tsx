@@ -40,6 +40,12 @@ interface WaveSurferProps {
   onHome: boolean
   onConch: boolean
   waveHeight: number;
+  isConch: boolean;
+  containerType: string;
+  showBigPost: boolean,
+  setShowBigPost: any,
+  bigPost: any,
+  setBigPost: any,
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
@@ -62,6 +68,12 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   onHome,
   onConch,
   waveHeight,
+  isConch,
+  containerType,
+  // setBigPost,
+  // setShowBigPost,
+  // bigPost,
+  // showBigPost
 }) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
@@ -72,12 +84,13 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [duration, setDuration] = useState<string>();
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [addComment, setAddComment] = useState<boolean>(false);
-  const [showFullPost, setShowFullPost] = useState<boolean>(false);
+  const [showBigPost, setShowBigPost] = useState<boolean>(false);
+  const [bigPost, setBigPost] = useState(null);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
 
   //const [hasCategories, setHasCategories] = useState<boolean>();
   // const { audioUrl, postId } = props;
-  const containerId = `waveform-${postId || ''}`;
+  const containerId = `waveform-${postId || ''}-${containerType}`;
   // const handleDelete: () => void = async () => {
   //   try {
   //     const deletePost = await axios.delete(`/deletePost/${userId}/${postId}`);
@@ -265,6 +278,12 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
     console.log('wave created!');
 
   };
+  console.log('before handle', showBigPost)
+  const handleBigPost = (bigPostObj) => {
+    console.log('big post', bigPostObj)
+    setShowBigPost((prevShowBigPost) => !prevShowBigPost);
+    setBigPost(bigPostObj);
+  };
   //console.log('categories?', hasCategories);
   useEffect(() => {
     createSoundWaves();
@@ -280,9 +299,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
 
       <div className="row" id="feed-row">
         <div className="col-sm" id="feed-col-sm">
-          <div className="card" id="feed-card" style={{marginBottom:'1rem'}}>
+          <div className="card" id="feed-card" style={{ marginBottom: '1rem' }}>
             {/* <br/> */}
-            <div className="card-body" style={{height: onConch ? '400px' : '100%'}}>
+            <div className="card-body" style={{ height: onConch ? '400px' : '100%' }}>
               {onProfile ? (
                 <a></a>
               ) : (
@@ -307,7 +326,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     }}
                   />
                   <a
-                    href={`profile/${postObj.user.id}`}
+                    href={onConch ? `feed/profile/${postObj.user.id}` : `profile/${postObj.user.id}`}
                     style={{ fontSize: onConch ? '1.5rem' : '2rem', color: '#0f0c0c' }}
                     id="feed-username"
                   >
@@ -342,9 +361,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 paddingTop: '1rem',
                 paddingLeft: '1rem',
                 justifyContent: 'start',
-                alignContent: 'end'
+                alignContent: 'end',
               }}
-                onClick={() => showFullPost ? setShowFullPost(false) : setShowFullPost(true)}
+              onClick= {() => handleBigPost(postObj) }
               >
                 <div
                   style={{
@@ -445,7 +464,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     padding: '2rem',
                     justifyContent: 'start',
                     width: '100%',
-                    height: onUserProfile || onProfile || onConch ? '200px' : '500px',
+                    height: waveHeight,
                   }}
                 >
                   <div
@@ -514,7 +533,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                         type="button"
                         style={{
                           marginTop: onConch ? '10%' : '10%',
-                        //marginBottom: onConch ? '5%' : '',
+                          //marginBottom: onConch ? '5%' : '',
                           alignSelf: 'center',
                         }}
                         className="simple-btn"
@@ -582,14 +601,14 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 style={{ marginTop: '.5rem' }}
                 >
                     <div style={{ color: '#e1e1e5' }}>
-              {onConch ? <div></div> : (postObj.isLiked 
-                ? `Liked by you and ${postObj.likeCount - 1} other listeners` 
-                : `Liked by ${postObj.likeCount} listeners`)}
-            </div>
+                {onConch ? <div></div> : (postObj.isLiked 
+                  ? `Liked by you and ${postObj.likeCount - 1} other listeners` 
+                  : `Liked by ${postObj.likeCount} listeners`)}
+                </div>
                   <div style={{ color: '#e1e1e5', marginLeft: 'auto' }}>{duration ? duration : ''}</div>
                 </div>
               </div>
-              {onHome ? <div></div> : (<div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginTop: onConch ? '10px' : 'none', marginBottom: '8px', 
+              {onHome || isConch ? <div></div> : (<div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginTop: onConch ? '10px' : 'none', marginBottom: '8px', 
               }}>
               {postObj.isLiked ? (
                 <div>
@@ -701,6 +720,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 audioContext={audioContext}
                 addComment={addComment}
                 setAddComment={setAddComment}
+                onProfile={onProfile}
+                onUserProfile={onUserProfile}
               />
             </div>
             {/* )} */}
@@ -717,26 +738,34 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
           audioContext={audioContext}
         ></SharePost>
       </Modal>
-      {/* <Modal isOpen={showFullPost} onClose={() => setShowFullPost(false)} >
-        <WaveSurferComponent
-        postObj={postObj}
-        audioUrl={postObj.soundUrl}
-        postId={postObj.id}
-        userId={userId}
-        getPosts={getPosts}
-        updatePost={updatePost}
-        onProfile={onProfile}
-        audioContext={audioContext}
-        feed={feed}
-        setIsDeleting={setIsDeleting}
-        setCorrectPostId={setCorrectPostId}
-        setSelectedUserPosts={setSelectedUserPosts}
-        isDeleting={isDeleting}
-        setCurrentDeletePostId={setCurrentDeletePostId}
-        onUserProfile={onUserProfile}
-        setOnProfile={setOnProfile}
-        ></WaveSurferComponent>
-      </Modal> */}
+      {
+        showBigPost && bigPost ?
+        <Modal show={showBigPost && bigPost } onHide={() => setShowBigPost(false)} >
+          <Modal.Body className='bs-bigPost-modal-content'>
+                <WaveSurferComponent
+                postObj={bigPost}
+                audioUrl={bigPost.soundUrl}
+                postId={bigPost.id}
+                userId={userId}
+                getPosts={getPosts}
+                updatePost={updatePost}
+                //onProfile={onProfile}
+                audioContext={audioContext}
+                feed={feed}
+                setIsDeleting={setIsDeleting}
+                setCorrectPostId={setCorrectPostId}
+                setSelectedUserPosts={setSelectedUserPosts}
+                isDeleting={isDeleting}
+                setCurrentDeletePostId={setCurrentDeletePostId}
+                //onUserProfile={onUserProfile}
+                setOnProfile={setOnProfile}
+                waveHeight={300}
+                containerType='big'
+                ></WaveSurferComponent> 
+                </Modal.Body>
+              </Modal> 
+          : ''
+      }
     </div>
   );
 };
@@ -804,3 +833,4 @@ export default WaveSurferComponent;
                   ) : (
                     <div></div>
                   )}  */
+                 

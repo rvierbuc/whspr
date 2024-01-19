@@ -86,7 +86,7 @@ router.get('/getAudio', async (req: Request, res: Response) => {
   }
 });
 
-router.post('/conch', async (req: Request, res: Response) => {
+router.post('/conch', upload.single('audio'), async (req: Request, res: Response) => {
   const { sendingUserId, title, receivingUserId } = req.body;
   console.log('HEEEREEE', req.body)
   if (!req.file) {

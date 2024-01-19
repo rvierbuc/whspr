@@ -186,7 +186,8 @@ const saveAudioConch = async (audio: any, sendingUserId, receivingUserId, title:
         receivingUserId,
         sendingUserId,
         title,
-        soundUrl: downloadURL
+        soundUrl: downloadURL,
+        hasSeen: false,
       })
     ])
     //const commentId = await conchRecord.get('id')
