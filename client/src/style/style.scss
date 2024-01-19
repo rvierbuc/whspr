@@ -797,15 +797,15 @@ body {
 
 .ais-SearchBox-input {
   flex: 1;
-  height: 38px; /* Adjust the height as needed */
+  height: 38px;
   padding: 6px 12px;
   font-size: 14px;
   line-height: 1.42857143;
   color: #555555;
   background-color: rgb(33, 37, 41);
   border: 1px solid #cccccc;
-  width: 230px;
-  max-width: 230px;
+  width: 12vw;
+  max-width: 17vw;
 }
 
 .ais-SearchBox-submit {
@@ -821,12 +821,15 @@ body {
 .ais-SearchBox-SubmitIcon {
   color:#ffff;
 }
-ais-SearchBox-reset {
+.ais-SearchBox-reset {
   display: none !important;
+  .ais-SearchBox-resetIcon {
+    display: none;
+  }
 }
+
 #post-card-box {
-  max-width: 520px;
-  max-height: 341px;
+  max-width: 40vw;
 }
 
 #cat-hit {

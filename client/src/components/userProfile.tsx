@@ -13,7 +13,7 @@ import { Link } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap';
 import { FaSearch } from 'react-icons/fa';
 //edit profile imports:
-import { Modal as CustomModal } from './Modal'
+import { Modal as CustomModal } from './Modal';
 interface PostAttributes {
   id: number;
   userId: number;
@@ -89,11 +89,11 @@ const UserProfile = ({
   const [onProfile, setOnProfile] = useState<boolean>(true);
   const [onUserProfile, setOnUserProfile] = useState<boolean>(true);
   const [selectedUserFollowers, setSelectedUserFollowers] = useState<
-    FollowerAttributes[]
+  FollowerAttributes[]
   >([]);
   const [currentDeletePostId, setCurrentDeletePostId] = useState<number>(0);
   const [selectedUserFollowing, setSelectedUserFollowing] = useState<
-    FollowingAttributes[]
+  FollowingAttributes[]
   >([]);
   const [displayFollowers, setDisplayFollowers] = useState<boolean>(true);
   const [followerCount, setFollowerCount] = useState<number>(0);
@@ -101,19 +101,19 @@ const UserProfile = ({
   const [searchModal, setSearchModal] = useState<boolean>(false);
   const [searchInput, setSearchInput] = useState<string>('');
   const [followerSearchResults, setFollowerSearchResults] = useState<
-    FollowerAttributes[]
+  FollowerAttributes[]
   >([]);
   const [followingSearchResults, setFollowingSearchResults] = useState<
-    FollowingAttributes[]
+  FollowingAttributes[]
   >([]);
   //editing profile states
   const [username, setUsername] = useState(currentUser.displayUsername || currentUser.username);
   const [usernameError, setUsernameError] = useState('');
-  const [profileImgError, setProfileImgError] = useState('')
+  const [profileImgError, setProfileImgError] = useState('');
   const [profileImg, setprofileImg] = useState(currentUser.profileImgUrl);
   const [userBio, setUserBio] = useState(currentUser.userBio);
   const [openModal, setOpenModal] = useState(null);
-  const [rerender, setRerender] = useState(0)
+  const [rerender, setRerender] = useState(0);
   // setting a delete state => if true => render a fade in asking if the user wants to delete the post
   // then if they delete => set the state with the current posts
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -234,11 +234,11 @@ const UserProfile = ({
   };
 
   const updateBio = () => {
-    let userId = currentUser.id.toString()
+    const userId = currentUser.id.toString();
     axios.patch('/update-bio', { userBio: userBio, userId })
       .then(response => {
         console.log('Profile updated:', response.data);
-        setUserBio(userBio)
+        setUserBio(userBio);
         closeModalHandler();
       })
       .catch(error => {
@@ -247,13 +247,13 @@ const UserProfile = ({
   };
 
   const updateUsername = () => {
-    let userId = currentUser.id.toString()
+    const userId = currentUser.id.toString();
     setUsernameError('');
     axios.post('/update-username', { displayUsername: username, userId })
       .then(response => {
         console.log('Profile updated:', response.data);
-        setUsername(username)
-        console.log(rerender)
+        setUsername(username);
+        console.log(rerender);
         closeModalHandler();
       })
       .catch(error => {
@@ -265,12 +265,12 @@ const UserProfile = ({
   };
 
   const uploadImage = () => {
-    setProfileImgError('')
-    let userId = currentUser.id.toString()
+    setProfileImgError('');
+    const userId = currentUser.id.toString();
     const formData = new FormData();
 
     if (!profileImg) {
-      setProfileImgError('Please select an image.')
+      setProfileImgError('Please select an image.');
       console.error('image not selected');
       return;
     }
@@ -284,12 +284,12 @@ const UserProfile = ({
       },
     })
       .then(() => {
-        window.location.reload()
+        window.location.reload();
         closeModalHandler();
         console.log('Image uploaded correctly');
       })
       .catch(error => {
-        setProfileImgError('Please select an image.')
+        setProfileImgError('Please select an image.');
         console.error('Error uploading image:', error);
       });
   };
@@ -478,7 +478,7 @@ const UserProfile = ({
                 <h2 style={{ color: 'white' }}>{username}</h2>
               </div>
 
-              <div className="user-profile-bio" onClick={() => openModalHandler('bio')}>{userBio || "Click to add bio"}
+              <div className="user-profile-bio" onClick={() => openModalHandler('bio')}>{userBio || 'Click to add bio'}
                 <div className="modal-button-container">
                   <CustomModal className="modal-profile-edit" isOpen={openModal === 'bio'} onClose={closeModalHandler}>
                     <h2>Change Your Bio</h2>
