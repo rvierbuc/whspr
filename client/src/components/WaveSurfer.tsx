@@ -436,7 +436,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   marginTop: onProfile ? '0px' : '1rem',
                   height: waveHeight,
                   borderRadius: '6px',
-                  //position: 'relative',
+                  position: 'relative',
                 }}
               >
                 <div id={containerId}></div>
@@ -712,6 +712,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 onProfile={onProfile}
                 onUserProfile={onUserProfile}
                 waveHeight={waveHeight}
+                onConch={onConch}
               />
             </div>
             {/* )} */}

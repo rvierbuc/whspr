@@ -47,6 +47,8 @@ body {
   border-radius:8px;
   position: absolute; 
   z-index: 1050;
+  animation: slide-up 1s, ease-in
+  // transition: all .3s ease-out;
 }
 //post background effects
 .card {
@@ -467,7 +469,7 @@ body {
 }
 
 /* Handle */
-.on-profile-tags::-webkit-scrollbar-thumb:vertical {
+.on-profile-tags::-webkit-scrollbar-thumb:vertical:hover {
   width: 8px;
   background: #e9ecf313;
   border-radius: 26px;
@@ -1399,7 +1401,17 @@ margin-top: 1rem;
     margin-left: 36%;
   }
 }
-
+@keyframes slide-up {
+  from {
+    //transform: rotate(.25turn);
+    height: 0;
+  }
+  to {
+    // transform: rotate(-.25turn);
+    // transform: rotate(.25turn);
+   height:100%
+  }
+}
 
 
 .ocean {
