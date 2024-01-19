@@ -16,7 +16,7 @@ import {
   WhsprAIProps,
   msMaxTouchPointsCheck,
   PressTime,
-} from './types/WhsprAITypes';
+} from './interfacesandtypes/WhsprAITypes';
 //img imports
 import mute from '../style/mute.svg';
 import unmute from '../style/unmute.svg';
@@ -398,86 +398,88 @@ export const WhsprAI = ({ audioContext }: WhsprAIProps): ReactElement => {
 
 
   return (
-    <div className='container-whsprAI'>
-      <div className='card-whsprAI' ref={cardRef} style={{ height: 'calc(100vh - 150px)' }}>
-        <div className="help-btn-container">
-          <img
-            src={require('../style/help.png')}
-            className='help-btn'
-            title='Help'
-            onClick={() => setModalOpen(!modalOpen)}
-            style={{ opacity: modalOpen ? .25 : 1 }}
-          />
-          <div className="help-modal-whsprAI" onClick={() => setModalOpen(!modalOpen)}>
-            <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} >
-              <p>Press and hold the button to talk to Whisper, our AI chatbot.</p>
-            </Modal>
-          </div>
-        </div>
-        <div className='pause-btn-container'>
-          <img
-            title={!isPaused ? 'Pause' : 'Play'}
-            src={!isPaused ? pause : play}
-            className={`pause-btn ${!isPlaying ? 'disabled' : ''}`}
-            onClick={togglePause}
-          />
-        </div>
-        <div>
-          <div className="centered-whsprAI">
-            <div className="canvas-container-whsprAI">
-              <canvas ref={canvasRef} width="100vh" height="100" className="mt5"></canvas>
+    <div className='whsprAI'>
+      <div className='container-whsprAI'>
+        <div className='card-whsprAI' ref={cardRef} style={{ height: 'calc(100vh - 150px)' }}>
+          <div className="help-btn-container">
+            <img
+              src={require('../style/help.png')}
+              className='help-btn'
+              title='Help'
+              onClick={() => setModalOpen(!modalOpen)}
+              style={{ opacity: modalOpen ? .25 : 1 }}
+            />
+            <div className="help-modal-whsprAI" onClick={() => setModalOpen(!modalOpen)}>
+              <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} >
+                <p>Press and hold the button to talk to Whisper, our AI chatbot.</p>
+              </Modal>
             </div>
           </div>
-          <div className="press-to-talk-container">
-            {isLoading
-              ? (<img src={require('../style/loading.gif')}
-                className="loading-img"></img>)
-              : (<button
-                title="Press to talk"
-                onMouseDown={!isPhone ? (): void => { startUserMedia(); handlePressToTalkPress(); } : undefined}
-                onMouseUp={!isPhone ? handlePressToTalkRelease : undefined}
-                onMouseLeave={!isPhone ? handlePressToTalkRelease : undefined}
-                onTouchStart={isPhone ? (): void => { startUserMedia(); handlePressToTalkPress(); } : undefined}
-                onTouchEnd={isPhone ? handlePressToTalkRelease : undefined}
-                onContextMenu={(e) => e.preventDefault()}
-                className="push--skeuo"
-                style={{ border: 'none' }}>
-                <span>
-                  press and<br />hold to talk
-                </span>
-              </button>
-              )}
+          <div className='pause-btn-container'>
+            <img
+              title={!isPaused ? 'Pause' : 'Play'}
+              src={!isPaused ? pause : play}
+              className={`pause-btn ${!isPlaying ? 'disabled' : ''}`}
+              onClick={togglePause}
+            />
           </div>
-          {showText && <div className='floating-text-whsprAI' ref={transcript}>
-            {text.map((item, index) => (
-              <div key={index} >
-                <div><span className="chatHistoryName">You: </span><span className="chatHistoryText">{item}</span></div>
-                {AIResponse[index] && <div><span className="chatHistoryName">Whisper: </span><span className="chatHistoryText">{AIResponse[index]}</span></div>}
+          <div>
+            <div className="centered-whsprAI">
+              <div className="canvas-container-whsprAI">
+                <canvas ref={canvasRef} width="100vh" height="100" className="mt5"></canvas>
               </div>
-            ))}
-          </div>}
-        </div>
-        <div className='mute-btn-container'>
-          <img
-            title={!isMuted ? 'Mute' : 'Unmute'}
-            src={isMuted ? mute : unmute}
-            className={`mute-btn ${!isPlaying ? 'disabled' : ''}`}
-            onClick={toggleMute}
-          />
-        </div>
-        <div className='text-btn-container'>
-          <img
-            title="Chat Transcript"
-            src={require('../style/posticon.png')}
-            className='text-btn'
-            onClick={handleSetShowText}
-            style={{ opacity: showText ? .25 : 1 }}
-          />
-          {newMessageCount > 0 && (
-            <div className='message-count-whsprAI'>
-              {newMessageCount}
             </div>
-          )}
+            <div className="press-to-talk-container">
+              {isLoading
+                ? (<img src={require('../style/loading.gif')}
+                  className="loading-img"></img>)
+                : (<button
+                  title="Press to talk"
+                  onMouseDown={!isPhone ? (): void => { startUserMedia(); handlePressToTalkPress(); } : undefined}
+                  onMouseUp={!isPhone ? handlePressToTalkRelease : undefined}
+                  onMouseLeave={!isPhone ? handlePressToTalkRelease : undefined}
+                  onTouchStart={isPhone ? (): void => { startUserMedia(); handlePressToTalkPress(); } : undefined}
+                  onTouchEnd={isPhone ? handlePressToTalkRelease : undefined}
+                  onContextMenu={(e) => e.preventDefault()}
+                  className="push--skeuo"
+                  style={{ border: 'none' }}>
+                  <span>
+                    press and<br />hold to talk
+                  </span>
+                </button>
+                )}
+            </div>
+            {showText && <div className='floating-text-whsprAI' ref={transcript}>
+              {text.map((item, index) => (
+                <div key={index} >
+                  <div><span className="chatHistoryName">You: </span><span className="chatHistoryText">{item}</span></div>
+                  {AIResponse[index] && <div><span className="chatHistoryName">Whisper: </span><span className="chatHistoryText">{AIResponse[index]}</span></div>}
+                </div>
+              ))}
+            </div>}
+          </div>
+          <div className='mute-btn-container'>
+            <img
+              title={!isMuted ? 'Mute' : 'Unmute'}
+              src={isMuted ? mute : unmute}
+              className={`mute-btn ${!isPlaying ? 'disabled' : ''}`}
+              onClick={toggleMute}
+            />
+          </div>
+          <div className='text-btn-container'>
+            <img
+              title="Chat Transcript"
+              src={require('../style/posticon.png')}
+              className='text-btn'
+              onClick={handleSetShowText}
+              style={{ opacity: showText ? .25 : 1 }}
+            />
+            {newMessageCount > 0 && (
+              <div className='message-count-whsprAI'>
+                {newMessageCount}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
