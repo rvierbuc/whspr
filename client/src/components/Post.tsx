@@ -14,10 +14,11 @@ interface PostProps {
   addComment: boolean,
   setAddComment: any,
   onProfile: boolean,
-  onUserProfile: boolean
+  onUserProfile: boolean,
+  waveHeight: number,
 }
 const Post = (props) => {
-  const { postObj, userId, updatePost, audioContext, addComment, setAddComment, onProfile, onUserProfile } = props;
+  const { postObj, userId, updatePost, audioContext, addComment, setAddComment, onProfile, onUserProfile, waveHeight } = props;
   const [hearLess, setHearLess] = useState<boolean>(false);
   const [comments, setComments] = useState<any>([]);
   const getComments = async () => {
@@ -42,7 +43,7 @@ const Post = (props) => {
       {
         addComment ?
         // <Modal show={addComment}>
-        <div id="header" style={{ margin: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center', }}>
+        <div className= 'post-bottom-overlay' style={{ margin: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center', height: waveHeight / 2, }}>
         <div style={{ margin: '.5rem 0 .25rem 0', fontSize: onProfile || onUserProfile ? '1rem' : '2rem' }}>Record Your Comment</div>
          <RecordComment
          audioContext={audioContext}
@@ -62,7 +63,7 @@ const Post = (props) => {
      
 
       { comments.length > 0
-        ? <div className='card on-profile-tags' style={{ margin: '1rem', maxHeight:'25rem',overflow:'scroll' }} >
+        ? <div className='post-bottom-overlay on-profile-tags' style={{ margin: '1rem', maxHeight:'22rem',overflow:'scroll' }} >
           <div style={{ marginLeft: 'auto', marginRight:'auto', fontSize: onProfile || onUserProfile ? '1rem' : '2rem', color: '#e1e1e5' }}>Comments</div>
       { comments.map((commentObj: any) => (
           <Comment 

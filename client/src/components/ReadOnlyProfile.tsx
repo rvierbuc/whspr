@@ -93,9 +93,6 @@ const ReadOnlyProfile = ({ audioContext }) => {
       const updatedPost: any = await axios.get(
         `/post/updatedPost/${postId}/${user.id}`,
       );
-      // if (bigPost) {
-      //   setBigPost(updatedPost.data);
-      // }
       const postIndex = selectedUserInfo.findIndex(
         (post) => post.id === updatedPost.data.id,
       );

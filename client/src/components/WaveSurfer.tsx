@@ -42,10 +42,10 @@ interface WaveSurferProps {
   waveHeight: number;
   isConch: boolean;
   containerType: string;
-  showBigPost: boolean,
-  setShowBigPost: any,
-  bigPost: any,
-  setBigPost: any,
+  // showBigPost: boolean,
+  // setShowBigPost: any,
+  // bigPost: any,
+  // setBigPost: any,
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
@@ -70,10 +70,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   waveHeight,
   isConch,
   containerType,
-  // setBigPost,
-  // setShowBigPost,
-  // bigPost,
-  // showBigPost
+
 }) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
@@ -84,8 +81,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [duration, setDuration] = useState<string>();
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [addComment, setAddComment] = useState<boolean>(false);
-  const [showBigPost, setShowBigPost] = useState<boolean>(false);
-  const [bigPost, setBigPost] = useState(null);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
 
   //const [hasCategories, setHasCategories] = useState<boolean>();
@@ -278,13 +273,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
     console.log('wave created!');
 
   };
-  console.log('before handle', showBigPost)
-  const handleBigPost = (bigPostObj) => {
-    console.log('big post', bigPostObj)
-    setShowBigPost((prevShowBigPost) => !prevShowBigPost);
-    setBigPost(bigPostObj);
-  };
-  //console.log('categories?', hasCategories);
+
   useEffect(() => {
     createSoundWaves();
     isFollowing();
@@ -722,6 +711,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 setAddComment={setAddComment}
                 onProfile={onProfile}
                 onUserProfile={onUserProfile}
+                waveHeight={waveHeight}
               />
             </div>
             {/* )} */}
@@ -738,99 +728,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
           audioContext={audioContext}
         ></SharePost>
       </Modal>
-      {
-        showBigPost && bigPost ?
-        <Modal show={showBigPost && bigPost } onHide={() => setShowBigPost(false)} >
-          <Modal.Body className='bs-bigPost-modal-content'>
-                <WaveSurferComponent
-                postObj={bigPost}
-                audioUrl={bigPost.soundUrl}
-                postId={bigPost.id}
-                userId={userId}
-                getPosts={getPosts}
-                updatePost={updatePost}
-                //onProfile={onProfile}
-                audioContext={audioContext}
-                feed={feed}
-                setIsDeleting={setIsDeleting}
-                setCorrectPostId={setCorrectPostId}
-                setSelectedUserPosts={setSelectedUserPosts}
-                isDeleting={isDeleting}
-                setCurrentDeletePostId={setCurrentDeletePostId}
-                //onUserProfile={onUserProfile}
-                setOnProfile={setOnProfile}
-                waveHeight={300}
-                containerType='big'
-                ></WaveSurferComponent> 
-                </Modal.Body>
-              </Modal> 
-          : ''
-      }
     </div>
   );
 };
 
 export default WaveSurferComponent;
-/**
- * listen stat
- * <div>
-                    <img
-                      src={require('../style/listenIcon.png')}
-                      style={{
-                        width: 'auto',
-                        height: '35px',
-                        objectFit: 'scale-down',
-                        color: '#e1e1e5',
-                      }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      marginLeft: '2px',
-                      marginRight: '2%',
-                      fontSize: 'x-large',
-                      color: '#e1e1e5',
-                    }}
-                  >
-                    {postObj.listenCount}
-                  </div>
- */
-/**
- * old delete
- *  {/* {onUserProfile ? (
-                    <div>
-                      {' '}
-                      <div>
-                        <img
-                          src={require('../style/bin.png')}
-                          style={{
-                            width: 'auto',
-                            height: '40px',
-                            objectFit: 'scale-down',
-                            color: '#e1e1e5',
-                          }}
-                          onClick={() => {
-                            if (deleting === false) {
-                              setDeleting(true);
-                              setIsDeleting(true);
-                            } else {
-                              setDeleting(false);
-                              setIsDeleting(false);
-                            }
-                          }}
-                        />
-                      </div>
-                      <div>
-                        {deleting === true && (
-                          <Modal
-                            isOpen={deleting}
-                            onClose={() => setDeleting(false)}
-                            children={<Delete userId={userId} id={postId} />}
-                          />
-                        )}
-                      </div>{' '}
-                    </div>
-                  ) : (
-                    <div></div>
-                  )}  */
-                 
