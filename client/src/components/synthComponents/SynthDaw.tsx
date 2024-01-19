@@ -107,8 +107,8 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
       if (id === 'Q' && phaseFilter) {
         phaseFilter.Q.value = Number(value);
       }
-      if (id === 'phaseWet' && phaseFilter) {
-        phaseFilter.wet.value = Number(value);
+      if (id === 'octaves' && phaseFilter) {
+        phaseFilter.octaves = Number(value);
       }
     }
   };

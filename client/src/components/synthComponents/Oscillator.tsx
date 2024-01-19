@@ -67,7 +67,7 @@ const Oscillator = ({
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const { oscillator, fatOscillator, fmOscillator, amOscillator } = oscillatorOptions
   const { type, frequency, detune } = oscSettings;
-  const { Q, phaseWet } = phaserSettings;
+  const { Q, octaves } = phaserSettings;
   const { wet, distortion } = distortionSettings;
   const [selectedOscillator, setSelectedOscillator] = useState<string>(oscillatorKeys[0]);
   const gainNode: Tone.Gain = new Tone.Gain();
@@ -160,6 +160,7 @@ const Oscillator = ({
                 className={`btn-sm btn-dark ${synthBypass.phaseFilter && 'activeButton'}`}
                 style={{display: 'inline-block', marginLeft: '1.7rem' }}
                 id='phaseFilter'
+                disabled={isPlaying}
                 onClick={changePhase}>Phaser</Button>
             </div>
             <h5 className="text-white" style={{display: 'inline-block', marginLeft: '0.5rem'}}><SlQuestion id="phaser" onClick={handleInfoToggle} /></h5>
@@ -179,14 +180,14 @@ const Oscillator = ({
                   step={0.05}/>
               </div>
               <div className="text-center text-white">
-                <h6>Dry/Wet</h6>
+                <h6>Octaves</h6>
                 <input
-                  value={phaseWet}
-                  max="1"
-                  min="0"
+                  value={octaves}
+                  max="10"
+                  min="0.5"
                   onChange={changePhase}
                   disabled={!synthBypass.phaseFilter}
-                  id="phaseWet"
+                  id="octaves"
                   type="range"
                   step={0.05}/>
               </div>
@@ -199,6 +200,7 @@ const Oscillator = ({
                 className={`btn-sm btn-dark ${synthBypass.distortionFilter && 'activeButton'}`}
                 style={{ display: 'inline-block', marginLeft: '1.7rem' }}
                 id='distortionFilter'
+                disabled={isPlaying}
                 onClick={changeDistortion}
                 >Distortion</Button>
             </div>
