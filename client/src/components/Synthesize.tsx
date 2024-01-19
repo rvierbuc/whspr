@@ -55,8 +55,8 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
   const phaseFilter: Tone.Phaser = new Tone.Phaser({
     frequency: 15,
     Q: 10,
-    octaves: 4,
-    wet: 0.5,
+    octaves: 5.2,
+    wet: 1,
   }).toDestination();
 
   const distortionFilter: Tone.Distortion = new Tone.Distortion().toDestination();
