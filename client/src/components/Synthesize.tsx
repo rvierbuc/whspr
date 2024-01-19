@@ -50,7 +50,7 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
   oscillatorOptions.oscillator.frequency.value = 330;
   oscillatorOptions.fatOscillator.frequency.value = 330;
   oscillatorOptions.fmOscillator.frequency.value = 330;
-  oscillatorOptions.amOscillator.frequency.value = 0;
+  oscillatorOptions.amOscillator.frequency.value = 330;
 
   const phaseFilter: Tone.Phaser = new Tone.Phaser({
     frequency: 15,
@@ -97,7 +97,7 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
             <div>
               <ul>
                 <li><em>Spread</em>: Controls the spread of the peaks in the waveform magnitude.</li>
-                <li><em>Dry/Wet</em>: Controls how much of the phaser is present in the output of the audio. The drier the filter, the less present it is.</li>
+                <li><em>Octaves</em>: Controls the distance between the high and low peaks in the spread of the frequencies</li>
               </ul>
             </div> : null}
           {toggleInfo.distortion ?
