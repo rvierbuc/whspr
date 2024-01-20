@@ -64,7 +64,7 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
   distortionFilter.distortion = 0.5;
 
   return (
-    <div id="post-card-box" style={{ display: 'flexbox' }}>
+    <div id="post-card-box" id="post-card-box" style={{ display: 'flexbox', justifyContent: 'center' }}>
       <Container className="p-3 rounded w-75" id="post-card-box">
         <Modal show={toggleModal} centered className='synthModal'>
           <Modal.Header>
