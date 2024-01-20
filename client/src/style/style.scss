@@ -885,9 +885,14 @@ body {
 ais-SearchBox-reset {
   display: none !important;
 }
-// #post-card-box {
-//   max-width: 520px;
-//   max-height: 341px;
+
+#post-card-box {
+  width: 95vw;
+  height: 95vh;
+}
+
+// #post-card-row {
+//   display: flex-row;
 // }
 
 #cat-hit {
