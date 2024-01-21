@@ -57,7 +57,7 @@ export const Mail: React.FC<WaveSurferProps> = ({
         ? <div id='header'>
           <div  style={{ width: '90%', display: 'flex', flexDirection: 'column', marginTop: '.5rem', marginLeft: '.5rem', marginBottom: '.5rem' }} >
             <div style={{ display: 'flex', flexDirection: 'row' }}>
-              <div>{user ? user.username : ''}</div>
+              <div style={{fontStyle:'italic'}}>{user ? user.username : ''}</div>
               <div style={{ fontSize: '.75rem', marginRight: '.5rem', marginLeft: 'auto' }}>{isToday(sharePost.createdAt) ? dayjs(sharePost.createdAt).format('LT') : dayjs(sharePost.createdAt).format('MMM D')}</div>
             </div>
           <div>{sharePost.Post.title}</div>

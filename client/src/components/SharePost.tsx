@@ -61,7 +61,7 @@ export const SharePost: React.FC<SharePostProps> = ({ audioContext, userId, post
     //         </div>
     //       </Modal.Header> */}
           <Modal.Body >
-            <div style={{ marginBottom:'1rem', fontSize:'2.5rem'}}>Sharing...</div>
+            <div style={{ marginBottom: '1rem', fontSize: '2.5rem' }}>Sharing...</div>
             <div id='header'>
               <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 
@@ -86,8 +86,8 @@ export const SharePost: React.FC<SharePostProps> = ({ audioContext, userId, post
               type='sharePost'
               ></WaveSurferComponent>
              </div>
-              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin:'2rem 0rem 1rem 0rem' }}> 
-              <div style={{ marginRight: '.5rem', fontSize:'1.25rem' }}>To:</div>
+              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '2rem 0rem 1rem 0rem' }}> 
+              <div style={{ marginRight: '.5rem', fontSize: '1.25rem' }}>To:</div>
               {sendToUserObj ? <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 <img
                       src={sendToUserObj.profileImgUrl}
@@ -103,7 +103,7 @@ export const SharePost: React.FC<SharePostProps> = ({ audioContext, userId, post
                         
                       }}
                     />
-                    <div style={{fontSize:'1.5rem'}}>{sendToUserObj.username}</div>
+                    <div style={{ fontSize: '1.5rem' }}>{sendToUserObj.username}</div>
               </div> : 
               <div>
               <input
@@ -112,7 +112,7 @@ export const SharePost: React.FC<SharePostProps> = ({ audioContext, userId, post
               value={searchInput}
               onChange={handleSearchChange}
               />
-              <button style={{marginLeft:'1rem', padding:'.25rem'}} className='share-btn' onClick={() => handleSearchSubmission()}>
+              <button style={{ marginLeft: '1rem', padding: '.25rem' }} className='share-btn' onClick={() => handleSearchSubmission()}>
               Search
             </button>
               </div>
@@ -120,7 +120,7 @@ export const SharePost: React.FC<SharePostProps> = ({ audioContext, userId, post
               </div>
               {followingSearchResults 
                 ? (followingSearchResults.length > 0 ? followingSearchResults.map((user) => (
-                <div className='share-search-result' style={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}
+                <div className='share-search-result' style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
                 key={user.id} 
                 onClick={() => handleSelectSendToUser(user)}
                 >
@@ -131,7 +131,7 @@ export const SharePost: React.FC<SharePostProps> = ({ audioContext, userId, post
                       style={{
                         width: 'auto',
                         height: '35px',
-                        margin:'.5rem 1rem .5rem 1rem',
+                        margin: '.5rem 1rem .5rem 1rem',
                         objectFit: 'scale-down',
                         borderStyle: 'solid',
                         borderColor: '#3c3556',
@@ -141,7 +141,7 @@ export const SharePost: React.FC<SharePostProps> = ({ audioContext, userId, post
                   </div>
                 )) : <div>no user found</div>) : <div></div> }
                 {sendToUserObj ? <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                  <div style={{ marginBottom: '1rem', width:'50%', fontSize:'1.25rem' }}>Record a Message</div>
+                  <div style={{ marginBottom: '1rem', width: '50%', fontSize: '1.25rem' }}>Record a Message</div>
                   <RecordComment
                   isSharing={true}
                   sentToId={sendToUserObj.id}

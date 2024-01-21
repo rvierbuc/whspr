@@ -86,9 +86,9 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
     //console.log(selectedTags);
     //getPosts('explore', 'none')
   };
-  const updatePost = async (postId, updateType) => {
+  const updatePost = async (postId, userId) => {
     try {
-      const updatedPost: any = await axios.get(`/post/updatedPost/${postId}/${updateType}`);
+      const updatedPost: any = await axios.get(`/post/updatedPost/${postId}/${userId}`);
       console.log('updated post obj', updatedPost);
       const postIndex = posts.findIndex((post) => post.id === updatedPost.data.id);
       updatedPost.data.rank = posts[postIndex].rank;

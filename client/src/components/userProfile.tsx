@@ -181,22 +181,23 @@ const UserProfile = ({
     }
   };
   // function to update the posts
-  const updatePost = async (postId, updateType): Promise<void> => {
+  const updatePost = async (postId, userId): Promise<void> => {
     try {
       // make a request to the server endpoint made for updating posts and use the post id and the current user id as params
       const updatedPost = await axios.get(
-        `/post/updatedPost/${postId}/${currentUser.id}`,
+        `/post/updatedPost/${postId}/${userId}`,
       );
       // find the index of the post that was updated
       const postIndex = await selectedUserPosts.findIndex(
         (post) => post.id === updatedPost.data.id,
       );
       //updatedPost.data.rank = selectedUserPosts[postIndex].rank;
-      const postsWUpdatedPost = await selectedUserPosts.splice(
+      const postsWUpdatedPost = await selectedUserPosts.toSpliced(
         postIndex,
         1,
         updatedPost.data,
       );
+      setSelectedUserPosts(postsWUpdatedPost)
     } catch (error) {
       console.log('could not update post', error);
     }

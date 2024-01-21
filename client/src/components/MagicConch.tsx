@@ -121,8 +121,7 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
   return (
         <div >
 {/** commented out code below component */}
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '-3rem' }}>
-    <div className='inbox-title'>inbox</div>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
    {/* <PostConch audioContext={audioContext} />  */}
 {/* {type === 'inbox' ?
     <div >
@@ -170,9 +169,10 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
         <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
       </svg>
       </div>
-      <div className='conch-title' >
+      <div className='conch-title' style={{fontFamily:'headerFont', textShadow:'3px 3px 3px rgb(54, 89, 169)', fontSize:'2.3rem', margin:'-1.5rem 1rem -1rem 1rem'}}>
         A MAGIC CONCH HAS WASHED UP JUST FOR YOU!
       </div>
+      {/* <img src={require('../style/conch.png')} style={{margin:'1rem'}}/> */}
           <WaveSurferComponent onConch={true} containerType={'conch'} isConch={true} waveHeight={300} postObj={message} audioUrl={message.soundUrl} postId={message.id} />
           {/* <div className="wave"></div> */}
       </div>
@@ -224,7 +224,7 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
                </div>
                  : <div className='display-message' id='no-message'>
                   <img src={require('../style/listen.png')} id='select-mess-img'/>
-                  <div style={{ fontSize: '2rem', width: '25rem', overflow: 'wrap', marginBottom: '10rem', textAlign: 'center', color: '#e1e1e1' }}>Select a message from the left to listen</div>
+                  <div style={{ fontSize: '2rem', width: '25rem', overflow: 'wrap', marginBottom: '10rem', textAlign: 'center', color: '#e1e1e1', fontFamily:'headerFont' }}>Select a message from the left to listen</div>
                   </div>}
             </div>
         </div>

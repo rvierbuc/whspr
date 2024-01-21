@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, Navigate, useNavigate, Outlet } from 'react-router-dom';
+import { Link, Navigate, useNavigate, Outlet, useLocation } from 'react-router-dom';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
@@ -19,6 +19,7 @@ const NavBar = () => {
   const [show, setShow] = useState<boolean>(false);
   const { type }: Readonly<Params<string>> = useParams();
   const [logo, setLogo] = useState<any>(require('../style/whspr-logo.png'));
+  const location = useLocation();
   const navigate = useNavigate();
   const handleNavigation = (path: string) => {
     setIsOpen(() => !isOpen);
@@ -42,9 +43,17 @@ const NavBar = () => {
       setLogo(require('../style/explore-logo.png'));
     } else if (type === 'following') {
       setLogo(require('../style/following-logo.png'));
+    } else if (location.pathname === '/protected/inbox') {
+      setLogo(require('../style/inbox-logo.png'));
+    } else if (location.pathname === '/protected/radio') {
+      setLogo(require('../style/radio-logo.png'));
+    } else if (location.pathname === '/protected/WhsprAI') {
+      setLogo(require('../style/AI-logo.png'));
     } else if (!type) {
       setLogo(require('../style/whspr-logo.png'));
+      console.log('use location', location);
     }
+    
   });
   return (
     <>
@@ -121,7 +130,7 @@ const NavBar = () => {
                 >
                   Say Something
                 </Nav.Link>
-                <Nav.Link onClick={() => handleNavigation('/protected/conch')}>
+                <Nav.Link onClick={() => handleNavigation('/protected/inbox')}>
                   Inbox
                 </Nav.Link>
                 <Nav.Link

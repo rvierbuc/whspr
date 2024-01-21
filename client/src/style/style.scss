@@ -1396,7 +1396,6 @@ input[type='range']::-moz-range-thumb {
   margin-left: auto;
   display: flex;
   align-items: center;
-  min-height: calc(100% - 500px * 2);
   position: relative;
   width: auto;
   border-radius: 1rem;
