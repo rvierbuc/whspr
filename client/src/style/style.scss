@@ -890,16 +890,31 @@ ais-SearchBox-reset {
   width: 100vw;
 }
 
-@media only screen and (min-width: 480px) {
- #filterBtn, #sine, #triangle, #square, #sawtooth, #oscillatorType {
-  min-width: 14vw;
-  min-height: 4.5vw;
- }
+#filterBtn, #sine, #triangle, #square, #sawtooth, #oscillatorType {
+min-width: 14vw;
+min-height: 4.5vh;
+font-size:larger;
+font-family: headerFont;
 }
 
-#phaseFilter, #distortionFilter {
+#oscillatorLabels {
+  font-family: 'headerFont';
+  font-size: large;
+}
+
+
+#phaseFilter {
+  min-width: 8vw;
+  min-height: 4.5vh;
+  font-size: large;
+  font-family: headerFont;
+}
+
+#distortionFilter {
   min-width: 10vw;
   min-height: 4.5vh;
+  font-size: large;
+  font-family: headerFont;
 }
 
 #phaser, #distortion, #oscType, #waveType {

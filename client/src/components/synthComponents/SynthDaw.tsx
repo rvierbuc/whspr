@@ -139,7 +139,7 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
           <button
             type="button"
             className="text-white btn btn-dark btn-rounded"
-            style={ { margin: '0.1rem', width: '20rem', minHeight: '4.5vw' } }
+            style={ { margin: '0.1rem', width: '20rem', minHeight: '4.5vw', fontFamily: 'headerFont' } }
             onClick={toggleSynth}>Synthesize your own sound!</button>
         </div>
         {addSynth === true &&

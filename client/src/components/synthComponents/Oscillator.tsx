@@ -126,7 +126,7 @@ const Oscillator = ({
         <Stack direction="vertical" gap={3} className="mx-auto mb-1">
           {/* oscillator types */}
           <div className="text-center text-white oscillatorOptions">
-            <h4 className="text-center mb-2">Oscillator Type <SlQuestion id="oscType" onClick={handleInfoToggle} /></h4>
+            <h4 id="oscillatorLabels" className="text-center mb-2">Oscillator Type <SlQuestion id="oscType" onClick={handleInfoToggle} /></h4>
             <Button id="oscillatorType" className={`btn mx-1  ${selectedOscillator === oscillatorKeys[0] && 'activeButton'}`} variant='dark' onClick={() => handleOscillatorChange(oscillator)}>Default</Button>
             <Button id="oscillatorType" className={`btn mx-1 ${selectedOscillator === oscillatorKeys[1] && 'activeButton'}`} variant='dark' onClick={() => handleOscillatorChange(fatOscillator)} >Fat</Button>
             <Button id="oscillatorType" className={`btn mx-1 ${selectedOscillator === oscillatorKeys[2] && 'activeButton'}`} variant='dark' onClick={() => handleOscillatorChange(fmOscillator)} >FM</Button>
@@ -134,7 +134,7 @@ const Oscillator = ({
           </div>
           {/* wave types */}
           <div className="text-center text-white mx-auto">
-            <h4 className="text-center mb-2">Wave Type <SlQuestion id="waveType" onClick={handleInfoToggle} /></h4>
+            <h4 id="oscillatorLabels" className="text-center mb-2">Wave Type <SlQuestion id="waveType" onClick={handleInfoToggle} /></h4>
             <Button className={`btn mx-1 ${type === 'sine' && 'activeButton'}`} variant='dark' id="sine" onClick={(e) => handleTypeChange(e)}>Sine</Button>
             <Button className={`btn mx-1 ${type === 'triangle' && 'activeButton'}`} variant='dark' id="triangle" onClick={(e) => handleTypeChange(e)} >Triangle</Button>
             <Button className={`btn mx-1 ${type === 'square' && 'activeButton'}`} variant='dark' id="square" onClick={(e) => handleTypeChange(e)} >Square</Button>
@@ -144,11 +144,11 @@ const Oscillator = ({
           <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
             <Stack direction="horizontal" gap={5}>
               <div className="text-center text-white mr-1">
-                <h6>Frequency</h6>
+                <h6 id="oscillatorLabels">Frequency</h6>
                 <input value={frequency} max="660" onChange={changeValue} id="frequency" type="range" />
               </div>
               <div className="text-center text-white ml-1">
-                <h6>Detune</h6>
+                <h6 id="oscillatorLabels">Detune</h6>
                 <input value={detune} max="150" min="-150" onChange={changeValue} id="detune" type="range" />
               </div>
             </Stack>
@@ -168,7 +168,7 @@ const Oscillator = ({
           <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
             <Stack direction="horizontal" gap={5}>
               <div className="text-center text-white">
-                <h6>Spread</h6>
+                <h6 id="oscillatorLabels">Spread</h6>
                 <input
                   value={Q}
                   max="20"
@@ -180,7 +180,7 @@ const Oscillator = ({
                   step={0.05}/>
               </div>
               <div className="text-center text-white">
-                <h6>Octaves</h6>
+                <h6 id="oscillatorLabels">Octaves</h6>
                 <input
                   value={octaves}
                   max="10"
@@ -194,7 +194,7 @@ const Oscillator = ({
             </Stack>
           </div>
           {/* DISTORTION OPTIONS */}
-          <div className="mx-auto" style={{marginBottom: '-1rem'}}>
+          <div className="mx-auto" style={{marginBottom: '-0.7rem'}}>
             <div style={{ display: 'inline-block', justifyContent: 'center', marginLeft: '1.3rem' }}>
               <Button
                 className={`btn-sm btn-dark ${synthBypass.distortionFilter && 'activeButton'}`}
@@ -209,7 +209,7 @@ const Oscillator = ({
           <div className="mx-auto" style={{display: 'flex', justifyContent: 'center'}}>
             <Stack direction="horizontal" gap={5}>
               <div className="text-center text-white">
-                <h6>Distortion</h6>
+                <h6 id="oscillatorLabels">Distortion</h6>
                 <input
                   value={distortion}
                   max="1"
@@ -221,7 +221,7 @@ const Oscillator = ({
                   step={0.05}/>
               </div>
               <div className="text-center text-white">
-                <h6>Dry/Wet</h6>
+                <h6 id="oscillatorLabels">Dry/Wet</h6>
                 <input
                   value={wet}
                   max="1"
@@ -239,7 +239,7 @@ const Oscillator = ({
           <button
             type="button"
             className="btn btn-dark"
-            style={{ minHeight: '4.5vh'}}
+            style={{ minHeight: '4.5vh', fontSize: 'larger', fontFamily: 'headerFont' }}
             onClick={() => {
               if (isPlaying) {
                 gainNode.gain.rampTo(-2, 0.3);

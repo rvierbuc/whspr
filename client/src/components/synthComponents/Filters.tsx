@@ -129,7 +129,7 @@ const Filters = ({ setFilter, audioContext, filter }: Props) => {
     <Container className="text-center my-2 rounded" style={{ flexDirection: 'row', justifyContent: 'center' }}>
     <div id="synthFilters">
       <div id="synthFilters" style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-        <h5 className="text-white mb-2">Try out one of our filters</h5>
+        <h5 className="text-white mb-2" style={{ fontFamily: 'headerFont' }}>Try out one of our filters</h5>
       </div>
       <div>
         <Button style={{margin: '1rem'}} id="filterBtn" className={`btn text-white ${currentFilter === 'defaultSettings' && 'activeButton'}`}variant='dark' onClick={() => handleFilterChange(defaultSettings)}>None</Button>

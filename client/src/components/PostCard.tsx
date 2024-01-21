@@ -188,7 +188,7 @@ const PostCard = ({ setPostCategories, setPostTitle }) => {
       <div id="responsive-navbar-nav" className={postCreated ? 'show' : ''}>
         <div className="d-flex justify-content-center">
           <div>
-            <h4 className="mx-auto text-white" style={{ marginBottom: '0.9rem' }}>Title</h4>
+            <h4 className="mx-auto text-white" style={{ marginBottom: '0.9rem', fontFamily: 'headerFont' }}>Title</h4>
             <input type="text"
               maxLength={22}
               placeholder="Name your track"
@@ -201,7 +201,7 @@ const PostCard = ({ setPostCategories, setPostTitle }) => {
             />
           </div>
           <div>
-            <h4 className="mx-auto text-white" style={{ marginBottom: '0.9rem' }}>Categories</h4>
+            <h4 className="mx-auto text-white" style={{ marginBottom: '0.9rem', fontFamily: 'headerFont' }}>Categories</h4>
             <CategorySearch onCategorySelect={handleCategorySelect} />
           </div>
         </div>
