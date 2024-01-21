@@ -9,6 +9,7 @@ import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import { get } from 'http';
+import { Toaster } from 'react-hot-toast';
 
 const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   const [posts, setPosts] = useState<any>();
@@ -145,6 +146,7 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
         ? (posts.length === 0 ? <a href='explore' style={{ color: 'white', fontSize: 'xxx-large' }}>Explore Popular Posts to Find Friends</a>
           : posts.map((post: any) => (
             <div style={{ marginBottom: '2rem', maxWidth: '950px', marginLeft: 'auto', marginRight: 'auto' }} className="centered">
+              <Toaster />
               <WaveSurferComponent
                 key={post.id}
                 postObj={post}

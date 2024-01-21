@@ -18,6 +18,8 @@ import { MdDeleteOutline } from 'react-icons/md';
 import { TooltipComponent } from './Tooltip';
 import Modal from 'react-bootstrap/Modal';
 import { SharePost } from './SharePost';
+import toast, { Toaster } from 'react-hot-toast';
+
 
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
@@ -84,9 +86,45 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   //   }
   // };
 
+  // toast notifications
+  const notifyLike = (): void => {
+    toast.success('Post liked!', {
+      icon: '❤️‍🔥',
+      style: {
+        background: 'rgba(34, 221, 84, 0.785)',
+      },
+      position: 'top-right',
+    });
+  };
+  const notifyUnlike = (): void => {
+    toast.error('Post unliked!', {
+      icon: '💔',
+      style: {
+        background: 'rgba(221, 34, 34, 0.785)',
+      },
+      position: 'top-right',
+    });
+  };
+  const notifyFollow = (): void => {
+    toast.success('Followed!', {
+      icon: '🤝',
+      style: {
+        background: 'rgba(34, 221, 84, 0.785)',
+      },
+      position: 'top-right',
+    });
+  };
+  const notifyUnfollow = (): void => {
+    toast.error('Unfollowed!', {
+      icon: '👋',
+      style: {
+        background: 'rgba(221, 34, 34, 0.785)',
+      },
+      position: 'top-right',
+    });
+  };
 
-
-  const handleLike = async () => {
+  const handleLike = async ():Promise <void> => {
     try {
       await axios.post('/post/like', { userId, postId: postObj.id });
       await axios.put('/post/updateCount', {
@@ -95,11 +133,14 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
         id: postId,
       });
       await updatePost(postId, userId);
+      console.log('befre notify like');
+      notifyLike();
+      console.log('after notify like');
     } catch (error) {
       console.log('client could not like', error);
     }
   };
-  const handleUnlike = async () => {
+  const handleUnlike = async ():Promise <void> => {
     try {
       // const likeObj = postObj.Likes.filter((likeObj) => likeObj.userId === userId);
       await axios.delete(`/post/unlike/${postId}/${userId}`);
@@ -109,11 +150,12 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
         id: postId,
       });
       await updatePost(postId, userId);
+      notifyUnlike();
     } catch (error) {
       console.log('client could not unlike', error);
     }
   };
-  const isFollowing = async () => {
+  const isFollowing = async ():Promise <void> => {
     try {
       const findFollowing = await axios.get(
         `/post/isFollowing/${userId}/${postObj.user.id}`,
@@ -128,7 +170,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       console.log('following error', error);
     }
   };
-  const startFollowing = async () => {
+  const startFollowing = async ():Promise <void> => {
     try {
       const createFollowing = await axios.post('/post/startFollowing', {
         userId,
@@ -136,26 +178,26 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       });
       if (createFollowing.data === 'Created') {
         setFollowing(true);
+        notifyFollow();
       }
     } catch (error) {
       console.error('could not follow user', error);
     }
   };
-  const stopFollowing = async () => {
+  const stopFollowing = async ():Promise <void> => {
     try {
       const createFollowing = await axios.delete(
         `/post/stopFollowing/${userId}/${postObj.user.id}`,
       );
       if (createFollowing.data === 'Created') {
         setFollowing(false);
+        notifyUnfollow();
       }
     } catch (error) {
       console.error('could not follow user', error);
     }
   };
-  console.log('on user profile:', onUserProfile);
-  console.log('on profile:', onProfile);
-  const createSoundWaves = () => {
+  const createSoundWaves = ():void => {
     let regions: RegionsPlugin;
     let hover: HoverPlugin;
     //if there is a wavesurfer already, destroy it
@@ -339,7 +381,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 paddingTop: '1rem',
                 paddingLeft: '1rem',
                 justifyContent: 'start',
-                alignContent: 'end'
+                alignContent: 'end',
               }}
                 onClick={() => showFullPost ? setShowFullPost(false) : setShowFullPost(true)}
               >

@@ -35,7 +35,7 @@ const Post = (props) => {
   };
 
   return (
-    <div style={{minHeight:'50px'}} >
+    <div  style={{minHeight:'50px'}} >
       {
         addComment ?
         <div id="header" style={{ margin: '8px', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'start' }}>

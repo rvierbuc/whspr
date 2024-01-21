@@ -14,6 +14,7 @@ import { Modal, Button } from 'react-bootstrap';
 import { FaSearch } from 'react-icons/fa';
 //edit profile imports:
 import { Modal as CustomModal } from './Modal';
+import toast, { Toaster } from 'react-hot-toast';
 interface PostAttributes {
   id: number;
   userId: number;
@@ -107,7 +108,9 @@ const UserProfile = ({
   FollowingAttributes[]
   >([]);
   //editing profile states
-  const [username, setUsername] = useState(currentUser.displayUsername || currentUser.username);
+  const [username, setUsername] = useState(
+    currentUser.displayUsername || currentUser.username,
+  );
   const [usernameError, setUsernameError] = useState('');
   const [profileImgError, setProfileImgError] = useState('');
   const [profileImg, setprofileImg] = useState(currentUser.profileImgUrl);
@@ -118,7 +121,48 @@ const UserProfile = ({
   // then if they delete => set the state with the current posts
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [correctPostId, setCorrectPostId] = useState<number | null>(null);
+  
+  //toast for deleting post
+  const notifyDelete = () =>
+    toast.success('Post deleted!', {
+      icon: '🗑️',
+      style: {
+        background: 'rgba(34, 221, 84, 0.785)',
+      },
+    });
 
+  const notifyImageChange = () => {
+    toast.success('Profile image changed!', {
+      icon: '📷',
+      style: {
+        background: 'rgba(34, 221, 84, 0.785)',
+      },
+    });
+  };
+  const notifyUsernameChange = () => {
+    toast.success('Username changed!', {
+      icon: '📝',
+      style: {
+        background: 'rgba(34, 221, 84, 0.785)',
+      },
+    });
+  };
+  const notifyBioChange = () => {
+    toast.success('Bio changed!', {
+      icon: '📝',
+      style: {
+        background: 'rgba(34, 221, 84, 0.785)',
+      },
+    });
+  };
+  const notifyNoMatchingUsers = () => {
+    toast.error('No matching users found!', {
+      icon: '❓',
+      style: {
+        background: 'rgba(255, 0, 0, 0.5)',
+      },
+    });
+  };
   // function to get the selected user information
   const getSelectedUserInfo = async (): Promise<void> => {
     try {
@@ -202,6 +246,10 @@ const UserProfile = ({
       const followingQueryResults = await axios.get(
         `/post/user/${currentUser.id}/following/search/${searchInput}`,
       );
+      if (!followersQueryResults.data.length && !followingQueryResults.data.length) {
+        notifyNoMatchingUsers();
+        return;
+      }
       // using hooks, set the search results for the followers and the following respectively
       setFollowerSearchResults(followersQueryResults.data);
       setFollowingSearchResults(followingQueryResults.data);
@@ -215,13 +263,8 @@ const UserProfile = ({
     getSelectedUserFollowers();
     getSelectedUserFollowing();
   }, []);
-  // code to separate the posts on the user profile into a grid
-  const numberOfPostsPerRow = 3;
-  const rows: PostAttributes[][] = [];
-  for (let i = 0; i < selectedUserPosts.length; i += numberOfPostsPerRow) {
-    const row = selectedUserPosts.slice(i, i + numberOfPostsPerRow);
-    rows.push(row);
-  }
+  // toast notifications
+  
   //editing profile funcs
 
   const openModalHandler = (modalName) => {
@@ -235,13 +278,15 @@ const UserProfile = ({
 
   const updateBio = () => {
     const userId = currentUser.id.toString();
-    axios.patch('/update-bio', { userBio: userBio, userId })
-      .then(response => {
+    axios
+      .patch('/update-bio', { userBio: userBio, userId })
+      .then((response) => {
         console.log('Profile updated:', response.data);
         setUserBio(userBio);
         closeModalHandler();
+        notifyBioChange();
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error updating profile:', error);
       });
   };
@@ -249,21 +294,22 @@ const UserProfile = ({
   const updateUsername = () => {
     const userId = currentUser.id.toString();
     setUsernameError('');
-    axios.post('/update-username', { displayUsername: username, userId })
-      .then(response => {
+    axios
+      .post('/update-username', { displayUsername: username, userId })
+      .then((response) => {
         console.log('Profile updated:', response.data);
         setUsername(username);
         console.log(rerender);
         closeModalHandler();
+        notifyUsernameChange();
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.response && error.response.status === 400) {
           setUsernameError('Username already exists.');
         }
         console.error('Error updating profile:', error);
       });
   };
-
   const uploadImage = () => {
     setProfileImgError('');
     const userId = currentUser.id.toString();
@@ -278,17 +324,19 @@ const UserProfile = ({
     formData.append('image', profileImg);
     formData.append('userId', userId);
 
-    axios.post('/upload-image', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
+    axios
+      .post('/upload-image', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
       .then(() => {
         window.location.reload();
         closeModalHandler();
+        notifyImageChange(); //TODO: doesnt stay for long cause of reload ask alec
         console.log('Image uploaded correctly');
       })
-      .catch(error => {
+      .catch((error) => {
         setProfileImgError('Please select an image.');
         console.error('Error uploading image:', error);
       });
@@ -312,38 +360,60 @@ const UserProfile = ({
       console.log(deletePost.status);
       const getPosts = await axios.get(`/post/selected/${currentUser.id}`);
       setSelectedUserPosts(getPosts.data);
+      notifyDelete();
     } catch (error) {
       console.error(error);
     }
   };
   return (
     <div>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 5000,
+          style: {
+            background: '#e1e1e1',
+          },
+          success: {
+            style: {
+              background: 'rgba(34, 221, 84, 0.785)',
+              color: '#000',
+            },
+          },
+          error: {
+            style: {
+              background: 'rgba(255, 0, 0, 0.5)',
+              color: '#000',
+            },
+          },
+        }}
+      />
       <Modal
         style={{ backgroundColor: 'rgba(209, 209, 209, 0.6)' }}
         show={isDeleting}
         onHide={() => setIsDeleting(!isDeleting)}
       >
-          <Modal.Header closeButton>
-            <Modal.Title>Delete Post</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>Are you sure you want to delete this post?</Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="secondary"
-              onClick={() => setIsDeleting(!isDeleting)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="danger"
-              onClick={() => {
-                setIsDeleting(false);
-                handleDelete(currentDeletePostId);
-              }}
-            >
-              Delete
-            </Button>
-          </Modal.Footer>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Post</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this post?</Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setIsDeleting(!isDeleting)}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="danger"
+            onClick={() => {
+              setIsDeleting(false);
+              handleDelete(currentDeletePostId);
+            }}
+          >
+            Delete
+          </Button>
+        </Modal.Footer>
       </Modal>
       <Modal
         style={{
@@ -442,7 +512,10 @@ const UserProfile = ({
               className="card user-profile-card"
               style={{ justifyContent: 'center' }}
             >
-              <div className="user-profile-image" onClick={() => openModalHandler('img')}>
+              <div
+                className="user-profile-image"
+                onClick={() => openModalHandler('img')}
+              >
                 <img
                   src={currentUser.profileImgUrl}
                   alt="user profile image"
@@ -455,38 +528,104 @@ const UserProfile = ({
                   }}
                 />
                 <div className="modal-button-container">
-                  <CustomModal className="modal-profile-edit" isOpen={openModal === 'img'} onClose={closeModalHandler}>
+                  <CustomModal
+                    className="modal-profile-edit"
+                    isOpen={openModal === 'img'}
+                    onClose={closeModalHandler}
+                  >
                     <h2>Upload Profile Image</h2>
-                    <input style={{ display: 'none' }} id="profileImgInput" type="file" onChange={handleImageChange} />
-                    <button className="btn btn-dark" onClick={handleFileButtonClick}>Choose File</button>
-                    <button className="btn btn-dark" onClick={uploadImage}>Upload Image</button>
-                    <button className="btn btn-dark" onClick={closeModalHandler}>Cancel</button>
-                    {profileImgError && <div className='text-warning'>{profileImgError}</div>}
+                    <input
+                      style={{ display: 'none' }}
+                      id="profileImgInput"
+                      type="file"
+                      onChange={handleImageChange}
+                    />
+                    <button
+                      className="btn btn-dark"
+                      onClick={handleFileButtonClick}
+                    >
+                      Choose File
+                    </button>
+                    <button className="btn btn-dark" onClick={uploadImage}>
+                      Upload Image
+                    </button>
+                    <button
+                      className="btn btn-dark"
+                      onClick={closeModalHandler}
+                    >
+                      Cancel
+                    </button>
+                    {profileImgError && (
+                      <div className="text-warning">{profileImgError}</div>
+                    )}
                   </CustomModal>
                 </div>
               </div>
-              <div className="user-profile-info" onClick={() => openModalHandler('username')}>
+              <div
+                className="user-profile-info"
+                onClick={() => openModalHandler('username')}
+              >
                 <div className="modal-button-container">
-                  <CustomModal className="modal-profile-edit" isOpen={openModal === 'username'} onClose={closeModalHandler}>
+                  <CustomModal
+                    className="modal-profile-edit"
+                    isOpen={openModal === 'username'}
+                    onClose={closeModalHandler}
+                  >
                     <h2>Change Username</h2>
-                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-                    {usernameError && <div className='text-warning'>{usernameError}</div>}
-                    <button className="btn btn-dark" onClick={() => updateUsername()}>Commit</button>
-                    <button className="btn btn-dark" onClick={closeModalHandler}>Cancel</button>
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                    {usernameError && (
+                      <div className="text-warning">{usernameError}</div>
+                    )}
+                    <button
+                      className="btn btn-dark"
+                      onClick={() => updateUsername()}
+                    >
+                      Commit
+                    </button>
+                    <button
+                      className="btn btn-dark"
+                      onClick={closeModalHandler}
+                    >
+                      Cancel
+                    </button>
                   </CustomModal>
                 </div>
                 <h2 style={{ color: 'white' }}>{username}</h2>
               </div>
 
-              <div className="user-profile-bio" onClick={() => openModalHandler('bio')}>{userBio || 'Click to add bio'}
+              <div
+                className="user-profile-bio"
+                onClick={() => openModalHandler('bio')}
+              >
+                {userBio || 'Click to add bio'}
                 <div className="modal-button-container">
-                  <CustomModal className="modal-profile-edit" isOpen={openModal === 'bio'} onClose={closeModalHandler}>
+                  <CustomModal
+                    className="modal-profile-edit"
+                    isOpen={openModal === 'bio'}
+                    onClose={closeModalHandler}
+                  >
                     <h2>Change Your Bio</h2>
-                    <textarea onChange={(e) => setUserBio(e.target.value)}
-                      value={userBio} />
+                    <textarea
+                      onChange={(e) => setUserBio(e.target.value)}
+                      value={userBio}
+                    />
                     <div>
-                      <button className="btn btn-dark" onClick={() => updateBio()}>Commit</button>
-                      <button className="btn btn-dark" onClick={closeModalHandler}>Cancel</button>
+                      <button
+                        className="btn btn-dark"
+                        onClick={() => updateBio()}
+                      >
+                        Commit
+                      </button>
+                      <button
+                        className="btn btn-dark"
+                        onClick={closeModalHandler}
+                      >
+                        Cancel
+                      </button>
                     </div>
                   </CustomModal>
                 </div>
@@ -511,7 +650,11 @@ const UserProfile = ({
                   {followingCount} Following
                 </button>
                 <FaSearch
-                  style={{ marginLeft: '10px', marginRight: '10px', cursor: 'pointer' }}
+                  style={{
+                    marginLeft: '10px',
+                    marginRight: '10px',
+                    cursor: 'pointer',
+                  }}
                   onClick={() => setSearchModal(true)}
                 />
               </div>
@@ -539,32 +682,6 @@ const UserProfile = ({
               </div>
             ))}
           </div>
-          {/* {rows.map((row, index) => (
-            <Col key={index}>
-              {row.map((post) => (
-                <Row key={post.id}>
-                  <div className="grid-post-item">
-                    <WaveSurferComponent
-                      audioContext={audioContext}
-                      postObj={post}
-                      audioUrl={post.soundUrl}
-                      postId={post.id}
-                      userId={currentUser.id}
-                      updatePost={updatePost}
-                      getPosts={getSelectedUserInfo}
-                      onProfile={onProfile}
-                      onUserProfile={onUserProfile}
-                      setOnProfile={setOnProfile}
-                      setIsDeleting={setIsDeleting}
-                      setCorrectPostId={setCorrectPostId}
-                      setSelectedUserPosts={setSelectedUserPosts}
-                      setCurrentDeletePostId={setCurrentDeletePostId}
-                    />
-                  </div>
-                </Row>
-              ))}
-            </Col>
-          ))} */}
         </div>
       </div>
     </div>

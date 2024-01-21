@@ -5,6 +5,7 @@ import Post from './Post';
 import WaveSurferComponent from './WaveSurfer';
 import { useLoaderData } from 'react-router-dom';
 import axios, { AxiosResponse } from 'axios';
+import toast from 'react-hot-toast';
 
 const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   const [messages, setMessages] = useState<any>();
@@ -12,7 +13,6 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   const [title, setTitle] = useState<string>('');
   const [category, setCategory] = useState<string>('');
   const user: any = useLoaderData();
-  console.log('user', user);
 
 
   useEffect(() => {
@@ -20,31 +20,31 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
   }, []);
 
 
-    const getMessage = async() => {
-        try{
-          const response: AxiosResponse = await axios.get(`/conch/${user.id}`)
-          console.log('message', response)
-            const messages = response.data
-            messages.user = user
-            messages.userId = user.id
-          setMessages(messages)
-        } catch(error) {
-          console.log('couldnt get message', error)
-        }
-      }
+  const getMessage = async () => {
+    try {
+      const response: AxiosResponse = await axios.get(`/conch/${user.id}`);
+      console.log('message', response);
+      const messages = response.data;
+      messages.user = user;
+      messages.userId = user.id;
+      setMessages(messages);
+    } catch (error) {
+      console.log('couldnt get message', error);
+    }
+  };
 
-      const getOutbox = async() => {
-        try{
-          const response: AxiosResponse = await axios.get(`/conch/sent/${user.id}`)
-          console.log('message', response)
-            const messages = response.data
-            messages.user = user
-            messages.userId = user.id
-          setMessages(messages)
-        } catch(error) {
-          console.log('couldnt get message', error)
-        }
-      }
+  const getOutbox = async () => {
+    try {
+      const response: AxiosResponse = await axios.get(`/conch/sent/${user.id}`);
+      console.log('message', response);
+      const messages = response.data;
+      messages.user = user;
+      messages.userId = user.id;
+      setMessages(messages);
+    } catch (error) {
+      console.log('couldnt get message', error);
+    }
+  };
 
 
 
@@ -63,7 +63,7 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
 
   return (
         <div >
-          <div style={{color: 'white'}}>
+          <div style={{ color: 'white' }}>
             <h2>Record a message that gets sent to a random user!</h2>
           </div>
 
@@ -97,7 +97,7 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
                 onClick={() => getMessages('outbox')}
             >Outbox</button> */}
 
-          <div style={{justifyContent: 'center', flexDirection: 'column', display: 'flex', alignItems: 'center'}}>
+          <div style={{ justifyContent: 'center', flexDirection: 'column', display: 'flex', alignItems: 'center' }}>
 
 {type === 'inbox' ?
     <div>
@@ -129,9 +129,9 @@ const MagicConch = ({ audioContext }: { audioContext: BaseAudioContext }) => {
 
             <div>
                 {messages ? 
-                    messages.map((message) => {
-                      <WaveSurferComponent postObj={message} audioUrl={message.soundUrl} postId={message.id} />
-                    })
+                  messages.map((message) => {
+                      <WaveSurferComponent postObj={message} audioUrl={message.soundUrl} postId={message.id} />;
+                  })
                   : <div>No messages!</div>}
             </div>
         </div>
