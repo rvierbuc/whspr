@@ -72,7 +72,7 @@ export const Mail: React.FC<WaveSurferProps> = ({
           <div style={{ color:"#e1e1e1" }}>{sharePost.Post.title}</div>
            </div>
            <div style={{ width: '10%' }}>
-           <svg xmlns="http://www.w3.org/2000/svg" fill="rgb(54, 89, 169)" viewBox="0 0 24 24" width="24" height="24">
+           <svg style={{margin:'-.5rem'}}xmlns="http://www.w3.org/2000/svg" fill="rgb(54, 89, 169)" viewBox="0 0 24 24" width="24" height="24">
               <filter id="shadow">
                 <feDropShadow dx="0.2" dy="0.4" stdDeviation="0.2" />
               </filter>

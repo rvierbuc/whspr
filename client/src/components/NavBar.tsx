@@ -13,8 +13,10 @@ import { useParams } from 'react-router';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 // import '../style/style.scss'
 import Search from './Search';
+import { displayPartsToString } from 'typescript';
+import { singularize } from 'sequelize/types/utils';
 
-const NavBar = () => {
+const NavBar = ({ notificationCount }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [show, setShow] = useState<boolean>(false);
   const { type }: Readonly<Params<string>> = useParams();
@@ -38,6 +40,9 @@ const NavBar = () => {
   };
 
   const expand = 'false';
+
+  
+
   useEffect(() => {
     if (type === 'explore') {
       setLogo(require('../style/explore-logo.png'));
@@ -122,7 +127,7 @@ const NavBar = () => {
               </svg>
             </Offcanvas.Header>
             <Offcanvas.Body>
-              <Nav className="ml-auto" style={{ color: '#e1e1e5' }}>
+              <Nav className="ml-auto" style={{ color: '#e1e1e5', fontFamily:'headerFont', fontSize:'2rem' }}>
                 {/* <Nav.Link onClick={() => handleNavigation('/protected/feed')} >Home</Nav.Link> */}
                 {/* <Nav.Link onClick={() => handleNavigation('/protected/post')}>Post</Nav.Link> */}
                 <Nav.Link
@@ -131,8 +136,29 @@ const NavBar = () => {
                   Say Something
                 </Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/inbox')}>
-                  Inbox
+                  <div style={{display:'flex', flexDirection:'row'}}>
+                  <div>
+                    Inbox
+                  </div>
+                  {notificationCount > 0 
+                    ? <div >
+                        <svg style={{position:'absolute', top:'125px', right:'255px'}} xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="0 0 24 24" width="45" height="45">
+                          <filter id="shadow">
+                            <feDropShadow dx="0.2" dy="0.4" stdDeviation="0.2" />
+                          </filter>
+                          <g filter="url(#shadow)">
+                            <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path>  
+                          </g>
+                        </svg>
+                        <div style={{position:'absolute', fontSize:'.75rem', fontFamily:'sans-serif', top:'138px', right:'271px'}} >
+                          {notificationCount}
+                        </div>
+                      </div> 
+                    : <div></div>}
+                  </div>
+                
                 </Nav.Link>
+               
                 <Nav.Link
                   onClick={() => handleNavigation('/protected/feed/explore')}
                 >

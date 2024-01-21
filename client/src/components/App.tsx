@@ -63,6 +63,10 @@ const App = () => {
       return null;
     }
   };
+  //console.log('current user', currUser);
+ 
+
+
   // socket.on('sharedPost-notification', async (notificationObj) => {
   //   const { sentToUser, notificationAmt } = notificationObj;
   //   try {
@@ -85,7 +89,7 @@ const App = () => {
 
             <Route>
                 <Route path="/" element={<Login />} />
-                <Route path="/protected" element={<PrivateRoutes />} >
+                <Route path="/protected" element={<PrivateRoutes/>} loader={() => getUserLoader()} >
                     <Route path="dashboard" element={<WaveSurferComponent />} />
                     <Route path="WhsprAI" element={<WhsprAI audioContext={audioContext} />} loader={() => getUserLoader()}/>
                     {/* <Route path="search" element={<Search />} /> */}

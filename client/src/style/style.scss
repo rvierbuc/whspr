@@ -174,9 +174,7 @@ body {
   //color: rgb(63, 133, 42)
   cursor: pointer;
 }
-.bs-bigPost-modal-content {
-  background-color: #ec2812;
-}
+
 //recording buttons
 
 #play-btn-new {
@@ -1500,4 +1498,12 @@ input[type='range']::-moz-range-thumb {
   position: absolute;
   top: 2rem;
   left: 0;
+}
+.notification-position{
+  position:absolute;
+  //z-index: 990;
+  top:110px;
+  right:320px;
+  // background-color: #a51c30;
+  // padding:.5rem
 }
