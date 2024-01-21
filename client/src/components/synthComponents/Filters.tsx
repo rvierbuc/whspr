@@ -132,11 +132,11 @@ const Filters = ({ setFilter, audioContext, filter }: Props) => {
         <h5 className="text-white mb-2">Try out one of our filters</h5>
       </div>
       <div>
-        <Button style={{margin: '1rem'}} className={`btn text-white ${currentFilter === 'defaultSettings' && 'activeButton'}`}variant='dark' onClick={() => handleFilterChange(defaultSettings)}>None</Button>
-        <Button style={{margin: '1rem'}} className={`btn text-white ${currentFilter === 'alien' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(alien)}>Alien</Button>
-        <Button style={{margin: '1rem'}} className={`btn text-white ${currentFilter === 'wobbly' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(wobbly)}>Wobbly</Button>
-        <Button style={{margin: '1rem'}} className={`btn text-white ${currentFilter === 'robot' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(robot)}>Robot</Button>
-        <Button style={{margin: '1rem'}} className={`btn text-white ${currentFilter === 'sixteenBit' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(sixteenBit)}>16-bit</Button>
+        <Button style={{margin: '1rem'}} id="filterBtn" className={`btn text-white ${currentFilter === 'defaultSettings' && 'activeButton'}`}variant='dark' onClick={() => handleFilterChange(defaultSettings)}>None</Button>
+        <Button style={{margin: '1rem'}} id="filterBtn" className={`btn text-white ${currentFilter === 'alien' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(alien)}>Alien</Button>
+        <Button style={{margin: '1rem'}} id="filterBtn" className={`btn text-white ${currentFilter === 'wobbly' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(wobbly)}>Wobbly</Button>
+        <Button style={{margin: '1rem'}} id="filterBtn" className={`btn text-white ${currentFilter === 'robot' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(robot)}>Robot</Button>
+        <Button style={{margin: '1rem'}} id="filterBtn" className={`btn text-white ${currentFilter === 'sixteenBit' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(sixteenBit)}>16-bit</Button>
       </div>
     </div>
   </Container>

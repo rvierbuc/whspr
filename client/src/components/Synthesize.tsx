@@ -64,8 +64,8 @@ const Synthesize = ({ audioContext }: Props): React.JSX.Element => {
   distortionFilter.distortion = 0.5;
 
   return (
-    <div id="post-card-box" id="post-card-box" style={{ display: 'flexbox', justifyContent: 'center' }}>
-      <Container className="p-3 rounded w-75" id="post-card-box">
+    <div id="post-card-box" style={{ display: 'flexbox', justifyContent: 'center' }}>
+      <Container className="p-3 rounded w-75">
         <Modal show={toggleModal} centered className='synthModal'>
           <Modal.Header>
             {toggleInfo.oscType ? <p><strong>Oscillators</strong> are the basic components of a synth sound and we have four types you can choose to play with!</p> : null}

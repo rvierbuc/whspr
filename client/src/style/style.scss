@@ -890,9 +890,23 @@ ais-SearchBox-reset {
   width: 100vw;
 }
 
-// #post-card-row {
-//   display: flex-row;
-// }
+@media only screen and (min-width: 480px) {
+ #filterBtn, #sine, #triangle, #square, #sawtooth, #oscillatorType {
+  min-width: 14vw;
+  min-height: 4.5vw;
+ }
+}
+
+#phaseFilter, #distortionFilter {
+  min-width: 10vw;
+  min-height: 4.5vh;
+}
+
+#phaser, #distortion, #oscType, #waveType {
+  min-width: 3.5vw;
+  min-height: 3.5vh;
+}
+
 
 #cat-hit {
   // background-color: #000000;
@@ -1104,23 +1118,23 @@ $bg: rgb(69, 67, 67);
 input[type='range'] {
   -webkit-appearance: none;
   appearance: none;
-  width: 100%;
+  width: 20vw;
   cursor: pointer;
   outline: none;
-  height: 15px;
+  height: 1.5rem;
   background: #ccc;
   border-radius: 16px;
   overflow: hidden;
 }
 
 input[type='range']::-webkit-slider-runnable-track {
-  height: 15px;
+  height: 1.5rem;
   background: #ccc;
   border-radius: 16px;
 }
 
 input[type='range']::-moz-range-track {
-  height: 15px;
+  height: 1.5rem;
   background: #ccc;
   border-radius: 16px;
 }
@@ -1128,8 +1142,8 @@ input[type='range']::-moz-range-track {
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  height: 15px;
-  width: 15px;
+  height: 1.5rem;
+  width: 1.5rem;
   background-color: gray;
   border-radius: 50%;
   border: 2px solid rgb(60, 53, 86);
