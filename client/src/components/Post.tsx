@@ -23,7 +23,7 @@ interface PostProps {
   setSelectedUserPosts: any
 }
 const Post = (props) => {
-  const { postObj, userId, updatePost, audioContext, addComment, setAddComment, onProfile, onUserProfile, onConch, deleting, setSelectedUserPosts setDeleting, waveHeight } = props;
+  const { postObj, userId, updatePost, audioContext, addComment, setAddComment, onProfile, onUserProfile, onConch, deleting, setSelectedUserPosts, setDeleting, waveHeight } = props;
   const [hearLess, setHearLess] = useState<boolean>(false);
   const [comments, setComments] = useState<any>([]);
   const getComments = async () => {
