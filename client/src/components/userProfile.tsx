@@ -121,7 +121,7 @@ const UserProfile = ({
   // then if they delete => set the state with the current posts
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [correctPostId, setCorrectPostId] = useState<number | null>(null);
-  
+  const [tempUsername, setTempUsername] = useState(currentUser.displayUsername || currentUser.username);
   //toast for deleting post
   const notifyDelete = () =>
     toast.success('Post deleted!', {
