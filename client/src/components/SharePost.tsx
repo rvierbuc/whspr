@@ -3,6 +3,7 @@ import axios from 'axios';
 import Modal from 'react-bootstrap/Modal';
 import { RecordComment } from './RecordComment';
 import WaveSurferComponent from './WaveSurferSimple';
+import toast from 'react-hot-toast';
 interface SharePostProps {
   userId: number;
   postObj: any;
@@ -15,7 +16,16 @@ export const SharePost: React.FC<SharePostProps> = ({ audioContext, userId, post
   const [searchInput, setSearchInput] = useState<string>('');
   const [sendToUserObj, setSendToUserObj] = useState<any>(null);
   const [shareComment, setShareComment] = useState<FormData>(null);
-  console.log('userId', userId, 'postObj', postObj, 'show', showShareModal, 'set show', setShowShareModal);
+  // toast notifications
+  const notifyPostShared = () => {
+    toast.success('Post Shared!', {
+      icon: '📨',
+      style: {
+        background: 'rgba(34, 221, 34, 0.785)',
+      },
+      position: 'top-right',
+    });
+  };
   const handleSearchChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ): void => {  
@@ -40,8 +50,9 @@ export const SharePost: React.FC<SharePostProps> = ({ audioContext, userId, post
   const handleSelectSendToUser = (userObj) => {
     setSendToUserObj(userObj);
     setFollowingSearchResults(null);
+    // TODO: i think this is where the send button functionality is but i'm not sure so i'm leaving it here for now
+    notifyPostShared();
   };
-  console.log(showShareModal, 'share component');
   return (
     <div>
     {/* //       <Modal.Header>
