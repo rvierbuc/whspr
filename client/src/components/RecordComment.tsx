@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import socket from './socket';
 
 interface RecordCommentProps {
   postObj: any,
@@ -34,7 +35,6 @@ export const RecordComment = ({ setShowShareModal, onProfile, sentToId, isSharin
     });
   };
   
-  console.log('record comment AC', audioContext);
   const startRecording = async () => {
     try {
       setAudioChunks([]);
@@ -141,7 +141,6 @@ export const RecordComment = ({ setShowShareModal, onProfile, sentToId, isSharin
         await getComments();
         await updatePost(postObj.id, userId);
         await notifyCommentPosted();
-        await console.log('all done');
       } else {
         console.error('Error saving audio:', response.statusText);
       }
@@ -160,8 +159,8 @@ export const RecordComment = ({ setShowShareModal, onProfile, sentToId, isSharin
   
       const response = await axios.post('/uploadSharePost', formData);
       if (response.status === 200) {
-        console.log(response);
         setShowShareModal(false);
+        socket.emit('sent-shared-message', { 'sentFromId': userId, 'sentToId': sentToId });
       }
       
     } catch (error) {

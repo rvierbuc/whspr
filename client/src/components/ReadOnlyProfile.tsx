@@ -51,12 +51,6 @@ const ReadOnlyProfile = ({ audioContext }) => {
   };
   const handleSearchSubmission = async (): Promise<void> => {
     try {
-      console.log(
-        'inside search submission',
-        selectedUserInfo,
-        'userid',
-        selectedUserInfo.userId,
-      );
       if (searchInput === '') {
         alert('Please enter a search term');
         return;
@@ -70,7 +64,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
       setFollowerSearchResults(followerResults.data);
       setFollowingSearchResults(followingResults.data);
     } catch (error) {
-      console.log('error searching for followers', error);
+      console.error('error searching for followers', error);
     }
   };
 
@@ -81,9 +75,6 @@ const ReadOnlyProfile = ({ audioContext }) => {
     try {
       const selectedUserObj = await axios.get(`/post/selected/${id}`);
       setSelectedUserInfo(selectedUserObj.data);
-      // setUserPosts(selectedUserObj.data[0].Posts)
-      // console.log(selectedUserObj.data[0].Posts)
-      console.log(selectedUserObj.data);
     } catch (error) {
       console.error('could not get selected user info', error);
     }
@@ -97,16 +88,14 @@ const ReadOnlyProfile = ({ audioContext }) => {
         (post) => post.id === updatedPost.data.id,
       );
       updatedPost.data.rank = selectedUserInfo[postIndex].rank;
-      //console.log('post index', updatePostIndex)
       const postsWUpdatedPost = selectedUserInfo.toSpliced(
         postIndex,
         1,
         updatedPost.data,
       );
-      console.log(postsWUpdatedPost);
       setSelectedUserInfo(postsWUpdatedPost);
     } catch (error) {
-      console.log('could not update post', error);
+      console.error('could not update post', error);
     }
   };
   const startFollowing = async (): Promise<void> => {
@@ -148,7 +137,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
       if (error.response.status === 404) {
         setFollowing(false);
       }
-      console.log('following error', error);
+      console.error('following error', error);
     }
   };
   const getSelectedUserFollowers = async (): Promise<void> => {
@@ -156,7 +145,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
       const followers = await axios.get(`/post/user/${id}/followers`);
       setSelectedUserFollowers(followers.data);
     } catch (error) {
-      console.log('error fetching current user followers', error);
+      console.error('error fetching current user followers', error);
     }
   };
   const getSelectedUserFollowing = async (): Promise<void> => {
@@ -164,7 +153,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
       const followingArr = await axios.get(`/post/user/${id}/following`);
       setSelectedUserFollowing(followingArr.data);
     } catch (error) {
-      console.log('error fetching current user following', error);
+      console.error('error fetching current user following', error);
     }
   };
   useEffect(() => {
@@ -285,10 +274,11 @@ const ReadOnlyProfile = ({ audioContext }) => {
                   alt="user profile image"
                 />
               </div>
-              <div className="user-profile-info">
-                <h2 style={{ color: '#0f0c0c', fontSize: '2rem' }}>
+              <div className="user-profile-info" style={{display:'flex', flexDirection:'column', flexWrap:'wrap'}}>
+                <h2 style={{ color: '#0f0c0c', fontSize: '2rem', fontFamily:'headerFont', marginTop:'.5rem' }}>
                   {selectedUserInfo[0].user.username}
                 </h2>
+                <div style={{width:'500px', overflow:'wrap'}}>{selectedUserInfo[0].user.userBio}</div>
               </div>
               {following ? (
                 <IoPersonRemoveOutline
@@ -316,8 +306,9 @@ const ReadOnlyProfile = ({ audioContext }) => {
                   }}
                   onClick={() => startFollowing()}
                 ></IoPersonAdd>
-              )}
+              )}  
             </div>
+            
             <div className="row-container" style={{ justifyContent: 'center' }}>
               <div
                 style={{
@@ -328,8 +319,8 @@ const ReadOnlyProfile = ({ audioContext }) => {
                   margin: '.5rem',
                 }}
               >
-                <div>{selectedUserFollowing.length}</div>
-                <div>Following</div>
+                <div id='headerFont'>{selectedUserFollowing.length}</div>
+                <div id='headerFont'>Following</div>
               </div>
               <div
                 style={{
@@ -340,15 +331,16 @@ const ReadOnlyProfile = ({ audioContext }) => {
                   margin: '.5rem',
                 }}
               >
-                <div>{selectedUserFollowers.length}</div>
-                <div>
+                <div id='headerFont' >{selectedUserFollowers.length}</div>
+                <div id='headerFont' >
                   Followers{' '}
-                  <FaSearch
+                  
+                </div>
+              </div>
+              <FaSearch
                     style={{ marginLeft: '10px', cursor: 'pointer' }}
                     onClick={() => setSearchModal(true)}
                   />
-                </div>
-              </div>
             </div>
           </div>
           <div

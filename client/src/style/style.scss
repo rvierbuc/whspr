@@ -30,12 +30,12 @@ body {
   backdrop-filter: blur($radius);
 }
 
-.inbox-title{
-  font-family: headerFont;
-  font-size: 5rem;
-  text-shadow: 3px 3px 3px #a6c5ff;
-  color:#e1e1e1
- 
+#feed-username:hover {
+  text-shadow: 1px 1px 1px rgb(54, 89, 169);
+}
+#hover:hover {
+  -webkit-filter: drop-shadow( 4px 4px 1px rgb(0, 0, 0, .5));
+  filter: drop-shadow( 4px 4px 1px rgb(0, 0, 0, .5));
 }
 
 .post-bottom-overlay {
@@ -87,6 +87,10 @@ body {
   //opacity: 60%;
   display: flex;
   justify-content: space-between;
+}
+#headerFont {
+  font-family: headerFont;
+  font-size: 1.5rem;
 }
 
 .room-users {
@@ -174,9 +178,7 @@ body {
   //color: rgb(63, 133, 42)
   cursor: pointer;
 }
-.bs-bigPost-modal-content {
-  background-color: #ec2812;
-}
+
 //recording buttons
 
 #play-btn-new {
@@ -867,11 +869,12 @@ body {
   border: 1px solid #cccccc;
   width: 12vw;
   max-width: 17vw;
+  margin:.5rem
 }
 
 .ais-SearchBox-submit {
-  background-color: #3c3556;
-  border: 1px solid #ffff;
+  background-color: #e1e1e1;
+  border: 3px solid #e1e1e1;
   color: #ffffff;
   padding: 6px 12px;
   margin-left: -1px;
@@ -937,7 +940,8 @@ font-family: headerFont;
 }
 .input-group-text {
   background-color: rgb(33 37 41);
-  color: rgb(255, 255, 255);
+  color: #e1e1e1;
+  border:none
 }
 
 .custom-checkbox {
@@ -1396,11 +1400,11 @@ input[type='range']::-moz-range-thumb {
   margin-left: auto;
   display: flex;
   align-items: center;
-  min-height: calc(100% - 500px * 2);
   position: relative;
   width: auto;
   border-radius: 1rem;
   top: 20%;
+  left:0;
   animation: slide-right 3s, rock 6s ease-in-out infinite;
 }
 
@@ -1419,12 +1423,12 @@ input[type='range']::-moz-range-thumb {
 @keyframes slide-right {
   from {
     //transform: rotate(.25turn);
-    margin-left: 0%;
+    left: -1200px;
   }
   to {
     // transform: rotate(-.25turn);
     // transform: rotate(.25turn);
-    margin-left: 36%;
+    left: 0;
   }
 }
 
@@ -1501,4 +1505,143 @@ input[type='range']::-moz-range-thumb {
   position: absolute;
   top: 2rem;
   left: 0;
+}
+.notification-position{
+  position:absolute;
+  //z-index: 990;
+  top:110px;
+  right:320px;
+  // background-color: #a51c30;
+  // padding:.5rem
+}
+@-webkit-keyframes shells-fall {
+  0% {
+    top: -10%
+  }
+  100% {
+    top: 100%
+  }
+}
+
+@-webkit-keyframes shells-shake {
+  0%,
+  100% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0)
+  }
+  50% {
+    -webkit-transform: translateX(80px);
+    transform: translateX(80px)
+  }
+}
+
+@keyframes shells-fall {
+  0% {
+    top: -10%
+  }
+  100% {
+    top: 100%
+  }
+}
+
+@keyframes shells-shake {
+  0%,
+  100% {
+    transform: translateX(0)
+  }
+  50% {
+    transform: translateX(80px)
+  }
+}
+
+.shell {
+  position: absolute;
+  top: -10%;
+  z-index: 999;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-animation-name: shells-fall, shells-shake;
+  -webkit-animation-duration: 10s, 3s;
+  -webkit-animation-timing-function: linear, ease-in-out;
+  -webkit-animation-iteration-count: infinite, infinite;
+  -webkit-animation-play-state: running, running;
+  animation-name: shells-fall, shells-shake;
+  animation-duration: 10s, 3s;
+  animation-timing-function: linear, ease-in-out;
+  animation-iteration-count: infinite, infinite;
+  animation-play-state: running, running
+}
+
+.shell:nth-of-type(0) {
+  left: 1%;
+  -webkit-animation-delay: 0s, 0s;
+  animation-delay: 0s, 0s
+}
+
+.shell:nth-of-type(1) {
+  left: 10%;
+  -webkit-animation-delay: 1s, 1s;
+  animation-delay: 1s, 1s
+}
+
+.shell:nth-of-type(2) {
+  left: 20%;
+  -webkit-animation-delay: 6s, .5s;
+  animation-delay: 6s, .5s
+}
+
+.shell:nth-of-type(3) {
+  left: 30%;
+  -webkit-animation-delay: 4s, 2s;
+  animation-delay: 4s, 2s
+}
+
+.shell:nth-of-type(4) {
+  left: 40%;
+  -webkit-animation-delay: 2s, 2s;
+  animation-delay: 2s, 2s
+}
+
+.shell:nth-of-type(5) {
+  left: 50%;
+  -webkit-animation-delay: 8s, 3s;
+  animation-delay: 8s, 3s
+}
+
+.shell:nth-of-type(6) {
+  left: 60%;
+  -webkit-animation-delay: 6s, 2s;
+  animation-delay: 6s, 2s
+}
+
+.shell:nth-of-type(7) {
+  left: 70%;
+  -webkit-animation-delay: 2.5s, 1s;
+  animation-delay: 2.5s, 1s
+}
+
+.shell:nth-of-type(8) {
+  left: 80%;
+  -webkit-animation-delay: 1s, 0s;
+  animation-delay: 1s, 0s
+}
+
+.shell:nth-of-type(9) {
+  left: 90%;
+  -webkit-animation-delay: 3s, 1.5s;
+  animation-delay: 3s, 1.5s
+}
+
+.shell:nth-of-type(10) {
+  left: 25%;
+  -webkit-animation-delay: 2s, 0s;
+  animation-delay: 2s, 0s
+}
+
+.shell:nth-of-type(11) {
+  left: 65%;
+  -webkit-animation-delay: 4s, 2.5s;
+  animation-delay: 4s, 2.5s
 }
