@@ -228,9 +228,9 @@ io.on('connection', (socket) => {
           hasSeen: false
         }
       })
-     socket.emit('sharedPost-notification', {sentToId, notificationAmt: sharedPosts.length})
+      socket.emit('sharedPost-notification', { sentToId, notificationAmt: sharedPosts.length })
 
-    }catch (error){
+    } catch (error) {
       console.error('shared message socket error', error)
     }
   })

@@ -91,11 +91,11 @@ const UserProfile = ({
   const [onProfile, setOnProfile] = useState<boolean>(true);
   const [onUserProfile, setOnUserProfile] = useState<boolean>(true);
   const [selectedUserFollowers, setSelectedUserFollowers] = useState<
-  FollowerAttributes[]
+    FollowerAttributes[]
   >([]);
   const [currentDeletePostId, setCurrentDeletePostId] = useState<number>(0);
   const [selectedUserFollowing, setSelectedUserFollowing] = useState<
-  FollowingAttributes[]
+    FollowingAttributes[]
   >([]);
   const [displayFollowers, setDisplayFollowers] = useState<boolean>(true);
   const [followerCount, setFollowerCount] = useState<number>(0);
@@ -103,10 +103,10 @@ const UserProfile = ({
   const [searchModal, setSearchModal] = useState<boolean>(false);
   const [searchInput, setSearchInput] = useState<string>('');
   const [followerSearchResults, setFollowerSearchResults] = useState<
-  FollowerAttributes[]
+    FollowerAttributes[]
   >([]);
   const [followingSearchResults, setFollowingSearchResults] = useState<
-  FollowingAttributes[]
+    FollowingAttributes[]
   >([]);
   //editing profile states
   const [username, setUsername] = useState(
@@ -269,7 +269,7 @@ const UserProfile = ({
     getSelectedUserFollowing();
   }, []);
   // toast notifications
-  
+
   //editing profile funcs
 
   const openModalHandler = (modalName) => {
@@ -309,7 +309,7 @@ const UserProfile = ({
     const userId = currentUser.id.toString();
     setUsernameError('');
     axios
-      .post('/update-username', { displayUsername: username, userId })
+      .patch('/update-username', { displayUsername: username, userId })
       .then((response) => {
         console.log('Profile updated:', response.data);
         setCurrentUser(prevState => ({ ...prevState, username: tempUsername }));
@@ -586,7 +586,7 @@ const UserProfile = ({
                     </button>
                   </CustomModal>
                 </div>
-                <h2 style={{ color: '#e1e1e1', fontFamily:'headerFont' }}>{username}</h2>
+                <h2 style={{ color: '#e1e1e1', fontFamily: 'headerFont' }}>{username}</h2>
               </div>
 
               <div
