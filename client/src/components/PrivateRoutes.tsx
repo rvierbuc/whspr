@@ -11,7 +11,7 @@ const PrivateRoutes = () => {
   const [notificationCount, setNotificationCount] = useState<number>(0);
   const getNotificationCount = async () => {
     try {
-      const notificationArr = await axios.get(`/post/shared/${user.id}/sentToId`);
+      const notificationArr = await axios.get(`/post/shared/${user.id}/notification`);
       setNotificationCount(notificationArr.data.length);
       console.log('notification count', notificationArr.data.length);
     } catch (error) {

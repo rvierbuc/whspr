@@ -86,6 +86,15 @@ const NavBar = ({ notificationCount }) => {
               margin: '10px',
             }}
           >
+            <div>
+            <svg style={{position:'absolute', top:'30px', right:'3px'}} xmlns="http://www.w3.org/2000/svg" fill="rgb(54, 89, 169)" viewBox="0 0 24 24" width="45" height="45">
+                          <filter id="shadow">
+                            <feDropShadow dx="0.2" dy="0.4" stdDeviation="0.2" />
+                          </filter>
+                          <g filter="url(#shadow)">
+                            <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path>  
+                          </g>
+                        </svg>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="26"
@@ -93,12 +102,13 @@ const NavBar = ({ notificationCount }) => {
               fill="currentColor"
               className="bi bi-list"
               viewBox="0 0 16 16"
-            >
+              >
               <path
                 fillRule="evenodd"
                 d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"
-              />
+                />
             </svg>
+                </div>
           </Navbar.Toggle>
           <Navbar.Offcanvas
             id={`offcanvasNavbar-expand-${expand}`}
@@ -142,7 +152,7 @@ const NavBar = ({ notificationCount }) => {
                   </div>
                   {notificationCount > 0 
                     ? <div >
-                        <svg style={{position:'absolute', top:'125px', right:'255px'}} xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="0 0 24 24" width="45" height="45">
+                        <svg style={{position:'absolute', top:'125px', right:'255px'}} xmlns="http://www.w3.org/2000/svg" fill="rgb(54, 89, 169)" viewBox="0 0 24 24" width="45" height="45">
                           <filter id="shadow">
                             <feDropShadow dx="0.2" dy="0.4" stdDeviation="0.2" />
                           </filter>

@@ -633,17 +633,27 @@ router.get("/tags", async (req: Request, res: Response) => {
 });
  router.get('/shared/:id/:type', async (req: Request, res: Response) => {
   const { id, type } = req.params;
-  const userModel = type === 'sentToId' ? 'sentFromUser' : 'sentToUser'
+ 
+  let sharedPosts;
   try{
-   const sharedPosts = await SharedPost.findAll({
-    where: {[type]: id},
-    include: [Post, { model: User,
-      as: userModel }],
-    order:[
-        ['createdAt', 'DESC']
-      ],
-   })
-   
+   if(type === 'notification'){
+    sharedPosts = await SharedPost.findAll({
+      where: {
+        sentToId: id,
+        hasSeen: false
+      }
+     })
+   } else {
+    const userModel = type === 'sentToId' ? 'sentFromUser' : 'sentToUser'
+    sharedPosts = await SharedPost.findAll({
+      where: {[type]: id},
+      include: [Post, { model: User,
+        as: userModel }],
+      order:[
+          ['createdAt', 'DESC']
+        ],
+     })
+   }
     //console.log('shared', sharedPosts)
     res.send(sharedPosts)
   }catch(error){
