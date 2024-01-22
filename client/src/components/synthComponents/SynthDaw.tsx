@@ -54,7 +54,7 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
 
   const [distortionSettings, setDistortionSettings] = useState({
     wet: distortionFilter.wet.value,
-    distortion: distortionFilter.distortion,
+    distort: distortionFilter.distortion,
   });
 
   useEffect(() => {
