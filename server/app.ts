@@ -205,17 +205,9 @@ app.post('/openAIGetResponse', async (req, res) => {
 io.on('connection', (socket) => {
   console.log('User connected');
 
-  socket.on('join-channel', (channelName, uid) => {
-    socket.join(channelName);
-    io.to(channelName).emit('user-joined', uid);
-  });
-
-  socket.on('leave-channel', () => {
-    const rooms = Object.keys(socket.rooms);
-    rooms.forEach((room) => {
-      socket.leave(room);
-    });
-  });
+  socket.on('sendUser', (user) => {
+    io.emit('recieveUser', user)
+  })
 
   socket.on('sent-shared-message', async (response) => {
     //console.log('socket new-message', response)

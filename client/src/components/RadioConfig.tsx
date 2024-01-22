@@ -48,16 +48,16 @@ const RadioConfig = ({ setRoomProps }) => {
     setName(e.target.value);
   };
 
-  const navigateTo = (room) => {
-    if (name === '') {
-      setError('Please name your channel');
-    } else {
-      console.log('create', user);
-      setRoomProps(name, user.username, room.data.id, user);
+    const navigateTo = (room) => {
+        if(name === ''){
+            setError("Please name your channel")
+        }else{
+            console.log('create', user)
+            setRoomProps(name, user.username, room.data.id, user)
+            window.location.href = `/protected/room/${name}`;
             
-      navigate(`/protected/room/${name}`);
+        }
     }
-  };
 
 
   const createChannel = async () => {
