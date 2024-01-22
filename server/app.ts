@@ -371,7 +371,6 @@ app.patch('/update-username', async (req, res) => {
 
   try {
     const userExists = await User.findOne({ where: { displayUsername } });
-    console.log("userExists:", userExists)
     if (userExists) {
       return res.status(400).send('Display username already exists');
     }
