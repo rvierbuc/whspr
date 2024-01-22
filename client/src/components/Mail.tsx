@@ -23,10 +23,8 @@ export const Mail: React.FC<WaveSurferProps> = ({
   const user = sharePost.sentFromUser ? sharePost.sentFromUser : sharePost.sentToUser;
   const getFullPost = async () => {
     try {
-      const seenMessage = await axios.post('/post/hasSeen', { id: sharePost.id, bool: true, type: 'sentToId'});
+      const seenMessage = await axios.put('/post/hasSeen', { id: sharePost.id, bool: true, userType: 'sentToId', modelType: 'SharedPost'});
       const fullPost = await axios.get(`/post/updatedPost/${sharePost.Post.id}/${currUser.id}`);
-      console.log('seen message', seenMessage);
-      //sharePost = seenMessage.data;
       const newSharedPosts = sharedPosts.map((post, ind) => {
         if (ind === sharePostIndex) {
           return seenMessage.data;
@@ -41,9 +39,7 @@ export const Mail: React.FC<WaveSurferProps> = ({
       console.error('could not get full post in mailbox', error);
     }
    
-    //console.log('isToday working?', isToday(sharePost.createdAt));
   };
-  console.log('share post', sharePost)
   const isToday = (testDate) => {
     const today = new Date();
     const date = new Date(testDate);
@@ -57,7 +53,7 @@ export const Mail: React.FC<WaveSurferProps> = ({
         ? <div id='header'>
           <div  style={{ width: '90%', display: 'flex', flexDirection: 'column', marginTop: '.5rem', marginLeft: '.5rem', marginBottom: '.5rem' }} >
             <div style={{ display: 'flex', flexDirection: 'row' }}>
-              <div>{user ? user.username : ''}</div>
+              <div style={{fontStyle:'italic'}}>{user ? user.username : ''}</div>
               <div style={{ fontSize: '.75rem', marginRight: '.5rem', marginLeft: 'auto' }}>{isToday(sharePost.createdAt) ? dayjs(sharePost.createdAt).format('LT') : dayjs(sharePost.createdAt).format('MMM D')}</div>
             </div>
           <div>{sharePost.Post.title}</div>
@@ -72,7 +68,7 @@ export const Mail: React.FC<WaveSurferProps> = ({
           <div style={{ color:"#e1e1e1" }}>{sharePost.Post.title}</div>
            </div>
            <div style={{ width: '10%' }}>
-           <svg xmlns="http://www.w3.org/2000/svg" fill="rgb(54, 89, 169)" viewBox="0 0 24 24" width="24" height="24">
+           <svg style={{margin:'-.5rem'}}xmlns="http://www.w3.org/2000/svg" fill="rgb(54, 89, 169)" viewBox="0 0 24 24" width="24" height="24">
               <filter id="shadow">
                 <feDropShadow dx="0.2" dy="0.4" stdDeviation="0.2" />
               </filter>

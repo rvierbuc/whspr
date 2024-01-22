@@ -126,15 +126,19 @@ const Filters = ({ setFilter, audioContext, filter }: Props) => {
   };
 
   return (
-    <Container className="text-center my-2 rounded">
-    <h5 className="text-white mb-2">Try out one of our filters</h5>
-    <Stack direction="horizontal" gap={3} className="mx-4 my-1 typeCard">
-      <Button className={`btn text-white ${currentFilter === 'defaultSettings' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(defaultSettings)}>None</Button>
-      <Button className={`btn text-white ${currentFilter === 'alien' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(alien)}>Alien</Button>
-      <Button className={`btn text-white ${currentFilter === 'wobbly' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(wobbly)}>Wobbly</Button>
-      <Button className={`btn text-white ${currentFilter === 'robot' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(robot)}>Robot</Button>
-      <Button className={`btn text-white ${currentFilter === 'sixteenBit' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(sixteenBit)}>16-bit</Button>
-    </Stack>
+    <Container className="text-center my-2 rounded" style={{ flexDirection: 'row', justifyContent: 'center' }}>
+    <div id="synthFilters">
+      <div id="synthFilters" style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+        <h5 className="text-white mb-2" style={{ fontFamily: 'headerFont' }}>Try out one of our filters</h5>
+      </div>
+      <div>
+        <Button style={{margin: '1rem'}} id="filterBtn" className={`btn text-white ${currentFilter === 'defaultSettings' && 'activeButton'}`}variant='dark' onClick={() => handleFilterChange(defaultSettings)}>None</Button>
+        <Button style={{margin: '1rem'}} id="filterBtn" className={`btn text-white ${currentFilter === 'alien' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(alien)}>Alien</Button>
+        <Button style={{margin: '1rem'}} id="filterBtn" className={`btn text-white ${currentFilter === 'wobbly' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(wobbly)}>Wobbly</Button>
+        <Button style={{margin: '1rem'}} id="filterBtn" className={`btn text-white ${currentFilter === 'robot' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(robot)}>Robot</Button>
+        <Button style={{margin: '1rem'}} id="filterBtn" className={`btn text-white ${currentFilter === 'sixteenBit' && 'activeButton'}`} variant='dark' onClick={() => handleFilterChange(sixteenBit)}>16-bit</Button>
+      </div>
+    </div>
   </Container>
   );
 };

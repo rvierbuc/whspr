@@ -9,14 +9,15 @@ import {
   Like,
   Comment,
   Listen,
-  Radio, SharedPost,
+  Radio,
+  SharedPost,
+  MagicConch
 } from "../dbmodels";
 import { getTagsByEngagement } from "../algorithmHelpers";
 // ****HELPER FUNCTIONS***********
 const addIsLikedPair = (postArr, likedPostIdArr) => {
   for (let i = 0; i < postArr.length; i++) {
     if (likedPostIdArr.includes(postArr[i].id)) {
-      //console.log('true')
       postArr[i].dataValues.isLiked = true;
     } else {
       postArr[i].dataValues.isLiked = false;
@@ -99,13 +100,11 @@ router.get("/explore/:userId/:tag", async (req: Request, res: Response) => {
       const listenedPostIdArr = await listenedPosts.map(
         (post: any) => post.postId
       );
-      //console.log(listenedPostIdArr)
       await decayRankWhenPrevListened(postsWRanks, listenedPostIdArr);
     }
 
     //get user specific tag rankings (function definition in server/algorithmHelpers)
     const tagRanks = await getTagsByEngagement(userId);
-    //console.log(postsWRanks[0])
     //function to add user specific tag ranking to current rank field
     const getFinalRanking = (postRanks, tagRanks) => {
       for (let i = 0; i < postRanks.length; i++) {
@@ -115,12 +114,10 @@ router.get("/explore/:userId/:tag", async (req: Request, res: Response) => {
               postRanks[i].rank += tagRanks[key];
             }
           }
-          //console.log('qwz', postRanks[i])
         }
       }
     };
     await getFinalRanking(postsWRanks, tagRanks);
-    //console.log('posts to send', postsWRanks)
     //send posts in order of ranking
     await res.send(postsWRanks.sort((a, b) => (a.rank > b.rank ? -1 : 1)));
   } catch (error) {
@@ -343,14 +340,12 @@ router.get(
       });
 
       const likedPostIdArr = await likedPosts.map((post: any) => post.postId);
-      //console.log(likedPostIdArr)
 
       await addIsLikedPair(followingPosts, likedPostIdArr);
-      //console.log(followingPosts)
       await res.status(200).send(followingPosts);
     } catch (error) {
       res.sendStatus(500);
-      console.log("could not get following posts", error);
+      console.error("could not get following posts", error);
     }
   }
 );
@@ -364,7 +359,6 @@ router.get("/home", async (req: Request, res: Response) => {
 
     //clean query response to only include dataValues
     const postDataValues = await allPosts.map((post) => post.dataValues);
-    //console.log('home', postDataValues)
 
     //add popularity ranking based on overall likes, comments, and listen counts
     const postsWRanks = rankPostsByPopularity(postDataValues);
@@ -387,19 +381,17 @@ router.get("/use/:id", async (req: Request, res: Response) => {
     res.status(200).send(users);
   } catch (error) {
     res.sendStatus(500);
-    console.log("could not get following posts", error);
+    console.error("could not get following posts", error);
   }
 });
 
 router.get("/users", async (req: Request, res: Response) => {
-  console.log("hi");
   try {
     const users = await User.findAll();
-    console.log(users);
     res.status(200).send(users);
   } catch (error) {
     res.sendStatus(500);
-    console.log("could not get following posts", error);
+    console.error("could not get following posts", error);
   }
 });
 //gets all posts
@@ -425,7 +417,7 @@ router.get("/explore/:userId", async (req: Request, res: Response) => {
     res.status(200).send(postsArr);
   } catch (error) {
     res.sendStatus(500);
-    console.log("could not get following posts", error);
+    console.error("could not get following posts", error);
   }
 });
 //creates comment
@@ -435,14 +427,13 @@ router.post("/createCommentRecord", async (req: Request, res: Response) => {
     await Comment.create({ userId, postId, soundUrl });
     res.sendStatus(201);
   } catch (error) {
-    console.log("could not add comment", error);
+    console.error("could not add comment", error);
     res.sendStatus(500);
   }
 });
 //add following relationship
 router.post("/startFollowing", async (req: Request, res: Response) => {
   const { userId, followingId } = req.body;
-  console.log(userId, followingId);
   try {
     const startFollowing = await Follower.create({ userId, followingId });
     res.sendStatus(201);
@@ -457,7 +448,6 @@ router.post("/radio", async (req: Request, res: Response) => {
 
   try {
     const radio = await Radio.create({ host, listenerCount: 0, title });
-    console.log("radio", radio);
     res.status(201).send(radio);
   } catch {}
 });
@@ -469,10 +459,9 @@ router.post("/like", async (req: Request, res: Response) => {
       userId,
       postId,
     });
-    //console.log(createdLike)
     res.sendStatus(201);
   } catch (error) {
-    console.log("could not add like", error);
+    console.error("could not add like", error);
     res.sendStatus(500);
   }
 });
@@ -490,10 +479,9 @@ router.delete(
           userId,
         },
       });
-      //console.log(destroyLike)
       res.sendStatus(201);
     } catch (error) {
-      console.log("could not remove like", error);
+      console.error("could not remove like", error);
       res.sendStatus(500);
     }
   }
@@ -501,9 +489,7 @@ router.delete(
 //gets all comments for one post
 router.get("/comment/:postId", async (req: Request, res: Response) => {
   const { postId } = req.params;
-  //type limit = number;
-  //const limit = parseInt(limitStr)
-  //console.log(limit)
+
   try {
     const postComments = await Comment.findAll({
       where: {
@@ -536,14 +522,12 @@ router.get("/selected/:id", async (req: Request, res: Response) => {
       ],
       order: [["createdAt", "DESC"]],
     });
-    //console.log('got user posts', selectedUserPosts)
 
     const likedPosts = await Like.findAll({
       where: { id },
     });
 
     const likedPostIdArr = await likedPosts.map((post: any) => post.postId);
-    //console.log(likedPostIdArr)
 
     await addIsLikedPair(selectedUserPosts, likedPostIdArr);
     res.status(200).send(selectedUserPosts);
@@ -578,15 +562,12 @@ router.get(
 
 router.get("/followers/:userId", async (req: Request, res: Response) => {
   const { userId } = req.params;
-  //console.log('iddd', userId)
   try {
     const followers = await Follower.findAll({
       where: {
         followingId: 4,
       },
     });
-    //console.log('fol', followers[0])
-
     res.status(200).send(followers);
   } catch (error) {
     console.error("error checking following relationship", error);
@@ -622,7 +603,6 @@ router.get("/tags", async (req: Request, res: Response) => {
 
     const tagsToSend =
       sortedTopTags.length > 20 ? sortedTopTags.slice(0, 20) : sortedTopTags;
-    //console.log('tags', tagsToSend)
     res.status(200).send(tagsToSend);
   } catch (error) {
     console.error("get tags error:", error);
@@ -631,18 +611,27 @@ router.get("/tags", async (req: Request, res: Response) => {
 });
  router.get('/shared/:id/:type', async (req: Request, res: Response) => {
   const { id, type } = req.params;
-  const userModel = type === 'sentToId' ? 'sentFromUser' : 'sentToUser'
+ 
+  let sharedPosts;
   try{
-   const sharedPosts = await SharedPost.findAll({
-    where: {[type]: id},
-    include: [Post, { model: User,
-      as: userModel }],
-    order:[
-        ['createdAt', 'DESC']
-      ],
-   })
-   
-    //console.log('shared', sharedPosts)
+   if(type === 'notification'){
+    sharedPosts = await SharedPost.findAll({
+      where: {
+        sentToId: id,
+        hasSeen: false
+      }
+     })
+   } else {
+    const userModel = type === 'sentToId' ? 'sentFromUser' : 'sentToUser'
+    sharedPosts = await SharedPost.findAll({
+      where: {[type]: id},
+      include: [Post, { model: User,
+        as: userModel }],
+      order:[
+          ['createdAt', 'DESC']
+        ],
+     })
+   }
     res.send(sharedPosts)
   }catch(error){
     console.error('error getting shared posts', error)
@@ -651,27 +640,11 @@ router.get("/tags", async (req: Request, res: Response) => {
 
 // *************POST REQUESTS***********************
 
-router.post('/hasSeen', async (req:Request, res:Response) => {
-  const { id, bool, type } = req.body;
-  const userModel = type === 'sentToId' ? 'sentFromUser' : 'sentToUser'
-  console.log(userModel)
-  try {
-    const updateHasSeen = await SharedPost.update({hasSeen: bool}, {where: {id}})
-    const updated = await SharedPost.findByPk(id, {include: [Post, { model: User,
-      as: userModel }] })
-    res.send(updated)
-  }catch (error){
-    console.error('could not update hasSeen on share post', error)
-    res.sendStatus(500)
-  }
-})
-
  router.post('/radio', async(req: Request, res: Response) => {
   const {host, listenerCount, category, soundUrl, title} = req.body
 
   try {
     const radio = await Radio.create({host, listenerCount: 0, title})
-    console.log('radio', radio)
     res.status(201).send(radio)
   }catch {
 
@@ -693,7 +666,6 @@ router.post("/createCommentRecord", async (req: Request, res: Response) => {
 //creates following relationship
 router.post("/startFollowing", async (req: Request, res: Response) => {
   const { userId, followingId } = req.body;
-  console.log("in start following", userId, followingId);
   try {
     const startFollowing = await Follower.create({ userId, followingId });
     res.sendStatus(201);
@@ -711,7 +683,6 @@ router.post("/like", async (req: Request, res: Response) => {
       userId,
       postId,
     });
-    //console.log(createdLike)
     res.sendStatus(201);
   } catch (error) {
     console.error("could not add like", error);
@@ -727,7 +698,6 @@ router.post("/listen", async (req: Request, res: Response) => {
       userId,
       postId,
     });
-    //console.log(createdListen)
     res.sendStatus(201);
   } catch (error) {
     console.error("could not add listen", error);
@@ -745,12 +715,10 @@ router.put("/updateCount", async (req: Request, res: Response) => {
     const postToUpdate: any = await Post.findByPk(id);
     if (type === "increment") {
       updateResult = await postToUpdate.increment(column);
-      //console.log(updateResult)
     }
 
     if (type === "decrement") {
       updateResult = await postToUpdate.decrement(column);
-      //console.log(updateResult)
     }
     res.status(200).send(updateResult);
   } catch (error) {
@@ -771,13 +739,33 @@ router.put("/selectedTags/:id", async (req: Request, res: Response) => {
         },
       }
     );
-    //console.log(updated)
     res.sendStatus(200);
   } catch (error) {
     console.error("could not add selected tags to user", error);
     res.send(500);
   }
 });
+
+router.put('/hasSeen', async (req:Request, res:Response) => {
+  const { id, bool, userType, modelType } = req.body;
+ // console.log('magic conch has seen', id, bool, userType, modelType)
+  const userModel = userType === 'sentToId' ? 'sentFromUser' : 'sentToUser'
+  const model = modelType === 'SharedPost' ? SharedPost : MagicConch
+  let updated;  
+  try {
+    const updateHasSeen = await model.update({hasSeen: bool}, {where: {id}})
+    if(modelType === 'SharedPost'){
+      updated = await model.findByPk(id, {include: [Post, { model: User,
+        as: userModel }] })
+    } else {
+      updated = await model.findByPk(id)
+    }
+    res.send(updated)
+  }catch (error){
+    console.error('could not update hasSeen on share post', error)
+    res.sendStatus(500)
+  }
+})
 // **********************DELETE REQUESTS****************************
 //allows user to unlike a post and removes like record from db
 router.delete(
@@ -792,7 +780,6 @@ router.delete(
           postId,
         },
       });
-      //console.log('unliked', destroyLike)
       res.sendStatus(201);
     } catch (error) {
       console.error("could not remove like", error);
@@ -804,17 +791,17 @@ router.delete(
 router.delete("/radio/:name", async (req: Request, res: Response) => {
   const { name } = req.params;
 
-  console.log("hete", name);
+  //console.log("hete", name);
   try {
     const destroyRadio = Radio.destroy({
       where: {
         host: name
       }
     })
-    console.log('deleted', destroyRadio)
+    //console.log('deleted', destroyRadio)
     res.sendStatus(201)
   }catch{
-    console.log('no')
+    console.error('no')
   }
 });
 
@@ -831,7 +818,6 @@ router.delete(
           followingId,
         },
       });
-      console.log("unfollowed", destroyFollowing);
       res.sendStatus(201);
     } catch (error) {
       console.error("server could not unfollow", error);

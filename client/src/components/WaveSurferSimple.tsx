@@ -35,7 +35,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       wave.destroy();
     }
     //create the new wave
-    console.log('creating new comment wave');
     const wavesurfer = WaveSurfer.create({
       // barWidth: 15,
       // barRadius: 5,
@@ -100,7 +99,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
  
     setWave(wavesurfer);
     setDisplay(true);
-    console.log('wave created!');
   };
 
   useEffect(() => {

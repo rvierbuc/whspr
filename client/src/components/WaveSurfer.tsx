@@ -18,6 +18,8 @@ import { MdDeleteOutline } from 'react-icons/md';
 import { TooltipComponent } from './Tooltip';
 import Modal from 'react-bootstrap/Modal';
 import { SharePost } from './SharePost';
+import toast, { Toaster } from 'react-hot-toast';
+
 
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
@@ -32,14 +34,19 @@ interface WaveSurferProps {
   setOnProfile: any;
   audioContext: AudioContext;
   feed: string;
-  setIsDeleting: any
   setCorrectPostId: any
   setSelectedUserPosts: any
-  isDeleting: boolean
   setCurrentDeletePostId: any
   onHome: boolean
   onConch: boolean
   waveHeight: number;
+  isConch: boolean;
+  containerType: string;
+  setSelectedUserPosts: any
+  // showBigPost: boolean,
+  // setShowBigPost: any,
+  // bigPost: any,
+  // setBigPost: any,
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
@@ -54,14 +61,13 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   setOnProfile,
   audioContext,
   feed,
-  setIsDeleting,
-  setCorrectPostId,
   setSelectedUserPosts,
-  isDeleting,
-  setCurrentDeletePostId,
   onHome,
   onConch,
   waveHeight,
+  isConch,
+  containerType,
+
 }) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
@@ -72,24 +78,48 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [duration, setDuration] = useState<string>();
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [addComment, setAddComment] = useState<boolean>(false);
-  const [showFullPost, setShowFullPost] = useState<boolean>(false);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
 
-  //const [hasCategories, setHasCategories] = useState<boolean>();
-  // const { audioUrl, postId } = props;
-  const containerId = `waveform-${postId || ''}`;
-  // const handleDelete: () => void = async () => {
-  //   try {
-  //     const deletePost = await axios.delete(`/deletePost/${userId}/${postId}`);
-  //     console.log(deletePost.status);
-  //   } catch (error: any) {
-  //     console.error(error);
-  //   }
-  // };
+  const containerId = `waveform-${postId || ''}-${containerType}`;
+  // toast notifications
+  const notifyLike = (): void => {
+    toast.success('Post liked!', {
+      icon: '❤️‍🔥',
+      style: {
+        background: 'rgba(34, 221, 84, 0.785)',
+      },
+      position: 'top-right',
+    });
+  };
+  const notifyUnlike = (): void => {
+    toast.error('Post unliked!', {
+      icon: '💔',
+      style: {
+        background: 'rgba(221, 34, 34, 0.785)',
+      },
+      position: 'top-right',
+    });
+  };
+  const notifyFollow = (): void => {
+    toast.success('Followed!', {
+      icon: '🤝',
+      style: {
+        background: 'rgba(34, 221, 84, 0.785)',
+      },
+      position: 'top-right',
+    });
+  };
+  const notifyUnfollow = (): void => {
+    toast.error('Unfollowed!', {
+      icon: '👋',
+      style: {
+        background: 'rgba(221, 34, 34, 0.785)',
+      },
+      position: 'top-right',
+    });
+  };
 
-
-
-  const handleLike = async () => {
+  const handleLike = async ():Promise <void> => {
     try {
       await axios.post('/post/like', { userId, postId: postObj.id });
       await axios.put('/post/updateCount', {
@@ -98,11 +128,12 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
         id: postId,
       });
       await updatePost(postId, userId);
+      notifyLike();
     } catch (error) {
-      console.log('client could not like', error);
+      console.error('client could not like', error);
     }
   };
-  const handleUnlike = async () => {
+  const handleUnlike = async ():Promise <void> => {
     try {
       // const likeObj = postObj.Likes.filter((likeObj) => likeObj.userId === userId);
       await axios.delete(`/post/unlike/${postId}/${userId}`);
@@ -112,11 +143,12 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
         id: postId,
       });
       await updatePost(postId, userId);
+      notifyUnlike();
     } catch (error) {
-      console.log('client could not unlike', error);
+      console.error('client could not unlike', error);
     }
   };
-  const isFollowing = async () => {
+  const isFollowing = async ():Promise <void> => {
     try {
       const findFollowing = await axios.get(
         `/post/isFollowing/${userId}/${postObj.user.id}`,
@@ -128,10 +160,10 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       if (error.response.status === 404) {
         setFollowing(false);
       }
-      console.log('following error', error);
+      console.error('following error', error);
     }
   };
-  const startFollowing = async () => {
+  const startFollowing = async ():Promise <void> => {
     try {
       const createFollowing = await axios.post('/post/startFollowing', {
         userId,
@@ -139,26 +171,26 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       });
       if (createFollowing.data === 'Created') {
         setFollowing(true);
+        notifyFollow();
       }
     } catch (error) {
       console.error('could not follow user', error);
     }
   };
-  const stopFollowing = async () => {
+  const stopFollowing = async ():Promise <void> => {
     try {
       const createFollowing = await axios.delete(
         `/post/stopFollowing/${userId}/${postObj.user.id}`,
       );
       if (createFollowing.data === 'Created') {
         setFollowing(false);
+        notifyUnfollow();
       }
     } catch (error) {
       console.error('could not follow user', error);
     }
   };
-  console.log('on user profile:', onUserProfile);
-  console.log('on profile:', onProfile);
-  const createSoundWaves = () => {
+  const createSoundWaves = ():void => {
     let regions: RegionsPlugin;
     let hover: HoverPlugin;
     //if there is a wavesurfer already, destroy it
@@ -166,7 +198,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       wave.destroy();
     }
     //create the new wave
-    console.log('creating new wave');
     const wavesurfer = WaveSurfer.create({
       // barWidth: 15,
       // barRadius: 5,
@@ -255,17 +286,15 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
           id: postId,
         });
         await updatePost(postId, userId);
-        console.log('complete', updateListenCount, addListen);
       } catch (error) {
         console.error('on audio finish error', error);
       }
     });
 
     setWave(wavesurfer);
-    console.log('wave created!');
 
   };
-  //console.log('categories?', hasCategories);
+
   useEffect(() => {
     createSoundWaves();
     isFollowing();
@@ -280,9 +309,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
 
       <div className="row" id="feed-row">
         <div className="col-sm" id="feed-col-sm">
-          <div className="card" id="feed-card" style={{marginBottom:'1rem'}}>
+          <div className="card" id="feed-card" style={{ marginBottom: '1rem' }}>
             {/* <br/> */}
-            <div className="card-body" style={{height: onConch ? '400px' : '100%'}}>
+            <div className="card-body" style={{ height: onConch ? '400px' : '100%' }}>
               {onProfile ? (
                 <a></a>
               ) : (
@@ -307,8 +336,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     }}
                   />
                   <a
-                    href={`profile/${postObj.user.id}`}
-                    style={{ fontSize: onConch ? '1.5rem' : '2rem', color: '#0f0c0c' }}
+                    href={onConch ? `feed/profile/${postObj.user.id}` : `profile/${postObj.user.id}`}
+                    style={{ fontSize: onConch ? '1.5rem' : '2rem', color: '#0f0c0c', fontFamily: 'headerFont', textDecoration: 'none' }}
                     id="feed-username"
                   >
                     {postObj.user.displayUsername || postObj.user.username}
@@ -317,7 +346,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     following ? (
                       <button
                         className="p-2 btn btn-danger"
-                        style={{ marginLeft: 'auto', marginRight: '2%' }}
+                        style={{ marginLeft: 'auto', marginRight: '2%', background: '#7c3030', border: 'none' }}
                         onClick={() => stopFollowing()}
                       >
                         Unfollow
@@ -325,7 +354,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     ) : (
                       <button
                         className="p-2 btn btn-primary"
-                        style={{ marginLeft: 'auto', marginRight: '2%' }}
+                        style={{ marginLeft: 'auto', marginRight: '2%', background: 'rgb(54, 89, 169)', border: 'none' }}
                         onClick={() => startFollowing()}
                       >
                         Follow
@@ -342,9 +371,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 paddingTop: '1rem',
                 paddingLeft: '1rem',
                 justifyContent: 'start',
-                alignContent: 'end'
+                alignContent: 'end',
               }}
-                onClick={() => showFullPost ? setShowFullPost(false) : setShowFullPost(true)}
+              onClick= {() => handleBigPost(postObj) }
               >
                 <div
                   style={{
@@ -428,7 +457,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   marginTop: onProfile ? '0px' : '1rem',
                   height: waveHeight,
                   borderRadius: '6px',
-                  //position: 'relative',
+                  position: 'relative',
                 }}
               >
                 <div id={containerId}></div>
@@ -445,7 +474,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     padding: '2rem',
                     justifyContent: 'start',
                     width: '100%',
-                    height: onUserProfile || onProfile || onConch ? '200px' : '500px',
+                    height: waveHeight,
                   }}
                 >
                   <div
@@ -514,14 +543,15 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                         type="button"
                         style={{
                           marginTop: onConch ? '10%' : '10%',
-                        //marginBottom: onConch ? '5%' : '',
+                          //marginBottom: onConch ? '5%' : '',
                           alignSelf: 'center',
                         }}
                         className="simple-btn"
-                        id="play-btn"
+                        id="play-btn hover"
                         onClick={() => {
                           if (wave) {
                             wave.playPause();
+                            
                             setIsPaused(() => !isPaused);
                           }
                         }}
@@ -541,7 +571,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                           background: 'none',
                           border: 'none',
                           padding: '10rem',
-                          margin: 'auto',
+                          margin: onProfile || onUserProfile || onConch ? 'auto' : 'auto 16rem',
                         }}
                         onClick={() => {
                           if (wave) {
@@ -553,6 +583,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     <button
                       type="button"
                       className="simple-btn"
+                      id='hover'
                       style={{
                         marginTop: onConch ? '10%' : '10%',
                         alignSelf: 'center',
@@ -582,20 +613,27 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 style={{ marginTop: '.5rem' }}
                 >
                     <div style={{ color: '#e1e1e5' }}>
-              {onConch ? <div></div> : (postObj.isLiked 
-                ? `Liked by you and ${postObj.likeCount - 1} other listeners` 
-                : `Liked by ${postObj.likeCount} listeners`)}
-            </div>
+                {onConch ? <div></div> : (postObj.isLiked ?
+                  (postObj.likeCount > 2
+                    ? `Liked by you and ${postObj.likeCount - 1} listeners` 
+                    : postObj.likeCount === 2 ? 'Liked by you and 1 listener' 
+                      : 'Liked by you')
+                  : (postObj.likeCount > 1
+                    ? `Liked by ${postObj.likeCount} listeners` 
+                    : postObj.likeCount === 1 ? 'Liked by 1 listener' 
+                      : <div></div>))}
+                </div>
                   <div style={{ color: '#e1e1e5', marginLeft: 'auto' }}>{duration ? duration : ''}</div>
                 </div>
               </div>
-              {onHome ? <div></div> : (<div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginTop: onConch ? '10px' : 'none', marginBottom: '8px', 
+              {onHome || isConch ? <div></div> : (<div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginTop: onConch ? '10px' : 'none', marginBottom: '8px', 
               }}>
               {postObj.isLiked ? (
                 <div>
                   {' '}
                   <TooltipComponent tooltip='Unlike' id={`unlike-${postObj.id}`}>
                     <MdOutlineFavorite
+                    id='hover'
                       type="button"
                       //className="btn"
                       onClick={() => handleUnlike()}
@@ -617,6 +655,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 <div>
                   <TooltipComponent tooltip='Like' id={`like-${postObj.id}`}>
                     <MdOutlineFavoriteBorder
+                    id='hover'
                       type="button"
                       data-toggle="tooltip" data-placement="top"
                       title='Like'
@@ -640,6 +679,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
               <TooltipComponent tooltip='Add a Comment' id={`comment-${postObj.id}`}>
 
                 <MdOutlineAddComment
+                id='hover'
                   type='button'
                   onClick={() => { setAddComment(() => !addComment); }}
                   style={{
@@ -655,6 +695,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
               </TooltipComponent>
               <TooltipComponent tooltip='Share' id={`share-${postObj.id}`}>
                 <MdArrowOutward
+                id='hover'
                   onClick={() => { setShowShareModal(true); }}
                   style={{
                     //backgroundColor: 'rgba(233, 236, 243, 0.00)',
@@ -666,25 +707,15 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   }}></MdArrowOutward>
               </TooltipComponent>
               {onUserProfile ? (
-                <div onClick={() => setIsDeleting(true)}>
-                  <MdDeleteOutline
-                    type="button"
-                    onClick={() => {
-                      if (!isDeleting) {
-                        setIsDeleting(true);
-                        setCurrentDeletePostId(postId);
-                      } else {
-                        setIsDeleting(false);
-                        setCurrentDeletePostId(null);
-                      }
-                    }}
-                    style={{
-                      color: '#e1e1e5',
-                      height: '3rem',
-                      width: '3rem',
-                      marginRight: '1rem',
-                    }}></MdDeleteOutline>
-                </div>
+                <MdDeleteOutline
+                  type="button"
+                  onClick={() => setDeleting(true)}
+                  style={{
+                    color: '#e1e1e5',
+                    height: '3rem',
+                    width: '3rem',
+                    marginRight: '1rem',
+                  }}></MdDeleteOutline>
               ) : (
                 <div></div>
               )}
@@ -694,6 +725,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
               ) : ( */}
             <div>
               <Post
+                setSelectedUserPosts={setSelectedUserPosts}
                 key={postId}
                 postObj={postObj}
                 updatePost={updatePost}
@@ -701,6 +733,12 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 audioContext={audioContext}
                 addComment={addComment}
                 setAddComment={setAddComment}
+                deleting={deleting}
+                setDeleting={setDeleting}
+                onProfile={onProfile}
+                onUserProfile={onUserProfile}
+                waveHeight={waveHeight}
+                onConch={onConch}
               />
             </div>
             {/* )} */}
@@ -717,90 +755,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
           audioContext={audioContext}
         ></SharePost>
       </Modal>
-      {/* <Modal isOpen={showFullPost} onClose={() => setShowFullPost(false)} >
-        <WaveSurferComponent
-        postObj={postObj}
-        audioUrl={postObj.soundUrl}
-        postId={postObj.id}
-        userId={userId}
-        getPosts={getPosts}
-        updatePost={updatePost}
-        onProfile={onProfile}
-        audioContext={audioContext}
-        feed={feed}
-        setIsDeleting={setIsDeleting}
-        setCorrectPostId={setCorrectPostId}
-        setSelectedUserPosts={setSelectedUserPosts}
-        isDeleting={isDeleting}
-        setCurrentDeletePostId={setCurrentDeletePostId}
-        onUserProfile={onUserProfile}
-        setOnProfile={setOnProfile}
-        ></WaveSurferComponent>
-      </Modal> */}
     </div>
   );
 };
 
 export default WaveSurferComponent;
-/**
- * listen stat
- * <div>
-                    <img
-                      src={require('../style/listenIcon.png')}
-                      style={{
-                        width: 'auto',
-                        height: '35px',
-                        objectFit: 'scale-down',
-                        color: '#e1e1e5',
-                      }}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      marginLeft: '2px',
-                      marginRight: '2%',
-                      fontSize: 'x-large',
-                      color: '#e1e1e5',
-                    }}
-                  >
-                    {postObj.listenCount}
-                  </div>
- */
-/**
- * old delete
- *  {/* {onUserProfile ? (
-                    <div>
-                      {' '}
-                      <div>
-                        <img
-                          src={require('../style/bin.png')}
-                          style={{
-                            width: 'auto',
-                            height: '40px',
-                            objectFit: 'scale-down',
-                            color: '#e1e1e5',
-                          }}
-                          onClick={() => {
-                            if (deleting === false) {
-                              setDeleting(true);
-                              setIsDeleting(true);
-                            } else {
-                              setDeleting(false);
-                              setIsDeleting(false);
-                            }
-                          }}
-                        />
-                      </div>
-                      <div>
-                        {deleting === true && (
-                          <Modal
-                            isOpen={deleting}
-                            onClose={() => setDeleting(false)}
-                            children={<Delete userId={userId} id={postId} />}
-                          />
-                        )}
-                      </div>{' '}
-                    </div>
-                  ) : (
-                    <div></div>
-                  )}  */

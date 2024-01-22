@@ -45,7 +45,7 @@ const upload = multer({ storage: storage })
 
 
 const postRoutes = require('./routes/postRoutes')
-import { Sound, Post, User, AIMessage } from './dbmodels'
+import { Sound, Post, User, AIMessage, SharedPost } from './dbmodels'
 
 
 const app = express()
@@ -129,7 +129,7 @@ app.get('/current-user', async (req: Request, res: Response) => {
   try {
     const results = await User.findOne({ where: { googleId: req.user } })
     if (results) {
-      console.log('current user:', results)
+      //console.log('current user:', results)
       res.status(200).send(results);
     } else {
       res.status(404).send('User not found');
@@ -217,6 +217,23 @@ io.on('connection', (socket) => {
     });
   });
 
+  socket.on('sent-shared-message', async (response) => {
+    //console.log('socket new-message', response)
+    const { sentToId, sentFromId } = response;
+    try {
+      console.log('sent shared message')
+      const sharedPosts = await SharedPost.findAll({
+        where: {
+          sentToId,
+          hasSeen: false
+        }
+      })
+     socket.emit('sharedPost-notification', {sentToId, notificationAmt: sharedPosts.length})
+
+    }catch (error){
+      console.error('shared message socket error', error)
+    }
+  })
   socket.on('disconnect', () => {
     console.log('User disconnected');
   });
