@@ -359,8 +359,28 @@ export const WhsprAI = ({ audioContext }: WhsprAIProps): ReactElement => {
     }
   };
 
+  const togglePause = (): void => {
+    if (audioRef.current) {
+      if (isPaused) {
+        audioRef.current.play();
+      } else {
+        audioRef.current.pause();
+      }
+      setIsPaused(!isPaused);
+    }
+  };
+
   const handlePressToTalkPress = (): void => {
-    if (isPlaying) { return; }
+    let currentIsPlaying = isPlaying;
+    if (isPaused) {
+      if (audioRef.current) {
+        audioRef.current = null;
+      }
+      setIsPaused(false);
+      setIsPlaying(false);
+      currentIsPlaying = false;
+    }
+    if (currentIsPlaying) { return; }
     pressTime.current = setTimeout(() => {
       setIsRecording(true);
       vibratePhone();
@@ -386,16 +406,6 @@ export const WhsprAI = ({ audioContext }: WhsprAIProps): ReactElement => {
     }
   };
 
-  const togglePause = (): void => {
-    if (audioRef.current) {
-      if (isPaused) {
-        audioRef.current.play();
-      } else {
-        audioRef.current.pause();
-      }
-      setIsPaused(!isPaused);
-    }
-  };
 
 
   return (
