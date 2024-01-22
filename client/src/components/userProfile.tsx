@@ -586,7 +586,7 @@ const UserProfile = ({
                     </button>
                   </CustomModal>
                 </div>
-                <h2 style={{ color: 'white' }}>{username}</h2>
+                <h2 style={{ color: '#e1e1e1', fontFamily:'headerFont' }}>{username}</h2>
               </div>
 
               <div
