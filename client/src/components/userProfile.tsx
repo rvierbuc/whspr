@@ -1,24 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useLoaderData } from "react-router-dom";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Post from "./Post";
-import RadioConfig from "./RadioConfig";
-import Container from "react-bootstrap/Container";
-import WaveSurferComponent from "./WaveSurfer";
-import WaveSurferSimple from "./WaveSurferSimple";
-import { Link } from "react-router-dom";
-import { Modal, Button } from "react-bootstrap";
-import { FaSearch } from "react-icons/fa";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useLoaderData } from 'react-router-dom';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Post from './Post';
+import RadioConfig from './RadioConfig';
+import Container from 'react-bootstrap/Container';
+import WaveSurferComponent from './WaveSurfer';
+import WaveSurferSimple from './WaveSurferSimple';
+import { Link } from 'react-router-dom';
+import { Modal, Button } from 'react-bootstrap';
+import { FaSearch } from 'react-icons/fa';
 //edit profile imports:
-<<<<<<< HEAD
-import { Modal as CustomModal } from "./Modal";
-=======
 import { Modal as CustomModal } from './Modal';
 import toast, { Toaster } from 'react-hot-toast';
->>>>>>> fce838d419c4d3f02c90577a8b19895c84a8de21
 interface PostAttributes {
   id: number;
   userId: number;
@@ -87,10 +83,10 @@ const UserProfile = ({
   setRoomProps,
 }: PropsType): JSX.Element => {
   const [currentUser, setCurrentUser] = useState<CurrentUserAttributes>(
-    useLoaderData() as CurrentUserAttributes
+    useLoaderData() as CurrentUserAttributes,
   );
   const [selectedUserPosts, setSelectedUserPosts] = useState<PostAttributes[]>(
-    []
+    [],
   );
   const [onProfile, setOnProfile] = useState<boolean>(true);
   const [onUserProfile, setOnUserProfile] = useState<boolean>(true);
@@ -105,7 +101,7 @@ const UserProfile = ({
   const [followerCount, setFollowerCount] = useState<number>(0);
   const [followingCount, setFollowingCount] = useState<number>(0);
   const [searchModal, setSearchModal] = useState<boolean>(false);
-  const [searchInput, setSearchInput] = useState<string>("");
+  const [searchInput, setSearchInput] = useState<string>('');
   const [followerSearchResults, setFollowerSearchResults] = useState<
   FollowerAttributes[]
   >([]);
@@ -114,33 +110,22 @@ const UserProfile = ({
   >([]);
   //editing profile states
   const [username, setUsername] = useState(
-<<<<<<< HEAD
-    currentUser.displayUsername || currentUser.username
+    currentUser.displayUsername || currentUser.username,
   );
   const [tempUsername, setTempUsername] = useState(
-    currentUser.displayUsername || currentUser.username
-  );
-  const [usernameError, setUsernameError] = useState("");
-  const [profileImgError, setProfileImgError] = useState("");
-=======
     currentUser.displayUsername || currentUser.username,
   );
   const [usernameError, setUsernameError] = useState('');
-  const [profileImgError, setProfileImgError] = useState('')
->>>>>>> fce838d419c4d3f02c90577a8b19895c84a8de21
+  const [profileImgError, setProfileImgError] = useState('');
   const [profileImg, setprofileImg] = useState(null);
   const [userBio, setUserBio] = useState(currentUser.userBio);
   const [tempUserBio, setTempUserBio] = useState(currentUser.userBio);
   const [openModal, setOpenModal] = useState(null);
   const [rerender, setRerender] = useState(0);
-<<<<<<< HEAD
-=======
   // setting a delete state => if true => render a fade in asking if the user wants to delete the post
   // then if they delete => set the state with the current posts
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
->>>>>>> fce838d419c4d3f02c90577a8b19895c84a8de21
   const [correctPostId, setCorrectPostId] = useState<number | null>(null);
-  const [tempUsername, setTempUsername] = useState(currentUser.displayUsername || currentUser.username);
   //toast for deleting post
   const notifyDelete = () =>
     toast.success('Post deleted!', {
@@ -187,12 +172,12 @@ const UserProfile = ({
     try {
       // make a request to the server endpoint using the currentUser's id
       const selectedUserObj = await axios.get(
-        `/post/selected/${currentUser.id}`
+        `/post/selected/${currentUser.id}`,
       );
       // set the selected user posts to the data from the request
       setSelectedUserPosts(selectedUserObj.data);
     } catch (error) {
-      console.error("could not get selected user info", error);
+      console.error('could not get selected user info', error);
     }
   };
   // function to update the posts
@@ -200,20 +185,20 @@ const UserProfile = ({
     try {
       // make a request to the server endpoint made for updating posts and use the post id and the current user id as params
       const updatedPost = await axios.get(
-        `/post/updatedPost/${postId}/${currentUser.id}`
+        `/post/updatedPost/${postId}/${currentUser.id}`,
       );
       // find the index of the post that was updated
       const postIndex = await selectedUserPosts.findIndex(
-        (post) => post.id === updatedPost.data.id
+        (post) => post.id === updatedPost.data.id,
       );
       //updatedPost.data.rank = selectedUserPosts[postIndex].rank;
       const postsWUpdatedPost = await selectedUserPosts.splice(
         postIndex,
         1,
-        updatedPost.data
+        updatedPost.data,
       );
     } catch (error) {
-      console.log("could not update post", error);
+      console.log('could not update post', error);
     }
   };
   // function to get the selected user's followers
@@ -221,13 +206,13 @@ const UserProfile = ({
     try {
       // make a request to the server endpoint using the current user's id as an identifying param
       const followers = await axios.get(
-        `/post/user/${currentUser.id}/followers`
+        `/post/user/${currentUser.id}/followers`,
       );
       // using the information fetched, set the selected user's followers and set the follower count using the length property on the array of followers
       setSelectedUserFollowers(followers.data);
       setFollowerCount(followers.data.length);
     } catch (error) {
-      console.log("error fetching current user followers", error);
+      console.log('error fetching current user followers', error);
     }
   };
   // function to get the selected user's following list
@@ -235,35 +220,35 @@ const UserProfile = ({
     try {
       // make a request to the server endpoint using the current user's id as an identifying param
       const following = await axios.get(
-        `/post/user/${currentUser.id}/following`
+        `/post/user/${currentUser.id}/following`,
       );
       // using the information fetched, set the selected user's followers and set the follower count using the length property on the array of followers
       setSelectedUserFollowing(following.data);
       setFollowingCount(following.data.length);
     } catch (error) {
-      console.log("error fetching current user following", error);
+      console.log('error fetching current user following', error);
     }
   };
   // function to handle the search input change and set the search input state
   const handleSearchChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ): void => {
     setSearchInput(event.target.value);
   };
   // function to handle the search submission
   const handleSearchSubmission = async (): Promise<void> => {
     try {
-      if (searchInput === "") {
-        alert("Please enter a search term");
+      if (searchInput === '') {
+        alert('Please enter a search term');
         return;
       }
       // make a request to the server endpoint using the current user's id and the search input as identifying params to get
       // the search results for the followers and the following
       const followersQueryResults = await axios.get(
-        `/post/user/${currentUser.id}/followers/search/${searchInput}`
+        `/post/user/${currentUser.id}/followers/search/${searchInput}`,
       );
       const followingQueryResults = await axios.get(
-        `/post/user/${currentUser.id}/following/search/${searchInput}`
+        `/post/user/${currentUser.id}/following/search/${searchInput}`,
       );
       if (!followersQueryResults.data.length && !followingQueryResults.data.length) {
         notifyNoMatchingUsers();
@@ -273,7 +258,7 @@ const UserProfile = ({
       setFollowerSearchResults(followersQueryResults.data);
       setFollowingSearchResults(followingQueryResults.data);
     } catch (error) {
-      console.log("error fetching search results", error);
+      console.log('error fetching search results', error);
     }
   };
   // use effect to load user posts on page load and the followers / following
@@ -288,10 +273,10 @@ const UserProfile = ({
 
   const openModalHandler = (modalName) => {
     const newModalState = openModal === modalName ? null : modalName;
-    if (modalName === "bio") {
+    if (modalName === 'bio') {
       setTempUserBio(userBio);
     }
-    if (modalName === "username") {
+    if (modalName === 'username') {
       setTempUsername(username);
     }
     setOpenModal(newModalState);
@@ -299,32 +284,16 @@ const UserProfile = ({
 
   const closeModalHandler = () => {
     setOpenModal(null);
-    setProfileImgError("");
-    setUsernameError("");
+    setProfileImgError('');
+    setUsernameError('');
   };
 
   const updateBio = () => {
-<<<<<<< HEAD
-    let userId = currentUser.id.toString();
-    axios
-      .patch("/update-bio", { userBio: tempUserBio, userId })
-      .then((response) => {
-        console.log("Profile updated:", response.data);
-        setCurrentUser((prevState) => {
-          return { ...prevState, userBio: tempUserBio };
-        });
-        setUserBio(tempUserBio);
-        closeModalHandler();
-        setTempUserBio("");
-      })
-      .catch((error) => {
-        console.error("Error updating profile:", error);
-=======
-    let userId = currentUser.id.toString()
+    const userId = currentUser.id.toString();
     axios.patch('/update-bio', { userBio: tempUserBio, userId })
       .then(response => {
         console.log('Profile updated:', response.data);
-        setCurrentUser(prevState => { return ({ ...prevState, userBio: tempUserBio }) })
+        setCurrentUser(prevState => { return ({ ...prevState, userBio: tempUserBio }); });
         setUserBio(tempUserBio);
         closeModalHandler();
         setTempUserBio('');
@@ -332,56 +301,30 @@ const UserProfile = ({
       })
       .catch((error) => {
         console.error('Error updating profile:', error);
->>>>>>> fce838d419c4d3f02c90577a8b19895c84a8de21
       });
   };
 
   const updateUsername = () => {
-<<<<<<< HEAD
-    let userId = currentUser.id.toString();
-    setUsernameError("");
-    axios
-      .patch("/update-username", { displayUsername: tempUsername, userId })
-      .then((response) => {
-        console.log("Profile updated:", response.data);
-        setCurrentUser((prevState) => ({
-          ...prevState,
-          username: tempUsername,
-        }));
-        setUsername(tempUsername);
-        closeModalHandler();
-        setTempUsername("");
-=======
     const userId = currentUser.id.toString();
     setUsernameError('');
     axios
       .post('/update-username', { displayUsername: username, userId })
       .then((response) => {
         console.log('Profile updated:', response.data);
-        setCurrentUser(prevState => ({ ...prevState, username: tempUsername }))
-        setUsername(tempUsername)
+        setCurrentUser(prevState => ({ ...prevState, username: tempUsername }));
+        setUsername(tempUsername);
         closeModalHandler();
         setTempUsername('');
         notifyUsernameChange();
->>>>>>> fce838d419c4d3f02c90577a8b19895c84a8de21
       })
       .catch((error) => {
         if (error.response && error.response.status === 400) {
-          setUsernameError("Username already exists.");
+          setUsernameError('Username already exists.');
         }
-        console.error("Error updating profile:", error);
+        console.error('Error updating profile:', error);
       });
   };
   const uploadImage = () => {
-<<<<<<< HEAD
-    setProfileImgError("");
-    let userId = currentUser.id.toString();
-    const formData = new FormData();
-
-    if (!profileImg) {
-      setProfileImgError("Please select an image.");
-      console.error("image not selected");
-=======
     setProfileImgError('');
     const userId = currentUser.id.toString();
     const formData = new FormData();
@@ -389,17 +332,16 @@ const UserProfile = ({
     if (!profileImg) {
       setProfileImgError('Please select an image.');
       console.error('image not selected');
->>>>>>> fce838d419c4d3f02c90577a8b19895c84a8de21
       return;
     }
 
-    formData.append("image", profileImg);
-    formData.append("userId", userId);
+    formData.append('image', profileImg);
+    formData.append('userId', userId);
 
     axios
-      .post("/upload-image", formData, {
+      .post('/upload-image', formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       })
       .then((response) => {
@@ -414,21 +356,21 @@ const UserProfile = ({
         setprofileImg(null);
       })
       .catch((error) => {
-        console.error("Error uploading image:", error);
+        console.error('Error uploading image:', error);
       });
   };
 
   const handleFileButtonClick = () => {
-    document.getElementById("profileImgInput")!.click();
+    document.getElementById('profileImgInput')!.click();
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setProfileImgError("");
+      setProfileImgError('');
       setprofileImg(file);
     } else {
-      setProfileImgError("Please select an image.");
+      setProfileImgError('Please select an image.');
     }
   };
 
@@ -469,8 +411,8 @@ const UserProfile = ({
       />
       <Modal
         style={{
-          backgroundColor: "rgb(209, 209, 209, 0.6",
-          textAlign: "center",
+          backgroundColor: 'rgb(209, 209, 209, 0.6',
+          textAlign: 'center',
         }}
         show={searchModal}
         onHide={() => setSearchModal(!searchModal)}
@@ -511,11 +453,11 @@ const UserProfile = ({
                       src={follower.profileImgUrl}
                       alt="follower profile image"
                       style={{
-                        borderRadius: "50%",
-                        width: "100px",
-                        height: "100px",
-                        marginTop: "10px",
-                        marginBottom: "10px",
+                        borderRadius: '50%',
+                        width: '100px',
+                        height: '100px',
+                        marginTop: '10px',
+                        marginBottom: '10px',
                       }}
                     />
                     <h4>{follower.username}</h4>
@@ -539,11 +481,11 @@ const UserProfile = ({
                       src={following.profileImgUrl}
                       alt="follower profile image"
                       style={{
-                        borderRadius: "50%",
-                        width: "100px",
-                        height: "100px",
-                        marginTop: "10px",
-                        marginBottom: "10px",
+                        borderRadius: '50%',
+                        width: '100px',
+                        height: '100px',
+                        marginTop: '10px',
+                        marginBottom: '10px',
                       }}
                     />
                     <h4>{following.username}</h4>
@@ -559,32 +501,32 @@ const UserProfile = ({
           <div>
             <div
               className="card user-profile-card"
-              style={{ justifyContent: "center" }}
+              style={{ justifyContent: 'center' }}
             >
               <div
                 className="user-profile-image"
-                onClick={() => openModalHandler("img")}
+                onClick={() => openModalHandler('img')}
               >
                 <img
                   src={currentUser.profileImgUrl}
                   alt="user profile image"
                   style={{
-                    borderRadius: "50%",
-                    width: "100px",
-                    height: "100px",
-                    marginTop: "10px",
-                    marginBottom: "10px",
+                    borderRadius: '50%',
+                    width: '100px',
+                    height: '100px',
+                    marginTop: '10px',
+                    marginBottom: '10px',
                   }}
                 />
                 <div className="modal-button-container">
                   <CustomModal
                     className="modal-profile-edit"
-                    isOpen={openModal === "img"}
+                    isOpen={openModal === 'img'}
                     onClose={closeModalHandler}
                   >
                     <h2>Upload Profile Image</h2>
                     <input
-                      style={{ display: "none" }}
+                      style={{ display: 'none' }}
                       id="profileImgInput"
                       type="file"
                       onChange={handleImageChange}
@@ -612,12 +554,12 @@ const UserProfile = ({
               </div>
               <div
                 className="user-profile-info"
-                onClick={() => openModalHandler("username")}
+                onClick={() => openModalHandler('username')}
               >
                 <div className="modal-button-container">
                   <CustomModal
                     className="modal-profile-edit"
-                    isOpen={openModal === "username"}
+                    isOpen={openModal === 'username'}
                     onClose={closeModalHandler}
                   >
                     <h2>Change Username</h2>
@@ -643,18 +585,18 @@ const UserProfile = ({
                     </button>
                   </CustomModal>
                 </div>
-                <h2 style={{ color: "white" }}>{username}</h2>
+                <h2 style={{ color: 'white' }}>{username}</h2>
               </div>
 
               <div
                 className="user-profile-bio"
-                onClick={() => openModalHandler("bio")}
+                onClick={() => openModalHandler('bio')}
               >
-                {userBio || "Click to add bio"}
+                {userBio || 'Click to add bio'}
                 <div className="modal-button-container">
                   <CustomModal
                     className="modal-profile-edit"
-                    isOpen={openModal === "bio"}
+                    isOpen={openModal === 'bio'}
                     onClose={closeModalHandler}
                   >
                     <h2>Change Your Bio</h2>
@@ -687,7 +629,7 @@ const UserProfile = ({
                   type="button"
                   onClick={() => setSearchModal(true)}
                   className="btn btn-dark btn-md"
-                  style={{ marginLeft: "10px" }}
+                  style={{ marginLeft: '10px' }}
                 >
                   {followerCount} Followers
                 </button>
@@ -695,15 +637,15 @@ const UserProfile = ({
                   type="button"
                   onClick={() => setDisplayFollowers(false)}
                   className="btn btn-dark btn-md"
-                  style={{ marginLeft: "10px" }}
+                  style={{ marginLeft: '10px' }}
                 >
                   {followingCount} Following
                 </button>
                 <FaSearch
                   style={{
-                    marginLeft: "10px",
-                    marginRight: "10px",
-                    cursor: "pointer",
+                    marginLeft: '10px',
+                    marginRight: '10px',
+                    cursor: 'pointer',
                   }}
                   onClick={() => setSearchModal(true)}
                 />
