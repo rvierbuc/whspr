@@ -54,7 +54,7 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
 
   const [distortionSettings, setDistortionSettings] = useState({
     wet: distortionFilter.wet.value,
-    distortion: distortionFilter.distortion,
+    distort: distortionFilter.distortion,
   });
 
   useEffect(() => {
@@ -130,7 +130,7 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
 
   return (
     <Container className="rounded text-white text-center" style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '-1rem' }}>
-      <div className="card p-3" id="post-card-box">
+      <div className="card p-3">
         <Container className="p-1 mb-1">
           <PostCard setPostCategories={setPostCategories} setPostTitle={setPostTitle} />
           <Filters filter={filter} setFilter={setFilter} audioContext={audioContext} />
@@ -139,7 +139,7 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
           <button
             type="button"
             className="text-white btn btn-dark btn-rounded"
-            style={ { margin: '0.1rem', width: '20rem', minHeight: '4.5vw', fontFamily: 'headerFont' } }
+            style={ { margin: '0.1rem', width: '20rem', minHeight: '4.5vh', fontSize: 'larger', fontFamily: 'headerFont' } }
             onClick={toggleSynth}>Synthesize your own sound!</button>
         </div>
         {addSynth === true &&
