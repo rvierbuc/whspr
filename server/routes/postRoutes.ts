@@ -413,7 +413,7 @@ router.get("/users", async (req: Request, res: Response) => {
     res.sendStatus(500);
     console.error("could not get following posts", error);
   }
-<<<<<<< HEAD
+
 })
 // Gets all the users that the selected user is following
 router.get('/user/:userId/following', async (req: Request, res: Response): Promise<void> => {
@@ -571,9 +571,7 @@ router.get('/users', async (req: Request, res: Response) => {
     
     })
 
-=======
-});
->>>>>>> 14d10ae7fb1d688904dab84f11ce600d3f1765a2
+
 //gets all posts
 router.get("/explore/:userId", async (req: Request, res: Response) => {
   const { userId } = req.params;
