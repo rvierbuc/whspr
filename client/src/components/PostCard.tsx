@@ -15,7 +15,7 @@ const generateUserToken = (): string => {
 
 const userToken = generateUserToken();
 
-const searchClient = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251e4', {
+const searchClient = algoliasearch('L1DTWCU98D', 'bf531f95b4dd36ed1fc7eadf4c95cda6', {
   headers: {
     'X-Algolia-UserToken': userToken,
   },
@@ -108,7 +108,7 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
   const Hit = ({ hit, onSelect }: { hit: any; onSelect: (category: string[] | string) => void }) => {
     const { hits } = useHits();
     // console.log('hits', hit); //the individual hit obj
-    console.log('hits array', hits);
+    console.log('hits array + hit', hits, hit);
     //  filter the hits based on the current search
     const filteredHits = hits.filter((individualHit: any) => {
       return individualHit.category.toLowerCase().includes(currentSearch.toLowerCase());
@@ -158,7 +158,7 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
         {/* create an input that holds the selected categories */}
         {currentSearch && <Hits className="cat-hits" hitComponent={(props) => <Hit {...props} onSelect={handleHitClick} />} />}
         {/* <input type="text" value={selectedCategories} readOnly={true} className='input-control text-white' id='category-read-only' /> */}
-        <Configure userToken={userToken} />
+        <Configure userToken={userToken} hitsPerPage={2} />
         {selectedCategories ? selectedCategories.map((category, index) => (
           <CategoryWithDeleteButton key={index} category={category} onSelect={handleHitClick} />
         )) : null}
