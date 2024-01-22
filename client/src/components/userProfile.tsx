@@ -13,7 +13,12 @@ import { Link } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
 //edit profile imports:
+<<<<<<< HEAD
 import { Modal as CustomModal } from "./Modal";
+=======
+import { Modal as CustomModal } from './Modal';
+import toast, { Toaster } from 'react-hot-toast';
+>>>>>>> fce838d419c4d3f02c90577a8b19895c84a8de21
 interface PostAttributes {
   id: number;
   userId: number;
@@ -90,11 +95,11 @@ const UserProfile = ({
   const [onProfile, setOnProfile] = useState<boolean>(true);
   const [onUserProfile, setOnUserProfile] = useState<boolean>(true);
   const [selectedUserFollowers, setSelectedUserFollowers] = useState<
-    FollowerAttributes[]
+  FollowerAttributes[]
   >([]);
   const [currentDeletePostId, setCurrentDeletePostId] = useState<number>(0);
   const [selectedUserFollowing, setSelectedUserFollowing] = useState<
-    FollowingAttributes[]
+  FollowingAttributes[]
   >([]);
   const [displayFollowers, setDisplayFollowers] = useState<boolean>(true);
   const [followerCount, setFollowerCount] = useState<number>(0);
@@ -102,13 +107,14 @@ const UserProfile = ({
   const [searchModal, setSearchModal] = useState<boolean>(false);
   const [searchInput, setSearchInput] = useState<string>("");
   const [followerSearchResults, setFollowerSearchResults] = useState<
-    FollowerAttributes[]
+  FollowerAttributes[]
   >([]);
   const [followingSearchResults, setFollowingSearchResults] = useState<
-    FollowingAttributes[]
+  FollowingAttributes[]
   >([]);
   //editing profile states
   const [username, setUsername] = useState(
+<<<<<<< HEAD
     currentUser.displayUsername || currentUser.username
   );
   const [tempUsername, setTempUsername] = useState(
@@ -116,13 +122,66 @@ const UserProfile = ({
   );
   const [usernameError, setUsernameError] = useState("");
   const [profileImgError, setProfileImgError] = useState("");
+=======
+    currentUser.displayUsername || currentUser.username,
+  );
+  const [usernameError, setUsernameError] = useState('');
+  const [profileImgError, setProfileImgError] = useState('')
+>>>>>>> fce838d419c4d3f02c90577a8b19895c84a8de21
   const [profileImg, setprofileImg] = useState(null);
   const [userBio, setUserBio] = useState(currentUser.userBio);
   const [tempUserBio, setTempUserBio] = useState(currentUser.userBio);
   const [openModal, setOpenModal] = useState(null);
   const [rerender, setRerender] = useState(0);
+<<<<<<< HEAD
+=======
+  // setting a delete state => if true => render a fade in asking if the user wants to delete the post
+  // then if they delete => set the state with the current posts
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+>>>>>>> fce838d419c4d3f02c90577a8b19895c84a8de21
   const [correctPostId, setCorrectPostId] = useState<number | null>(null);
+  const [tempUsername, setTempUsername] = useState(currentUser.displayUsername || currentUser.username);
+  //toast for deleting post
+  const notifyDelete = () =>
+    toast.success('Post deleted!', {
+      icon: '🗑️',
+      style: {
+        background: 'rgba(34, 221, 84, 0.785)',
+      },
+    });
 
+  const notifyImageChange = () => {
+    toast.success('Profile image changed!', {
+      icon: '📷',
+      style: {
+        background: 'rgba(34, 221, 84, 0.785)',
+      },
+    });
+  };
+  const notifyUsernameChange = () => {
+    toast.success('Username changed!', {
+      icon: '📝',
+      style: {
+        background: 'rgba(34, 221, 84, 0.785)',
+      },
+    });
+  };
+  const notifyBioChange = () => {
+    toast.success('Bio changed!', {
+      icon: '📝',
+      style: {
+        background: 'rgba(34, 221, 84, 0.785)',
+      },
+    });
+  };
+  const notifyNoMatchingUsers = () => {
+    toast.error('No matching users found!', {
+      icon: '❓',
+      style: {
+        background: 'rgba(255, 0, 0, 0.5)',
+      },
+    });
+  };
   // function to get the selected user information
   const getSelectedUserInfo = async (): Promise<void> => {
     try {
@@ -206,6 +265,10 @@ const UserProfile = ({
       const followingQueryResults = await axios.get(
         `/post/user/${currentUser.id}/following/search/${searchInput}`
       );
+      if (!followersQueryResults.data.length && !followingQueryResults.data.length) {
+        notifyNoMatchingUsers();
+        return;
+      }
       // using hooks, set the search results for the followers and the following respectively
       setFollowerSearchResults(followersQueryResults.data);
       setFollowingSearchResults(followingQueryResults.data);
@@ -219,13 +282,8 @@ const UserProfile = ({
     getSelectedUserFollowers();
     getSelectedUserFollowing();
   }, []);
-  // code to separate the posts on the user profile into a grid
-  const numberOfPostsPerRow = 3;
-  const rows: PostAttributes[][] = [];
-  for (let i = 0; i < selectedUserPosts.length; i += numberOfPostsPerRow) {
-    const row = selectedUserPosts.slice(i, i + numberOfPostsPerRow);
-    rows.push(row);
-  }
+  // toast notifications
+  
   //editing profile funcs
 
   const openModalHandler = (modalName) => {
@@ -246,6 +304,7 @@ const UserProfile = ({
   };
 
   const updateBio = () => {
+<<<<<<< HEAD
     let userId = currentUser.id.toString();
     axios
       .patch("/update-bio", { userBio: tempUserBio, userId })
@@ -260,10 +319,25 @@ const UserProfile = ({
       })
       .catch((error) => {
         console.error("Error updating profile:", error);
+=======
+    let userId = currentUser.id.toString()
+    axios.patch('/update-bio', { userBio: tempUserBio, userId })
+      .then(response => {
+        console.log('Profile updated:', response.data);
+        setCurrentUser(prevState => { return ({ ...prevState, userBio: tempUserBio }) })
+        setUserBio(tempUserBio);
+        closeModalHandler();
+        setTempUserBio('');
+        notifyBioChange();
+      })
+      .catch((error) => {
+        console.error('Error updating profile:', error);
+>>>>>>> fce838d419c4d3f02c90577a8b19895c84a8de21
       });
   };
 
   const updateUsername = () => {
+<<<<<<< HEAD
     let userId = currentUser.id.toString();
     setUsernameError("");
     axios
@@ -277,6 +351,19 @@ const UserProfile = ({
         setUsername(tempUsername);
         closeModalHandler();
         setTempUsername("");
+=======
+    const userId = currentUser.id.toString();
+    setUsernameError('');
+    axios
+      .post('/update-username', { displayUsername: username, userId })
+      .then((response) => {
+        console.log('Profile updated:', response.data);
+        setCurrentUser(prevState => ({ ...prevState, username: tempUsername }))
+        setUsername(tempUsername)
+        closeModalHandler();
+        setTempUsername('');
+        notifyUsernameChange();
+>>>>>>> fce838d419c4d3f02c90577a8b19895c84a8de21
       })
       .catch((error) => {
         if (error.response && error.response.status === 400) {
@@ -285,8 +372,8 @@ const UserProfile = ({
         console.error("Error updating profile:", error);
       });
   };
-
   const uploadImage = () => {
+<<<<<<< HEAD
     setProfileImgError("");
     let userId = currentUser.id.toString();
     const formData = new FormData();
@@ -294,6 +381,15 @@ const UserProfile = ({
     if (!profileImg) {
       setProfileImgError("Please select an image.");
       console.error("image not selected");
+=======
+    setProfileImgError('');
+    const userId = currentUser.id.toString();
+    const formData = new FormData();
+
+    if (!profileImg) {
+      setProfileImgError('Please select an image.');
+      console.error('image not selected');
+>>>>>>> fce838d419c4d3f02c90577a8b19895c84a8de21
       return;
     }
 
@@ -314,6 +410,7 @@ const UserProfile = ({
           profileImgUrl: newProfileImgUrl,
         }));
         closeModalHandler();
+        notifyImageChange(); //TODO: doesnt stay for long cause of reload ask alec
         setprofileImg(null);
       })
       .catch((error) => {
@@ -349,6 +446,27 @@ const UserProfile = ({
 
   return (
     <div>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 5000,
+          style: {
+            background: '#e1e1e1',
+          },
+          success: {
+            style: {
+              background: 'rgba(34, 221, 84, 0.785)',
+              color: '#000',
+            },
+          },
+          error: {
+            style: {
+              background: 'rgba(255, 0, 0, 0.5)',
+              color: '#000',
+            },
+          },
+        }}
+      />
       <Modal
         style={{
           backgroundColor: "rgb(209, 209, 209, 0.6",
@@ -616,32 +734,6 @@ const UserProfile = ({
               </div>
             ))}
           </div>
-          {/* {rows.map((row, index) => (
-            <Col key={index}>
-              {row.map((post) => (
-                <Row key={post.id}>
-                  <div className="grid-post-item">
-                    <WaveSurferComponent
-                      audioContext={audioContext}
-                      postObj={post}
-                      audioUrl={post.soundUrl}
-                      postId={post.id}
-                      userId={currentUser.id}
-                      updatePost={updatePost}
-                      getPosts={getSelectedUserInfo}
-                      onProfile={onProfile}
-                      onUserProfile={onUserProfile}
-                      setOnProfile={setOnProfile}
-                      setIsDeleting={setIsDeleting}
-                      setCorrectPostId={setCorrectPostId}
-                      setSelectedUserPosts={setSelectedUserPosts}
-                      setCurrentDeletePostId={setCurrentDeletePostId}
-                    />
-                  </div>
-                </Row>
-              ))}
-            </Col>
-          ))} */}
         </div>
       </div>
     </div>

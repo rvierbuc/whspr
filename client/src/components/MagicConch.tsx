@@ -6,6 +6,7 @@ import WaveSurferComponent from './WaveSurfer';
 import WaveSurferSimple from './WaveSurferSimple';
 import { useLoaderData } from 'react-router-dom';
 import axios, { AxiosResponse } from 'axios';
+import toast from 'react-hot-toast';
 //import Modal from 'react-bootstrap/Modal';
 import { ConchModal } from './ConchModal';
 import { Mail } from './Mail';
@@ -25,7 +26,6 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
   const [displayMessage, setDisplayMessage] = useState(null);
   // const [shareUser, setShareUser] = useState(null);
   const user: any = useLoaderData();
-  console.log('user', user);
 
   const getMessage = async () => {
     try {

@@ -40,26 +40,10 @@ const searchClient = algoliasearch(
   },
 );
 
-// function Hit({ hit }) {
-//   const { hits } = useHits(); // the array of hits
-//   console.log('hits', hits);//the individual hit obj
-//   const { refine } = useSearchBox();
-//   console.log('refine', refine);
-
-//   return (
-//     <article>
-//       <img src={hit.profileImgUrl || ''} alt={hit.name} style={{ width: 'auto', height: '100px', objectFit: 'scale-down' }} />
-//       <Link to={`/protected/profile/${hit.objectID}`}>{hit.username}</Link>
-
-// <p>{hit.title || ''}</p>
-
-//     </article>
-//   );
-// }
-
 const Search: React.FC = () => {
   const [currentSearch, setCurrentSearch] = useState<string>('');
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.stopPropagation();
     setCurrentSearch(event.target.value);
   };
   // moved hit comp into search comp to access current search
@@ -71,28 +55,27 @@ const Search: React.FC = () => {
       objectID: string;
       title: string;
     };
-    searchQuery: string;
   }
 
-  const Hit: React.FC<HitProps> = ({ hit, searchQuery }) => {
+  const Hit: React.FC<HitProps> = ({ hit }) => {
     const { hits } = useHits(); // the array of hits
     const { query } = useSearchBox();
-    console.log('search query', query);
-    console.log('hit prop searchQuery pass down', searchQuery);
-    console.log('hit inside of hit inside of search', hit);
-    console.log('hits inside of hit comp ins earch', hits);
+    // console.log('search query', query);
+    // console.log('hit prop searchQuery pass down', searchQuery);
+    // console.log('hit inside of hit inside of search', hit);
+    // console.log('hits inside of hit comp ins earch', hits);
     // filter the hits based on the current search
     const filteredHits = hits.filter((individualHit) => {
       return individualHit.username
         .toLowerCase()
-        .includes(currentSearch.toLowerCase());
+        .includes(query.toLowerCase());
     });
-    console.log('curr search and indiv hits in hit', currentSearch, filteredHits);
+    console.log('curr search and indiv hits in hit', currentSearch, query, filteredHits);
     // limit the number of hits to only display how many are in the filtered hits array
     return (
       <>
         {filteredHits.slice(0, 5).map((filteredHit, index) => {
-          console.log('hit inside of filtered hits', hit);
+          // console.log('hit inside of filtered hits', hit);
           return (
             <article key={index}>
               {/* <img
@@ -104,7 +87,7 @@ const Search: React.FC = () => {
                   objectFit: 'scale-down',
                 }}
               /> */}
-              <Link to={`/protected/profile/${hit.objectID}`}>
+              <Link to={`/protected/profile/${hit.id}`}>
                 {filteredHit.username}
               </Link>
 
@@ -115,9 +98,6 @@ const Search: React.FC = () => {
       </>
     );
   };
-  // useEffect(() => {
-  //   console.log('current search', currentSearch);
-  // }, []);
 
   return (
     <InstantSearch
@@ -125,7 +105,8 @@ const Search: React.FC = () => {
       indexName="user_index"
       // initialUiState={{ searchBox: { query: currentSearch } }}
       searchState={{ query: currentSearch }}
-      insights={true}
+      insights={false}
+      
     >
       {/* <SearchBox onInput={handleSearchChange}/> */}
       <div>
@@ -141,9 +122,9 @@ const Search: React.FC = () => {
         </InputGroup>
       </div>
       {currentSearch && (
-      <Hits hitComponent={(hit) => <Hit {...hit} searchQuery={currentSearch} />} className="card" />
+      <Hits hitComponent={(hit) => <Hit {...hit} />} className="card" />
       )}
-      <Configure clickAnalytics={true} queryType="prefixLast" />
+      <Configure clickAnalytics={true} queryType="prefixLast" hitsPerPage={2} />
     </InstantSearch>
   );
 };

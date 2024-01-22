@@ -55,7 +55,7 @@ const Post = (props) => {
   };
 
   return (
-    <div style={{minHeight:'50px'}} >
+    <div  style={{minHeight:'50px'}} >
       {
         addComment ?
         // <Modal show={addComment}>
