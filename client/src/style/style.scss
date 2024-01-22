@@ -88,6 +88,10 @@ body {
   display: flex;
   justify-content: space-between;
 }
+#headerFont {
+  font-family: headerFont;
+  font-size: 1.5rem;
+}
 
 .room-users {
   background: rgba(233, 236, 243, 0.075);

@@ -83,7 +83,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
       setSelectedUserInfo(selectedUserObj.data);
       // setUserPosts(selectedUserObj.data[0].Posts)
       // console.log(selectedUserObj.data[0].Posts)
-      console.log(selectedUserObj.data);
+      console.log('profile', selectedUserObj.data);
     } catch (error) {
       console.error('could not get selected user info', error);
     }
@@ -285,10 +285,11 @@ const ReadOnlyProfile = ({ audioContext }) => {
                   alt="user profile image"
                 />
               </div>
-              <div className="user-profile-info">
-                <h2 style={{ color: '#0f0c0c', fontSize: '2rem' }}>
+              <div className="user-profile-info" style={{display:'flex', flexDirection:'column', flexWrap:'wrap'}}>
+                <h2 style={{ color: '#0f0c0c', fontSize: '2rem', fontFamily:'headerFont', marginTop:'.5rem' }}>
                   {selectedUserInfo[0].user.username}
                 </h2>
+                <div style={{width:'500px', overflow:'wrap'}}>{selectedUserInfo[0].user.userBio}</div>
               </div>
               {following ? (
                 <IoPersonRemoveOutline
@@ -316,8 +317,9 @@ const ReadOnlyProfile = ({ audioContext }) => {
                   }}
                   onClick={() => startFollowing()}
                 ></IoPersonAdd>
-              )}
+              )}  
             </div>
+            
             <div className="row-container" style={{ justifyContent: 'center' }}>
               <div
                 style={{
@@ -328,8 +330,8 @@ const ReadOnlyProfile = ({ audioContext }) => {
                   margin: '.5rem',
                 }}
               >
-                <div>{selectedUserFollowing.length}</div>
-                <div>Following</div>
+                <div id='headerFont'>{selectedUserFollowing.length}</div>
+                <div id='headerFont'>Following</div>
               </div>
               <div
                 style={{
@@ -340,15 +342,16 @@ const ReadOnlyProfile = ({ audioContext }) => {
                   margin: '.5rem',
                 }}
               >
-                <div>{selectedUserFollowers.length}</div>
-                <div>
+                <div id='headerFont' >{selectedUserFollowers.length}</div>
+                <div id='headerFont' >
                   Followers{' '}
-                  <FaSearch
+                  
+                </div>
+              </div>
+              <FaSearch
                     style={{ marginLeft: '10px', cursor: 'pointer' }}
                     onClick={() => setSearchModal(true)}
                   />
-                </div>
-              </div>
             </div>
           </div>
           <div
