@@ -309,7 +309,7 @@ const UserProfile = ({
     const userId = currentUser.id.toString();
     setUsernameError('');
     axios
-      .patch('/update-username', { displayUsername: username, userId })
+      .patch('/update-username', { displayUsername: tempUsername, userId })
       .then((response) => {
         console.log('Profile updated:', response.data);
         setCurrentUser(prevState => ({ ...prevState, username: tempUsername }));
