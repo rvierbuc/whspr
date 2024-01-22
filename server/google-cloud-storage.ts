@@ -108,7 +108,8 @@ const saveSharePost = async (audio: any, sentFromId, sentToId, postId): Promise<
       sentFromId,
       sentToId,
       postId,
-      captionUrl: downloadURL
+      captionUrl: downloadURL,
+      hasSeen: false,
     })
     const writeStream = file.createWriteStream({
       metadata: {
@@ -185,7 +186,8 @@ const saveAudioConch = async (audio: any, sendingUserId, receivingUserId, title:
         receivingUserId,
         sendingUserId,
         title,
-        soundUrl: downloadURL
+        soundUrl: downloadURL,
+        hasSeen: false,
       })
     ])
     //const commentId = await conchRecord.get('id')

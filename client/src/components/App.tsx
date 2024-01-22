@@ -1,30 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, lazy } from 'react';
 import {
   Route,
   RouterProvider,
   createBrowserRouter,
   createRoutesFromElements,
-  Outlet,
-  Link,
-  Routes,
-  useLoaderData,
 } from 'react-router-dom';
 
-import Login from './Login';
-import Room from './Room';
 import Radio from './Radio';
-import PrivateRoutes from './PrivateRoutes';
-import Synthesize from './Synthesize';
-import WaveSurferComponent from './WaveSurfer';
-import Feed from './Feed';
-import PostCard from './PostCard';
-import UserProfile from './userProfile';
-import MagicConch from './MagicConch';
-import ReadOnlyProfile from './ReadOnlyProfile';
-import ProfileEdit from './test'
+const Login = lazy(() => import('./Login'));
+const Room = lazy(() => import('./Room'));
+const PrivateRoutes = lazy(() => import('./PrivateRoutes'));
+const WaveSurferComponent = lazy(() => import('./WaveSurfer'));
+const Feed = lazy(() => import('./Feed'));
+const UserProfile = lazy(() => import('./userProfile'));
+const MagicConch = lazy(() => import('./MagicConch'));
+const ReadOnlyProfile = lazy(() => import('./ReadOnlyProfile'));
 // import Search from './Search';
-import Post from './Post';
-
+const Synthesize = lazy(() => import('./Synthesize'));
+//import socket from './socket';
 import axios from 'axios';
 import { WhsprAI } from './WhsprAI';
 import aa from 'search-insights';
@@ -32,7 +25,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 // THE MAIN audio context to be used throughout the application (DO NOT ALTER)
-// const AudioContext = window.AudioContext;
 const audioContext: AudioContext = new AudioContext();
 // algolia initialization
 aa('init', {
@@ -52,24 +44,44 @@ const App = () => {
   const [channelName, setChannelName] = useState<string>();
   const [host, setHost] = useState<string>();
   const [uid, setUid] = useState<number>();
-  const [creator, setCreator] = useState<MediaStream>()
-
-  const setRoomProps = (channelName, host, uid, creator) => {
+  const [creator, setCreator] = useState<MediaStream>();
+  //const [inboxNotiCount, setInboxNotiCount] = useState<number>(0)
+  const setRoomProps = (channelName: string, host: string, uid: number) => {
     setChannelName(channelName);
     setHost(host);
     setUid(uid);
-    setCreator(creator)
+    setCreator(creator);
   };
 
   const getUserLoader = async () => {
     try {
       const response = await axios.get('/current-user');
+      //console.log('getUserLoader', response.data)
       return response.data;
     } catch (err) {
       console.error('user loader error', err);
       return null;
     }
   };
+  //console.log('current user', currUser);
+ 
+
+
+  // socket.on('sharedPost-notification', async (notificationObj) => {
+  //   const { sentToUser, notificationAmt } = notificationObj;
+  //   try {
+  //     const user = await getUserLoader();
+  //     console.log('getUserLoader', user.id === sentToUser);
+  //     //if (user.id === sentToUser) {
+  //       console.log('curr user', notificationAmt)
+  //       setInboxNotiCount(notificationAmt);
+  //     //}
+  //   } catch (error) {
+  //     console.error('shared post notification error', error);
+  //   }
+  //   //if(sentToUser === )
+    
+  // });
 
 
   const router = createBrowserRouter(

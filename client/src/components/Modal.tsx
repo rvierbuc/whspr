@@ -11,7 +11,7 @@ const handleModalClick = (event) => {
     event.stopPropagation();
 };
 
-export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
+export const Modal: React.FC<ModalProps> = ({ isOpen, children }) => {
     if (!isOpen) return null;
     return (
         <div className='modalCustom' onClick={handleModalClick}>

@@ -122,6 +122,8 @@ export const VerticalCarousel = ({ posts, leadingText, audioContext }) => {
       onUserProfile={false}
       onHome={onHome}
       audioContext={audioContext}
+      waveHeight={500}
+      containerType='home'
       ></WaveSurferComponent>
       </div>
       <IoIosArrowDown

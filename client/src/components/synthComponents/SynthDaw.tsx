@@ -1,10 +1,10 @@
-import React, { useState, useEffect, BaseSyntheticEvent } from 'react';
+import React, { useState, useEffect, BaseSyntheticEvent, lazy } from 'react';
 import { Container } from 'react-bootstrap';
 import Oscillator from './Oscillator';
-import { RecordPost } from '../RecordPost';
-import Filters from './Filters';
-import PostCard from '../PostCard';
 import * as Tone from 'tone';
+const Filters = lazy(() => import('./Filters'));
+const RecordPost = lazy(() => import('../RecordPost'));
+const PostCard = lazy(() => import('../PostCard'));
 
 interface Options {
   oscillator: Tone.Oscillator
@@ -35,7 +35,7 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
   const [instrument, setInstrument] = useState(oscillatorOptions.oscillator);
   const [postCategories, setPostCategories] = useState<string[]>([]);
   const [postTitle, setPostTitle] = useState<string>('');
-  const [synthFilters, setSynthFilters] = useState<{ phaseFilter: Tone.Phaser, distortionFilter: Tone.Distortion }>({});
+  const [synthFilters, setSynthFilters] = useState<{ phaseFilter: Tone.Phaser, distortionFilter: Tone.Distortion }>({phaseFilter, distortionFilter});
   const [synthBypass, setSynthBypass] = useState<{ phaseFilter: boolean, distortionFilter: boolean }>({
     phaseFilter: false,
     distortionFilter: false,
@@ -54,13 +54,12 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
 
   const [distortionSettings, setDistortionSettings] = useState({
     wet: distortionFilter.wet.value,
-    distortion: distortionFilter.distortion,
+    distort: distortionFilter.distortion,
   });
 
   useEffect(() => {
     setAddSynth(false);
     setInstrument(oscillatorOptions.oscillator);
-    setSynthFilters({ phaseFilter, distortionFilter });
   }, []);
 
   const toggleSynth: () => void = () => addSynth === false ? setAddSynth(true) : setAddSynth(false);
@@ -108,8 +107,8 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
       if (id === 'Q' && phaseFilter) {
         phaseFilter.Q.value = Number(value);
       }
-      if (id === 'phaseWet' && phaseFilter) {
-        phaseFilter.wet.value = Number(value);
+      if (id === 'octaves' && phaseFilter) {
+        phaseFilter.octaves = Number(value);
       }
     }
   };
@@ -121,7 +120,7 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
       setSynthBypass({ ...synthBypass, [id]: !synthBypass[id] });
     } else {
       setDistortionSettings({ ...distortionSettings, [id]: Number(value) });
-      if (id === 'distortion' && distortionFilter) {
+      if (id === 'distort' && distortionFilter) {
         distortionFilter.distortion = Number(value);
       } else if (id === 'wet' && distortionFilter) {
         distortionFilter.wet.value = Number(value);
@@ -132,12 +131,16 @@ const SynthDaw = ({ handleInfoToggle, audioContext, oscillatorOptions, user, pha
   return (
     <Container className="rounded text-white text-center" style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '-1rem' }}>
       <div className="card p-3">
-        <div className="p-2 mb-1">
+        <Container className="p-1 mb-1">
           <PostCard setPostCategories={setPostCategories} setPostTitle={setPostTitle} />
           <Filters filter={filter} setFilter={setFilter} audioContext={audioContext} />
-        </div>
+        </Container>
         <div className="synthOption">
-          <button type="button" className="text-white btn btn-dark btn-rounded" style={ { margin: '0.1rem', width: '50%' } } onClick={toggleSynth}>Synthesize your own sound!</button>
+          <button
+            type="button"
+            className="text-white btn btn-dark btn-rounded"
+            style={ { margin: '0.1rem', width: '20rem', minHeight: '4.5vh', fontSize: 'larger', fontFamily: 'headerFont' } }
+            onClick={toggleSynth}>Synthesize your own sound!</button>
         </div>
         {addSynth === true &&
         <Container className="syntheSize rounded mt-3">

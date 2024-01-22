@@ -13,12 +13,14 @@ interface WaveSurferProps {
   postId: number;
   audioContext: AudioContext;
   type: string;
+  onShare: boolean;
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   audioUrl,
   postId,
   audioContext,
+  onShare,
   type,
 }) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
@@ -33,7 +35,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       wave.destroy();
     }
     //create the new wave
-    console.log('creating new comment wave');
     const wavesurfer = WaveSurfer.create({
       // barWidth: 15,
       // barRadius: 5,
@@ -98,14 +99,13 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
  
     setWave(wavesurfer);
     setDisplay(true);
-    console.log('wave created!');
   };
 
   useEffect(() => {
     createSoundWaves();
   }, [audioUrl]);
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'start', marginLeft: '1rem', marginRight:'1rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'start', marginLeft: onShare ? '0' : '1rem', marginRight:'1rem' }}>
       {isPlaying ? (
         <button
           type="button"

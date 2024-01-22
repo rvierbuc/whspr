@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import axios from 'axios';
+import toast from 'react-hot-toast';
+import socket from './socket';
 
 interface RecordCommentProps {
   postObj: any,
@@ -14,15 +16,25 @@ interface RecordCommentProps {
   isSharing: boolean,
   sentToId: number,
   setShowShareModal: any,
+  onProfile: boolean
 }
-export const RecordComment = ({ setShowShareModal, sentToId, isSharing, postObj, getComments, userId, updatePost, commentStateLength, addComment, setAddComment, audioContext }) => {
+export const RecordComment = ({ setShowShareModal, onProfile, sentToId, isSharing, postObj, getComments, userId, updatePost, commentStateLength, addComment, setAddComment, audioContext }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioSource = useRef<AudioBufferSourceNode | null>(null);
+  // toast notifications
+  const notifyCommentPosted = () => {
+    toast.success('Comment Posted!', {
+      icon: '🔊',
+      style: {
+        background: 'rgba(34, 221, 34, 0.785)',
+      },
+      position: 'top-right',
+    });
+  };
   
-  console.log('record comment AC', audioContext);
   const startRecording = async () => {
     try {
       setAudioChunks([]);
@@ -128,12 +140,10 @@ export const RecordComment = ({ setShowShareModal, sentToId, isSharing, postObj,
         await axios.put('/post/updateCount', { type: 'increment', column: 'commentCount', id: postObj.id });
         await getComments();
         await updatePost(postObj.id, userId);
-        await console.log('all done');
+        await notifyCommentPosted();
       } else {
         console.error('Error saving audio:', response.statusText);
-          
       }
-      
     } catch (error) {
       console.error('Error saving audio:', error);
     }
@@ -149,8 +159,8 @@ export const RecordComment = ({ setShowShareModal, sentToId, isSharing, postObj,
   
       const response = await axios.post('/uploadSharePost', formData);
       if (response.status === 200) {
-        console.log(response);
         setShowShareModal(false);
+        socket.emit('sent-shared-message', { 'sentFromId': userId, 'sentToId': sentToId });
       }
       
     } catch (error) {
@@ -176,8 +186,8 @@ export const RecordComment = ({ setShowShareModal, sentToId, isSharing, postObj,
   // }
   
   return (
-    <div>
-    <div style={{ display: 'flex', flexDirection: 'row', alignContent: 'space-between' }}>
+    <div style={{ width: isSharing ? '70%' : '100' }}>
+    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly' } }>
     <button
       //className="record-button"
       id='record-btn-new'
@@ -224,13 +234,18 @@ export const RecordComment = ({ setShowShareModal, sentToId, isSharing, postObj,
         {/* <img src={require('../style/postbutton.png')} /> */}
         </button>}
   </div>
-  {isSharing ? <button id='save-btn-new'
-       onClick={() =>{
-         saveSharePostToGoogleCloud();
-         emptyRecording();
-       }}
-       disabled={audioChunks.length === 0 || isRecording}> Send
-     </button> : <div></div>}
+  {isSharing ? 
+  <div style={{ display: 'flex', justifyContent: 'end', marginTop: '-1rem' }}>
+
+  <button className='share-btn' style={{ padding: '.25rem' }}
+  onClick={() =>{
+    saveSharePostToGoogleCloud();
+    emptyRecording();
+  }}
+  disabled={audioChunks.length === 0 || isRecording}> Send
+  
+     </button> 
+     </div> : <div></div>}
   </div>
   );
 };

@@ -9,6 +9,7 @@ import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 import Modal from 'react-bootstrap/Modal';
 import { get } from 'http';
+import { Toaster } from 'react-hot-toast';
 
 const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   const [posts, setPosts] = useState<any>();
@@ -32,12 +33,9 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   const getTagList = async () => {
     const tagList: AxiosResponse = await axios.get('/post/tags');
     setTags(tagList.data);
-    console.log('tags', tagList.data);
   };
-  //console.log('feed AC', audioContext);
   const getPosts = async (feedType, tag) => {
     setFeed(feedType);
-    console.log(user);
     try {
       const allPosts: AxiosResponse = await axios.get(`/post/${type}/${user.id}/${tag}`);
       if (allPosts.data.length === 0) {
@@ -50,9 +48,9 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
       } else {
         setPosts(allPosts.data);
       }
-      console.log('all posts', allPosts.data);
+  
     } catch (error) {
-      console.log('client get friends', error);
+      console.error('client get friends', error);
     }
   };
 
@@ -61,7 +59,6 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
     if (selectedTags.includes(event.target.value)) {
       setSelectedTags(selectedTags.filter(tag => tag !== event.target.value));
       setTagCounter(() => tagCounter - 1);
-      console.log('selected tags unchecked', selectedTags);
       event.target.className = 'not-selected-tag';
     }
 
@@ -71,7 +68,6 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
       event.target.className = 'selected-tag';
       if (tagCounter === 5) {
         setCannotSelect(true);
-        console.log('selected tags length=4', selectedTags);
         event.target.className = 'not-selected-tag';
         setSelectedTags(selectedTags.filter(tag => tag !== event.target.value));
       }
@@ -82,28 +78,20 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
     axios.put(`/post/selectedTags/${user.id}`, { tags: selectedTags });
     setShowTagModal(false);
     getPosts('explore', 'none');
-    //console.log(selectedTags);
-    //getPosts('explore', 'none')
   };
-  const updatePost = async (postId, updateType) => {
+  const updatePost = async (postId, userId) => {
     try {
-      const updatedPost: any = await axios.get(`/post/updatedPost/${postId}/${updateType}`);
-      console.log('updated post obj', updatedPost);
+      const updatedPost: any = await axios.get(`/post/updatedPost/${postId}/${userId}`);
       const postIndex = posts.findIndex((post) => post.id === updatedPost.data.id);
       updatedPost.data.rank = posts[postIndex].rank;
-      //console.log('post index', updatePostIndex)
       const postsWUpdatedPost = posts.toSpliced(postIndex, 1, updatedPost.data);
-      console.log(postsWUpdatedPost);
       setPosts(postsWUpdatedPost);
     } catch (error) {
-      console.log('could not update post', error);
+      console.error('could not update post', error);
     }
   };
   useEffect(() => {
-    console.log('feed', type);
     getPosts(type, 'none');
-
-
   }, [type]);
 
   // SYDNEY => these are placeholders passing into PostCard so my added functionality in RecordPost doesn't conflict
@@ -144,19 +132,21 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
       {posts
         ? (posts.length === 0 ? <a href='explore' style={{ color: 'white', fontSize: 'xxx-large' }}>Explore Popular Posts to Find Friends</a>
           : posts.map((post: any) => (
-            <div style={{ marginBottom: '2rem', maxWidth: '950px', marginLeft: 'auto', marginRight: 'auto' }} className="centered">
-              <WaveSurferComponent
-                key={post.id}
-                postObj={post}
-                audioUrl={post.soundUrl}
-                postId={post.id}
-                userId={user.id}
-                getPosts={getPosts}
-                updatePost={updatePost}
-                audioContext={audioContext}
-                feed={feed} onProfile={false} setOnProfile={undefined} />
-            </div>),
-          )) : <div>Database is broken.</div>}
+        <div style={{ marginBottom: '2rem', maxWidth: '950px', marginLeft: 'auto', marginRight: 'auto' }} className="centered">
+              <Toaster />
+          <WaveSurferComponent
+                  key={post.id}
+                  postObj={post}
+                  audioUrl={post.soundUrl}
+                  postId={post.id}
+                  userId={user.id}
+                  getPosts={getPosts}
+                  updatePost={updatePost}
+                  audioContext={audioContext}
+                  waveHeight={500}
+                  feed={feed} onProfile={false} setOnProfile={undefined} containerType='feed'/>
+        </div>),
+          )) : <div>Loading...</div>}
     </div>
 
   );

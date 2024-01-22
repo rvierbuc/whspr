@@ -1,49 +1,52 @@
-import React, {useState, useEffect} from 'react'
-import axios, { AxiosResponse } from 'axios'
+import React, { useState, useEffect } from 'react';
+import axios, { AxiosResponse } from 'axios';
 import { useLoaderData, useNavigate } from 'react-router-dom';
-import {Modal, Form} from 'react-bootstrap'
+import { Modal, Form } from 'react-bootstrap';
+import toast from 'react-hot-toast';
 
-const RadioConfig = ({setRoomProps}) => {
-    const [select, setSelect] = useState([])
-    const [options, setOptions] = useState<AxiosResponse[]>([])
-    const [name, setName] = useState('')
-    const [error, setError] = useState('')
-    const navigate = useNavigate()
-    const user: any = useLoaderData();
-    const [show, setShow] = useState(false)
+const RadioConfig = ({ setRoomProps }) => {
+  const [select, setSelect] = useState([]);
+  const [options, setOptions] = useState<AxiosResponse[]>([]);
+  const [name, setName] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const user: any = useLoaderData();
+  const [show, setShow] = useState(false);
+  //toast notifications
+  const notifyChannelCreated = () => {
+    toast.success('Channel Created!', {
+      icon: '📻',
+      style: {
+        background: 'rgba(34, 221, 34, 0.785)',
+      },
+      position: 'top-right',
+    });
+  };
+  
+  const close = () => {
+    setShow(false);
+  };
+  
+  const open = () => {
+    setShow(true);
+  };
 
+  const getFollowers = async () => {
+    try {
+      const followers = await axios.get(`/post/followers/${user.id}`);
+      console.log('followers', followers);
+      for (const i in followers.data) {
+        const users = await axios.get(`/post/use/${followers.data[i].id}`);
+        setOptions((pre) => [...pre, users.data]);
+      }
 
+    } catch {
 
-    useEffect(() => {
-        getFollowers()
-    }, [])
-
-    const close = () => {
-        setShow(false)
     }
-
-    const open = () => {
-        setShow(true)
-    }
-
-    const getFollowers = async () => {
-        try{
-            const followers = await axios.get(`/post/followers/${user.id}`)
-            console.log('followers', followers)
-            for(let i in followers.data){
-                console.log('iii')
-                const users = await axios.get(`/post/use/${followers.data[i].id}`)
-                console.log('usee', users)
-                setOptions((pre) => [...pre, users.data])
-            }
-
-        } catch {
-
-        }
-    }
-    const channelChange = (e) => {
-        setName(e.target.value)
-    }
+  };
+  const channelChange = (e) => {
+    setName(e.target.value);
+  };
 
     const navigateTo = (room) => {
         if(name === ''){
@@ -57,26 +60,29 @@ const RadioConfig = ({setRoomProps}) => {
     }
 
 
-    const createChannel = async () => {
+  const createChannel = async () => {
 
-        try {
+    try {
 
-            if(name !== ''){
-                const room = await axios.post('/post/radio', {host: user.username, title: name, })
+      if (name !== '') {
+        const room = await axios.post('/post/radio', { host: user.username, title: name });
     
-                console.log('room', room)
-                navigateTo(room)
+        console.log('room', room);
+        navigateTo(room);
+        notifyChannelCreated();
+      }
+    } catch {
 
-            }
-        }catch {
-
-        }
     }
+  };
 
-    const optionClick = (option) => {
-        setSelect(option.username === select ? null : option.username)
-    }
-    return (
+  const optionClick = (option) => {
+    setSelect(option.username === select ? null : option.username);
+  };
+  useEffect(() => {
+    getFollowers();
+  }, []);
+  return (
          <div>
         
             
@@ -97,7 +103,7 @@ const RadioConfig = ({setRoomProps}) => {
                             ></Form.Control>
                             <br/>
                             <div>
-                            {error === null ? "" : error}
+                            {error === null ? '' : error}
                             </div>
                             <button 
                         onClick={createChannel}
@@ -118,7 +124,7 @@ const RadioConfig = ({setRoomProps}) => {
                 
 
         </div>
-    )
-}
+  );
+};
 
-export default RadioConfig
+export default RadioConfig;

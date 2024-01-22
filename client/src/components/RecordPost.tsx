@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import * as Tone from 'tone';
-import Tuna from 'tunajs';
 
 interface Props {
   instrument: Tone.Oscillator | Tone.FatOscillator | Tone.FMOscillator | Tone.AMOscillator
@@ -40,7 +39,7 @@ const constraints: Constraints = {
   video: false,
 };
 
-export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, categories, filter, addSynth, instrument, start, stop }: Props) => {
+const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, categories, filter, addSynth, instrument, start, stop }: Props): React.JSX.Element => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
@@ -151,7 +150,7 @@ export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, titl
     if (!synthBypass.phaseFilter) {
       synthFilters.phaseFilter.wet.value = 0;
     } else {
-      synthFilters.phaseFilter.wet.value = 0.5
+      synthFilters.phaseFilter.wet.value = 0.5;
     }
     if (!synthBypass.distortionFilter) {
       synthFilters.distortionFilter.wet.value = 0;
@@ -159,7 +158,7 @@ export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, titl
       synthFilters.distortionFilter.wet.value = 0.5;
     }
     try {
-      const filters: any[] = Object.values(synthFilters)
+      const filters: (Tone.Phaser | Tone.Distortion)[] = Object.values(synthFilters);
       const context = Tone.context;
       const destination = context.createMediaStreamDestination();
       resumeAudioContext();
@@ -178,7 +177,7 @@ export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, titl
       start();
       setIsRecording(true);
     } catch (error) {
-      console.error('Could not start recording', error)
+      console.error('Could not start recording', error);
     }
   };
 
@@ -233,7 +232,7 @@ export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, titl
   };
 
   const saveAudioToGoogleCloud = async (): Promise<void> => {
-    title = title || "untitled"
+    title = title || 'untitled';
     if (title) {
       handleNavigation('/protected/feed/following');
     } else {
@@ -275,8 +274,6 @@ export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, titl
     <div className="d-flex justify-content-center mt-3">
       <Stack direction="horizontal" gap={3}>
         <button
-          //className="record-button"
-          //style={{height:'5rem', width:'5rem'}}
           id='record-btn-new'
           onClick={() => {
             if (addSynth) {
@@ -285,55 +282,38 @@ export const RecordPost = ({ synthBypass, synthFilters, user, audioContext, titl
               startRecording();
             }
           }}
-          disabled={isRecording || audioChunks.length > 0}
-        >
-          {/* <img src={require('../style/recordbutton.png')} /> */}
+          disabled={isRecording || audioChunks.length > 0}>
         </button>
         <button
           id='play-btn-new'
-          //className="play-button"
           onClick={playAudio}
-          // if either of the chunks has a valid length => either one can be played back
-          disabled={isPlaying || (audioChunks.length === 0 && synthAudioChunks.length === 0)}
-        >
-          {/* <img src={require('../style/playbutton.png')} /> */}
+          disabled={isPlaying || (audioChunks.length === 0 && synthAudioChunks.length === 0)}>
         </button>
         <button
           id='stop-btn-new'
-          //style={{height:'4rem', width:'4rem'}}
-          //className="stop-button"
           onClick={isRecording ? stopRecording : stopPlaying}
-          disabled={!isRecording && !isPlaying}
-        >
-          {/* <img src={require('../style/stopbutton.png')} /> */}
+          disabled={!isRecording && !isPlaying}>
         </button>
         <button
           id='remove-btn-new'
           className="delete-button"
           onClick={() => {
-            emptyRecording()
-            stopStream()
-          }
-          }
-
-          disabled={audioChunks.length === 0 || isRecording}
-        >
-          {/* <img src={require('../style/deletebutton.png')} /> */}
+            emptyRecording();
+            stopStream();
+          }}
+          disabled={audioChunks.length === 0 || isRecording}>
         </button>
         <button
           id='post-btn-new'
-          //className="post-button"
           onClick={() => {
             saveAudioToGoogleCloud();
             stopStream();
-          }
-          }
-          // if either set of chunks is valid then that version of audio can be saved
-          disabled={(audioChunks.length === 0 && synthAudioChunks.length === 0) || isRecording}
-        >
-          {/* <img src={require('../style/postbutton.png')} /> */}
+          }}
+          disabled={(audioChunks.length === 0 && synthAudioChunks.length === 0) || isRecording}>
         </button>
       </Stack>
     </div >
   );
 };
+
+export default RecordPost;

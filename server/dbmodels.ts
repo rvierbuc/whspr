@@ -60,6 +60,9 @@ export const MagicConch = db.define('MagicConch', {
   soundUrl: {
     type: DataTypes.STRING,
   },
+  hasSeen: {
+    type: DataTypes.BOOLEAN,
+  }
 });
 
 export const Sound = db.define('Sound', {
@@ -213,11 +216,14 @@ export const SharedPost = db.define('SharedPost', {
   captionUrl: {
     type: DataTypes.STRING,
   },
+  hasSeen: {
+    type: DataTypes.BOOLEAN
+  },
 });
 
 // defines table relations
 User.hasMany(MagicConch, { foreignKey: 'sendingUserId' });
-MagicConch.belongsTo(User, { foreignKey: 'sendingUserId' });
+MagicConch.belongsTo(User, { foreignKey: 'sendingUserId', as: 'sentFromUser' });
 User.hasMany(MagicConch, { foreignKey: 'receivingUserId' });
 MagicConch.belongsTo(User, { foreignKey: 'receivingUserId' });
 //MagicConch.belongsTo(Sound, { foreignKey: 'soundUrl' })
@@ -227,9 +233,9 @@ Post.hasMany(Like, { foreignKey: 'postId' });
 Like.belongsTo(Post, { foreignKey: 'postId' });
 
 User.hasMany(SharedPost, { foreignKey: 'sentFromId' });
-SharedPost.belongsTo(User, { foreignKey: 'sentFromId' });
+SharedPost.belongsTo(User, { foreignKey: 'sentFromId', as: 'sentFromUser' });
 User.hasMany(SharedPost, { foreignKey: 'sentToId' });
-SharedPost.belongsTo(User, { foreignKey: 'sentToId' });
+SharedPost.belongsTo(User, { foreignKey: 'sentToId', as: 'sentToUser' });
 Post.hasMany(SharedPost, { foreignKey: 'postId' });
 SharedPost.belongsTo(Post, { foreignKey: 'postId' });
 
