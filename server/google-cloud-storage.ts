@@ -1,5 +1,6 @@
 import { Storage } from '@google-cloud/storage'
-import { Post, Sound, Comment, MagicConch } from './dbmodels'
+import { v4 as uuidv4 } from 'uuid';
+import { Post, Sound, Comment, MagicConch, SharedPost } from './dbmodels'
 const storage = new Storage({
   keyFilename: './key.json',
   projectId: 'whspr-406622'
@@ -12,7 +13,7 @@ const saveAudio = async (audio: any, userId, title: string, categories: string[]
   const file = bucket.file(`audio/${Date.now()}.wav`)
   const downloadURL = `https://storage.googleapis.com/${bucket.name}/${file.name}`
   try {
-    
+
     const postRecord = await Post.create({
       title,
       categories,
@@ -23,7 +24,7 @@ const saveAudio = async (audio: any, userId, title: string, categories: string[]
       listenCount: 0
     })
     const postId = postRecord.get('id')
-    if(!postId){
+    if (!postId) {
       console.error('postId not found in saveAudio')
     }
     const writeStream = file.createWriteStream({
@@ -43,8 +44,8 @@ const saveAudio = async (audio: any, userId, title: string, categories: string[]
         writeStream.end(audio);
       }),
       Sound.create({
-        userId, 
-        postId, 
+        userId,
+        postId,
         soundUrl: downloadURL,
       }).catch((soundError) => {
         console.error('Error creating Sound record:', soundError);
@@ -66,7 +67,7 @@ const saveAudioComment = async (audio: any, userId, postId): Promise<void | stri
       soundUrl: downloadURL
     })
     const commentId = await commentRecord.get('id')
-    if(!commentId){
+    if (!commentId) {
       console.error('commentId not found in saveAudioComment')
     }
     const writeStream = file.createWriteStream({
@@ -86,8 +87,47 @@ const saveAudioComment = async (audio: any, userId, postId): Promise<void | stri
         writeStream.end(audio);
       }),
       Sound.create({
-        userId, 
-        postId, 
+        userId,
+        postId,
+        soundUrl: downloadURL,
+      }).catch((soundError) => {
+        console.error('Error creating Sound record:', soundError);
+      }),
+    ])
+    console.log('Audio saved to cloud')
+    return downloadURL
+  } catch (error) {
+    console.error('Error handling audio upload:', error)
+  }
+}
+const saveSharePost = async (audio: any, sentFromId, sentToId, postId): Promise<void | string> => {
+  const file = bucket.file(`audio/${Date.now()}.wav`)
+  const downloadURL = `https://storage.googleapis.com/${bucket.name}/${file.name}`
+  try {
+    const sharePostRecord = await SharedPost.create({
+      sentFromId,
+      sentToId,
+      postId,
+      captionUrl: downloadURL
+    })
+    const writeStream = file.createWriteStream({
+      metadata: {
+        contentType: 'audio/wav'
+      }
+    })
+    await Promise.all([
+      new Promise<void>((resolve, reject) => {
+        writeStream.on('error', (error) => {
+          console.error('Error uploading audio:', error);
+          reject(error);
+        });
+        writeStream.on('finish', () => {
+          resolve();
+        });
+        writeStream.end(audio);
+      }),
+      Sound.create({
+        userId: sentFromId,
         soundUrl: downloadURL,
       }).catch((soundError) => {
         console.error('Error creating Sound record:', soundError);
@@ -105,10 +145,10 @@ const deleteAudioPost = async (userId: any, id: any) => {
   // const id = postId;
   try {
     await Promise.all([
-      Post.destroy({ where: {userId: userId, id: id}}),
-      Sound.destroy({ where: { postId: id }})
+      Post.destroy({ where: { userId: userId, id: id } }),
+      Sound.destroy({ where: { postId: id } })
     ])
-  } catch(error) {
+  } catch (error) {
     console.error('Error deleting Post', error);
   }
 };
@@ -116,7 +156,7 @@ const deleteAudioPost = async (userId: any, id: any) => {
 const saveAudioConch = async (audio: any, sendingUserId, receivingUserId, title: string): Promise<void | string> => {
   const file = bucket.file(`audio/${Date.now()}.wav`)
   const downloadURL = `https://storage.googleapis.com/${bucket.name}/${file.name}`
-  
+
   try {
 
     const writeStream = file.createWriteStream({
@@ -141,7 +181,7 @@ const saveAudioConch = async (audio: any, sendingUserId, receivingUserId, title:
       }).catch((soundError) => {
         console.error('Error creating Sound record:', soundError);
       }),
-        MagicConch.create({
+      MagicConch.create({
         receivingUserId,
         sendingUserId,
         title,
@@ -166,7 +206,7 @@ const getAudioUrl = async (postId: number): Promise<string | null> => {
       return null;
     }
     const soundUrl = soundRecord.get('soundUrl') as string;
-    if(!soundUrl){
+    if (!soundUrl) {
       console.error('Audio URL not found.')
     }
     return soundUrl;
@@ -176,4 +216,37 @@ const getAudioUrl = async (postId: number): Promise<string | null> => {
   }
 };
 
-export { saveAudio, getAudioUrl, saveAudioComment, saveAudioConch, deleteAudioPost }
+const saveImage = async (imageBuffer: Buffer, imageType: string, userId: string) => {
+  const uniqueFilename = `${userId}-${uuidv4()}`;
+  const file = bucket.file(`images/${uniqueFilename}`);
+  const downloadURL = `https://storage.googleapis.com/${bucket.name}/${file.name}`;
+
+  try {
+    const writeStream = file.createWriteStream({
+      metadata: {
+        contentType: imageType,
+      },
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      writeStream.on('error', (error) => {
+        console.error('Error uploading image:', error);
+        reject(error);
+      });
+      writeStream.on('finish', () => {
+        resolve();
+      });
+      writeStream.end(imageBuffer);
+    });
+
+    console.log('Image saved to cloud');
+    return downloadURL;
+  } catch (error) {
+    console.error('Error handling image upload:', error);
+    throw error;
+  }
+};
+
+
+
+export { saveAudio, getAudioUrl, saveAudioComment, saveAudioConch, deleteAudioPost, saveSharePost, saveImage }

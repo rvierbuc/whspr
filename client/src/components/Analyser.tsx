@@ -1,33 +1,48 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Visualiser from './Visualiser';
 
-const AudioAnalyser = ({ audioContext }) => {
-  const [audioData, setAudioData] = useState([]);
-  const [analyser, setAnalyser] = useState(null);
-  const [dataArray, setDataArray] = useState(new Uint8Array());
-  const [rafId, setRafId] = useState(null);
-  const [source, setSource] = useState(null);
+interface AudioAnalyserProps {
+  audioContext: AudioContext;
+  audioStream?: MediaStream;
+}
+
+const AudioAnalyser: React.FC<AudioAnalyserProps> = ({ audioContext }) => {
+  const [audioStream, setAudioStream] = useState<MediaStream>()
+  const [audioData, setAudioData] = useState<number[]>([]);
+  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
+  const [rafId, setRafId] = useState<number | null>(null);
 
   useEffect(() => {
     const execute = async () => {
       try {
+        if (!audioStream) {
+          console.log('Audio stream is undefined');
+        const audioStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+        setAudioStream(audioStream)
+          return;
+        }
+
+
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 2048;
+        setAnalyser(analyser);
+
+        const dataArray = new Uint8Array(analyser.fftSize);
+        const audio = audioContext.createMediaStreamSource(audioStream);
+        audio.connect(analyser);
+
         const tick = () => {
           analyser.getByteTimeDomainData(dataArray);
-          setAudioData([...dataArray]); // Use spread to create a new array
+          setAudioData([...dataArray]);
           setRafId(requestAnimationFrame(tick));
         };
 
-        const stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
-
-        const analyser = audioContext.createAnalyser();
-        setAnalyser(analyser);
-        const dataArray = new Uint8Array(analyser.fftSize);
-        const audio = audioContext.createMediaStreamSource(stream);
-        audio.connect(analyser);
         setRafId(requestAnimationFrame(tick));
 
         return () => {
-          cancelAnimationFrame(rafId);
+          if (rafId) {
+            cancelAnimationFrame(rafId);
+          }
           analyser.disconnect();
           audio.disconnect();
         };
@@ -37,7 +52,7 @@ const AudioAnalyser = ({ audioContext }) => {
     };
 
     execute();
-  }, [audioContext]);
+  }, [audioContext, audioStream]);
 
   return <Visualiser audioData={audioData} />;
 };

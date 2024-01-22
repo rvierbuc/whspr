@@ -1,5 +1,5 @@
+@use 'sass:math';
 @import '~bootstrap/scss/bootstrap';
-
 @keyframes navbarflyout {
   from {
     height: 0;
@@ -15,7 +15,7 @@
 
 body {
   background-image: url('./mirrored.png');
-  background-color: rgb(96, 96, 96);
+  background-color: #606060;
   background-repeat: repeat;
   //background-size: auto
 }
@@ -37,6 +37,19 @@ body {
   //height:100%
   //height:100%
 }
+#modal-background {
+  background-color: #e1e1e500;
+}
+#tag-mod-header {
+  //width: auto;
+  text-align: center;
+  background-color: #3c3556;
+  color: #e1e1e1;
+  font-size: 3rem;
+  //border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  @include blur(4.2px);
+}
 
 .room-info {
   //background: rgba(233, 236, 243, 0.075);
@@ -56,7 +69,51 @@ body {
   @include blur(4.2px);
   border: 1px solid rgba(236, 210, 210, 0.36);
 }
+.modal-content {
+  background: #e1e1e1;
+  //opacity: 60%;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgb(0, 0, 0);
+  @include blur(4.2px);
+  border: none;
+}
+.selected-tag {
+  background-color: #3c3556;
+  border: none;
+  border-radius: 8px;
+  color: #e1e1e1;
+  box-shadow: 0 4px 3px #525151;
+}
+.selected-tag:disabled {
+  background-color: #3c3556b0;
+  border: none;
+  border-radius: 8px;
+  color: #e1e1e1;
+  box-shadow: 0 4px 3px #525151;
+}
+#tag-submit {
+  border-radius: 8px;
+  border-color: #3c3556;
+  color: #3c3556;
+}
+#tag-submit:hover {
+  border-radius: 8px;
+  background-color: #3c3556;
+  color: #e1e1e1;
+  box-shadow: 0 4px 3px #525151;
+}
+.not-selected-tag {
+  background-color: transparent;
+  border: none;
+  //filter: saturate(0%)
+  //text-shadow: 1px 1px 2px black;
+}
 
+.not-selected-tag:hover {
+  background-color: transparent;
+  border: none;
+  text-shadow: 1px 1px 1px black;
+}
 #header {
   //more opaque
   background: #e9ecf343;
@@ -82,7 +139,7 @@ body {
 }
 #comment-btn {
   margin-left: 15px;
-  color:rgb(166, 197, 255);
+  color: rgb(166, 197, 255);
   //color: rgb(63, 133, 42)
   cursor: pointer;
 }
@@ -95,7 +152,6 @@ body {
 }
 #record-btn-new {
   background: #e9ecf300 url(record-circle-fill.svg) no-repeat;
-  
 }
 #post-btn-new {
   background: #e9ecf300 url(post.svg) no-repeat 1rem;
@@ -110,14 +166,14 @@ body {
 #remove-btn-new {
   background-position: center;
   //background-size: cover;
-  height: 3rem; 
+  height: 3rem;
   width: 3rem;
   //border-radius: 6px;
-  margin:1rem;
+  margin: 1rem;
   //box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   //@include blur(4.2px);
   border: none;
- // border: 1px solid rgb(45, 58, 81);
+  // border: 1px solid rgb(45, 58, 81);
 }
 #record-btn-new:hover {
   background: #e9ecf300 url(record-circle-fill-hover.svg) no-repeat 1rem;
@@ -132,7 +188,6 @@ body {
   background: #e9ecf300 url(stop-fill-hover.svg) no-repeat 1rem;
   background-position: center;
   //background-size: cover;
-
 }
 #post-btn-new:hover {
   background: #e9ecf300 url(post-hover.svg) no-repeat 1rem;
@@ -192,11 +247,12 @@ body {
   position: relative;
   justify-content: center;
   align-items: center;
+  z-index: 999;
   width: 100%;
 }
 .card.user-profile-followers-card {
   display: flex;
-  flex-wrap:wrap;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   top: 6%;
@@ -215,12 +271,12 @@ body {
   text-align: center;
   .card.follower-search {
     display: flex;
-    flex-wrap:wrap;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     padding-top: 20px;
     padding-bottom: 45px;
-    .follower-info-wrap{
+    .follower-info-wrap {
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -260,14 +316,18 @@ body {
   border: 1px solid rgba(233, 236, 243, 0.449);
 }
 
-
 #home-header {
   background-color: #1e1a2a79;
-  height: auto;
-  width: 100vw;
-  margin-bottom: 15px;
+  //height: 10rem;
+  //width: 100vw;
+  //margin-bottom: 15px;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   @include blur(4.2px);
+  padding-bottom: '2rem';
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
   //border-bottom: 1px solid rgba(233, 236, 243, 0.449);
 }
 
@@ -333,7 +393,7 @@ body {
 //    //border:'blue'
 // }
 /* width */
-.on-profile-tags::-webkit-scrollbar{
+.on-profile-tags::-webkit-scrollbar {
   background-color: transparent;
   //width: 8px;
 }
@@ -442,12 +502,15 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 45vh;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .card-whsprAI {
   background: rgba(233, 236, 243, 0.075);
-  //opacity: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 95%;
   max-width: 60rem;
   border-radius: 1.5rem;
@@ -457,7 +520,7 @@ body {
 }
 
 .container-whsprAI {
-  height: calc(100vh - 100px);
+  height: calc(85vh);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -485,6 +548,22 @@ body {
   width: 5px;
 }
 
+.mute-btn-container {
+  position: fixed;
+  display: block;
+  left: 1rem;
+  bottom: 1rem;
+}
+
+.mute-btn {
+  position: relative;
+  max-width: 4.5rem;
+  max-height: 4.5rem;
+  width: 7vw;
+  height: 7vw;
+  opacity: 0.6;
+}
+
 .text-btn-container {
   position: fixed;
   display: block;
@@ -502,13 +581,14 @@ body {
 
 .message-count-whsprAI {
   position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  background-color: rgba(4, 217, 255);
+  bottom: 0rem;
+  right: 0rem;
+  background-color: rgb(150, 0, 0);
   border-radius: 50%;
   color: rgb(248, 248, 248);
-  width: 1.2rem;
-  height: 1.2rem;
+  size: 1.8rem;
+  width: 1.8rem;
+  height: 1.8rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -538,6 +618,7 @@ body {
   position: absolute;
   bottom: 0;
   right: 0;
+  //color: #a6c5ff
 }
 
 .modalCustom {
@@ -550,9 +631,17 @@ body {
   background-color: rgba(128, 128, 128, 0.2);
   border-left: 1px solid (128, 128, 128, 0.4);
   overflow-y: auto;
-  z-index: 1000;
+  z-index: 1000 !important;
   padding: 10px;
   box-shadow: -3px 0px 3px (128, 128, 128, 0.4);
+}
+.modalCustom input {
+  border-radius: 10px;
+}
+.modalCustom textarea {
+  border-radius: 10px;
+  width: 100%;
+  height: 100px;
 }
 
 .chatHistoryName {
@@ -589,15 +678,21 @@ body {
   bottom: 3vh;
   width: 20vw;
   height: 20vw;
-  margin-left: 5vw;
-  max-height: 200px;
-  max-width: 200px;
+  max-height: 12rem;
+  max-width: 12rem;
 }
 
 .typeCard {
   display: flex;
   justify-content: center;
 } //USER PROFILE
+
+.user-profile-bio {
+  color: white;
+  size: 0.8rem;
+  margin: 1rem;
+  text-indent: 3rem;
+}
 
 .user-main {
   display: flex;
@@ -806,53 +901,64 @@ $bg: rgb(69, 67, 67);
 }
 
 .push--skeuo {
-  color: #797979;
-  box-shadow: inset 0 $push-size/24 0 lighten($push-color, 5%),
-    inset 0 (-$push-size/24) $push-size/60 darken($push-color, 5%),
-    0 0 $push-size/60 $push-color,
-    inset 0 0 $push-size/30 darken($push-color, 15%),
-    inset 0 0 $push-size/30 transparentize($bg, 0.5),
-    inset 0 0 $push-size/60 $push-size/12 $push-color,
-    inset 0 (-$push-size/30) $push-size/40 $push-size/10
+  box-shadow: inset 0 math.div($push-size, 24) 0 lighten($push-color, 5%),
+    inset 0 math.div(-$push-size, 24) math.div($push-size, 60)
+      darken($push-color, 5%),
+    0 0 math.div($push-size, 60) $push-color,
+    inset 0 0 math.div($push-size, 30) darken($push-color, 15%),
+    inset 0 0 math.div($push-size, 30) transparentize($bg, 0.5),
+    inset 0 0 math.div($push-size, 60) math.div($push-size, 12) $push-color,
+    inset 0 math.div(-$push-size, 30) math.div($push-size, 40)
+      math.div($push-size, 10) transparentize($bg, 0.3),
+    inset 0 0 math.div($push-size, 60) math.div($push-size, 10)
+      darken($push-color, 20%),
+    inset 0 0 math.div($push-size, 60) math.div($push-size, 10)
       transparentize($bg, 0.3),
-    inset 0 0 $push-size/60 $push-size/10 darken($push-color, 20%),
-    inset 0 0 $push-size/60 $push-size/10 transparentize($bg, 0.3),
-    inset 0 0 $push-size/120 $push-size/9.2 darken($push-color, 50%),
-    inset 0 0 $push-size/120 $push-size/8
+    inset 0 0 math.div($push-size, 120) math.div($push-size, 9.2)
+      darken($push-color, 50%),
+    inset 0 0 math.div($push-size, 120) math.div($push-size, 8)
       transparentize(lighten($push-color, 30%), 0.3),
-    inset 0 $push-size/20 0 $push-size/8.5
+    inset 0 math.div($push-size, 20) 0 math.div($push-size, 8.5)
       transparentize(lighten($push-color, 15%), 0.3),
-    inset 0 (-$push-size/20) $push-size/60 $push-size/8.5
-      transparentize(darken($push-color, 10%), 0.8),
-    inset 0 0 0 $push-size/5.5 $push-color,
-    inset 0 $push-size/2.5 $push-size/7.5 darken($push-color, 5%),
-    inset 0 0 $push-size/10 $push-size/6 darken($push-color, 10%),
-    0 $push-size/40 $push-size/20 rgba(0, 0, 0, 0.5);
+    inset 0 math.div(-$push-size, 20) math.div($push-size, 60)
+      math.div($push-size, 8.5) transparentize(darken($push-color, 10%), 0.8),
+    inset 0 0 0 math.div($push-size, 5.5) $push-color,
+    inset 0 math.div($push-size, 2.5) math.div($push-size, 7.5)
+      darken($push-color, 5%),
+    inset 0 0 math.div($push-size, 10) math.div($push-size, 6)
+      darken($push-color, 10%),
+    0 math.div($push-size, 40) math.div($push-size, 20) rgba(0, 0, 0, 0.5);
 
   &:active,
   // &:hover,
   &.is-pushed {
-    box-shadow: inset 0 $push-size/24 0 lighten($push-color, 5%),
-      inset 0 (-$push-size/24) $push-size/60 darken($push-color, 5%),
-      0 0 $push-size/60 $push-color,
-      inset 0 0 $push-size/30 darken($push-color, 15%),
-      inset 0 0 $push-size/30 transparentize($bg, 0.5),
-      inset 0 0 $push-size/60 $push-size/12 $push-color,
-      inset 0 (-$push-size/30) $push-size/40 $push-size/10
+    box-shadow: inset 0 math.div($push-size, 24) 0 lighten($push-color, 5%),
+      inset 0 math.div(-$push-size, 24) math.div($push-size, 60)
+        darken($push-color, 5%),
+      0 0 math.div($push-size, 60) $push-color,
+      inset 0 0 math.div($push-size, 30) darken($push-color, 15%),
+      inset 0 0 math.div($push-size, 30) transparentize($bg, 0.5),
+      inset 0 0 math.div($push-size, 60) math.div($push-size, 12) $push-color,
+      inset 0 math.div(-$push-size, 30) math.div($push-size, 40)
+        math.div($push-size, 10) transparentize($bg, 0.3),
+      inset 0 0 math.div($push-size, 60) math.div($push-size, 10)
+        darken($push-color, 20%),
+      inset 0 0 math.div($push-size, 60) math.div($push-size, 10)
         transparentize($bg, 0.3),
-      inset 0 0 $push-size/60 $push-size/10 darken($push-color, 20%),
-      inset 0 0 $push-size/60 $push-size/10 transparentize($bg, 0.3),
-      inset 0 0 $push-size/40 $push-size/8.5 darken($push-color, 40%),
-      inset 0 0 $push-size/120 $push-size/7.5
+      inset 0 0 math.div($push-size, 40) math.div($push-size, 8.5)
+        darken($push-color, 40%),
+      inset 0 0 math.div($push-size, 120) math.div($push-size, 7.5)
         transparentize(lighten($push-color, 30%), 0.8),
-      inset 0 $push-size/20 0 28px
+      inset 0 math.div($push-size, 20) 0 28px
         transparentize(lighten($push-color, 15%), 0.5),
-      inset 0 (-$push-size/20) $push-size/60 28px
+      inset 0 math.div(-$push-size, 20) math.div($push-size, 60) 28px
         transparentize(darken($push-color, 20%), 0.8),
-      inset 0 0 0 $push-size/5.5 darken($push-color, 3%),
-      inset 0 $push-size/2.5 $push-size/7.5 darken($push-color, 8%),
-      inset 0 0 $push-size/10 $push-size/6 darken($push-color, 15%),
-      0 $push-size/40 $push-size/20 rgba(0, 0, 0, 0.5);
+      inset 0 0 0 math.div($push-size, 5.5) darken($push-color, 3%),
+      inset 0 math.div($push-size, 2.5) math.div($push-size, 7.5)
+        darken($push-color, 8%),
+      inset 0 0 math.div($push-size, 10) math.div($push-size, 6)
+        darken($push-color, 15%),
+      0 math.div($push-size, 40) math.div($push-size, 20) rgba(0, 0, 0, 0.5);
     background-color: darken($push-color, 2%);
 
     &:before {
@@ -863,11 +969,11 @@ $bg: rgb(69, 67, 67);
   &:before {
     content: '';
     position: absolute;
-    bottom: $push-size/4.5;
-    left: $push-size/3.6;
+    bottom: math.div($push-size, 4.5);
+    left: math.div($push-size, 3.6);
     display: block;
-    width: $push-size/2.2;
-    height: $push-size/3.3;
+    width: math.div($push-size, 2.2);
+    height: math.div($push-size, 3.3);
     background: transparentize(lighten($push-color, 30%), 0.8);
     background: linear-gradient(
       to top,
@@ -878,7 +984,7 @@ $bg: rgb(69, 67, 67);
     transition: opacity 200ms;
   }
 }
-input[type="range"] {
+input[type='range'] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
@@ -890,19 +996,19 @@ input[type="range"] {
   overflow: hidden;
 }
 
-input[type="range"]::-webkit-slider-runnable-track {
+input[type='range']::-webkit-slider-runnable-track {
   height: 15px;
   background: #ccc;
   border-radius: 16px;
 }
 
-input[type="range"]::-moz-range-track {
+input[type='range']::-moz-range-track {
   height: 15px;
   background: #ccc;
   border-radius: 16px;
 }
 
-input[type="range"]::-webkit-slider-thumb {
+input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   height: 15px;
@@ -913,7 +1019,7 @@ input[type="range"]::-webkit-slider-thumb {
   box-shadow: -407px 0 0 400px rgb(60, 53, 86);
 }
 
-input[type="range"]::-moz-range-thumb {
+input[type='range']::-moz-range-thumb {
   height: 15px;
   width: 15px;
   background-color: gray;
@@ -923,6 +1029,184 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .activeButton {
-  background-color: #7C3030;
-  border-color: #A51C30;
+  background-color: #7c3030;
+  border-color: #a51c30;
+}
+
+.push--skeuo span {
+  user-select: none;
+  color: rgba(255, 255, 255, 0.4);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.outer-container {
+  //max-width: 800px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  //border: 1px solid #ccc;
+  //border-radius: 5px;
+  //box-shadow: 1px 3px 6px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  height: 100%;
+}
+
+.outer-container > div {
+  flex: 1;
+  padding: 20px;
+}
+
+.outer-container .carousel-wrapper {
+  max-width: 1200px;
+  min-width: 900px;
+  //background: #a6c5ff;
+  //background: #e9ecf313;
+  // border-radius: 16px;
+  // box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  // @include blur(4.2px);
+  // border: 1px solid rgba(236, 210, 210, 0.36);
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  //align-content: center;
+  // background-image: url('./mirrored.png');
+  // background-color: #606060;
+}
+
+.outer-container .content {
+  background: var(--white);
+}
+
+.carousel-button {
+  display: flex;
+  align-self: center;
+  //padding: 10px;
+  width: 6rem;
+  height: 6rem;
+  color: #e9ecf346;
+  //max-width: 50px;
+  //border-radius: 30px;
+  //background: #e9ecf343;
+  //border: 2px solid var(--white);
+  cursor: pointer;
+}
+.outer-container .carousel-wrapper,
+.carousel-item {
+  font-weight: 700;
+  font-size: 2.5rem;
+  color: var(--white);
+  line-height: 1.2;
+}
+
+.leading-text {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
+  font-size: 2.5rem;
+  //margin-right: 6px;
+  //margin-left: auto;
+  text-align: right;
+  width: 50%;
+  margin-bottom: 3.5rem;
+  margin-left: 3.5rem;
+}
+#lead-img {
+  align-items: end;
+}
+.carousel {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  //flex: 5;
+  background: #a6c5ff;
+  align-items: center;
+  margin: 1rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgb(0, 0, 0);
+  //color: var(--white);
+}
+
+.slides {
+  //align-self: flex-start;
+  display: flex;
+  justify-content: flex-start;
+  flex: 1;
+  width: 100%;
+  overflow: hidden;
+  //margin-bottom: 2rem;
+}
+
+.carousel-inner {
+  position: relative;
+  //max-height: 250px;
+  height: 275px;
+  margin-bottom: 1rem;
+}
+
+.carousel-inner::before,
+.carousel-inner::after {
+  content: '';
+  z-index: 1;
+  position: absolute;
+  width: 100%;
+  //height: 110px;
+  pointer-events: none;
+  border-radius: 16px;
+}
+
+.carousel-inner::before {
+  top: 0;
+  height: 120px;
+  background: linear-gradient(360deg, hsla(0, 0%, 100%, 0) -60%, #a6c5ff 100%);
+  //@include blur(1.2px);
+  //linear-gradient(0deg, hsla(0, 0%, 100%, 0.169) 0%, #606060 100%);
+}
+
+.carousel-inner::after {
+  bottom: 0;
+  height: 117px;
+
+  background: linear-gradient(360deg, #a6c5ff 0%, hsla(0, 0%, 100%, 0) 160%);
+  //@include blur(1.2px);
+  // background: linear-gradient(
+  //   transparent, rgb(233, 236, 243) 10%,
+  // );
+  // @include blur(1.2px);
+  //linear-gradient(0deg, #6060605f  0%, hsla(0, 0%, 100%, 0.205) 100%);
+}
+
+.carousel-item {
+  position: absolute;
+  background: none;
+  border: none;
+  padding: 0;
+  //margin: .5rem;
+  top: 112px;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+  //opacity: 0;
+  color: black;
+}
+
+// .carousel-item-visible {
+//   color: white;
+//   position: absolute;
+//   background: none;
+//   border: none;
+//   padding: 0;
+//   margin: 0;
+//   top: 112px;
+//   transition: transform 0.4s ease, opacity 0.4s ease;
+//   //opacity: 0;
+//   //color: black;
+// }
+
+.modal-button-container {
+  position: relative;
+}
+
+.modal-profile-edit {
+  position: absolute;
+  top: 2rem;
+  left: 0;
 }

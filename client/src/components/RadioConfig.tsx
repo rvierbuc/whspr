@@ -51,8 +51,8 @@ const RadioConfig = ({setRoomProps}) => {
         }else{
             console.log('create', user)
             setRoomProps(name, user.username, room.data.id, user)
+            window.location.href = `/protected/room/${name}`;
             
-            navigate(`/protected/room/${name}`)
         }
     }
 

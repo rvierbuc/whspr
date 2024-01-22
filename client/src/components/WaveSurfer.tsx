@@ -16,6 +16,8 @@ import { MdArrowOutward } from 'react-icons/md';
 import { MdDeleteOutline } from 'react-icons/md';
 import { MdDeleteOutline } from 'react-icons/md';
 import { TooltipComponent } from './Tooltip';
+import Modal from 'react-bootstrap/Modal';
+import { SharePost } from './SharePost';
 
 dayjs.extend(relativeTime);
 interface WaveSurferProps {
@@ -34,9 +36,9 @@ interface WaveSurferProps {
   setCorrectPostId: any
   setSelectedUserPosts: any
   isDeleting: boolean
-  onGridView: boolean;
-  setOnGridView: any;
   setCurrentDeletePostId: any
+  onHome: boolean
+
 }
 
 const WaveSurferComponent: React.FC<WaveSurferProps> = ({
@@ -55,9 +57,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   setCorrectPostId,
   setSelectedUserPosts,
   isDeleting,
-  onGridView,
-  setOnGridView,
-  setCurrentDeletePostId
+  setCurrentDeletePostId,
+  onHome,
 }) => {
   const [wave, setWave] = useState<WaveSurfer | null>(null);
   const [display, setDisplay] = useState<boolean>(false);
@@ -68,6 +69,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [duration, setDuration] = useState<string>();
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [addComment, setAddComment] = useState<boolean>(false);
+  const [showFullPost, setShowFullPost] = useState<boolean>(false);
+  const [showShareModal, setShowShareModal] = useState<boolean>(false);
+
   //const [hasCategories, setHasCategories] = useState<boolean>();
   // const { audioUrl, postId } = props;
   const containerId = `waveform-${postId || ''}`;
@@ -79,7 +83,10 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   //     console.error(error);
   //   }
   // };
-  const handleLike = async ()=> {
+
+
+
+  const handleLike = async () => {
     try {
       await axios.post('/post/like', { userId, postId: postObj.id });
       await axios.put('/post/updateCount', {
@@ -101,7 +108,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
         type: 'decrement',
         id: postId,
       });
-      await updatePost(postId, userId );
+      await updatePost(postId, userId);
     } catch (error) {
       console.log('client could not unlike', error);
     }
@@ -170,7 +177,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       width: 'auto',
       height: onUserProfile || onProfile ? 200 : 500, //TODO: maybe change this back to auto
       normalize: true,
-     
+
       renderFunction: (channels, ctx) => {
         const { width, height } = ctx.canvas;
         const scale = channels[0].length / width;
@@ -207,7 +214,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
     hover = wavesurfer.registerPlugin(HoverPlugin.create());
 
     regions = wavesurfer.registerPlugin(RegionsPlugin.create());
-    
+
     // wavesurfer.on("click", () => {
     //   regions.addRegion({
     //     start: wavesurfer.getCurrentTime(),
@@ -259,15 +266,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   useEffect(() => {
     createSoundWaves();
     isFollowing();
-    // if (postObj.categories) {
-    //   if (postObj.categories.length > 0) {
-    //     setHasCategories(true);
-    //   } else {
-    //     setHasCategories(false);
-    //   }
-    // } else {
-    //   setHasCategories(false);
-    // }
   }, [audioUrl]);
   return (
     <div
@@ -275,146 +273,151 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       id="feed-container"
       style={{ width: onUserProfile || onProfile ? '315px' : '100%', height: '100%', marginTop: '1rem', marginBottom: '1rem' }}
     >
-      
-        <div className="row" id="feed-row">
-          <div className="col-sm" id="feed-col-sm">
-            <div className="card" id="feed-card" >
-              {/* <br/> */}
-              <div className="card-body">
-                {onProfile ? (
-                  <a></a>
-                ) : (
-                  <div
-                    className="d-flex flex-row align-items-center justify-content-start"
-                    id="header"
+
+
+      <div className="row" id="feed-row">
+        <div className="col-sm" id="feed-col-sm">
+          <div className="card" id="feed-card" >
+            {/* <br/> */}
+            <div className="card-body">
+              {onProfile ? (
+                <a></a>
+              ) : (
+                <div
+                  className="d-flex flex-row align-items-center justify-content-start"
+                  id="header"
+                  style={{
+                    padding: '10px',
+                  }}
+                >
+                  <img
+                    src={postObj.user.profileImgUrl}
+                    className="rounded-circle"
                     style={{
-                      padding: '10px',
+                      width: 'auto',
+                      height: '70px',
+                      margin: '20px',
+                      objectFit: 'scale-down',
+                      borderStyle: 'solid',
+                      borderWidth: 'medium',
+                      borderColor: '#3c3556',
                     }}
+                  />
+                  <a
+                    href={`profile/${postObj.user.id}`}
+                    style={{ fontSize: 'xx-large', color: '#0f0c0c' }}
+                    id="feed-username"
                   >
-                    <img
-                      src={postObj.user.profileImgUrl}
-                      className="rounded-circle"
-                      style={{
-                        width: 'auto',
-                        height: '70px',
-                        margin: '20px',
-                        objectFit: 'scale-down',
-                        borderStyle: 'solid',
-                        borderWidth: 'medium',
-                        borderColor: '#3c3556',
-                      }}
-                    />
-                    <a
-                      href={`profile/${postObj.user.id}`}
-                      style={{ fontSize: 'xx-large', color: '#0f0c0c' }}
-                      id="feed-username"
-                    >
-                      {postObj.user.username}
-                    </a>
-                    {feed === 'explore' ? (
-                      following ? (
-                        <button
-                          className="p-2 btn btn-danger"
-                          style={{ marginLeft: 'auto', marginRight: '2%' }}
-                          onClick={() => stopFollowing()}
-                        >
-                          Unfollow
-                        </button>
-                      ) : (
-                        <button
-                          className="p-2 btn btn-primary"
-                          style={{ marginLeft: 'auto', marginRight: '2%' }}
-                          onClick={() => startFollowing()}
-                        >
-                          Follow
-                        </button>
-                      )
+                    {postObj.user.displayUsername || postObj.user.username}
+                  </a>
+                  {feed === 'explore' ? (
+                    following ? (
+                      <button
+                        className="p-2 btn btn-danger"
+                        style={{ marginLeft: 'auto', marginRight: '2%' }}
+                        onClick={() => stopFollowing()}
+                      >
+                        Unfollow
+                      </button>
                     ) : (
-                      <div></div>
-                    )}
-                  </div>
-                )}
-              <div hidden={!onProfile} style={{ display: 'flex',
+                      <button
+                        className="p-2 btn btn-primary"
+                        style={{ marginLeft: 'auto', marginRight: '2%' }}
+                        onClick={() => startFollowing()}
+                      >
+                        Follow
+                      </button>
+                    )
+                  ) : (
+                    <div></div>
+                  )}
+                </div>
+              )}
+              <div hidden={!onProfile} style={{
+                display: 'flex',
                 flexDirection: 'column',
                 paddingTop: '1rem',
                 paddingLeft: '1rem',
                 justifyContent: 'start',
-                alignContent:'end' }}>
-              <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'start',
-                      alignItems: 'center',
-                      //flexWrap: 'wrap',
-                      marginTop: '-2rem',
-                      marginLeft: '-1rem',
-                      marginBottom: '.5rem',
-                    }}
-                  >
-                    <TooltipComponent tooltip={postObj.title} id={`${postObj.id}`}>
+                alignContent: 'end'
+              }}
+                onClick={() => showFullPost ? setShowFullPost(false) : setShowFullPost(true)}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'start',
+                    alignItems: 'center',
+                    //flexWrap: 'wrap',
+                    marginTop: '-2rem',
+                    marginLeft: '-1rem',
+                    marginBottom: '.5rem',
+                  }}
+                >
+                  <TooltipComponent tooltip={postObj.title} id={`${postObj.id}`}>
                     <div
                       style={{
                         fontSize: onUserProfile || onProfile ? '1.5rem' : '4rem',
                         color: '#e1e1e5',
-                        marginTop:'.5rem',
-                        width:'190px',
-                        overflow:'hidden',
-                        whiteSpace:'nowrap',
+                        marginTop: '.5rem',
+                        width: '190px',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
                         textOverflow: 'ellipsis',
-                        cursor:'pointer',
+                        cursor: 'pointer',
                       }}
                     >
 
                       {postObj.title}
                     </div>
-                    </TooltipComponent>
-                    <div
-                      style={{
-                        marginTop:'.5rem',
-                        marginLeft: 'auto',
-                        fontSize: '.5rem',
-                        color: '#e1e1e5',
-                      }}
-                    >
-                      {dayjs(postObj.createdAt).fromNow()}
-                    </div>
-                  </div>
+                  </TooltipComponent>
                   <div
-                    className='on-profile-tags'
                     style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      marginTop: '-1rem',
-                      flexWrap: 'wrap',
-                      overflow: 'scroll',
-                      height: '2.5rem',
-                      justifyContent: 'start',
-                      marginLeft: '-1.5rem',
-                      //width:'15rem'
+                      marginTop: '.5rem',
+                      marginLeft: 'auto',
+                      fontSize: '.5rem',
+                      color: '#e1e1e5',
                     }}
                   >
-                    {postObj.categories ? (
-                      postObj.categories.map((cat, index) => (
-                        <button
-                          className="btn btn-link"
-                          style={{
-                            color: '#e1e1e5',
-                            textDecoration: 'none',
-                            margin: '-.5rem',
-                            // overflow:'hidden',
-                            // whiteSpace:'nowrap',
-                            // textOverflow: 'ellipsis',
-                            //width:'5rem'
-                          }}
-                          onClick={() => getPosts('explore', cat)}
-                          key={(index + 1).toString()}
-                        >{`#${cat}`}</button>
-                      ))
-                    ) : (
-                      <div></div>
-                    )}
+                    {dayjs(postObj.createdAt).fromNow()}
                   </div>
+                </div>
+                <div
+                  className='on-profile-tags'
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    marginTop: '-1rem',
+                    flexWrap: 'wrap',
+                    overflow: 'scroll',
+                    height: '2.5rem',
+                    justifyContent: 'start',
+                    marginLeft: '-1.5rem',
+                    //width:'15rem'
+                  }}
+                >
+                  {postObj.categories ? (
+                    postObj.categories.map((cat, index) => (
+                      <button
+                        className="btn btn-link"
+                        style={{
+                          color: '#e1e1e5',
+                          textDecoration: 'none',
+                          margin: '-.5rem',
+                          // overflow:'hidden',
+                          // whiteSpace:'nowrap',
+                          // textOverflow: 'ellipsis',
+                          //width:'5rem'
+                        }}
+                        onClick={() => getPosts('explore', cat)}
+                        key={(index + 1).toString()}
+                      >{`#${cat}`}</button>
+                    ))
+                  ) : (
+                    <div></div>
+                  )}
+                </div>
               </div>
               <div
                 className="wavesurfer-container"
@@ -451,7 +454,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                       flexWrap: 'wrap',
                       marginTop: '-2rem',
                       marginLeft: '-1rem',
-                      
+
                     }}
                     hidden={onProfile}
                   >
@@ -465,7 +468,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     </div>
                     <div
                       style={{
-                        marginTop:'1.5rem',
+                        marginTop: '1.5rem',
                         marginLeft: 'auto',
                         fontSize: 'large',
                         color: '#e1e1e5',
@@ -503,45 +506,45 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                     )}
                   </div>
                   {isPlaying ? (
-                    isPaused ? 
-                    <button
-                      type="button"
-                      style={{
-                        marginTop: onUserProfile || onProfile ? '5%' : '15%',
-                        alignSelf: 'center',
-                      }}
-                      className="simple-btn"
-                      id="play-btn"
-                      onClick={() => {
-                        if (wave) {
-                          wave.playPause();
-                          setIsPaused(() => !isPaused);
-                        }
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" 
-                        width= {onUserProfile || onProfile ? '5rem' : '10rem'} height={onUserProfile || onProfile ? '5rem' : '10rem'}
-                        fill="#e9ecf343"
-                        className="bi bi-pause"
-                        viewBox="0 0 16 16"
+                    isPaused ?
+                      <button
+                        type="button"
+                        style={{
+                          marginTop: onUserProfile || onProfile ? '5%' : '15%',
+                          alignSelf: 'center',
+                        }}
+                        className="simple-btn"
+                        id="play-btn"
+                        onClick={() => {
+                          if (wave) {
+                            wave.playPause();
+                            setIsPaused(() => !isPaused);
+                          }
+                        }}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                          width={onUserProfile || onProfile ? '5rem' : '10rem'} height={onUserProfile || onProfile ? '5rem' : '10rem'}
+                          fill="#e9ecf343"
+                          className="bi bi-pause"
+                          viewBox="0 0 16 16"
                         >
-                          <path d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5m4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5"/>
-                      </svg>
-                    </button>
+                          <path d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5m4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5" />
+                        </svg>
+                      </button>
                       : <TooltipComponent id={`stop-${postObj.id}`} tooltip='Click to Pause'> <button
-                      
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        padding: '10rem',
-                        margin: 'auto',
-                      }}
-                      onClick={() => {
-                        if (wave) {
-                          wave.playPause();
-                          setIsPaused(() => !isPaused);
-                        }
-                      }}></button> </TooltipComponent>
+
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          padding: '10rem',
+                          margin: 'auto',
+                        }}
+                        onClick={() => {
+                          if (wave) {
+                            wave.playPause();
+                            setIsPaused(() => !isPaused);
+                          }
+                        }}></button> </TooltipComponent>
                   ) : (
                     <button
                       type="button"
@@ -573,133 +576,164 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
               <div
                 className="d-flex flex-row align-items-center justify-content-start"
                 style={{ marginTop: '.5rem' }}
-                >
-                    <div style={{ color: '#e1e1e5' }}>
-              {postObj.isLiked 
-                ? `Liked by you and ${postObj.likeCount - 1} other listeners` 
-                : `Liked by ${postObj.likeCount} listeners`}
-            </div>
-                  <div style={{ color: '#e1e1e5', marginLeft: 'auto' }}>{duration ? duration : ''}</div>
+              >
+                <div style={{ color: '#e1e1e5' }}>
+                  {postObj.isLiked
+                    ? `Liked by you and ${postObj.likeCount - 1} other listeners`
+                    : `Liked by ${postObj.likeCount} listeners`}
                 </div>
+                <div style={{ color: '#e1e1e5', marginLeft: 'auto' }}>{duration ? duration : ''}</div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginBottom: '8px', 
-              }}>
+            </div>
+            {onHome ? <div></div> : (<div style={{
+              display: 'flex', flexDirection: 'row', justifyContent: 'start', alignItems: 'center', marginBottom: '8px',
+            }}>
               {postObj.isLiked ? (
                 <div>
                   {' '}
                   <TooltipComponent tooltip='Unlike' id={`unlike-${postObj.id}`}>
-                  <MdOutlineFavorite
-                    type="button"
-                    //className="btn"
-                    onClick={() => handleUnlike()}
-                    style={{
-                      // backgroundColor: 'rgba(233, 236, 243, 0.00)',
-                      // borderColor: 'rgba(233, 236, 243, 0.00)',
-                      height: '3rem',
-                      width: '3rem',
-                      marginRight: '1rem',
-                      marginLeft: '1rem',
-                      color: '#e1e1e5',
-                    }}
-                  >
-                  </MdOutlineFavorite>
+                    <MdOutlineFavorite
+                      type="button"
+                      //className="btn"
+                      onClick={() => handleUnlike()}
+                      style={{
+                        // backgroundColor: 'rgba(233, 236, 243, 0.00)',
+                        // borderColor: 'rgba(233, 236, 243, 0.00)',
+                        height: '3rem',
+                        width: '3rem',
+                        marginRight: '1rem',
+                        marginLeft: '1rem',
+                        color: '#e1e1e5',
+                      }}
+                    >
+                    </MdOutlineFavorite>
                   </TooltipComponent>
                   {/* {postObj.likeCount ? <p style={{marginLeft: '3%', fontSize:'x-large'}}>{`${postObj.likeCount} likes`}</p> : <p></p>}  */}
                 </div>
               ) : (
                 <div>
                   <TooltipComponent tooltip='Like' id={`like-${postObj.id}`}>
-                  <MdOutlineFavoriteBorder
-                    type="button"
-                    data-toggle="tooltip" data-placement="top"
-                    title='Like'
-                    //className="btn btn-light"
-                    onClick={() => handleLike()}
-                    style={{
-                      //backgroundColor: 'rgba(233, 236, 243, 0.00)',
-                      //borderColor: 'rgba(233, 236, 243, 0.00)',
-                      height: '3rem',
-                      width: '3rem',
-                      marginLeft: '1rem',
-                      marginRight: '1rem',
-                      color: '#e1e1e5',
-                    }}
-                  >
-                  </MdOutlineFavoriteBorder>
+                    <MdOutlineFavoriteBorder
+                      type="button"
+                      data-toggle="tooltip" data-placement="top"
+                      title='Like'
+                      //className="btn btn-light"
+                      onClick={() => handleLike()}
+                      style={{
+                        //backgroundColor: 'rgba(233, 236, 243, 0.00)',
+                        //borderColor: 'rgba(233, 236, 243, 0.00)',
+                        height: '3rem',
+                        width: '3rem',
+                        marginLeft: '1rem',
+                        marginRight: '1rem',
+                        color: '#e1e1e5',
+                      }}
+                    >
+                    </MdOutlineFavoriteBorder>
                   </TooltipComponent>
                   {/* {postObj.likeCount ? <p style={{marginLeft: '3%', fontSize:'x-large'}}>{`${postObj.likeCount} likes`}</p> : <p></p>} */}
                 </div>
               )}
               <TooltipComponent tooltip='Add a Comment' id={`comment-${postObj.id}`}>
 
-              <MdOutlineAddComment
-                type='button'
-                onClick={() => { setAddComment(() => !addComment); }}
-                style={{
-                  //backgroundColor: 'rgba(233, 236, 243, 0.00)',
-                  //borderColor: 'rgba(233, 236, 243, 0.00)',
-                  color: '#e1e1e5',
-                  height: '3rem',
-                  width: '3rem',
-                  marginRight: '1rem',
-                }}
+                <MdOutlineAddComment
+                  type='button'
+                  onClick={() => { setAddComment(() => !addComment); }}
+                  style={{
+                    //backgroundColor: 'rgba(233, 236, 243, 0.00)',
+                    //borderColor: 'rgba(233, 236, 243, 0.00)',
+                    color: '#e1e1e5',
+                    height: '3rem',
+                    width: '3rem',
+                    marginRight: '1rem',
+                  }}
                 >
                 </MdOutlineAddComment>
-                  </TooltipComponent>
-                  <TooltipComponent tooltip='Share' id={`share-${postObj.id}`}>
+              </TooltipComponent>
+              <TooltipComponent tooltip='Share' id={`share-${postObj.id}`}>
                 <MdArrowOutward
-                style={{
-                  //backgroundColor: 'rgba(233, 236, 243, 0.00)',
-                  //borderColor: 'rgba(233, 236, 243, 0.00)',
-                  color: '#e1e1e5',
-                  height: '3rem',
-                  width: '3rem',
-                  marginRight: '1rem',
-                }}></MdArrowOutward>
-                    </TooltipComponent>
-                {onUserProfile ? (
-                  <div onClick={() => setIsDeleting(true)}>
-                      <MdDeleteOutline
-                        type="button"
-                        onClick={() => {
-                          if (!isDeleting) {
-                            setIsDeleting(true);
-                            setCurrentDeletePostId(postId);
-                          } else {
-                            setIsDeleting(false);
-                            setCurrentDeletePostId(null);
-                          }
-                        }}
-                        style={{
-                          color: '#e1e1e5',
-                          height: '3rem',
-                          width: '3rem',
-                          marginRight: '1rem',
-                        }}></MdDeleteOutline>
-                    </div>
-                ) : (
-                    <div></div>
-                )}
-              </div>
-              {/* {onUserProfile ? (
+                  onClick={() => { setShowShareModal(true); }}
+                  style={{
+                    //backgroundColor: 'rgba(233, 236, 243, 0.00)',
+                    //borderColor: 'rgba(233, 236, 243, 0.00)',
+                    color: '#e1e1e5',
+                    height: '3rem',
+                    width: '3rem',
+                    marginRight: '1rem',
+                  }}></MdArrowOutward>
+              </TooltipComponent>
+              {onUserProfile ? (
+                <div onClick={() => setIsDeleting(true)}>
+                  <MdDeleteOutline
+                    type="button"
+                    onClick={() => {
+                      if (!isDeleting) {
+                        setIsDeleting(true);
+                        setCurrentDeletePostId(postId);
+                      } else {
+                        setIsDeleting(false);
+                        setCurrentDeletePostId(null);
+                      }
+                    }}
+                    style={{
+                      color: '#e1e1e5',
+                      height: '3rem',
+                      width: '3rem',
+                      marginRight: '1rem',
+                    }}></MdDeleteOutline>
+                </div>
+              ) : (
+                <div></div>
+              )}
+            </div>)}
+            {/* {onUserProfile ? (
                 <a></a>
               ) : ( */}
-                <div>
-                  <Post
-                    key={postId}
-                    postObj={postObj}
-                    updatePost={updatePost}
-                    userId={userId}
-                    audioContext={audioContext}
-                    addComment={addComment}
-                    setAddComment={setAddComment}
-                  />
-                </div>
-               {/* )} */}
+            <div>
+              <Post
+                key={postId}
+                postObj={postObj}
+                updatePost={updatePost}
+                userId={userId}
+                audioContext={audioContext}
+                addComment={addComment}
+                setAddComment={setAddComment}
+              />
             </div>
+            {/* )} */}
           </div>
         </div>
-      
+      </div>
+      <Modal show={showShareModal} onHide={() => setShowShareModal(false)} aria-labelledby="contained-modal-title-vcenter"
+        centered>
+        <SharePost
+          postObj={postObj}
+          userId={userId}
+          setShowShareModal={setShowShareModal}
+          showShareModal={showShareModal}
+          audioContext={audioContext}
+        ></SharePost>
+      </Modal>
+      {/* <Modal isOpen={showFullPost} onClose={() => setShowFullPost(false)} >
+        <WaveSurferComponent
+        postObj={postObj}
+        audioUrl={postObj.soundUrl}
+        postId={postObj.id}
+        userId={userId}
+        getPosts={getPosts}
+        updatePost={updatePost}
+        onProfile={onProfile}
+        audioContext={audioContext}
+        feed={feed}
+        setIsDeleting={setIsDeleting}
+        setCorrectPostId={setCorrectPostId}
+        setSelectedUserPosts={setSelectedUserPosts}
+        isDeleting={isDeleting}
+        setCurrentDeletePostId={setCurrentDeletePostId}
+        onUserProfile={onUserProfile}
+        setOnProfile={setOnProfile}
+        ></WaveSurferComponent>
+      </Modal> */}
     </div>
   );
 };
@@ -767,4 +801,3 @@ export default WaveSurferComponent;
                   ) : (
                     <div></div>
                   )}  */
- 
