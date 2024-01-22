@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-//import socket from './socket';
+import socket from './socket';
 
 interface RecordCommentProps {
   postObj: any,
@@ -163,7 +163,7 @@ export const RecordComment = ({ setShowShareModal, onProfile, sentToId, isSharin
       if (response.status === 200) {
         console.log(response);
         setShowShareModal(false);
-        //socket.emit('sent-shared-message', { 'sentFromId': userId, 'sentToId': sentToId });
+        socket.emit('sent-shared-message', { 'sentFromId': userId, 'sentToId': sentToId });
       }
       
     } catch (error) {

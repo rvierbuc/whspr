@@ -16,7 +16,7 @@ import Search from './Search';
 import { displayPartsToString } from 'typescript';
 import { singularize } from 'sequelize/types/utils';
 
-const NavBar = ({ notificationCount }) => {
+const NavBar = ({ notificationCount, setNotificationCount, getNotificationCount }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [show, setShow] = useState<boolean>(false);
   const { type }: Readonly<Params<string>> = useParams();
@@ -77,6 +77,7 @@ const NavBar = ({ notificationCount }) => {
           <Navbar.Toggle
             onClick={() => {
               setIsOpen(() => !isOpen);
+              getNotificationCount();
             }}
             aria-controls={`offcanvasNavbar-expand-${expand}`}
             style={{
@@ -87,7 +88,8 @@ const NavBar = ({ notificationCount }) => {
             }}
           >
             <div>
-            <svg style={{position:'absolute', top:'30px', right:'3px'}} xmlns="http://www.w3.org/2000/svg" fill="rgb(54, 89, 169)" viewBox="0 0 24 24" width="45" height="45">
+              {notificationCount > 0 ? 
+            <svg style={{ position: 'absolute', top: '30px', right: '3px' }} xmlns="http://www.w3.org/2000/svg" fill="rgb(54, 89, 169)" viewBox="0 0 24 24" width="45" height="45">
                           <filter id="shadow">
                             <feDropShadow dx="0.2" dy="0.4" stdDeviation="0.2" />
                           </filter>
@@ -95,8 +97,9 @@ const NavBar = ({ notificationCount }) => {
                             <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path>  
                           </g>
                         </svg>
+                : ''}
             <svg
-              xmlns="http://www.w3.org/2000/svg"
+            xmlns="http://www.w3.org/2000/svg"
               width="26"
               height="26"
               fill="currentColor"
@@ -137,7 +140,7 @@ const NavBar = ({ notificationCount }) => {
               </svg>
             </Offcanvas.Header>
             <Offcanvas.Body>
-              <Nav className="ml-auto" style={{ color: '#e1e1e5', fontFamily:'headerFont', fontSize:'2rem' }}>
+              <Nav className="ml-auto" style={{ color: '#e1e1e5', fontFamily: 'headerFont', fontSize: '2rem', color:'#e1e1e1' }}>
                 {/* <Nav.Link onClick={() => handleNavigation('/protected/feed')} >Home</Nav.Link> */}
                 {/* <Nav.Link onClick={() => handleNavigation('/protected/post')}>Post</Nav.Link> */}
                 <Nav.Link
@@ -146,13 +149,13 @@ const NavBar = ({ notificationCount }) => {
                   Say Something
                 </Nav.Link>
                 <Nav.Link onClick={() => handleNavigation('/protected/inbox')}>
-                  <div style={{display:'flex', flexDirection:'row'}}>
+                  <div style={{ display: 'flex', flexDirection: 'row' }}>
                   <div>
                     Inbox
                   </div>
                   {notificationCount > 0 
                     ? <div >
-                        <svg style={{position:'absolute', top:'125px', right:'255px'}} xmlns="http://www.w3.org/2000/svg" fill="rgb(54, 89, 169)" viewBox="0 0 24 24" width="45" height="45">
+                        <svg style={{ position: 'absolute', top: '125px', right: '255px' }} xmlns="http://www.w3.org/2000/svg" fill="rgb(54, 89, 169)" viewBox="0 0 24 24" width="45" height="45">
                           <filter id="shadow">
                             <feDropShadow dx="0.2" dy="0.4" stdDeviation="0.2" />
                           </filter>
@@ -160,7 +163,7 @@ const NavBar = ({ notificationCount }) => {
                             <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"></path>  
                           </g>
                         </svg>
-                        <div style={{position:'absolute', fontSize:'.75rem', fontFamily:'sans-serif', top:'138px', right:'271px'}} >
+                        <div style={{ position: 'absolute', fontSize: '.75rem', fontFamily: 'sans-serif', top: '138px', right: '271px' }} >
                           {notificationCount}
                         </div>
                       </div> 

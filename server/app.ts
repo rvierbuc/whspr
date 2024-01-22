@@ -217,22 +217,23 @@ io.on('connection', (socket) => {
     });
   });
 
-  // socket.on('sent-shared-message', async (response) => {
-  //   //console.log('socket new-message', response)
-  //   const { sentToId, sentFromId } = response;
-  //   try {
-  //     const sharedPosts = await SharedPost.findAll({
-  //       where: {
-  //         sentToId,
-  //         hasSeen: false
-  //       }
-  //     })
-  //    socket.emit('sharedPost-notification', {sentToId, notificationAmt: sharedPosts.length})
+  socket.on('sent-shared-message', async (response) => {
+    //console.log('socket new-message', response)
+    const { sentToId, sentFromId } = response;
+    try {
+      console.log('sent shared message')
+      const sharedPosts = await SharedPost.findAll({
+        where: {
+          sentToId,
+          hasSeen: false
+        }
+      })
+     socket.emit('sharedPost-notification', {sentToId, notificationAmt: sharedPosts.length})
 
-  //   }catch (error){
-  //     console.error('shared message socket error', error)
-  //   }
-  // })
+    }catch (error){
+      console.error('shared message socket error', error)
+    }
+  })
   socket.on('disconnect', () => {
     console.log('User disconnected');
   });
