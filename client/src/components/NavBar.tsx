@@ -56,7 +56,6 @@ const NavBar = ({ notificationCount, setNotificationCount, getNotificationCount 
       setLogo(require('../style/AI-logo.png'));
     } else if (!type) {
       setLogo(require('../style/whspr-logo.png'));
-      console.log('use location', location);
     }
     
   });

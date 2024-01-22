@@ -25,8 +25,6 @@ export const Mail: React.FC<WaveSurferProps> = ({
     try {
       const seenMessage = await axios.put('/post/hasSeen', { id: sharePost.id, bool: true, userType: 'sentToId', modelType: 'SharedPost'});
       const fullPost = await axios.get(`/post/updatedPost/${sharePost.Post.id}/${currUser.id}`);
-      console.log('seen message', seenMessage);
-      //sharePost = seenMessage.data;
       const newSharedPosts = sharedPosts.map((post, ind) => {
         if (ind === sharePostIndex) {
           return seenMessage.data;
@@ -41,9 +39,7 @@ export const Mail: React.FC<WaveSurferProps> = ({
       console.error('could not get full post in mailbox', error);
     }
    
-    //console.log('isToday working?', isToday(sharePost.createdAt));
   };
-  console.log('share post', sharePost)
   const isToday = (testDate) => {
     const today = new Date();
     const date = new Date(testDate);

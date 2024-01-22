@@ -15,13 +15,12 @@ const PrivateRoutes = () => {
     try {
       const notificationArr = await axios.get(`/post/shared/${user.id}/notification`);
       setNotificationCount(notificationArr.data.length);
-      console.log('get notification called', notificationArr.data.length);
     } catch (error) {
       console.error('could not get notification count', error);
     }
   };
   socket.on('sharedPost-notification', (notificationObj) => {
-    console.log('shared post notification', notificationObj);
+    //console.log('shared post notification', notificationObj);
     setNotificationCount(notificationObj.notificationAmt);
   });
   useEffect(() => {

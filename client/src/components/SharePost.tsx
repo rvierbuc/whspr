@@ -44,7 +44,7 @@ export const SharePost: React.FC<SharePostProps> = ({ audioContext, userId, post
       // using hooks, set the search results for the followers and the following respectively
       setFollowingSearchResults(followingQueryResults.data);
     } catch (error) {
-      console.log('error fetching search results', error);
+      console.error('error fetching search results', error);
     }
   };
   const handleSelectSendToUser = (userObj) => {

@@ -51,12 +51,6 @@ const ReadOnlyProfile = ({ audioContext }) => {
   };
   const handleSearchSubmission = async (): Promise<void> => {
     try {
-      console.log(
-        'inside search submission',
-        selectedUserInfo,
-        'userid',
-        selectedUserInfo.userId,
-      );
       if (searchInput === '') {
         alert('Please enter a search term');
         return;
@@ -70,7 +64,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
       setFollowerSearchResults(followerResults.data);
       setFollowingSearchResults(followingResults.data);
     } catch (error) {
-      console.log('error searching for followers', error);
+      console.error('error searching for followers', error);
     }
   };
 
@@ -81,9 +75,6 @@ const ReadOnlyProfile = ({ audioContext }) => {
     try {
       const selectedUserObj = await axios.get(`/post/selected/${id}`);
       setSelectedUserInfo(selectedUserObj.data);
-      // setUserPosts(selectedUserObj.data[0].Posts)
-      // console.log(selectedUserObj.data[0].Posts)
-      console.log('profile', selectedUserObj.data);
     } catch (error) {
       console.error('could not get selected user info', error);
     }
@@ -97,16 +88,14 @@ const ReadOnlyProfile = ({ audioContext }) => {
         (post) => post.id === updatedPost.data.id,
       );
       updatedPost.data.rank = selectedUserInfo[postIndex].rank;
-      //console.log('post index', updatePostIndex)
       const postsWUpdatedPost = selectedUserInfo.toSpliced(
         postIndex,
         1,
         updatedPost.data,
       );
-      console.log(postsWUpdatedPost);
       setSelectedUserInfo(postsWUpdatedPost);
     } catch (error) {
-      console.log('could not update post', error);
+      console.error('could not update post', error);
     }
   };
   const startFollowing = async (): Promise<void> => {
@@ -148,7 +137,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
       if (error.response.status === 404) {
         setFollowing(false);
       }
-      console.log('following error', error);
+      console.error('following error', error);
     }
   };
   const getSelectedUserFollowers = async (): Promise<void> => {
@@ -156,7 +145,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
       const followers = await axios.get(`/post/user/${id}/followers`);
       setSelectedUserFollowers(followers.data);
     } catch (error) {
-      console.log('error fetching current user followers', error);
+      console.error('error fetching current user followers', error);
     }
   };
   const getSelectedUserFollowing = async (): Promise<void> => {
@@ -164,7 +153,7 @@ const ReadOnlyProfile = ({ audioContext }) => {
       const followingArr = await axios.get(`/post/user/${id}/following`);
       setSelectedUserFollowing(followingArr.data);
     } catch (error) {
-      console.log('error fetching current user following', error);
+      console.error('error fetching current user following', error);
     }
   };
   useEffect(() => {

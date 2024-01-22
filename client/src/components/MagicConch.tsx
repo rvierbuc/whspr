@@ -30,56 +30,32 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
   const getMessage = async () => {
     try {
       const response: AxiosResponse = await axios.get(`/conch/${user.id}`);
-      console.log('message', response.data);
+
       const tempMessage = response.data[0];
-      // if (tempMessage.hasSeen) {
-      //   setMessage(null);
-      // } else {
-        tempMessage.user = tempMessage.sentFromUser;
-        tempMessage.userId = tempMessage.sentFromUser.id;
-        setMessage(tempMessage);
-        setShowConch(true);
+
+      tempMessage.user = tempMessage.sentFromUser;
+      tempMessage.userId = tempMessage.sentFromUser.id;
+      setMessage(tempMessage);
+      setShowConch(true);
       //}
     } catch (error) {
-      console.log('couldnt get message', error);
+      console.error('couldnt get message', error);
     }
   };
 
   const updatePost = async (postId, updateType) => {
     try {
       const updatedPost: any = await axios.get(`/post/updatedPost/${postId}/${updateType}`);
-      console.log('updated post obj', updatedPost);
-      //const postIndex = sharedPosts.findIndex((post) => post.id === updatedPost.data.id);
-      //updatedPost.data.rank = sharedPosts[postIndex].rank;
-      //console.log('post index', updatePostIndex)
-      //const postsWUpdatedPost = sharedPosts.toSpliced(postIndex, 1, updatedPost.data);
-      console.log(updatedPost);
       setDisplayPost(updatedPost.data);
     } catch (error) {
-      console.log('could not update post', error);
+      console.error('could not update post', error);
     }
   };
-
-  const getOutbox = async () => {
-    try {
-      const response: AxiosResponse = await axios.get(`/conch/sent/${user.id}`);
-      console.log('message', response);
-      // const tempMessage = response.data;
-      // tempMessage.user = tempMessage.sentFromUser;
-      // tempMessage.userId = tempMessage.sentFromUser.id;
-      setMessage(response.data);
-    } catch (error) {
-      console.log('couldnt get message', error);
-    }
-  };
-
-  console.log('display message', displayMessage);
 
   const getSharedPosts = async (idType) => {
     try {
       const sharedPostsArray: AxiosResponse = await axios.get(`/post/shared/${user.id}/${idType}`);
       if (sharedPostsArray.data.length > 0) {
-        console.log('get shared posts', sharedPostsArray.data);
         setSharedPosts(sharedPostsArray.data);
       }
     } catch (error) {
@@ -104,7 +80,6 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
 
   const handleConchClose = async () => {
     try {
-      console.log('closed conch');
       await axios.put('/post/hasSeen', { id: message.id, bool: true, userType: 'sentToId', modelType: 'MagicConch' });
       setShowConch(false);
     } catch (error) {
@@ -121,7 +96,7 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
   return (
         <div >
 {/** commented out code below component */}
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
    {/* <PostConch audioContext={audioContext} />  */}
 {/* {type === 'inbox' ?
     <div >
@@ -169,7 +144,7 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
         <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
       </svg>
       </div>
-      <div className='conch-title' style={{fontFamily:'headerFont', textShadow:'3px 3px 3px rgb(54, 89, 169)', fontSize:'2.3rem', margin:'-1.5rem 1rem -1rem 1rem'}}>
+      <div className='conch-title' style={{ fontFamily: 'headerFont', textShadow: '3px 3px 3px rgb(54, 89, 169)', fontSize: '2.3rem', margin: '-1.5rem 1rem -1rem 1rem' }}>
         A MAGIC CONCH HAS WASHED UP JUST FOR YOU!
       </div>
       {/* <img src={require('../style/conch.png')} style={{margin:'1rem'}}/> */}
@@ -224,7 +199,7 @@ const MagicConch = ({ audioContext }: { audioContext: AudioContext }) => {
                </div>
                  : <div className='display-message' id='no-message'>
                   <img src={require('../style/listen.png')} id='select-mess-img'/>
-                  <div style={{ fontSize: '2rem', width: '25rem', overflow: 'wrap', marginBottom: '10rem', textAlign: 'center', color: '#e1e1e1', fontFamily:'headerFont' }}>Select a message from the left to listen</div>
+                  <div style={{ fontSize: '2rem', width: '25rem', overflow: 'wrap', marginBottom: '10rem', textAlign: 'center', color: '#e1e1e1', fontFamily: 'headerFont' }}>Select a message from the left to listen</div>
                   </div>}
             </div>
         </div>

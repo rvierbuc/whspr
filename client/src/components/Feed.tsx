@@ -33,12 +33,9 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
   const getTagList = async () => {
     const tagList: AxiosResponse = await axios.get('/post/tags');
     setTags(tagList.data);
-    console.log('tags', tagList.data);
   };
-  //console.log('feed AC', audioContext);
   const getPosts = async (feedType, tag) => {
     setFeed(feedType);
-    console.log(user);
     try {
       const allPosts: AxiosResponse = await axios.get(`/post/${type}/${user.id}/${tag}`);
       if (allPosts.data.length === 0) {
@@ -51,9 +48,9 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
       } else {
         setPosts(allPosts.data);
       }
-      console.log('all posts', allPosts.data);
+  
     } catch (error) {
-      console.log('client get friends', error);
+      console.error('client get friends', error);
     }
   };
 
@@ -62,7 +59,6 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
     if (selectedTags.includes(event.target.value)) {
       setSelectedTags(selectedTags.filter(tag => tag !== event.target.value));
       setTagCounter(() => tagCounter - 1);
-      console.log('selected tags unchecked', selectedTags);
       event.target.className = 'not-selected-tag';
     }
 
@@ -72,7 +68,6 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
       event.target.className = 'selected-tag';
       if (tagCounter === 5) {
         setCannotSelect(true);
-        console.log('selected tags length=4', selectedTags);
         event.target.className = 'not-selected-tag';
         setSelectedTags(selectedTags.filter(tag => tag !== event.target.value));
       }
@@ -83,28 +78,20 @@ const Feed = ({ audioContext }: { audioContext: AudioContext }) => {
     axios.put(`/post/selectedTags/${user.id}`, { tags: selectedTags });
     setShowTagModal(false);
     getPosts('explore', 'none');
-    //console.log(selectedTags);
-    //getPosts('explore', 'none')
   };
   const updatePost = async (postId, userId) => {
     try {
       const updatedPost: any = await axios.get(`/post/updatedPost/${postId}/${userId}`);
-      console.log('updated post obj', updatedPost);
       const postIndex = posts.findIndex((post) => post.id === updatedPost.data.id);
       updatedPost.data.rank = posts[postIndex].rank;
-      //console.log('post index', updatePostIndex)
       const postsWUpdatedPost = posts.toSpliced(postIndex, 1, updatedPost.data);
-      console.log(postsWUpdatedPost);
       setPosts(postsWUpdatedPost);
     } catch (error) {
-      console.log('could not update post', error);
+      console.error('could not update post', error);
     }
   };
   useEffect(() => {
-    console.log('feed', type);
     getPosts(type, 'none');
-
-
   }, [type]);
 
   // SYDNEY => these are placeholders passing into PostCard so my added functionality in RecordPost doesn't conflict

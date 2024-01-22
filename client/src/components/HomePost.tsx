@@ -25,18 +25,15 @@ const HomePost = (props) => {
       );
       setComments(commentsArr.data);
       setHearLess(true);
-      console.log('got new comments', commentsArr.data);
     } catch (error) {
       console.error('could not get comments', error);
     }
   };
 
   const handleHearLess = () => {
-    // const lessComments = comments.slice(0, 2);
     setComments([]);
     setHearLess(false);
   };
-  // const { audioUrl, postId } = props;
 
   const createSoundWaves = () => {
     let regions: RegionsPlugin;
@@ -45,7 +42,7 @@ const HomePost = (props) => {
       wave.destroy();
     }
     //create the new wave
-    console.log('creating new wave');
+
 
     const wavesurfer = WaveSurfer.create({
       // barWidth: 15,
@@ -82,7 +79,6 @@ const HomePost = (props) => {
 
     setWave(wavesurfer);
     setDisplay(true);
-    console.log('wave created!');
   };
 
   useEffect(() => {

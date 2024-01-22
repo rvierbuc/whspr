@@ -80,18 +80,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   const [addComment, setAddComment] = useState<boolean>(false);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
 
-  //const [hasCategories, setHasCategories] = useState<boolean>();
-  // const { audioUrl, postId } = props;
   const containerId = `waveform-${postId || ''}-${containerType}`;
-  // const handleDelete: () => void = async () => {
-  //   try {
-  //     const deletePost = await axios.delete(`/deletePost/${userId}/${postId}`);
-  //     console.log(deletePost.status);
-  //   } catch (error: any) {
-  //     console.error(error);
-  //   }
-  // };
-
   // toast notifications
   const notifyLike = (): void => {
     toast.success('Post liked!', {
@@ -139,11 +128,9 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
         id: postId,
       });
       await updatePost(postId, userId);
-      console.log('befre notify like');
       notifyLike();
-      console.log('after notify like');
     } catch (error) {
-      console.log('client could not like', error);
+      console.error('client could not like', error);
     }
   };
   const handleUnlike = async ():Promise <void> => {
@@ -158,7 +145,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       await updatePost(postId, userId);
       notifyUnlike();
     } catch (error) {
-      console.log('client could not unlike', error);
+      console.error('client could not unlike', error);
     }
   };
   const isFollowing = async ():Promise <void> => {
@@ -173,7 +160,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       if (error.response.status === 404) {
         setFollowing(false);
       }
-      console.log('following error', error);
+      console.error('following error', error);
     }
   };
   const startFollowing = async ():Promise <void> => {
@@ -211,7 +198,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
       wave.destroy();
     }
     //create the new wave
-    console.log('creating new wave');
     const wavesurfer = WaveSurfer.create({
       // barWidth: 15,
       // barRadius: 5,
@@ -300,14 +286,12 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
           id: postId,
         });
         await updatePost(postId, userId);
-        console.log('complete', updateListenCount, addListen);
       } catch (error) {
         console.error('on audio finish error', error);
       }
     });
 
     setWave(wavesurfer);
-    console.log('wave created!');
 
   };
 
@@ -592,7 +576,6 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                         onClick={() => {
                           if (wave) {
                             wave.playPause();
-                            console.log('paused')
                             setIsPaused(() => !isPaused);
                           }
                         }}></button> </TooltipComponent>
