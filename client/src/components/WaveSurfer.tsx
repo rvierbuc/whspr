@@ -34,16 +34,15 @@ interface WaveSurferProps {
   setOnProfile: any;
   audioContext: AudioContext;
   feed: string;
-  setIsDeleting: any
   setCorrectPostId: any
   setSelectedUserPosts: any
-  isDeleting: boolean
   setCurrentDeletePostId: any
   onHome: boolean
   onConch: boolean
   waveHeight: number;
   isConch: boolean;
   containerType: string;
+  setSelectedUserPosts: any
   // showBigPost: boolean,
   // setShowBigPost: any,
   // bigPost: any,
@@ -62,11 +61,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
   setOnProfile,
   audioContext,
   feed,
-  setIsDeleting,
-  setCorrectPostId,
   setSelectedUserPosts,
-  isDeleting,
-  setCurrentDeletePostId,
   onHome,
   onConch,
   waveHeight,
@@ -716,25 +711,15 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                   }}></MdArrowOutward>
               </TooltipComponent>
               {onUserProfile ? (
-                <div onClick={() => setIsDeleting(true)}>
-                  <MdDeleteOutline
-                    type="button"
-                    onClick={() => {
-                      if (!isDeleting) {
-                        setIsDeleting(true);
-                        setCurrentDeletePostId(postId);
-                      } else {
-                        setIsDeleting(false);
-                        setCurrentDeletePostId(null);
-                      }
-                    }}
-                    style={{
-                      color: '#e1e1e5',
-                      height: '3rem',
-                      width: '3rem',
-                      marginRight: '1rem',
-                    }}></MdDeleteOutline>
-                </div>
+                <MdDeleteOutline
+                  type="button"
+                  onClick={() => setDeleting(true)}
+                  style={{
+                    color: '#e1e1e5',
+                    height: '3rem',
+                    width: '3rem',
+                    marginRight: '1rem',
+                  }}></MdDeleteOutline>
               ) : (
                 <div></div>
               )}
@@ -744,6 +729,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
               ) : ( */}
             <div>
               <Post
+                setSelectedUserPosts={setSelectedUserPosts}
                 key={postId}
                 postObj={postObj}
                 updatePost={updatePost}
@@ -751,6 +737,8 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
                 audioContext={audioContext}
                 addComment={addComment}
                 setAddComment={setAddComment}
+                deleting={deleting}
+                setDeleting={setDeleting}
                 onProfile={onProfile}
                 onUserProfile={onUserProfile}
                 waveHeight={waveHeight}
