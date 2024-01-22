@@ -903,7 +903,6 @@ body {
 #square,
 #sawtooth,
 #oscillatorType {
-  min-width: 14vw;
   min-height: 4.5vh;
   font-size: larger;
   font-family: headerFont;
@@ -915,25 +914,26 @@ body {
 }
 
 #phaseFilter {
-  min-width: 8vw;
   min-height: 4.5vh;
   font-size: large;
   font-family: headerFont;
+  margin-bottom: 0.5rem;
 }
 
 #distortionFilter {
-  min-width: 10vw;
   min-height: 4.5vh;
   font-size: large;
   font-family: headerFont;
+  margin-bottom: 0.5rem;
+  margin-top: 0.2rem;
 }
 
 #phaser,
 #distortion,
 #oscType,
 #waveType {
-  min-width: 3.5vw;
-  min-height: 3.5vh;
+  min-width: 2.5vw;
+  min-height: 2.5vh;
 }
 
 #cat-hit {
@@ -1147,23 +1147,23 @@ $bg: rgb(69, 67, 67);
 input[type='range'] {
   -webkit-appearance: none;
   appearance: none;
-  width: 20vw;
+  width: 16vw;
   cursor: pointer;
   outline: none;
-  height: 1.5rem;
+  height: 1.3rem;
   background: #ccc;
   border-radius: 16px;
   overflow: hidden;
 }
 
 input[type='range']::-webkit-slider-runnable-track {
-  height: 1.5rem;
+  height: 1.3rem;
   background: #ccc;
   border-radius: 16px;
 }
 
 input[type='range']::-moz-range-track {
-  height: 1.5rem;
+  height: 1.3rem;
   background: #ccc;
   border-radius: 16px;
 }
@@ -1171,8 +1171,8 @@ input[type='range']::-moz-range-track {
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  height: 1.5rem;
-  width: 1.5rem;
+  height: 1.3rem;
+  width: 1.3rem;
   background-color: gray;
   border-radius: 50%;
   border: 2px solid rgb(60, 53, 86);
@@ -1180,8 +1180,8 @@ input[type='range']::-webkit-slider-thumb {
 }
 
 input[type='range']::-moz-range-thumb {
-  height: 15px;
-  width: 15px;
+  height: 1.3rem;
+  width: 1.3rem;
   background-color: gray;
   border-radius: 50%;
   border: 1px solid rgb(60, 53, 86);
