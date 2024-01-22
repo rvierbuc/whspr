@@ -31,6 +31,7 @@ export const stopAudio = async () => {
   try {
     const localAudioStream: ILocalAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
     agoraClient.unpublish(localAudioStream);
+    console.log('muted')
   } catch (error) {
     console.error('no', error);
   }

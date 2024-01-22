@@ -6,8 +6,8 @@ interface AudioAnalyserProps {
   audioStream?: MediaStream;
 }
 
-const AudioAnalyser: React.FC<AudioAnalyserProps> = ({ audioContext }) => {
-  const [audioStream, setAudioStream] = useState<MediaStream>()
+const AudioAnalyser: React.FC<AudioAnalyserProps> = ({ audioContext, audioStream }) => {
+  // const [audioStream, setAudioStream] = useState<MediaStream>()/
   const [audioData, setAudioData] = useState<number[]>([]);
   const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
   const [rafId, setRafId] = useState<number | null>(null);
@@ -15,10 +15,11 @@ const AudioAnalyser: React.FC<AudioAnalyserProps> = ({ audioContext }) => {
   useEffect(() => {
     const execute = async () => {
       try {
+        console.log('stuff', audioContext, audioStream)
         if (!audioStream) {
           console.log('Audio stream is undefined');
-        const audioStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
-        setAudioStream(audioStream)
+        // const audioStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+        // setAudioStream(audioStream)
           return;
         }
 

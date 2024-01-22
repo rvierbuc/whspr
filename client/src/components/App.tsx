@@ -52,7 +52,7 @@ const App = () => {
   const [channelName, setChannelName] = useState<string>();
   const [host, setHost] = useState<string>();
   const [uid, setUid] = useState<number>();
-  const [creator, setCreator] = useState<any>()
+  const [creator, setCreator] = useState<MediaStream>()
 
   const setRoomProps = (channelName, host, uid, creator) => {
     setChannelName(channelName);

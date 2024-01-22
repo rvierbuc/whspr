@@ -198,6 +198,26 @@ router.get('/user/:userId/followers/search/:searchInput', async (req: Request, r
   }
 });
 
+router.get('/radio/:name', async (req: Request, res: Response) => {
+  const {name} = req.params
+
+  console.log('hete', name)
+  try {
+    const getRadio = Radio.findAll({
+      where: {
+        title: name
+      }
+    })
+    getRadio.then((info) => {
+      console.log('gotten', info)
+      res.send(info).status(200)
+    })
+    //console.log('gotten', getRadio)
+  }catch{
+    console.log('no')
+  }
+ })
+
 // gets the selected users following and searches for matching username
 router.get('/user/:userId/following/search/:searchInput', async (req: Request, res: Response): Promise<void> => {
   try {
@@ -393,6 +413,26 @@ router.get('/users', async (req: Request, res: Response) => {
   }
   
   })
+
+  router.get('/user/:username', async (req: Request, res: Response) => {
+    console.log('hi')
+    const {username} = req.params
+    try{
+      const users = await User.findAll({
+        where: {
+          username: username
+        }
+      })
+      console.log(users)
+      res.status(200).send(users)
+    
+    }catch(error){
+      res.sendStatus(500)
+      console.log('could not get user', error)
+    }
+    
+    })
+
 //gets all posts
 router.get('/explore/:userId', async (req: Request, res: Response) => {
   const { userId } = req.params;
