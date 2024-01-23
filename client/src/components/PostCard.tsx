@@ -15,11 +15,11 @@ const generateUserToken = (): string => {
 
 const userToken = generateUserToken();
 
-const searchClient = algoliasearch('L1DTWCU98D', 'bf531f95b4dd36ed1fc7eadf4c95cda6', {
-  headers: {
-    'X-Algolia-UserToken': userToken,
-  },
-});
+// const searchClient = algoliasearch('L1DTWCU98D', 'bf531f95b4dd36ed1fc7eadf4c95cda6', {
+//   headers: {
+//     'X-Algolia-UserToken': userToken,
+//   },
+// });
 
 
 
