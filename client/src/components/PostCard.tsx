@@ -28,6 +28,31 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
   const [currentSearch, setCurrentSearch] = useState<string>('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [placeholderCategories, setPlaceholderCategories] = useState<string[]>([]);
+  const [allCategories, setAllCategories] = useState<string[]>([]);
+  const [customHit, setCustomHit] = useState<string>('');
+
+  const handleCustomHitClick = (hit: any) => {
+    setSelectedCategories([hit, ...selectedCategories]);
+    setCurrentSearch('');
+    setCustomHit('');
+  };
+  const CustomHitComponent = (hit: any) => {
+    // console.log('custom hit', hit);
+    return (
+      <div className='custom-hit' onClick={() => handleCustomHitClick(hit.hit)}>
+        <p>{hit.hit}</p>
+      </div>
+    );
+  };
+
+  const getAllCategories = async (): Promise<void> => {
+    try {
+      const allCats = await axios.get('/post/categories');
+      setAllCategories(allCats.data);
+    } catch (error) {
+      console.error('error fetching all categories', error);
+    }
+  };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // console.log('working', event.target.value, event);
