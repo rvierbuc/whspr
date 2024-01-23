@@ -131,6 +131,7 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     handleCategorySelection(currentSearch);
+    setCustomHit('');
   };
   // const Hit = ({ hit, onSelect }: { hit: any; onSelect: (category: string[] | string) => void }) => {
   //   const { hits } = useHits();
