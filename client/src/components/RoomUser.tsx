@@ -24,7 +24,17 @@ const RoomUser = ({audioStream, audioContext, image, muted}) => {
         <div className='card'>
           <div className='room-users'>
 
-        <img style={{margin: '15px'}} width="100" src={image} alt="user profile image" />
+        <img className="rounded-circle"
+                    style={{
+                      width: 'auto',
+                      height: '100px',
+                      marginTop:  '40px',
+                      marginLeft: '40px',
+                      objectFit: 'scale-down',
+                      borderStyle: 'solid',
+                      borderWidth: 'medium',
+                      borderColor: '#3C3556',
+                    }}  src={image} alt="user profile image" />
 
         <AudioAnalyser audioStream={stream} audioContext={audioContext}/>
 

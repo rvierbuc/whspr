@@ -45,7 +45,7 @@ const Visualiser: React.FC<VisualiserProps> = ({ audioData }) => {
     context.stroke();
   };
 
-  return <canvas width="500" height="100vh" ref={canvasRef} className='mt-5'/>;
+  return <canvas width="650" height="100vh" ref={canvasRef} className='mt-5'/>;
 };
 
 export default Visualiser;
