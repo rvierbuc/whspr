@@ -136,46 +136,42 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
     event.preventDefault();
     handleCategorySelection(currentSearch);
   };
-  const Hit = ({ hit, onSelect }: { hit: any; onSelect: (category: string[] | string) => void }) => {
-    const { hits } = useHits();
-    // console.log('hits', hit); //the individual hit obj
-    // console.log('hits array + hit', hits, hit);
-    //  filter the hits based on the current search
-    const filteredHits = hits.filter((individualHit: any) => {
-      return individualHit.category.toLowerCase().includes(currentSearch.toLowerCase());
-    });
-    // console.log('search + indiv hits', currentSearch, filteredHits);
-    return (
-      // TODO: issue, when you click on a hit, it just adds the input value to the selected categories instead of the hit value
-      <article id='cat-hit' onClick={() => onSelect(filteredHits)}
-        style={{ border: '1px solid black', padding: '10px', margin: '10px' }}
-      >
-        {filteredHits.map(filteredHit => (
-          <div key={filteredHit.objectID}>
-            <p>{filteredHit.category}</p>
-          </div>
-        ))}
+  // const Hit = ({ hit, onSelect }: { hit: any; onSelect: (category: string[] | string) => void }) => {
+  //   const { hits } = useHits();
+  //   // console.log('hits', hit); //the individual hit obj
+  //   // console.log('hits array + hit', hits, hit);
+  //   //  filter the hits based on the current search
+  //   const filteredHits = hits.filter((individualHit: any) => {
+  //     return individualHit.category.toLowerCase().includes(currentSearch.toLowerCase());
+  //   });
+  //   // console.log('search + indiv hits', currentSearch, filteredHits);
+  //   return (
+  //     // TODO: issue, when you click on a hit, it just adds the input value to the selected categories instead of the hit value
+  //     <article id='cat-hit' onClick={() => onSelect(filteredHits)}
+  //       style={{ border: '1px solid black', padding: '10px', margin: '10px' }}
+  //     >
+  //       {filteredHits.map(filteredHit => (
+  //         <div key={filteredHit.objectID}>
+  //           <p>{filteredHit.category}</p>
+  //         </div>
+  //       ))}
 
-        {/* {filteredHits[0]} */}
-      </article>
-    );
-  };
+  //       {/* {filteredHits[0]} */}
+  //     </article>
+  //   );
+  // };
   useEffect(() => {
-    console.log('selectedCategories', selectedCategories);
-    console.log('placeholderCategories', placeholderCategories);
-    console.log('allCategories', allCategories);
-    console.log('customHit', customHit);
     getAllCategories();
   }, [selectedCategories, placeholderCategories, customHit]);
   
   return (
     <div>
-      <InstantSearch
+      {/* <InstantSearch
         searchClient={searchClient}
         indexName="category_index"
         initialUiState={{ searchBox: { query: currentSearch } }}
         
-      >
+      > */}
         {/* <SearchBox onInput={handleSearchChange} placeholder={'' || selectedCategory} className='input-control'/> */}
         <form onSubmit={handleSubmit}>
           <input
@@ -193,11 +189,11 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
         {/* create an input that holds the selected categories */}
         {/* {currentSearch && <Hits className="cat-hits" hitComponent={(props) => <Hit {...props} onSelect={handleHitClick} />} />} */}
         {/* <input type="text" value={selectedCategories} readOnly={true} className='input-control text-white' id='category-read-only' /> */}
-        <Configure userToken={userToken} hitsPerPage={2} />
+        {/* <Configure userToken={userToken} hitsPerPage={2} /> */}
         {selectedCategories ? selectedCategories.map((category, index) => (
           <CategoryWithDeleteButton key={index} category={category} onSelect={handleHitClick} />
         )) : null}
-      </InstantSearch>
+      {/* </InstantSearch> */}
      
       {/* {customHit && <CustomHitComponent hit={customHit} />} */}
       {customHit ? (
