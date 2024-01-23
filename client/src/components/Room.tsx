@@ -138,7 +138,17 @@ const Room = ({  host, id,  audioContext }) => {
 
        
        <div className='room-info'>
-       {owner ? <img style={{marginLeft: '15px', marginTop: '15px'}} width="100" src={owner.profileImgUrl} alt="user profile image" />
+       {owner ? <img className="rounded-circle"
+                    style={{
+                      width: 'auto',
+                      height: '100px',
+                      marginTop:  '40px',
+                      marginLeft: '40px',
+                      objectFit: 'scale-down',
+                      borderStyle: 'solid',
+                      borderWidth: 'medium',
+                      borderColor: '#3C3556',
+                    }}  src={owner.profileImgUrl} alt="user profile image" />
        :
           <img style={{marginLeft: '15px', marginTop: '15px'}} width="100" src="https://lh3.googleusercontent.com/a/ACg8ocI6UOrLKNPeKzMpAobwFfMo2jVBc2SccK66hzTPMkEk=s96-c" alt="user profile image" />
        }
