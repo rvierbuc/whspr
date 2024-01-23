@@ -359,26 +359,6 @@ export const WhsprAI = ({ audioContext }: WhsprAIProps): ReactElement => {
     }
   };
 
-  const handlePressToTalkPress = (): void => {
-    if (isPlaying) { return; }
-    pressTime.current = setTimeout(() => {
-      setIsRecording(true);
-      vibratePhone();
-    }, 300);
-  };
-
-  const handlePressToTalkRelease = (): void => {
-    setIsMuted(false);
-    if (isPlaying) { return; }
-    if (pressTime.current) {
-      clearTimeout(pressTime.current);
-      setIsRecording(false);
-    }
-    pressTime.current = null;
-  };
-
-
-
   const toggleMute = (): void => {
     setIsMuted(!isMuted);
     if (audioRef.current) {
@@ -397,6 +377,32 @@ export const WhsprAI = ({ audioContext }: WhsprAIProps): ReactElement => {
     }
   };
 
+  const handlePressToTalkPress = (): void => {
+    let currentIsPlaying = isPlaying;
+    if (isPaused) {
+      if (audioRef.current) {
+        audioRef.current = null;
+      }
+      setIsPaused(false);
+      setIsPlaying(false);
+      currentIsPlaying = false;
+    }
+    if (currentIsPlaying) { return; }
+    pressTime.current = setTimeout(() => {
+      setIsRecording(true);
+      vibratePhone();
+    }, 300);
+  };
+
+  const handlePressToTalkRelease = (): void => {
+    setIsMuted(false);
+    if (isPlaying) { return; }
+    if (pressTime.current) {
+      clearTimeout(pressTime.current);
+      setIsRecording(false);
+    }
+    pressTime.current = null;
+  };
 
   return (
     <div className='whsprAI'>

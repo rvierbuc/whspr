@@ -196,10 +196,10 @@ body {
 #remove-btn-new {
   background: #e9ecf300 url(trash3-fill.svg) no-repeat 1rem;
 }
-#conch-post-btn-new{
+#conch-post-btn-new {
   background: #e9ecf300 url(post-conch.svg) no-repeat 1rem;
   height: 2rem;
-  width:2rem;
+  width: 2rem;
   -webkit-filter: drop-shadow(2px 2px 1px rgb(0, 0, 0, 0.5));
   filter: drop-shadow(2px 2px 1px rgb(0, 0, 0, 0.5));
 }
@@ -347,7 +347,7 @@ body {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  color:#e1e1e1;
+  color: #e1e1e1;
 }
 .row-container {
   display: flex;
@@ -378,7 +378,7 @@ body {
   gap: 1rem;
 }
 .btn-dark {
-  margin:.5rem
+  margin: 0.5rem;
 }
 .outer-grid-post-container {
   display: flex;
@@ -826,6 +826,8 @@ body {
   color: white;
   size: 0.8rem;
   margin: 1rem;
+  justify-content: center;
+  display: flex;
   width: 100%;
   max-width: 600px;
 }
