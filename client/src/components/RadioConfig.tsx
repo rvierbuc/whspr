@@ -92,7 +92,7 @@ const RadioConfig = ({ setRoomProps }) => {
                 onHide={close}
                 >
                     <Modal.Header closeButton>
-                        <Modal.Title>Choose Your Channel Type</Modal.Title>
+                        <Modal.Title>Name Your Channel</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             <Form.Control

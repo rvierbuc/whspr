@@ -8,6 +8,7 @@ import { joinChannel, leaveChannel, startAudio, stopAudio, createChannel, subscr
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import socket from './socket'
+import RoomUser from './RoomUser'
 
 
 
@@ -26,55 +27,57 @@ const Room = ({  host, id,  audioContext }) => {
   const navigate = useNavigate()
   const user: any = useLoaderData();
 
-
+  
   useEffect(() => {
+    setRoomProps()
     const initUserMedia = async () => {
       try {
         setChannel(name)
-        setRoomProps()
-        console.log('channel', channel, host, id, user)
+        console.log('channel', channel, owner)
         const userMediaStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
         setStream(userMediaStream);
-
+        
         if (user.username !== owner) {
           //setListeners([...listeners, user]);
         }
-        socket.emit('sendUser', user)
+        socket.emit('sendUser', {user: user, stream: userMediaStream})
         socket.on('recieveUser', (user) => {
-          if(listeners.length > 0){
-            setListeners((prevListeners) => {
-              //[user, ...prevListeners]
-              console.log('diddit', user, owner)
-            })
-
+          console.log('list', owner, user)
+          if(listeners !== undefined && listeners.length > 0 && user.username !== owner.username){
+            setListeners((prevListeners) => [...prevListeners, user])
+            
           }else{
             setListeners([user])
-            console.log('diddit', user, owner)
+            console.log('zero', listeners)
           }
         })
-        createChannel(channelName, uid, '007eJxTYLgl/GBNxeRnk6S9tr6LjTRUUnzDN7k15slph5fybeeFF75XYEg0Tko2MDFNtDCztDCxMDe3MEoxSDUzTDI2NbOwtDQ1Uotfl9oQyMiwtMSRlZEBAkF8RoZEBgYACS4dtA==', userMediaStream);
+        createChannel(channelName, uid, '007eJxTYOj8fWnTO/mg+TlWgcG1EboX11Xm+Mp+e3boR9WcPa0LlpgrMCQaJyUbmJgmWphZWphYmJtbGKUYpJoZJhmbmllYWpoalUlvSG0IZGQ4fsmflZEBAkF8RoZEBgYAYqUfTQ==', userMediaStream);
       } catch (error) {
         console.log('Error initializing user media:', error);
       }
     };
-
+    
     initUserMedia();
-
+    
     subscribeRemoteUser((user, mediaType) => {
       if (mediaType === 'audio') {
         const remoteAudioTrack = user.audioTrack;
         user.audioTrack.play();
         setRemoteAudioTracks((prevTracks) => [...prevTracks, remoteAudioTrack]);
-
+        
         remoteAudioRef.current = remoteAudioTrack;
       }
     });
-  }, [audioContext, channel, uid, owner, user]);
 
+    
+  }, [audioContext]);
+  
   const setRoomProps = async () => {
     try{
-      const hosts = await axios.get(`/post/user/${owner}`)
+    
       const info = await axios.get(`/post/radio/${name}`)
+      const ost = info.data[0].host
+      const hosts = await axios.get(`/post/user/${ost}`)
       console.log('info', info, hosts)
       setChannel(info.data[0].title)
       setUid(info.data[0].id)
@@ -86,7 +89,7 @@ const Room = ({  host, id,  audioContext }) => {
   }
 
   const handleJoinChannel = (stream) => {
-    joinChannel(channel, uid, '007eJxTYLgl/GBNxeRnk6S9tr6LjTRUUnzDN7k15slph5fybeeFF75XYEg0Tko2MDFNtDCztDCxMDe3MEoxSDUzTDI2NbOwtDQ1Uotfl9oQyMiwtMSRlZEBAkF8RoZEBgYACS4dtA==');
+    joinChannel(channelName, uid, '007eJxTYOj8fWnTO/mg+TlWgcG1EboX11Xm+Mp+e3boR9WcPa0LlpgrMCQaJyUbmJgmWphZWphYmJtbGKUYpJoZJhmbmllYWpoalUlvSG0IZGQ4fsmflZEBAkF8RoZEBgYAYqUfTQ==');
     startAudio();
   };
 
@@ -125,7 +128,7 @@ const Room = ({  host, id,  audioContext }) => {
 
     <div style={{ alignItems: 'center'}} className='container'>
    
-      <h1>{channel}</h1>
+      <h1 style={{color: 'white'}}>{channel}</h1>
 
       
       <div className='card'>
@@ -135,20 +138,21 @@ const Room = ({  host, id,  audioContext }) => {
 
        
        <div className='room-info'>
+       {owner ? <img style={{marginLeft: '15px', marginTop: '15px'}} width="100" src={owner.profileImgUrl} alt="user profile image" />
+       :
           <img style={{marginLeft: '15px', marginTop: '15px'}} width="100" src="https://lh3.googleusercontent.com/a/ACg8ocI6UOrLKNPeKzMpAobwFfMo2jVBc2SccK66hzTPMkEk=s96-c" alt="user profile image" />
+       }
           <AudioAnalyser audioContext={audioContext} audioStream={stream}/>
          
-       {mute ?  <button
-       style={{margin: '15px'}}
-        type="button"
-        className='btn btn-dark'
-        onClick={() => {muted()}}
-        >Unmute</button> : <button
-        style={{margin: '15px'}}
-        type="button"
-        className='btn btn-light'
-        onClick={() => {muted()}}
-        >Mute</button>}
+       {mute ?  <img
+            onClick={muted}
+            src={require('../style/mute.svg')}
+            style={{width: '50px', margin: '20px', justifyContent: 'right'}}
+          /> :<img
+          onClick={muted}
+          src={require('../style/unmute.svg')}
+          style={{width: '50px', margin: '20px', justifyContent: 'right'}}
+        />}
 
        </div>
       
@@ -161,24 +165,34 @@ const Room = ({  host, id,  audioContext }) => {
 
       <div style={{ marginTop: '20px',  alignItems: 'center'}} className='container'>
 
-        <div className='card'>
-          <div className='room-users'>
-            {/* { listeners !== undefined ?
+        
+          <div>
+            { listeners ?
             listeners.map((listener) => {
-              <img style={{margin: '15px'}} width="100" src={listener.profileImgUrl} alt="user profile image" />
-              {mute ?  <button
-                type="button"
-                style={{margin: '15px'}}
-        className='btn btn-dark'
-        onClick={() => {muted()}}
-        >Unmute</button> : <button
-        type="button"
-        style={{margin: '15px'}}
-        className='btn btn-light'
-        onClick={() => {muted()}}
-        >Mute</button>}
+              return (
+                <div>
+                  {listener.user.username !== owner.username ? 
+                  <RoomUser image={listener.user.profileImgUrl} audioStream={listener.stream} audioContext={audioContext} muted={muted}/>
+                  : <br/>
+                  }
+                  </div>
+             // <img style={{margin: '15px'}} width="100" src={listener.profileImgUrl} alt="user profile image" />)
+        //       {mute ?  <button
+        //         type="button"
+        //         style={{margin: '15px'}}
+        // className='btn btn-dark'
+        // onClick={() => {muted()}}
+        // >Unmute</button> : <button
+        // type="button"
+        // style={{margin: '15px'}}
+        // className='btn btn-light'
+        // onClick={() => {muted()}}
+        // >Mute</button>}
+              )
+            
+        
       }) : <br></br>
-    } */}
+    }
           {/* <img style={{margin: '15px'}} width="100" src="https://lh3.googleusercontent.com/a/ACg8ocI6UOrLKNPeKzMpAobwFfMo2jVBc2SccK66hzTPMkEk=s96-c" alt="user profile image" />
        {mute ?  <button
         type="button"
@@ -193,7 +207,7 @@ const Room = ({  host, id,  audioContext }) => {
         >Mute</button>} */}
 
 
-          </div>
+        
           
         </div>
 

@@ -10,7 +10,7 @@ const RoomCard = ({name, host, listeners, setRoomProps, id}) => {
     
     const navigateTo = () => {
         setRoomProps(name, host, id)
-        navigate(`/protected/room/${name}`)
+        window.location.href = `/protected/room/${name}`
     }
 
   return (

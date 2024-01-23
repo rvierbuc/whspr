@@ -202,10 +202,13 @@ app.post('/openAIGetResponse', async (req, res) => {
   }
 });
 
+
 io.on('connection', (socket) => {
   console.log('User connected');
 
+
   socket.on('sendUser', (user) => {
+
     io.emit('recieveUser', user)
   })
 
