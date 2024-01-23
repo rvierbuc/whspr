@@ -196,12 +196,19 @@ body {
 #remove-btn-new {
   background: #e9ecf300 url(trash3-fill.svg) no-repeat 1rem;
 }
-
+#conch-post-btn-new{
+  background: #e9ecf300 url(post-conch.svg) no-repeat 1rem;
+  height: 2rem;
+  width:2rem;
+  -webkit-filter: drop-shadow(2px 2px 1px rgb(0, 0, 0, 0.5));
+  filter: drop-shadow(2px 2px 1px rgb(0, 0, 0, 0.5));
+}
 #stop-btn-new,
 #play-btn-new,
 #record-btn-new,
 #post-btn-new,
-#remove-btn-new {
+#remove-btn-new,
+#conch-post-btn-new {
   background-position: center;
   //background-size: cover;
   height: 3rem;
@@ -237,11 +244,19 @@ body {
   background-position: center;
   //background-size: cover;
 }
+#conch-post-btn-new:hover {
+  background: #e9ecf300 url(post-conch.svg) no-repeat 1rem;
+  background-position: center;
+  -webkit-filter: drop-shadow(2px 2px 1px #e9ecf343);
+  filter: drop-shadow(2px 2px 1px #e9ecf343);
+  //background-size: cover;
+}
 #stop-btn-new:disabled,
 #play-btn-new:disabled,
 #record-btn-new:disabled,
 #post-btn-new:disabled,
-#remove-btn-new:disabled {
+#remove-btn-new:disabled,
+#conch-post-btn-new:disabled {
   display: none;
 }
 
@@ -287,6 +302,7 @@ body {
   align-items: center;
   z-index: 999;
   width: 100%;
+  max-width: 650px;
   // height: 100%;
 }
 .card.user-profile-followers-card {
@@ -326,6 +342,12 @@ body {
 .display-followers-btn {
   margin-top: 10px;
   margin-bottom: 10px;
+  margin-left: 2rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  color:#e1e1e1;
 }
 .row-container {
   display: flex;
@@ -352,8 +374,21 @@ body {
   flex-direction: row;
   max-width: 999px;
   flex-wrap: wrap;
+  justify-content: start-flex;
+  gap: 1rem;
+}
+.btn-dark {
+  margin:.5rem
+}
+.outer-grid-post-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 999px;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 1rem;
+  margin-top: 1rem;
+  align-items: center;
 }
 
 .share-btn:hover {
@@ -557,6 +592,27 @@ body {
   background-color: rgba(0, 0, 0, 0.2);
   padding: 15px;
   height: 4rem;
+}
+
+.custom-hit {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  outline: #3c3556;
+  border: 1px solid #3c3556;
+  border-radius: 10px;
+  background: rgba(233, 236, 243, 0.0745098039);
+  padding-top: 1rem;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  margin-top: 0.1rem;
+}
+
+.custom-hit-container {
+  display: flex;
+  justify-content: center;
 }
 
 ///////////////////////whspr ai
@@ -770,6 +826,8 @@ body {
   color: white;
   size: 0.8rem;
   margin: 1rem;
+  width: 100%;
+  max-width: 600px;
 }
 
 .user-main {
@@ -865,7 +923,7 @@ body {
   padding: 6px 12px;
   font-size: 14px;
   line-height: 1.42857143;
-  color: #555555;
+  color: #e1e1e1;
   background-color: rgb(33, 37, 41);
   border: 1px solid #cccccc;
   width: 12vw;
@@ -1399,6 +1457,15 @@ input[type='range']::-moz-range-thumb {
   height: 100vh;
   background: #0000007d;
 }
+#conchPostBackdrop {
+  position: fixed;
+  top: -190px;
+  left: auto;
+  z-index: 1000;
+  width: 100vw;
+  height: 100vh;
+  background: #0000007d;
+}
 
 #conchChild {
   background-color: rgba(103, 122, 158);
@@ -1562,6 +1629,26 @@ input[type='range']::-moz-range-thumb {
 }
 
 .shell {
+  position: absolute;
+  top: -10%;
+  z-index: 1999;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-animation-name: shells-fall, shells-shake;
+  -webkit-animation-duration: 10s, 3s;
+  -webkit-animation-timing-function: linear, ease-in-out;
+  -webkit-animation-iteration-count: infinite, infinite;
+  -webkit-animation-play-state: running, running;
+  animation-name: shells-fall, shells-shake;
+  animation-duration: 10s, 3s;
+  animation-timing-function: linear, ease-in-out;
+  animation-iteration-count: infinite, infinite;
+  animation-play-state: running, running;
+}
+
+.post-shell {
   position: absolute;
   top: -10%;
   z-index: 999;
