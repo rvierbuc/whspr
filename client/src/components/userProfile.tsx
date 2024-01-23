@@ -91,11 +91,11 @@ const UserProfile = ({
   const [onProfile, setOnProfile] = useState<boolean>(true);
   const [onUserProfile, setOnUserProfile] = useState<boolean>(true);
   const [selectedUserFollowers, setSelectedUserFollowers] = useState<
-  FollowerAttributes[]
+    FollowerAttributes[]
   >([]);
   const [currentDeletePostId, setCurrentDeletePostId] = useState<number>(0);
   const [selectedUserFollowing, setSelectedUserFollowing] = useState<
-  FollowingAttributes[]
+    FollowingAttributes[]
   >([]);
   const [displayFollowers, setDisplayFollowers] = useState<boolean>(true);
   const [followerCount, setFollowerCount] = useState<number>(0);
@@ -103,10 +103,10 @@ const UserProfile = ({
   const [searchModal, setSearchModal] = useState<boolean>(false);
   const [searchInput, setSearchInput] = useState<string>('');
   const [followerSearchResults, setFollowerSearchResults] = useState<
-  FollowerAttributes[]
+    FollowerAttributes[]
   >([]);
   const [followingSearchResults, setFollowingSearchResults] = useState<
-  FollowingAttributes[]
+    FollowingAttributes[]
   >([]);
   //editing profile states
   const [username, setUsername] = useState(
@@ -181,22 +181,23 @@ const UserProfile = ({
     }
   };
   // function to update the posts
-  const updatePost = async (postId, updateType): Promise<void> => {
+  const updatePost = async (postId, userId): Promise<void> => {
     try {
       // make a request to the server endpoint made for updating posts and use the post id and the current user id as params
       const updatedPost = await axios.get(
-        `/post/updatedPost/${postId}/${currentUser.id}`,
+        `/post/updatedPost/${postId}/${userId}`,
       );
       // find the index of the post that was updated
       const postIndex = await selectedUserPosts.findIndex(
         (post) => post.id === updatedPost.data.id,
       );
       //updatedPost.data.rank = selectedUserPosts[postIndex].rank;
-      const postsWUpdatedPost = await selectedUserPosts.splice(
+      const postsWUpdatedPost = await selectedUserPosts.toSpliced(
         postIndex,
         1,
         updatedPost.data,
       );
+      setSelectedUserPosts(postsWUpdatedPost)
     } catch (error) {
       console.log('could not update post', error);
     }
@@ -268,7 +269,7 @@ const UserProfile = ({
     getSelectedUserFollowing();
   }, []);
   // toast notifications
-  
+
   //editing profile funcs
 
   const openModalHandler = (modalName) => {
@@ -308,7 +309,7 @@ const UserProfile = ({
     const userId = currentUser.id.toString();
     setUsernameError('');
     axios
-      .post('/update-username', { displayUsername: username, userId })
+      .patch('/update-username', { displayUsername: tempUsername, userId })
       .then((response) => {
         console.log('Profile updated:', response.data);
         setCurrentUser(prevState => ({ ...prevState, username: tempUsername }));
@@ -584,7 +585,7 @@ const UserProfile = ({
                     </button>
                   </CustomModal>
                 </div>
-                <h2 style={{ color: 'white' }}>{username}</h2>
+                <h2 style={{ color: '#e1e1e1', fontFamily: 'headerFont' }}>{username}</h2>
               </div>
 
               <div

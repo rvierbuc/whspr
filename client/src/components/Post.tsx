@@ -31,7 +31,6 @@ const Post = (props) => {
       const commentsArr = await axios.get(`/post/comment/${postObj.id}`);
       setComments(commentsArr.data);
       setHearLess(true);
-      console.log('got new comments', commentsArr.data);
     } catch (error) {
       console.error('could not get comments', error);
     }
@@ -46,7 +45,6 @@ const Post = (props) => {
   const handleDelete: (postId: number) => void = async (postId) => {
     try {
       const deletePost = await axios.delete(`/deletePost/${userId}/${postId}`);
-      console.log(deletePost.status);
       const getPosts = await axios.get(`/post/selected/${userId}`);
       setSelectedUserPosts(getPosts.data);
     } catch (error) {

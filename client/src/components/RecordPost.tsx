@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import * as Tone from 'tone';
-import Tuna from 'tunajs';
 
 interface Props {
   instrument: Tone.Oscillator | Tone.FatOscillator | Tone.FMOscillator | Tone.AMOscillator
@@ -151,7 +150,7 @@ const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, cate
     if (!synthBypass.phaseFilter) {
       synthFilters.phaseFilter.wet.value = 0;
     } else {
-      synthFilters.phaseFilter.wet.value = 0.5
+      synthFilters.phaseFilter.wet.value = 0.5;
     }
     if (!synthBypass.distortionFilter) {
       synthFilters.distortionFilter.wet.value = 0;
@@ -159,7 +158,7 @@ const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, cate
       synthFilters.distortionFilter.wet.value = 0.5;
     }
     try {
-      const filters: any[] = Object.values(synthFilters)
+      const filters: (Tone.Phaser | Tone.Distortion)[] = Object.values(synthFilters);
       const context = Tone.context;
       const destination = context.createMediaStreamDestination();
       resumeAudioContext();
@@ -178,7 +177,7 @@ const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, cate
       start();
       setIsRecording(true);
     } catch (error) {
-      console.error('Could not start recording', error)
+      console.error('Could not start recording', error);
     }
   };
 
@@ -233,7 +232,7 @@ const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, cate
   };
 
   const saveAudioToGoogleCloud = async (): Promise<void> => {
-    title = title || "untitled"
+    title = title || 'untitled';
     if (title) {
       handleNavigation('/protected/feed/following');
     } else {

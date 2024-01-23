@@ -368,6 +368,7 @@ export const WhsprAI = ({ audioContext }: WhsprAIProps): ReactElement => {
   };
 
   const handlePressToTalkRelease = (): void => {
+    setIsMuted(false);
     if (isPlaying) { return; }
     if (pressTime.current) {
       clearTimeout(pressTime.current);

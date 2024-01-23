@@ -17,10 +17,9 @@ const Login = (props) => {
   const getHomeFeed = async () => {
     try {
       const homePosts = await axios.get('/post/home');
-      console.log(homePosts.data);
       setPosts(homePosts.data);
     } catch (error) {
-      console.log('home feed posts', error);
+      console.error('home feed posts', error);
     }
   };
 

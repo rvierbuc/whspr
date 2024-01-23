@@ -17,7 +17,7 @@ const MagicConch = lazy(() => import('./MagicConch'));
 const ReadOnlyProfile = lazy(() => import('./ReadOnlyProfile'));
 // import Search from './Search';
 const Synthesize = lazy(() => import('./Synthesize'));
-
+//import socket from './socket';
 import axios from 'axios';
 import { WhsprAI } from './WhsprAI';
 import aa from 'search-insights';
@@ -44,24 +44,44 @@ const App = () => {
   const [channelName, setChannelName] = useState<string>();
   const [host, setHost] = useState<string>();
   const [uid, setUid] = useState<number>();
-  const [creator, setCreator] = useState<any>()
-
+  const [creator, setCreator] = useState<any>();
+  //const [inboxNotiCount, setInboxNotiCount] = useState<number>(0)
   const setRoomProps = (channelName: string, host: string, uid: number) => {
     setChannelName(channelName);
     setHost(host);
     setUid(uid);
-    setCreator(creator)
+    setCreator(creator);
   };
 
   const getUserLoader = async () => {
     try {
       const response = await axios.get('/current-user');
+      //console.log('getUserLoader', response.data)
       return response.data;
     } catch (err) {
       console.error('user loader error', err);
       return null;
     }
   };
+  //console.log('current user', currUser);
+ 
+
+
+  // socket.on('sharedPost-notification', async (notificationObj) => {
+  //   const { sentToUser, notificationAmt } = notificationObj;
+  //   try {
+  //     const user = await getUserLoader();
+  //     console.log('getUserLoader', user.id === sentToUser);
+  //     //if (user.id === sentToUser) {
+  //       console.log('curr user', notificationAmt)
+  //       setInboxNotiCount(notificationAmt);
+  //     //}
+  //   } catch (error) {
+  //     console.error('shared post notification error', error);
+  //   }
+  //   //if(sentToUser === )
+    
+  // });
 
 
   const router = createBrowserRouter(
@@ -69,7 +89,7 @@ const App = () => {
 
             <Route>
                 <Route path="/" element={<Login />} />
-                <Route path="/protected" element={<PrivateRoutes />} >
+                <Route path="/protected" element={<PrivateRoutes/>} loader={() => getUserLoader()} >
                     <Route path="dashboard" element={<WaveSurferComponent />} />
                     <Route path="WhsprAI" element={<WhsprAI audioContext={audioContext} />} loader={() => getUserLoader()}/>
                     {/* <Route path="search" element={<Search />} /> */}
@@ -79,7 +99,7 @@ const App = () => {
                     <Route path="synthesize" element={<Synthesize audioContext={audioContext} />} loader={() => getUserLoader()} />
                     <Route path="radio" element={<Radio setRoomProps={setRoomProps} />} />
                     <Route path="room/:name" element={<Room audioContext={audioContext} channel={channelName} host={host} id={uid} creator={creator}/>} loader={() => getUserLoader()}/>
-                    <Route path="conch" element={<MagicConch audioContext={audioContext}/>} loader={() => getUserLoader()}/>
+                    <Route path="inbox" element={<MagicConch audioContext={audioContext}/>} loader={() => getUserLoader()}/>
                     <Route path="feed/profile/:id" element={<ReadOnlyProfile audioContext={audioContext}/> } loader={() => getUserLoader()} />
                 </Route>
             </Route>,

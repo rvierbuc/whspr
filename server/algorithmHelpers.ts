@@ -6,9 +6,7 @@ const rankTags = (tagObjArr, score) => {
   return tagObjArr
     .map((post) => {
     let timeSinceCreation = (today - post.dataValues.Post.dataValues.createdAt.getTime()) / 14400000
-    //console.log(timeSinceCreation, date)
     let decay = (.05 * timeSinceCreation)
-    //console.log(date, .025/decay, .5/decay, 1/decay)
     if(post.dataValues.Post.dataValues.categories){
       return {
         decay,
@@ -38,7 +36,6 @@ const rankSelectedTags = (userObj) => {
   let obj = {}
   for(let i = 0; i < tags.length; i++){
     obj[tags[i]] = score
-   // console.log(obj, tags[i])
   }
   return obj;
 }
@@ -69,7 +66,6 @@ export const getTagsByEngagement = async(userId) => {
     })
 
     const userSelectedTags:any = await User.findByPk(userId)
-    //console.log(userSelectedTags)
     //rank tag by type
     const userCommentedTagObj = await rankTags(userCommentData, .5)
     const userListenedTagObj = await rankTags(userListensData, .025)
@@ -78,7 +74,6 @@ export const getTagsByEngagement = async(userId) => {
     if(userSelectedTags.dataValues.selectedTags){
       userSelectedTagObj = await rankSelectedTags(userSelectedTags)
     }
-    //console.log(userSelectedTagObj)
     //combine tag rankings 
     let rankedTags = {}
     const combineTagRanks = (rankedTagObj) => {
@@ -91,15 +86,8 @@ export const getTagsByEngagement = async(userId) => {
     await combineTagRanks(userLikedTagObj)
     await combineTagRanks(userSelectedTagObj)
     
-    //console.log(rankedTags)
     return rankedTags
   }catch(error){
     console.error('[algorithmHelpers.ts] tag ranking error:', error)
   }
 }
-//getTagsByEngagement(6)
-// .flatMap((comment) => comment.dataValues.Post.dataValues.categories)
-// .reduce((acc, curr) =>  {
-//   acc[curr] ? acc[curr] += 1 : acc[curr] = 1
-//   return acc
-// }, {})
