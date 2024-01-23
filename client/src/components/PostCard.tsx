@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { RecordPost } from './RecordPost';
 import { useLoaderData } from 'react-router-dom';
 import algoliasearch from 'algoliasearch';
-import { InstantSearch, SearchBox, Hits, useHits, useSearchBox, Configure } from 'react-instantsearch';
+//import { InstantSearch, SearchBox, Hits, useHits, useSearchBox, Configure } from 'react-instantsearch';
 import { v4 as uuidv4 } from 'uuid';
 import searchInsights from 'search-insights';
 import { FaDeleteLeft } from 'react-icons/fa6';
@@ -136,6 +136,7 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
   
   useEffect(() => {
     getAllCategories();
+    console.log('categories', allCategories)
   }, [selectedCategories, placeholderCategories, customHit]);
   
   return (

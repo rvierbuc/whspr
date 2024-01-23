@@ -626,23 +626,20 @@ const UserProfile = ({
               <RadioConfig setRoomProps={setRoomProps} />
 
               <div className="display-followers-btn">
-                <button
-                  type="button"
-                  onClick={() => setSearchModal(true)}
-                  className="btn btn-dark btn-md"
+                <div
+                  id='headerFont'
                   style={{ marginLeft: '10px' }}
                 >
                   {followerCount} Followers
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setDisplayFollowers(false)}
-                  className="btn btn-dark btn-md"
+                </div>
+                <div
+                id='headerFont'
                   style={{ marginLeft: '10px' }}
                 >
                   {followingCount} Following
-                </button>
+                </div>
                 <FaSearch
+                id='hover'
                   style={{
                     marginLeft: '10px',
                     marginRight: '10px',

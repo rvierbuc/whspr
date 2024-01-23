@@ -343,6 +343,11 @@ body {
   margin-top: 10px;
   margin-bottom: 10px;
   margin-left: 2rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  color:#e1e1e1;
 }
 .row-container {
   display: flex;
@@ -369,7 +374,7 @@ body {
   flex-direction: row;
   max-width: 999px;
   flex-wrap: wrap;
-  justify-content: start;
+  justify-content: start-flex;
   gap: 1rem;
 }
 .btn-dark {
@@ -587,6 +592,27 @@ body {
   background-color: rgba(0, 0, 0, 0.2);
   padding: 15px;
   height: 4rem;
+}
+
+.custom-hit {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  outline: #3c3556;
+  border: 1px solid #3c3556;
+  border-radius: 10px;
+  background: rgba(233, 236, 243, 0.0745098039);
+  padding-top: 1rem;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  margin-top: 0.1rem;
+}
+
+.custom-hit-container {
+  display: flex;
+  justify-content: center;
 }
 
 ///////////////////////whspr ai
