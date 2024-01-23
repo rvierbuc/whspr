@@ -29,11 +29,26 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [placeholderCategories, setPlaceholderCategories] = useState<string[]>([]);
   const [allCategories, setAllCategories] = useState<string[]>([]);
+  const [customHit, setCustomHit] = useState<string>('');
+
+  const handleCustomHitClick = (hit: any) => {
+    setSelectedCategories([hit, ...selectedCategories]);
+    setCurrentSearch('');
+    setCustomHit('');
+  };
+  const CustomHitComponent = (hit: any) => {
+    console.log('custom hit', hit);
+    return (
+      <div className='custom-hit' onClick={() => handleCustomHitClick(hit.hit)}>
+        <p>{hit.hit}</p>
+      </div>
+    );
+  };
 
   const getAllCategories = async (): Promise<void> => {
     try {
       const allCats = await axios.get('/post/categories');
-      setAllCategories(allCats);
+      setAllCategories(allCats.data);
     } catch (error) {
       console.error('error fetching all categories', error);
     }
@@ -41,6 +56,12 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // console.log('working', event.target.value, event);
+    // check if theres a match in allCategories to display the hit
+    if (allCategories.includes(event.target.value)) {
+      setCustomHit(event.target.value);
+    } else {
+      setCustomHit('');
+    }
     setCurrentSearch(event.target.value);
   };
   const handleCategorySelection = (category: string) => {
@@ -71,7 +92,7 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
   };
   const handleHitClick = (hit: any) => {
     if (typeof hit === 'object' && hit.length > 0 && hit[0].category) {
-      console.log('hit inside of handlehitclick', hit);
+      // console.log('hit inside of handlehitclick', hit);
       const selectedCategory = hit[0].category;
       const trimmedCategory = selectedCategory.trim();
       
@@ -118,12 +139,12 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
   const Hit = ({ hit, onSelect }: { hit: any; onSelect: (category: string[] | string) => void }) => {
     const { hits } = useHits();
     // console.log('hits', hit); //the individual hit obj
-    console.log('hits array + hit', hits, hit);
+    // console.log('hits array + hit', hits, hit);
     //  filter the hits based on the current search
     const filteredHits = hits.filter((individualHit: any) => {
       return individualHit.category.toLowerCase().includes(currentSearch.toLowerCase());
     });
-    console.log('search + indiv hits', currentSearch, filteredHits);
+    // console.log('search + indiv hits', currentSearch, filteredHits);
     return (
       // TODO: issue, when you click on a hit, it just adds the input value to the selected categories instead of the hit value
       <article id='cat-hit' onClick={() => onSelect(filteredHits)}
@@ -143,8 +164,9 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
     console.log('selectedCategories', selectedCategories);
     console.log('placeholderCategories', placeholderCategories);
     console.log('allCategories', allCategories);
+    console.log('customHit', customHit);
     getAllCategories();
-  }, [selectedCategories, placeholderCategories]);
+  }, [selectedCategories, placeholderCategories, customHit]);
   
   return (
     <div>
@@ -169,13 +191,20 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
           />
         </form>
         {/* create an input that holds the selected categories */}
-        {currentSearch && <Hits className="cat-hits" hitComponent={(props) => <Hit {...props} onSelect={handleHitClick} />} />}
+        {/* {currentSearch && <Hits className="cat-hits" hitComponent={(props) => <Hit {...props} onSelect={handleHitClick} />} />} */}
         {/* <input type="text" value={selectedCategories} readOnly={true} className='input-control text-white' id='category-read-only' /> */}
         <Configure userToken={userToken} hitsPerPage={2} />
         {selectedCategories ? selectedCategories.map((category, index) => (
           <CategoryWithDeleteButton key={index} category={category} onSelect={handleHitClick} />
         )) : null}
       </InstantSearch>
+     
+      {/* {customHit && <CustomHitComponent hit={customHit} />} */}
+      {customHit ? (
+        <div className="col custom-hit-container">
+          <CustomHitComponent hit={customHit} /> 
+        </div>
+      ) : null}
     </div>
   );
 };

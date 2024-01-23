@@ -886,6 +886,25 @@ body {
     display: none;
   }
 }
+.custom-hit {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  outline: #3c3556;
+  border: 1px solid #3c3556;
+  border-radius: 10px;
+  background: rgba(233, 236, 243, 0.0745098039);
+  padding-top: 1rem;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  margin-top: 0.1rem;
+}
+.custom-hit-container {
+  display: flex;
+  justify-content: center;
+}
 
 #post-card-box {
   width: 100vw;
