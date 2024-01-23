@@ -65,10 +65,8 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
     setCurrentSearch(event.target.value);
   };
   const handleCategorySelection = (category: string) => {
-    console.log('handlecategoryselection on click', category);
     const trimmedCategory = category.trim();
     const updatedCategories = [...selectedCategories, trimmedCategory];
-    // console.log('updatedCategories', updatedCategories);
     if (updatedCategories.length <= 5) {
       setSelectedCategories(updatedCategories);
       onCategorySelect(updatedCategories);
@@ -76,7 +74,6 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
       alert('You can only add up to 5 categories!');
     }
     setCurrentSearch('');
-    // setPlaceholderCategories(null);
   };
   // create custom button using <FaDeleteLeft /> from react-icons to delete selected categories
   const CustomDeleteButton = ({ category, onSelect }: { category?: string; onSelect: (category: string) => void }) => {
@@ -90,9 +87,8 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
   const CategoryWithDeleteButton = ({ category, onSelect }: { category?: string; onSelect: (category: string) => void }) => {
     return category ? <CustomDeleteButton category={category} onSelect={onSelect} /> : null;
   };
-  const handleHitClick = (hit: any) => {
+  const handleHitClick = (hit: any): void => {
     if (typeof hit === 'object' && hit.length > 0 && hit[0].category) {
-      // console.log('hit inside of handlehitclick', hit);
       const selectedCategory = hit[0].category;
       const trimmedCategory = selectedCategory.trim();
       
@@ -103,7 +99,7 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
         setSelectedCategories(updatedCategories);
         onCategorySelect(updatedCategories);
       } else {
-        // Add the category if not already selected
+        // Add the category if not selected
         handleCategorySelection(trimmedCategory);
         setPlaceholderCategories(trimmedCategory);
       }

@@ -346,7 +346,6 @@ const UserProfile = ({
       })
       .then((response) => {
         const newProfileImgUrl = response.data.imageUrl;
-        console.log(newProfileImgUrl);
         setCurrentUser((prevState) => ({
           ...prevState,
           profileImgUrl: newProfileImgUrl,
