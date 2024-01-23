@@ -200,6 +200,26 @@ router.get(
   }
 );
 
+router.get('/radio/:name', async (req: Request, res: Response) => {
+  const {name} = req.params
+
+  console.log('hete', name)
+  try {
+    const getRadio = Radio.findAll({
+      where: {
+        title: name
+      }
+    })
+    getRadio.then((info) => {
+      console.log('gotten', info)
+      res.send(info).status(200)
+    })
+    //console.log('gotten', getRadio)
+  }catch{
+    console.log('no')
+  }
+ })
+
 // gets the selected users following and searches for matching username
 router.get(
   "/user/:userId/following/search/:searchInput",
@@ -393,7 +413,165 @@ router.get("/users", async (req: Request, res: Response) => {
     res.sendStatus(500);
     console.error("could not get following posts", error);
   }
-});
+
+})
+// Gets all the users that the selected user is following
+router.get('/user/:userId/following', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId } = req.params;
+    // fetch the following and get the user id's to cross ref
+    const following = await Follower.findAll({
+      where: {
+        userId
+      }
+    })
+    const followingDisplayInformation = await User.findAll({
+      where: {
+        id: following.map((follower: any) => follower.followingId),
+      }
+    })
+    const extractedFollowingInfo = followingDisplayInformation.map((following: any) => {
+      return {
+        id: following.id,
+        username: following.username,
+        profileImgUrl: following.profileImgUrl,
+      }
+    });
+    res.send(extractedFollowingInfo);
+  } catch (error) {
+    console.error('could not get following', error)
+    res.sendStatus(500)
+  }
+})
+
+//Gets all posts from people user is following (for following feed)
+router.get('/following/:userId/:tag', async (req: Request, res: Response): Promise<void> => {
+const { userId, tag } = req.params;
+try{
+  const following = await Follower.findAll({
+    where: {
+      userId
+    }
+  })
+  const followingArr = following.map((follow: any) => {
+    const obj: any = {}
+    obj.userId = follow.followingId
+    return obj
+  })
+  const followingPosts:any = await Post.findAll({
+    where: {
+      [Op.or]: followingArr
+    },
+    include: [
+      {
+        model: User,
+        as: 'user'
+      },
+      {
+        model: Like
+      }
+    ], 
+    order: [
+      ['createdAt', 'DESC']
+    ],
+  })
+
+  const likedPosts = await Like.findAll({
+    where: {userId}
+  })
+  
+  const likedPostIdArr = await likedPosts.map((post:any) => post.postId)
+  //console.log(likedPostIdArr)
+
+    await addIsLikedPair(followingPosts, likedPostIdArr)
+    //console.log(followingPosts)
+    await res.status(200).send(followingPosts)
+
+}catch(error){
+  res.sendStatus(500)
+  console.log('could not get following posts', error)
+}
+
+})
+
+//gets posts ranked by popularity for home pages before user signs in
+router.get('/home', async (req: Request, res: Response) => {
+  try{
+    const allPosts = await Post.findAll({
+      include: [
+        Like,
+        Comment,
+        { model: User,
+          as: 'user'}
+        ]
+      })
+      
+      //clean query response to only include dataValues
+      const postDataValues = await allPosts.map((post) => post.dataValues)
+      //console.log('home', postDataValues)
+
+  //add popularity ranking based on overall likes, comments, and listen counts
+  const postsWRanks = rankPostsByPopularity(postDataValues)
+
+  res.status(200).send(postsWRanks.sort((a, b) => (a.rank > b.rank ? -1 : 1)))
+  }catch (error){
+    console.error('server error getting home feed:', error)
+  }
+})
+router.get('/use/:id', async (req: Request, res: Response) => {
+  const {id} = req.params
+  console.log('hi')
+  try{
+    const users = await User.findOne({
+      where: {
+        id
+      }
+    })
+    console.log("usee" ,users)
+    res.status(200).send(users)
+  
+  }catch(error){
+    res.sendStatus(500)
+    console.log('could not get following posts', error)
+  }
+  
+  })
+
+
+router.get('/users', async (req: Request, res: Response) => {
+  console.log('hi')
+  try{
+    const users = await User.findAll()
+    console.log(users)
+    res.status(200).send(users)
+  
+  }catch(error){
+    res.sendStatus(500)
+    console.log('could not get following posts', error)
+  }
+  
+  })
+
+  router.get('/user/:username', async (req: Request, res: Response) => {
+    console.log('hi')
+    const {username} = req.params
+    try{
+      const users = await User.findAll({
+        where: {
+          username: username
+        }
+      })
+      console.log(users)
+      res.status(200).send(users)
+    
+    }catch(error){
+      res.sendStatus(500)
+      console.log('could not get user', error)
+    }
+    
+    })
+
+
 //gets all posts
 router.get("/explore/:userId", async (req: Request, res: Response) => {
   const { userId } = req.params;
