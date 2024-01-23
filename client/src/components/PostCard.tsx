@@ -6,7 +6,7 @@ import { InstantSearch, SearchBox, Hits, useHits, useSearchBox, Configure } from
 import { v4 as uuidv4 } from 'uuid';
 import searchInsights from 'search-insights';
 import { FaDeleteLeft } from 'react-icons/fa6';
-
+import axios, { all } from 'axios';
 
 
 const generateUserToken = (): string => {
@@ -28,6 +28,16 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
   const [currentSearch, setCurrentSearch] = useState<string>('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [placeholderCategories, setPlaceholderCategories] = useState<string[]>([]);
+  const [allCategories, setAllCategories] = useState<string[]>([]);
+
+  const getAllCategories = async (): Promise<void> => {
+    try {
+      const allCats = await axios.get('/post/categories');
+      setAllCategories(allCats);
+    } catch (error) {
+      console.error('error fetching all categories', error);
+    }
+  };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // console.log('working', event.target.value, event);
@@ -132,6 +142,8 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
   useEffect(() => {
     console.log('selectedCategories', selectedCategories);
     console.log('placeholderCategories', placeholderCategories);
+    console.log('allCategories', allCategories);
+    getAllCategories();
   }, [selectedCategories, placeholderCategories]);
   
   return (
@@ -153,6 +165,7 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
             placeholder={placeholderCategories ? placeholderCategories : 'Add up to 5 categories!'}
             className='input-control text-white mb-2'
             id='category-search'
+            maxLength={18}
           />
         </form>
         {/* create an input that holds the selected categories */}

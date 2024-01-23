@@ -80,16 +80,7 @@ const Search: React.FC = () => {
           // console.log('hit inside of filtered hits', hit);
           return (
             <article key={index}>
-              {/* <img
-                src={filteredHit.profileImgUrl || ''}
-                alt={filteredHit.name}
-                style={{
-                  width: 'auto',
-                  height: '100px',
-                  objectFit: 'scale-down',
-                }}
-              /> */}
-              <Link to={`/protected/profile/${hit.id}`}>
+              <Link to={`/protected/feed/profile/${hit.id}`}>
                 {filteredHit.username}
               </Link>
 
