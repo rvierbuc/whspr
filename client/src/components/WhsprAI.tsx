@@ -359,6 +359,13 @@ export const WhsprAI = ({ audioContext }: WhsprAIProps): ReactElement => {
     }
   };
 
+  const toggleMute = (): void => {
+    setIsMuted(!isMuted);
+    if (audioRef.current) {
+      audioRef.current.volume = !isMuted ? 0 : 1;
+    }
+  };
+
   const togglePause = (): void => {
     if (audioRef.current) {
       if (isPaused) {
@@ -396,17 +403,6 @@ export const WhsprAI = ({ audioContext }: WhsprAIProps): ReactElement => {
     }
     pressTime.current = null;
   };
-
-
-
-  const toggleMute = (): void => {
-    setIsMuted(!isMuted);
-    if (audioRef.current) {
-      audioRef.current.volume = !isMuted ? 0 : 1;
-    }
-  };
-
-
 
   return (
     <div className='whsprAI'>
