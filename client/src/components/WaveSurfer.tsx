@@ -709,6 +709,7 @@ const WaveSurferComponent: React.FC<WaveSurferProps> = ({
               {onUserProfile ? (
                 <MdDeleteOutline
                   type="button"
+                  id='hover'
                   onClick={() => setDeleting(true)}
                   style={{
                     color: '#e1e1e5',

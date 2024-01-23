@@ -47,6 +47,7 @@ const Post = (props) => {
       const deletePost = await axios.delete(`/deletePost/${userId}/${postId}`);
       const getPosts = await axios.get(`/post/selected/${userId}`);
       setSelectedUserPosts(getPosts.data);
+      setDeleting(false);
     } catch (error) {
       console.error(error);
     }
