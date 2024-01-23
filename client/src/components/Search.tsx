@@ -8,31 +8,33 @@ import {
   useHits,
   useSearchBox,
 } from 'react-instantsearch';
-// require('dotenv').config();
 import { v4 as uuidv4 } from 'uuid';
 import { Link } from 'react-router-dom';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { FaDeleteLeft } from 'react-icons/fa6';
+// require('dotenv').config();
 const generateUserToken = (): string => {
   return uuidv4();
 };
 
 // TODO:
-interface EnvironmentVariables {
-  APP_ID: string;
-  ADMIN_API_KEY: string;
-}
+
 interface SearchPropTypes {
   children: React.ReactNode;
 }
-
+interface EnvironmentVariables {
+  ALGOLIA_APP_ID: string;
+  ALGOLIA_ADMIN_API_KEY: string;
+}
+// const { ALGOLIA_APP_ID, ALGOLIA_ADMIN_API_KEY }: EnvironmentVariables = process.env as any;
+// console.log('algolia app id', ALGOLIA_APP_ID);
+// console.log('algolia admin api key', ALGOLIA_ADMIN_API_KEY);
+// export const client = algoliasearch('L1DTWCU98D', 'bf531f95b4dd36ed1fc7eadf4c95cda6');
 const userToken = generateUserToken();
 
 const searchClient = algoliasearch(
-  '2580UW5I69',
-  'b0f5d0cdaf312c18df4a45012c4251e4',
+  'L1DTWCU98D', //applicationID
+  'bf531f95b4dd36ed1fc7eadf4c95cda6', //adminAPIKey
   {
     headers: {
       'X-Algolia-UserToken': userToken,
@@ -78,16 +80,7 @@ const Search: React.FC = () => {
           // console.log('hit inside of filtered hits', hit);
           return (
             <article key={index}>
-              {/* <img
-                src={filteredHit.profileImgUrl || ''}
-                alt={filteredHit.name}
-                style={{
-                  width: 'auto',
-                  height: '100px',
-                  objectFit: 'scale-down',
-                }}
-              /> */}
-              <Link to={`/protected/profile/${hit.id}`}>
+              <Link to={`/protected/feed/profile/${hit.id}`}>
                 {filteredHit.username}
               </Link>
 

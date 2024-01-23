@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import * as Tone from 'tone';
+import { Modal } from 'react-bootstrap';
 
 interface Props {
   instrument: Tone.Oscillator | Tone.FatOscillator | Tone.FMOscillator | Tone.AMOscillator
@@ -45,6 +46,7 @@ const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, cate
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [synthAudioChunks, setSynthAudioChunks] = useState<Blob[]>([]);
   const [audioStream, setAudioStream] = useState<MediaStream | null>(null)
+  const [showConchSendModal, setShowSendConchModal] = useState<boolean>(false);
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const audioSource = useRef<AudioBufferSourceNode | null>(null);
   const userId = user.id;
@@ -270,8 +272,61 @@ const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, cate
     }
   };
 
+  const saveConchToGoogleCloud = async (): Promise<void> => {
+    handleNavigation('/protected/feed/following');
+    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    try {
+      const users = await axios.get('/post/users');
+      const index = Math.floor(Math.random() * (users.data.length - 1));
+      const receivingUserId = users.data[index].id;
+
+      const formData = new FormData();
+      formData.append('audio', audioBlob);
+      formData.append('sendingUserId', userId);
+      formData.append('title', title);
+      categories.forEach((category, ind) => {
+        console.log('foreach', category, index);
+        formData.append(`category[${ind}]`, category);
+      });
+      formData.append('receivingUserId', receivingUserId);
+      const response = await axios.post('/conch', formData);
+      if (response.status === 200) {
+        console.info('Audio save successfully');
+      } else {
+        console.error('Error saving audio:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error saving audio:', error);
+    }
+  };
+
   return (
     <div className="d-flex justify-content-center mt-3">
+  
+      <Modal show={showConchSendModal} onHide={() => setShowSendConchModal(false)} aria-labelledby="contained-modal-title-vcenter" centered>
+          <Modal.Header style={{fontFamily: 'headerFont', textAlign:'center', textShadow: '1px 1px 2px rgb(0, 0, 0)', fontSize: '2.3rem', color:'rgb(54, 89, 169)'}}>
+          You have chosen to send a magic conch!
+        </Modal.Header>
+        <Modal.Body>
+          This means your whspr will be sent into our sea of listeners. One listener will be chosen at random to hear your message, and then it will vanish forever! This listener will know who sent it, so keep it kind.
+        </Modal.Body>
+        <Modal.Footer>
+          <button
+          style={{backgroundColor:'rgb(63, 133, 42)', color:'#e1e1e1', borderRadius:'.5rem', padding:'.25rem .5rem' }}
+          onClick={() => saveConchToGoogleCloud()}
+          >
+            Set it Free!
+          </button>
+          <button 
+            style={{backgroundColor:'rgb(155, 44, 22)', color:'#e1e1e1', borderRadius:'.5rem', padding:'.25rem .5rem' }}
+            onClick={() => setShowSendConchModal(false)}
+          >
+            Nevermind
+          </button>
+        </Modal.Footer>
+      </Modal>
+
+
       <Stack direction="horizontal" gap={3}>
         <button
           id='record-btn-new'
@@ -307,6 +362,14 @@ const RecordPost = ({ synthBypass, synthFilters, user, audioContext, title, cate
           id='post-btn-new'
           onClick={() => {
             saveAudioToGoogleCloud();
+            stopStream();
+          }}
+          disabled={(audioChunks.length === 0 && synthAudioChunks.length === 0) || isRecording}>
+        </button>
+        <button
+          id='conch-post-btn-new'
+          onClick={() => {
+            setShowSendConchModal(true)
             stopStream();
           }}
           disabled={(audioChunks.length === 0 && synthAudioChunks.length === 0) || isRecording}>
