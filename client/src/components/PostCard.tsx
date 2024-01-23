@@ -37,7 +37,7 @@ const CategorySearch = ({ onCategorySelect }: { onCategorySelect: (category: str
     setCustomHit('');
   };
   const CustomHitComponent = (hit: any) => {
-    console.log('custom hit', hit);
+    // console.log('custom hit', hit);
     return (
       <div className='custom-hit' onClick={() => handleCustomHitClick(hit.hit)}>
         <p>{hit.hit}</p>
