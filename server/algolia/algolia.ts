@@ -2,17 +2,17 @@
 // hello_algolia.js
 import algoliasearch from 'algoliasearch';
 import { User, Post } from '../dbmodels'
-
+require('dotenv').config();
 //const axios = require('axios');
 // Connect and authenticate with your Algolia app
 //TO DO:
-// interface EnvironmentVariables {
-//   APP_ID: string;
-//   ADMIN_API_KEY: string;
-// }
-// const { APP_ID, ADMIN_API_KEY }: EnvironmentVariables = process.env as any;
+interface EnvironmentVariables {
+  ALGOLIA_APP_ID: string;
+  ALGOLIA_ADMIN_API_KEY: string;
+}
+export const { ALGOLIA_APP_ID, ALGOLIA_ADMIN_API_KEY }: EnvironmentVariables = process.env as any;
 
-export const client = algoliasearch('2580UW5I69', 'b0f5d0cdaf312c18df4a45012c4251e4');
+export const client = algoliasearch(ALGOLIA_APP_ID, ALGOLIA_ADMIN_API_KEY);
 
 
 

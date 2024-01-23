@@ -153,7 +153,21 @@ router.get(
     }
   }
 );
-
+// gets all categories from posts in the db
+router.get('/categories', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const allCategories = await Post.findAll({
+      attributes: ['categories']
+    })
+    //console.log('allCategories', allCategories)
+    const categories = allCategories.map((post: any) => post.dataValues.categories)
+    // map through and extract only unique categories
+    const uniqueCategories = [...new Set(categories.flat())]
+    res.send(uniqueCategories)
+  } catch (error) {
+    console.error('error getting all categories', error)
+  }
+})
 //gets all users
 router.get("/users", async (req: Request, res: Response) => {
   try {
