@@ -26,7 +26,7 @@ const RoomUser = ({audioStream, audioContext, image, muted}) => {
 
         <img style={{margin: '15px'}} width="100" src={image} alt="user profile image" />
 
-        <AudioAnalyser audioStream={audioStream} audioContext={audioContext}/>
+        <AudioAnalyser audioStream={stream} audioContext={audioContext}/>
 
               {mute ?  <button
                 type="button"
