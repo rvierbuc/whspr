@@ -498,7 +498,7 @@ const UserProfile = ({
         )}
       </Modal>
       <div className="card" id="user-main-container">
-        <div className="grid-post-container">
+        <div className="outer-grid-post-container">
           <div>
             <div
               className="card user-profile-card"
